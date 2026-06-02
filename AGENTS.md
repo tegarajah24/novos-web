@@ -4,7 +4,7 @@
 
 ## 🎯 Tentang Project Ini
 
-Nama project: **Novos Order Management System**
+Nama project: **Novos Web**
 Jenis bisnis: Konveksi / Custom Jersey
 Tujuan: Sistem pemesanan jersey custom online lengkap dengan manajemen produksi internal.
 
