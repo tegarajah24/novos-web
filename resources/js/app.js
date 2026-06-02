@@ -1,7 +1,11 @@
+import Alpine from 'alpinejs'
 
+import Swal from 'sweetalert2'
+import lucide from 'lucide'
 
-import Alpine from 'alpinejs';
+window.Alpine = Alpine
+window.Swal = Swal
 
-window.Alpine = Alpine;
+Alpine.start()
 
-Alpine.start();
+lucide.createIcons()
