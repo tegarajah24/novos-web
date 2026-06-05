@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
             'Admin'       => redirect('/admin/dashboard'),
             'Design'      => redirect('/design/dashboard'),
             'Produksi'    => redirect('/produksi/dashboard'),
-            default       => redirect('/dashboard'), // Customer
+            default       => redirect('/customer/beranda'), // Customer
         };
     }
 

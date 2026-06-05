@@ -5,20 +5,48 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
+                    @auth
+                        <a href="{{ Auth::user()->role?->name === 'Customer' ? route('customer.beranda') : route('dashboard') }}">
+                            <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        </a>
+                    @endauth
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    @auth
+                        @if(Auth::user()->role?->name !== 'Customer')
+                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-nav-link>
+                        @endif
+
+                        @if(Auth::user()->role?->name === 'Customer')
+                            <x-nav-link :href="route('customer.beranda')" :active="request()->routeIs('customer.beranda')">
+                                {{ __('Beranda') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('customer.katalog')" :active="request()->routeIs('customer.katalog')">
+                                {{ __('Katalog') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('customer.pemesanan')" :active="request()->routeIs('customer.pemesanan')">
+                                {{ __('Buat Pesanan') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('customer.tracking')" :active="request()->routeIs('customer.tracking')">
+                                {{ __('Tracking') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('customer.chat')" :active="request()->routeIs('customer.chat')">
+                                {{ __('Chat') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('customer.tentang')" :active="request()->routeIs('customer.tentang')">
+                                {{ __('Tentang Kami') }}
+                            </x-nav-link>
+                        @endif
+                    @endauth
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
+            @auth
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -51,6 +79,7 @@
                     </x-slot>
                 </x-dropdown>
             </div>
+            @endauth
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
@@ -67,12 +96,38 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            @auth
+                @if(Auth::user()->role?->name !== 'Customer')
+                    <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-responsive-nav-link>
+                @endif
+
+                @if(Auth::user()->role?->name === 'Customer')
+                    <x-responsive-nav-link :href="route('customer.beranda')" :active="request()->routeIs('customer.beranda')">
+                        {{ __('Beranda') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('customer.katalog')" :active="request()->routeIs('customer.katalog')">
+                        {{ __('Katalog') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('customer.pemesanan')" :active="request()->routeIs('customer.pemesanan')">
+                        {{ __('Buat Pesanan') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('customer.tracking')" :active="request()->routeIs('customer.tracking')">
+                        {{ __('Tracking') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('customer.chat')" :active="request()->routeIs('customer.chat')">
+                        {{ __('Chat') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('customer.tentang')" :active="request()->routeIs('customer.tentang')">
+                        {{ __('Tentang Kami') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endauth
         </div>
 
         <!-- Responsive Settings Options -->
+        @auth
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
@@ -96,5 +151,6 @@
                 </form>
             </div>
         </div>
+        @endauth
     </div>
 </nav>
