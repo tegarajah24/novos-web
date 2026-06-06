@@ -66,10 +66,44 @@
                         <div class="flex" :class="msg.from === 'customer' ? 'justify-end' : 'justify-start'">
                             <div
                                 :class="msg.from === 'customer' ? 'bg-blue-900 text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
-                                class="max-w-[70%] px-4 py-2.5 rounded-2xl shadow-sm"
+                                class="max-w-[70%] px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5"
                             >
-                                <p class="text-sm leading-relaxed" x-text="msg.text"></p>
-                                <p class="text-xs mt-1" :class="msg.from === 'customer' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.time"></p>
+                                {{-- File attachment --}}
+                                <template x-if="msg.file_url">
+                                    <div>
+                                        {{-- Image --}}
+                                        <template x-if="msg.is_image">
+                                            <a :href="msg.file_url" target="_blank" class="block -mx-1 -mt-1">
+                                                <img :src="msg.file_url" :alt="msg.file_name" class="max-w-full rounded-xl max-h-60 object-cover">
+                                            </a>
+                                        </template>
+                                        {{-- Video --}}
+                                        <template x-if="msg.is_video">
+                                            <video :src="msg.file_url" controls class="max-w-full rounded-xl max-h-60" @click.stop></video>
+                                        </template>
+                                        {{-- Other file --}}
+                                        <template x-if="!msg.is_image && !msg.is_video">
+                                            <a :href="msg.file_url" target="_blank"
+                                                :class="msg.from === 'customer' ? 'bg-blue-800 hover:bg-blue-700' : 'bg-gray-100 hover:bg-gray-200'"
+                                                class="flex items-center gap-3 p-3 rounded-xl transition-colors"
+                                            >
+                                                <div :class="msg.from === 'customer' ? 'bg-blue-700' : 'bg-blue-100'" class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="msg.from === 'customer' ? 'text-white' : 'text-blue-900'"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium truncate" :class="msg.from === 'customer' ? 'text-blue-100' : 'text-gray-900'" x-text="msg.file_name"></p>
+                                                    <p class="text-xs" :class="msg.from === 'customer' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.file_size_formatted"></p>
+                                                </div>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" :class="msg.from === 'customer' ? 'text-blue-200' : 'text-gray-400'"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                            </a>
+                                        </template>
+                                    </div>
+                                </template>
+                                {{-- Text message --}}
+                                <template x-if="msg.text">
+                                    <p class="text-sm leading-relaxed" x-text="msg.text"></p>
+                                </template>
+                                <p class="text-xs" :class="msg.from === 'customer' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.time"></p>
                             </div>
                         </div>
                     </template>
@@ -88,7 +122,31 @@
 
                 {{-- Input --}}
                 <div class="bg-white border-t border-gray-200 px-6 py-4">
+                    {{-- File preview --}}
+                    <template x-if="selectedFile">
+                        <div class="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <template x-if="selectedFileIsImage">
+                                <img :src="selectedFilePreview" class="w-12 h-12 rounded-lg object-cover shrink-0">
+                            </template>
+                            <template x-if="!selectedFileIsImage">
+                                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-900"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                </div>
+                            </template>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate" x-text="selectedFile.name"></p>
+                                <p class="text-xs text-gray-500" x-text="selectedFileSizeFormatted"></p>
+                            </div>
+                            <button @click="removeSelectedFile" class="text-gray-400 hover:text-red-500 transition-colors p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                    </template>
                     <div class="flex items-center gap-3">
+                        <label class="cursor-pointer p-2 text-gray-400 hover:text-blue-900 transition-colors rounded-lg hover:bg-gray-100">
+                            <input type="file" @change="handleFileSelect" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar" class="hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18.84 5.6l-8.11 8.11a2 2 0 1 1-2.83-2.83l8.49-8.49"/></svg>
+                        </label>
                         <input
                             type="text"
                             x-model="message"
@@ -98,11 +156,16 @@
                         >
                         <button
                             @click="sendMessage"
-                            :disabled="!message.trim()"
-                            :class="message.trim() ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                            :disabled="(!message.trim() && !selectedFile) || sending"
+                            :class="(message.trim() || selectedFile) && !sending ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                             class="text-white p-3 rounded-xl transition-colors"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            <template x-if="!sending">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </template>
+                            <template x-if="sending">
+                                <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                            </template>
                         </button>
                     </div>
                 </div>
@@ -121,6 +184,10 @@ function chatApp() {
         activeChat: null,
         message: '',
         typing: false,
+        sending: false,
+        selectedFile: null,
+        selectedFilePreview: null,
+        selectedFileIsImage: false,
         chats: [
             {
                 id: 1,
@@ -154,44 +221,146 @@ function chatApp() {
             return this.chats.find(c => c.id === this.activeChat);
         },
 
-        sendMessage() {
-            if (!this.message.trim()) return;
+        get selectedFileSizeFormatted() {
+            if (!this.selectedFile) return '';
+            const bytes = this.selectedFile.size;
+            const units = ['B', 'KB', 'MB'];
+            let size = bytes;
+            let unit = 0;
+            while (size >= 1024 && unit < units.length - 1) {
+                size /= 1024;
+                unit++;
+            }
+            return size.toFixed(1) + ' ' + units[unit];
+        },
+
+        handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const maxSize = 20 * 1024 * 1024;
+            if (file.size > maxSize) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'File terlalu besar',
+                    text: 'Ukuran file maksimal 20 MB',
+                });
+                event.target.value = '';
+                return;
+            }
+
+            this.selectedFile = file;
+            this.selectedFileIsImage = file.type.startsWith('image/');
+
+            if (this.selectedFileIsImage) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.selectedFilePreview = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                this.selectedFilePreview = null;
+            }
+
+            event.target.value = '';
+        },
+
+        removeSelectedFile() {
+            this.selectedFile = null;
+            this.selectedFilePreview = null;
+            this.selectedFileIsImage = false;
+        },
+
+        async sendMessage() {
+            if ((!this.message.trim() && !this.selectedFile) || this.sending) return;
 
             const chat = this.currentChat;
-            const now = new Date();
-            const time = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            this.sending = true;
 
-            chat.messages.push({ from: 'customer', text: this.message.trim(), time });
-            chat.lastMessage = this.message.trim();
-            chat.time = time;
-            this.message = '';
+            const formData = new FormData();
+            formData.append('chat_id', chat.id);
+            if (this.message.trim()) {
+                formData.append('message', this.message.trim());
+            }
+            if (this.selectedFile) {
+                formData.append('file', this.selectedFile);
+            }
 
-            this.$nextTick(() => this.scrollToBottom());
+            try {
+                const response = await fetch('{{ route("customer.chat.send") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                });
 
-            // Simulate typing after 2 seconds
-            setTimeout(() => {
-                if (!this.activeChat) return;
-                this.typing = true;
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.message || 'Gagal mengirim pesan');
+                }
+
+                const result = await response.json();
+                const msg = result.message;
+
+                chat.messages.push({
+                    from: 'customer',
+                    text: msg.message || '',
+                    time: msg.created_at,
+                    file_url: msg.file_url,
+                    file_name: msg.file_name,
+                    file_size_formatted: msg.file_size_formatted,
+                    is_image: msg.is_image,
+                    is_video: msg.is_video,
+                });
+
+                if (msg.message) {
+                    chat.lastMessage = msg.message;
+                } else if (msg.file_name) {
+                    chat.lastMessage = '📎 ' + msg.file_name;
+                }
+                chat.time = msg.created_at;
+
+                this.message = '';
+                this.removeSelectedFile();
+
                 this.$nextTick(() => this.scrollToBottom());
 
-                // Reply after 1 more second
+                // Simulate admin reply
                 setTimeout(() => {
                     if (!this.activeChat) return;
-                    this.typing = false;
-                    const replyTime = new Date();
-                    const rt = String(replyTime.getHours()).padStart(2, '0') + ':' + String(replyTime.getMinutes()).padStart(2, '0');
-                    const replies = [
-                        'Baik Kak, akan kami tindak lanjuti',
-                        'Noted Kak, terima kasih informasinya',
-                        'Siap Kak, kami proses segera',
-                        'Baik, akan kami sampaikan ke tim terkait'
-                    ];
-                    chat.messages.push({ from: 'admin', text: replies[Math.floor(Math.random() * replies.length)], time: rt });
-                    chat.lastMessage = replies[0];
-                    chat.time = rt;
+                    this.typing = true;
                     this.$nextTick(() => this.scrollToBottom());
-                }, 1000);
-            }, 2000);
+
+                    setTimeout(() => {
+                        if (!this.activeChat) return;
+                        this.typing = false;
+                        const replyTime = new Date();
+                        const rt = String(replyTime.getHours()).padStart(2, '0') + ':' + String(replyTime.getMinutes()).padStart(2, '0');
+                        const replies = [
+                            'Baik Kak, akan kami tindak lanjuti',
+                            'Noted Kak, terima kasih informasinya',
+                            'Siap Kak, kami proses segera',
+                            'Baik, akan kami sampaikan ke tim terkait'
+                        ];
+                        const reply = replies[Math.floor(Math.random() * replies.length)];
+                        chat.messages.push({ from: 'admin', text: reply, time: rt });
+                        chat.lastMessage = reply;
+                        chat.time = rt;
+                        this.$nextTick(() => this.scrollToBottom());
+                    }, 1000);
+                }, 2000);
+
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal mengirim',
+                    text: error.message || 'Terjadi kesalahan saat mengirim pesan',
+                });
+            } finally {
+                this.sending = false;
+            }
         },
 
         scrollToBottom() {

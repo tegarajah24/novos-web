@@ -42,6 +42,8 @@ Route::prefix('customer')->name('customer.')->group(function () {
             return view('customer.chat');
         })->name('chat');
 
+        Route::post('/chat/send', [App\Http\Controllers\Customer\ChatController::class, 'store'])->name('chat.send');
+
     });
 
 });

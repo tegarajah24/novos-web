@@ -158,6 +158,10 @@
 | chat_id | foreignId | relasi ke chats |
 | sender_id | foreignId | user_id pengirim |
 | message | text | |
+| file_path | string, nullable | path file di storage |
+| file_name | string, nullable | nama asli file |
+| file_size | unsignedBigInteger, nullable | ukuran file dalam bytes |
+| file_type | string, nullable | MIME type file |
 | is_read | boolean, default false | |
 | timestamps | | |
 
