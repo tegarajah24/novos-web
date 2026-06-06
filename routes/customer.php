@@ -14,8 +14,17 @@ Route::prefix('customer')->name('customer.')->group(function () {
     })->name('tentang');
 
     Route::get('/katalog', function () {
-        return view('customer.katalog');
-    })->name('katalog');
+            return view('customer.katalog');
+        })->name('katalog');
+
+    Route::get('/pemesanan', function () {
+            return view('customer.pemesanan', [
+                'produk'  => request('produk'),
+                'kategori' => request('kategori'),
+                'harga'   => request('harga'),
+                'gambar'  => request('gambar'),
+            ]);
+        })->name('pemesanan');
 
     // Authenticated routes
     Route::middleware('auth')->group(function () {
@@ -24,15 +33,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
             $orders = auth()->user()->orders()->latest()->get();
             return view('customer.dashboard', compact('orders'));
         })->name('dashboard');
-
-        Route::get('/pemesanan', function () {
-            return view('customer.pemesanan', [
-                'produk'  => request('produk'),
-                'kategori' => request('kategori'),
-                'harga'   => request('harga'),
-                'gambar'  => request('gambar'),
-            ]);
-        })->name('pemesanan');
 
         Route::get('/tracking', function () {
             return view('customer.tracking');

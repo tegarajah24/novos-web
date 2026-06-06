@@ -1,6 +1,7 @@
 @extends('layouts.customer')
 
 @section('content')
+@auth
 @php
     $produkData = $produk ? [
         'produk'  => $produk,
@@ -648,4 +649,25 @@ function pemesananForm(catalogProduct = null) {
     }
 }
 </script>
+@else
+<div class="max-w-5xl mx-auto px-4 py-16">
+    <div class="text-center">
+        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-blue-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">Masuk untuk Memesan</h1>
+        <p class="text-gray-500 mb-8 max-w-md mx-auto">Silakan login atau daftar akun terlebih dahulu untuk dapat membuat pesanan jersey custom.</p>
+        <a href="?auth=login"
+           class="inline-flex items-center gap-2 px-8 py-3 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-800 transition-colors">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Login / Daftar
+        </a>
+        <p class="mt-6 text-sm text-gray-400">
+            <a href="{{ route('customer.beranda') }}" class="text-blue-900 hover:underline">Kembali ke Beranda</a>
+        </p>
+    </div>
+</div>
+@endauth
 @endsection

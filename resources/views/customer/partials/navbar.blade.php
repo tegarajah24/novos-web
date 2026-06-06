@@ -268,6 +268,10 @@
                                         <input type="password" name="password" required autocomplete="current-password"
                                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
                                     </div>
+                                    <p class="text-xs text-gray-400 -mt-1">
+                                        Belum punya akun?
+                                        <button type="button" @click="tab = 'register'" class="text-[#1a237e] font-medium hover:underline">Daftar</button>
+                                    </p>
                                     <div class="flex items-center justify-between">
                                         <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e]" checked>
@@ -456,6 +460,19 @@
             agreeMarketing: false,
             showWarning: false,
             warnTimer: null,
+
+            init() {
+                var params = new URLSearchParams(window.location.search);
+                var auth = params.get('auth');
+                if (auth === 'login' || auth === 'register') {
+                    this.tab = auth;
+                    this.sidebarOpen = true;
+                    if (history.replaceState) {
+                        var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.hash;
+                        history.replaceState(null, '', url);
+                    }
+                }
+            },
 
             submitForm(formEl) {
                 if (!this.agreeTerms || !this.agreePrivacy) {
