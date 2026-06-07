@@ -312,13 +312,39 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
             </div>
         </div>
 
-        {{-- Upload Hasil Desain --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <h3 class="font-semibold text-gray-900 mb-4 text-sm">Upload Hasil Desain</h3>
-            <div class="border-2 border-dashed border-gray-200 rounded-xl h-32 flex flex-col items-center justify-center gap-2 hover:border-[#1a237e]/40 transition-colors cursor-pointer mb-3">
-                <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                <p class="text-xs text-gray-500">Upload desain hasil</p>
-                <p class="text-xs text-gray-400">JPG, PNG, PDF</p>
+        {{-- File Hasil Desain (Dari Tim Design) --}}
+        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-sm shadow-blue-900/5 p-5">
+            <h3 class="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Hasil Desain (Siap ACC)
+            </h3>
+            
+            {{-- Preview Hasil --}}
+            <div class="space-y-2 mb-4">
+                <div class="flex items-center gap-3 p-2 bg-blue-50/50 border border-blue-100 rounded-lg">
+                    <div class="w-8 h-8 rounded bg-white flex items-center justify-center shrink-0 shadow-sm">
+                        <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-medium text-gray-700 truncate">mockup_garudafc.jpg</p>
+                        <p class="text-[10px] text-gray-400">Di-upload oleh Tim Design</p>
+                    </div>
+                    <button class="text-[#1a237e] hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Lihat">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-3 p-2 bg-blue-50/50 border border-blue-100 rounded-lg">
+                    <div class="w-8 h-8 rounded bg-white flex items-center justify-center shrink-0 shadow-sm">
+                        <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-medium text-gray-700 truncate">pola_baju_final.pdf</p>
+                        <p class="text-[10px] text-gray-400">Di-upload oleh Tim Design</p>
+                    </div>
+                    <button class="text-[#1a237e] hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Lihat">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </button>
+                </div>
             </div>
             <button onclick="alert('Kirim ke customer (dummy)')" class="w-full py-2.5 bg-cyan-500 text-white rounded-lg text-sm font-semibold hover:bg-cyan-600 transition-colors mb-3">
                 Kirim ke Customer
