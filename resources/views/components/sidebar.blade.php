@@ -1,42 +1,37 @@
-<aside class="sidebar bg-base-200 min-h-screen w-64 p-4">
-    <ul class="menu">
+<aside class="w-64 bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0">
+    <!-- Logo Area -->
+    <div class="h-16 flex items-center px-6 border-b border-gray-200">
+        <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-[#1a237e] rounded-lg flex items-center justify-center">
+                <span class="text-white font-bold text-lg">N</span>
+            </div>
+            <span class="text-xl font-bold text-gray-900">Novos</span>
+        </a>
+    </div>
+
+    <!-- Menu Items -->
+    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @php
-            $userRole = Auth::check() ? Auth::user()->role->name : null;
+            $menus = [
+                ['label' => 'Dashboard', 'url' => url('admin/dashboard'), 'icon' => 'layout-dashboard', 'active' => request()->is('admin/dashboard')],
+                ['label' => 'Summary', 'url' => url('admin/summary'), 'icon' => 'pie-chart', 'active' => request()->is('admin/summary')],
+                ['label' => 'Daftar Pesanan', 'url' => url('admin/pesanan'), 'icon' => 'shopping-bag', 'active' => request()->is('admin/pesanan*')],
+                ['label' => 'Design', 'url' => url('design/dashboard'), 'icon' => 'pen-tool', 'active' => request()->is('design*')],
+                ['label' => 'Produksi', 'url' => url('produksi/dashboard'), 'icon' => 'scissors', 'active' => request()->is('produksi*')],
+                ['label' => 'Stress Test', 'url' => url('admin/stress-test'), 'icon' => 'activity', 'active' => request()->is('admin/stress-test')],
+                ['label' => 'Laporan', 'url' => url('admin/laporan'), 'icon' => 'file-text', 'active' => request()->is('admin/laporan*')],
+                ['label' => 'Kelola Pengguna', 'url' => url('admin/pengguna'), 'icon' => 'users', 'active' => request()->is('admin/pengguna*') || request()->is('internal/kelola-pengguna*')],
+            ];
         @endphp
-        
-        @if($userRole === 'Admin' || $userRole === 'Manager' || $userRole === 'Super Admin')
-            <li>
-                <a href="{{ url('admin/dashboard') }}" class="{{ request()->is('admin*') ? 'active' : '' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
-                    </svg>
-                    Admin Dashboard
-                </a>
-            </li>
-        @endif
-        
-        @if($userRole === 'Design' || $userRole === 'Super Admin')
-            <li>
-                <a href="{{ url('design/dashboard') }}" class="{{ request()->is('design*') ? 'active' : '' }}">
-                    Design Dashboard
-                </a>
-            </li>
-        @endif
-        
-        @if($userRole === 'Produksi' || $userRole === 'Super Admin')
-            <li>
-                <a href="{{ url('produksi/dashboard') }}" class="{{ request()->is('produksi*') ? 'active' : '' }}">
-                    Produksi Dashboard
-                </a>
-            </li>
-        @endif
-        
-        @if($userRole === 'Customer')
-            <li>
-                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    Dashboard
-                </a>
-            </li>
-        @endif
-    </ul>
+
+        @foreach($menus as $menu)
+            <a href="{{ $menu['url'] }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ $menu['active'] ? 'bg-[#1a237e] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+                <i data-lucide="{{ $menu['icon'] }}" class="w-5 h-5 {{ $menu['active'] ? 'text-white' : '' }}"></i>
+                <span class="font-medium">{{ $menu['label'] }}</span>
+            </a>
+        @endforeach
+    </nav>
+
+    <!-- (Footer profile removed) -->
 </aside>
