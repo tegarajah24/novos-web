@@ -9,6 +9,18 @@ Route::middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])->g
     Route::get('/internal/summary', function () {
         return view('internal.summary');
     });
+
+    Route::get('/internal/daftarpesanan', function () {
+        return view('internal.daftar-pesanan');
+    });
+
+    Route::get('/internal/detail-pesanan/{id}', function ($id) {
+        return view('internal.detail-pesanan', ['id' => $id]);
+    });
+
+    Route::get('/internal/chat', function () {
+        return view('internal.chat');
+    })->name('internal.chat');
 });
 
 Route::middleware('auth')->group(function () {
@@ -27,7 +39,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/chat', function () {
+        $role = auth()->user()->role?->name;
+        if (in_array($role, ['Super Admin', 'Manager', 'Admin', 'Design', 'Produksi'])) {
+            return redirect()->route('internal.chat');
+        }
+        return redirect()->route('customer.chat');
+    });
 });
+
 
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
