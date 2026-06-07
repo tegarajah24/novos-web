@@ -14,7 +14,7 @@
         @php
             $menus = [
                 ['label' => 'Dashboard', 'url' => url('admin/dashboard'), 'icon' => 'layout-dashboard', 'active' => request()->is('admin/dashboard')],
-                ['label' => 'Summary', 'url' => url('admin/summary'), 'icon' => 'pie-chart', 'active' => request()->is('admin/summary')],
+                ['label' => 'Summary', 'url' => url('internal/summary'), 'icon' => 'pie-chart', 'active' => request()->is('internal/summary')],
                 ['label' => 'Daftar Pesanan', 'url' => url('admin/pesanan'), 'icon' => 'shopping-bag', 'active' => request()->is('admin/pesanan*')],
                 ['label' => 'Design', 'url' => url('design/dashboard'), 'icon' => 'pen-tool', 'active' => request()->is('design*')],
                 ['label' => 'Produksi', 'url' => url('produksi/dashboard'), 'icon' => 'scissors', 'active' => request()->is('produksi*')],

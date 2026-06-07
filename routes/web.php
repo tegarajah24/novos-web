@@ -5,6 +5,12 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', fn() => view('customer.beranda'));
 
+Route::middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])->group(function () {
+    Route::get('/internal/summary', function () {
+        return view('internal.summary');
+    });
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $role = auth()->user()->role?->name;
