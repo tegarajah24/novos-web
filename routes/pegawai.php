@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/design/dashboard', function () {
-        return view('internal.dashboard');
+        return view('internal.design');
     });
 
+
     Route::get('/produksi/dashboard', function () {
-        return view('internal.dashboard');
+        return view('internal.produksi');
     });
 });
+
