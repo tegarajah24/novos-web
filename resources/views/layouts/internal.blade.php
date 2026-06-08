@@ -18,6 +18,7 @@
     
     <style>
         * { font-family: 'Poppins', sans-serif; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-[#f5f5f5] text-[#212121] antialiased flex h-screen overflow-hidden">
