@@ -20,7 +20,7 @@
                 ['label' => 'Produksi', 'url' => url('produksi/dashboard'), 'icon' => 'scissors', 'active' => request()->is('produksi*')],
                 ['label' => 'Stress Test', 'url' => url('internal/stress-test'), 'icon' => 'activity', 'active' => request()->is('internal/stress-test')],
                 ['label' => 'Laporan', 'url' => url('internal/laporan'), 'icon' => 'file-text', 'active' => request()->is('internal/laporan')],
-                ['label' => 'Kelola Pengguna', 'url' => url('admin/pengguna'), 'icon' => 'users', 'active' => request()->is('admin/pengguna*') || request()->is('internal/kelola-pengguna*')],
+                ['label' => 'Kelola Pengguna', 'url' => url('admin/kelola-pengguna'), 'icon' => 'users', 'active' => request()->is('admin/kelola-pengguna*')],
             ];
         @endphp
 
