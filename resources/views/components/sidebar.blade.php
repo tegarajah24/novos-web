@@ -18,9 +18,9 @@
                 ['label' => 'Daftar Pesanan', 'url' => url('internal/daftarpesanan'), 'icon' => 'shopping-bag', 'active' => request()->is('internal/daftarpesanan*') || request()->is('internal/detail-pesanan*') || request()->is('internal/chat*')],
                 ['label' => 'Design', 'url' => url('design/dashboard'), 'icon' => 'pen-tool', 'active' => request()->is('design*')],
                 ['label' => 'Produksi', 'url' => url('produksi/dashboard'), 'icon' => 'scissors', 'active' => request()->is('produksi*')],
-                ['label' => 'Stress Test', 'url' => url('admin/stress-test'), 'icon' => 'activity', 'active' => request()->is('admin/stress-test')],
-                ['label' => 'Laporan', 'url' => url('admin/laporan'), 'icon' => 'file-text', 'active' => request()->is('admin/laporan*')],
-                ['label' => 'Kelola Pengguna', 'url' => url('admin/pengguna'), 'icon' => 'users', 'active' => request()->is('admin/pengguna*') || request()->is('internal/kelola-pengguna*')],
+                ['label' => 'Stress Test', 'url' => url('internal/stress-test'), 'icon' => 'activity', 'active' => request()->is('internal/stress-test')],
+                ['label' => 'Laporan', 'url' => url('internal/laporan'), 'icon' => 'file-text', 'active' => request()->is('internal/laporan')],
+                ['label' => 'Kelola Pengguna', 'url' => url('admin/kelola-pengguna'), 'icon' => 'users', 'active' => request()->is('admin/kelola-pengguna*')],
             ];
         @endphp
 
