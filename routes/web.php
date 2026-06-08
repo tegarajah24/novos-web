@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LaporanController;
 
 Route::get('/', fn() => view('customer.beranda'));
 
@@ -26,9 +27,10 @@ Route::middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])->g
         return view('internal.stress-test');
     });
 
-    Route::get('/internal/laporan', function () {
-        return view('internal.laporan');
-    });
+    Route::get('/internal/laporan', [LaporanController::class, 'index'])->name('internal.laporan');
+    Route::get('/internal/laporan/export/csv', [LaporanController::class, 'exportCsv'])->name('internal.laporan.csv');
+    Route::get('/internal/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('internal.laporan.excel');
+    Route::get('/internal/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('internal.laporan.pdf');
 });
 
 Route::middleware('auth')->group(function () {
