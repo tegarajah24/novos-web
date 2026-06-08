@@ -25,6 +25,10 @@ Route::middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])->g
     Route::get('/internal/stress-test', function () {
         return view('internal.stress-test');
     });
+
+    Route::get('/internal/laporan', function () {
+        return view('internal.laporan');
+    });
 });
 
 Route::middleware('auth')->group(function () {
