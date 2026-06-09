@@ -255,12 +255,12 @@
                         {{-- Form --}}
                         <div class="p-6">
                             {{-- Login --}}
-                            <form x-show="tab === 'login'" x-cloak method="POST" action="{{ route('login') }}" @submit.prevent="submitForm($event.target)">
+                            <form x-show="tab === 'login'" x-cloak method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="space-y-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                                        <input type="email" name="email" :value="old('email')" required autofocus autocomplete="username"
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                                        <input type="text" name="name" :value="old('name')" required autofocus autocomplete="username"
                                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
                                     </div>
                                     <div>
@@ -283,40 +283,6 @@
                                     </div>
                                 </div>
 
-                            {{-- Checklists --}}
-                            <div class="mt-6 space-y-3 border-t border-gray-100 pt-5"
-                                 :class="showWarning ? 'animate-shake' : ''">
-                                {{-- Warning banner --}}
-                                <div x-show="showWarning" x-cloak
-                                     @click="dismissWarn"
-                                     class="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 cursor-pointer transition-all duration-300"
-                                     x-transition:enter="animate-bounceIn"
-                                     x-transition:leave="animate-fadeOut">
-                                    <span class="text-2xl shrink-0">🥹</span>
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-semibold text-red-700">Waduh, jangan lupa!</p>
-                                        <p class="text-xs text-red-600">Centang dulu persyaratan yang wajib (*) ya 😅</p>
-                                    </div>
-                                    <button type="button" @click.stop="dismissWarn" class="ml-auto shrink-0 text-red-400 hover:text-red-600 transition-colors">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                    </button>
-                                </div>
-
-                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Persyaratan</p>
-                                <label class="flex items-start gap-3 cursor-pointer group">
-                                    <input type="checkbox" x-model="agreeTerms" @change="showWarning = false" class="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#1a237e] accent-[#1a237e]">
-                                    <span class="text-sm text-gray-600 group-hover:text-gray-800 leading-relaxed">Saya telah membaca dan menyetujui <a href="#" class="text-[#1a237e] font-medium hover:underline">Syarat & Ketentuan</a> yang berlaku. <span class="text-red-500">*</span></span>
-                                </label>
-                                <label class="flex items-start gap-3 cursor-pointer group">
-                                    <input type="checkbox" x-model="agreePrivacy" @change="showWarning = false" class="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#1a237e] accent-[#1a237e]">
-                                    <span class="text-sm text-gray-600 group-hover:text-gray-800 leading-relaxed">Saya telah membaca dan memahami <a href="#" class="text-[#1a237e] font-medium hover:underline">Kebijakan Privasi</a> terkait pengelolaan data pribadi saya. <span class="text-red-500">*</span></span>
-                                </label>
-                                <label class="flex items-start gap-3 cursor-pointer group">
-                                    <input type="checkbox" x-model="agreeMarketing" @change="showWarning = false" class="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#1a237e] accent-[#1a237e]">
-                                    <span class="text-sm text-gray-500 leading-relaxed">Saya bersedia menerima informasi, promo, dan pembaruan layanan melalui email atau media komunikasi lainnya. <span class="text-gray-400">(Opsional)</span></span>
-                                </label>
-                            </div>
-
                             <button type="submit"
                                 class="w-full mt-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center gap-2">
                                 Masuk
@@ -329,8 +295,8 @@
                             @csrf
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
-                                    <input type="text" name="name" :value="old('name')" required autofocus autocomplete="name"
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                                    <input type="text" name="name" :value="old('name')" required autofocus autocomplete="username"
                                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
                                 </div>
                                 <div>
