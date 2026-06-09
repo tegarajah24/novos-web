@@ -4,10 +4,7 @@
 <script>
 function katalogData() {
     return {
-            selectedCats: [],
-            maxPrice: 150000,
             searchQuery: '',
-            sort: 'terbaru',
             currentPage: 1,
             perPage: 9,
             products: [
@@ -25,20 +22,12 @@ function katalogData() {
                 { id: 12, name: 'Jersey Running Speed',       category: 'Running',    price: 85000,  badge: null,       image: 'https://images.unsplash.com/photo-1538333581680-29ead0704dd7' },
             ],
 
-            // ─── FIX 1: minPrice dihapus, maxPrice dinaikkan ke 150000 ───────────────
-            // ─── FIX 2: priceMatch pakai p.price === null, bukan !p.price ────────────
             get filteredProducts() {
-                let result = this.products.filter(p => {
-                    const catMatch   = this.selectedCats.length === 0 || this.selectedCats.includes(p.category);
-                    const priceMatch = p.price === null || p.price <= this.maxPrice;
-                    const searchMatch = !this.searchQuery || p.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-                    return catMatch && priceMatch && searchMatch;
-                });
-
-                if (this.sort === 'termurah')      result.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
-                else if (this.sort === 'termahal') result.sort((a, b) => (b.price ?? 999999) - (a.price ?? 999999));
-                else                               result.sort((a, b) => a.id - b.id);
-
+                let result = this.products;
+                if (this.searchQuery) {
+                    const q = this.searchQuery.toLowerCase();
+                    result = result.filter(p => p.name.toLowerCase().includes(q));
+                }
                 return result;
             },
             get totalPages() {
@@ -56,17 +45,8 @@ function katalogData() {
             formatRupiah(val) {
                 return 'Rp ' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             },
-            toggleCat(cat) {
-                const idx = this.selectedCats.indexOf(cat);
-                if (idx === -1) this.selectedCats.push(cat);
-                else            this.selectedCats.splice(idx, 1);
-                this.currentPage = 1;
-            },
             resetFilter() {
-                this.selectedCats = [];
-                this.maxPrice     = 150000; // ─── FIX 3: sesuaikan dengan nilai default baru
                 this.searchQuery  = '';
-                this.sort         = 'terbaru';
                 this.currentPage  = 1;
             },
             goPage(p) {
@@ -87,79 +67,7 @@ function katalogData() {
     </div>
 
     {{-- ===== MAIN CONTENT ===== --}}
-    <div class="max-w-[1200px] mx-auto px-6 pb-10 flex flex-col md:flex-row gap-8 items-start">
-
-        {{-- ============================== SIDEBAR ============================== --}}
-        <aside class="w-full md:w-64 flex-shrink-0 space-y-5">
-
-            {{-- Filter Header with Reset --}}
-            <div class="flex items-center justify-between">
-                <h2 class="text-base font-bold text-gray-800">Filter Produk</h2>
-                <button
-                    @click="resetFilter()"
-                    class="text-xs font-medium border border-gray-300 text-gray-500 px-3 py-1 rounded hover:border-gray-400 hover:text-gray-700 transition-colors"
-                >Reset Filter</button>
-            </div>
-
-            {{-- Kategori --}}
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                <p class="text-sm font-semibold text-[#1a237e] mb-3">Kategori</p>
-                <div class="space-y-2.5">
-                    @foreach(['Sepak Bola', 'Futsal', 'Basket', 'Voli', 'Running'] as $cat)
-                    <label class="flex items-center gap-2.5 cursor-pointer group">
-                        <input
-                            type="checkbox"
-                            :value="'{{ $cat }}'"
-                            @change="toggleCat('{{ $cat }}')"
-                            :checked="selectedCats.includes('{{ $cat }}')"
-                            class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e] cursor-pointer"
-                        >
-                        <span class="text-sm text-[#424242] group-hover:text-[#1a237e] transition-colors">{{ $cat }}</span>
-                    </label>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Harga Maksimal — FIX: max dinaikkan ke 150000 --}}
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                <p class="text-sm font-semibold text-gray-700 mb-4">
-                    Harga Maksimal: <span x-text="formatRupiah(maxPrice)"></span>
-                </p>
-                <input
-                    type="range"
-                    min="50000" max="150000" step="5000"
-                    x-model.number="maxPrice"
-                    @input="currentPage = 1"
-                    class="w-full h-1.5 rounded-full accent-[#1a237e] cursor-pointer mb-2"
-                >
-                <div class="flex justify-between text-xs text-gray-400">
-                    <span>Rp 50.000</span>
-                    <span>Rp 150.000</span>
-                </div>
-            </div>
-
-            {{-- Urutkan --}}
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                <p class="text-sm font-semibold text-[#1a237e] mb-3">Urutkan</p>
-                <select
-                    x-model="sort"
-                    @change="currentPage = 1"
-                    class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 text-[#424242] bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] cursor-pointer"
-                >
-                    <option value="terbaru">Terbaru</option>
-                    <option value="termurah">Termurah</option>
-                    <option value="termahal">Termahal</option>
-                </select>
-            </div>
-
-            {{-- Reset Button --}}
-            <button
-                @click="resetFilter()"
-                class="w-full py-2.5 border-2 border-[#1a237e] text-[#1a237e] text-sm font-semibold rounded-lg hover:bg-[#1a237e] hover:text-white transition-all duration-200"
-            >
-                Reset Semua Filter
-            </button>
-        </aside>
+    <div class="max-w-[1200px] mx-auto px-6 pb-10 flex flex-col">
 
         {{-- ============================== PRODUCT AREA ============================== --}}
         <div class="flex-1 min-w-0">
@@ -246,12 +154,12 @@ function katalogData() {
                     </svg>
                 </div>
                 <p class="text-[#424242] font-semibold mb-1">Produk tidak ditemukan</p>
-                <p class="text-sm text-[#9e9e9e] mb-5">Coba ubah filter atau reset untuk melihat semua produk</p>
+                <p class="text-sm text-[#9e9e9e] mb-5">Coba ubah kata pencarian untuk melihat semua produk</p>
                 <button
                     @click="resetFilter()"
                     class="px-5 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors"
                 >
-                    Reset Filter
+                    Reset Pencarian
                 </button>
             </div>
 
