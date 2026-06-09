@@ -18,7 +18,8 @@
                 <a href="{{ route('customer.katalog') }}"
                    class="text-sm font-medium transition-colors {{ request()->routeIs('customer.katalog') ? 'font-semibold text-[#1a237e] relative pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#00e5ff] after:rounded-full' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
                 <div x-show="katalogOpen" x-cloak @mouseenter="katalogOpen = true" @mouseleave="katalogOpen = false"
-                     class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                     class="absolute top-full left-0 pt-2 w-64 z-50">
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2"
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 translate-y-1"
                      x-transition:enter-end="opacity-100 translate-y-0"
@@ -41,6 +42,7 @@
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Basket</a>
                     <a href="{{ route('customer.katalog', ['kategori' => 'gym-training']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Gym / Training</a>
+                    </div>
                 </div>
             </div>
 
