@@ -3,37 +3,107 @@
         @php
             $userRole = Auth::check() ? Auth::user()->role->name : null;
         @endphp
-        
-        @if($userRole === 'Admin' || $userRole === 'Manager' || $userRole === 'Super Admin')
+
+        @if(in_array($userRole, ['Admin', 'Manager', 'Super Admin']))
+            @php
+                $dashboardActive = request()->routeIs('admin.dashboard') || request()->routeIs('superadmin.dashboard') || request()->routeIs('manager.dashboard');
+            @endphp
             <li>
-                <a href="{{ url('admin/dashboard') }}" class="{{ request()->is('admin*') ? 'active' : '' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
-                    </svg>
-                    Admin Dashboard
+                <a href="{{ route('admin.dashboard') }}" class="{{ $dashboardActive ? 'active' : '' }}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 {{ $dashboardActive ? '' : 'text-blue-600' }}"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.summary') }}" class="{{ request()->routeIs('admin.summary') ? 'active' : '' }}">
+                    <i data-lucide="trending-up" class="w-5 h-5 {{ request()->routeIs('admin.summary') ? '' : 'text-blue-600' }}"></i>
+                    Summary
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.daftar-pesanan') }}" class="{{ request()->routeIs('admin.daftar-pesanan') ? 'active' : '' }}">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 {{ request()->routeIs('admin.daftar-pesanan') ? '' : 'text-blue-600' }}"></i>
+                    Daftar Pesanan
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.design') }}" class="{{ request()->routeIs('admin.design') ? 'active' : '' }}">
+                    <i data-lucide="palette" class="w-5 h-5 {{ request()->routeIs('admin.design') ? '' : 'text-blue-600' }}"></i>
+                    Design
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.produksi') }}" class="{{ request()->routeIs('admin.produksi') ? 'active' : '' }}">
+                    <i data-lucide="factory" class="w-5 h-5 {{ request()->routeIs('admin.produksi') ? '' : 'text-blue-600' }}"></i>
+                    Produksi
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.stress-test') }}" class="{{ request()->routeIs('admin.stress-test') ? 'active' : '' }}">
+                    <i data-lucide="sparkles" class="w-5 h-5 {{ request()->routeIs('admin.stress-test') ? '' : 'text-blue-600' }}"></i>
+                    Stress Test
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.laporan') }}" class="{{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+                    <i data-lucide="file-text" class="w-5 h-5 {{ request()->routeIs('admin.laporan') ? '' : 'text-blue-600' }}"></i>
+                    Laporan
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.kelola-pengguna') }}" class="{{ request()->routeIs('admin.kelola-pengguna') ? 'active' : '' }}">
+                    <i data-lucide="users" class="w-5 h-5 {{ request()->routeIs('admin.kelola-pengguna') ? '' : 'text-blue-600' }}"></i>
+                    Kelola Pengguna
                 </a>
             </li>
         @endif
-        
+
         @if($userRole === 'Design' || $userRole === 'Super Admin')
             <li>
-                <a href="{{ url('design/dashboard') }}" class="{{ request()->is('design*') ? 'active' : '' }}">
-                    Design Dashboard
+                <a href="{{ route('design.dashboard') }}" class="{{ request()->routeIs('design.dashboard') ? 'active' : '' }}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 {{ request()->routeIs('design.dashboard') ? '' : 'text-blue-600' }}"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('design.daftar-pesanan') }}" class="{{ request()->routeIs('design.daftar-pesanan') ? 'active' : '' }}">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 {{ request()->routeIs('design.daftar-pesanan') ? '' : 'text-blue-600' }}"></i>
+                    Daftar Pesanan
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('design.design') }}" class="{{ request()->routeIs('design.design') ? 'active' : '' }}">
+                    <i data-lucide="palette" class="w-5 h-5 {{ request()->routeIs('design.design') ? '' : 'text-blue-600' }}"></i>
+                    Design
                 </a>
             </li>
         @endif
-        
+
         @if($userRole === 'Produksi' || $userRole === 'Super Admin')
             <li>
-                <a href="{{ url('produksi/dashboard') }}" class="{{ request()->is('produksi*') ? 'active' : '' }}">
-                    Produksi Dashboard
+                <a href="{{ route('produksi.dashboard') }}" class="{{ request()->routeIs('produksi.dashboard') ? 'active' : '' }}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 {{ request()->routeIs('produksi.dashboard') ? '' : 'text-blue-600' }}"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('produksi.daftar-pesanan') }}" class="{{ request()->routeIs('produksi.daftar-pesanan') ? 'active' : '' }}">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 {{ request()->routeIs('produksi.daftar-pesanan') ? '' : 'text-blue-600' }}"></i>
+                    Daftar Pesanan
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('produksi.produksi') }}" class="{{ request()->routeIs('produksi.produksi') ? 'active' : '' }}">
+                    <i data-lucide="factory" class="w-5 h-5 {{ request()->routeIs('produksi.produksi') ? '' : 'text-blue-600' }}"></i>
+                    Produksi
                 </a>
             </li>
         @endif
-        
+
         @if($userRole === 'Customer')
             <li>
                 <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 {{ request()->routeIs('dashboard') ? '' : 'text-blue-600' }}"></i>
                     Dashboard
                 </a>
             </li>
