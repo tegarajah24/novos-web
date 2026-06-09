@@ -14,8 +14,35 @@
             <a href="{{ route('customer.tentang') }}"
                class="text-sm font-medium transition-colors {{ request()->routeIs('customer.tentang') ? 'font-semibold text-[#1a237e] relative pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#00e5ff] after:rounded-full' : 'text-[#616161] hover:text-[#1a237e]' }}">Tentang Kami</a>
 
-            <a href="{{ route('customer.katalog') }}"
-               class="text-sm font-medium transition-colors {{ request()->routeIs('customer.katalog') ? 'font-semibold text-[#1a237e] relative pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#00e5ff] after:rounded-full' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
+            <div x-data="{ katalogOpen: false }" @mouseenter="katalogOpen = true" @mouseleave="katalogOpen = false" class="relative">
+                <a href="{{ route('customer.katalog') }}"
+                   class="text-sm font-medium transition-colors {{ request()->routeIs('customer.katalog') ? 'font-semibold text-[#1a237e] relative pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#00e5ff] after:rounded-full' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
+                <div x-show="katalogOpen" x-cloak @mouseenter="katalogOpen = true" @mouseleave="katalogOpen = false"
+                     class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0 translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-100"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 translate-y-1">
+                    <a href="{{ route('customer.katalog') }}"
+                       class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors font-medium">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        Semua Produk
+                    </a>
+                    <div class="border-t border-gray-100 my-1"></div>
+                    <a href="{{ route('customer.katalog', ['kategori' => 'running']) }}"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Running</a>
+                    <a href="{{ route('customer.katalog', ['kategori' => 'sepak-bola-futsal']) }}"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Sepak Bola / Futsal</a>
+                    <a href="{{ route('customer.katalog', ['kategori' => 'tenis']) }}"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Tenis</a>
+                    <a href="{{ route('customer.katalog', ['kategori' => 'basket']) }}"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Basket</a>
+                    <a href="{{ route('customer.katalog', ['kategori' => 'gym-training']) }}"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Gym / Training</a>
+                </div>
+            </div>
 
             <a href="{{ route('customer.pemesanan') }}"
                class="text-sm font-medium transition-colors {{ request()->routeIs('customer.pemesanan') ? 'font-semibold text-[#1a237e] relative pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#00e5ff] after:rounded-full' : 'text-[#616161] hover:text-[#1a237e]' }}">Buat Pesanan</a>
@@ -380,7 +407,24 @@
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-3">
         <a href="{{ route('customer.beranda') }}" class="block text-sm font-medium {{ request()->routeIs('customer.beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
         <a href="{{ route('customer.tentang') }}" class="block text-sm font-medium {{ request()->routeIs('customer.tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
-        <a href="{{ route('customer.katalog') }}" class="block text-sm font-medium {{ request()->routeIs('customer.katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Katalog</a>
+
+        {{-- Mobile Katalog with sub menu --}}
+        <div x-data="{ katalogOpen: false }">
+            <button @click="katalogOpen = !katalogOpen"
+                class="flex items-center justify-between w-full text-sm font-medium {{ request()->routeIs('customer.katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">
+                Katalog
+                <svg class="w-4 h-4 transition-transform" :class="katalogOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div x-show="katalogOpen" x-cloak class="mt-2 ml-4 space-y-2">
+                <a href="{{ route('customer.katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
+                <a href="{{ route('customer.katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
+                <a href="{{ route('customer.katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
+                <a href="{{ route('customer.katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
+                <a href="{{ route('customer.katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
+                <a href="{{ route('customer.katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
+            </div>
+        </div>
+
         <a href="{{ route('customer.pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('customer.pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
     </div>
 </nav>

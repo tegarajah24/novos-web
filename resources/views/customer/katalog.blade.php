@@ -4,6 +4,7 @@
 <script>
 function katalogData() {
     return {
+            selectedCats: [],
             searchQuery: '',
             currentPage: 1,
             perPage: 9,
@@ -22,8 +23,39 @@ function katalogData() {
                 { id: 12, name: 'Jersey Running Speed',       category: 'Running',    price: 85000,  badge: null,       image: 'https://images.unsplash.com/photo-1538333581680-29ead0704dd7' },
             ],
 
+            init() {
+                const params = new URLSearchParams(window.location.search);
+                const slug = params.get('kategori');
+                if (slug) {
+                    const map = {
+                        'running':           ['Running'],
+                        'sepak-bola-futsal':  ['Sepak Bola', 'Futsal'],
+                        'tenis':             ['Tenis'],
+                        'basket':            ['Basket'],
+                        'gym-training':       ['Gym', 'Training'],
+                    };
+                    this.selectedCats = map[slug] || [];
+                }
+            },
+
+            get activeLabel() {
+                if (this.selectedCats.length === 0) return 'Semua Produk';
+                const labels = {
+                    'running':          'Jersey Running',
+                    'sepak-bola-futsal': 'Jersey Sepak Bola / Futsal',
+                    'tenis':            'Jersey Tenis',
+                    'basket':           'Jersey Basket',
+                    'gym-training':      'Jersey Gym / Training',
+                };
+                const params = new URLSearchParams(window.location.search);
+                return labels[params.get('kategori')] || 'Semua Produk';
+            },
+
             get filteredProducts() {
                 let result = this.products;
+                if (this.selectedCats.length > 0) {
+                    result = result.filter(p => this.selectedCats.includes(p.category));
+                }
                 if (this.searchQuery) {
                     const q = this.searchQuery.toLowerCase();
                     result = result.filter(p => p.name.toLowerCase().includes(q));
@@ -62,7 +94,7 @@ function katalogData() {
 >
     {{-- ===== PAGE HEADER ===== --}}
     <div class="max-w-[1200px] mx-auto px-6 pt-8 pb-4">
-        <h1 class="text-2xl font-bold text-gray-900">Katalog Produk</h1>
+        <h1 class="text-2xl font-bold text-gray-900" x-text="activeLabel"></h1>
         <p class="text-gray-500 mt-1">Temukan Jersey custom sempurna untuk tim Anda</p>
     </div>
 
