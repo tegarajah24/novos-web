@@ -154,70 +154,35 @@
     <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">Keunggulan Layanan</h2>
     <p class="text-gray-500 text-center mb-10">Kenapa memilih Novos?</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {{-- Baris Atas --}}
-
-        {{-- Card 1: Desain Bebas (gambar overlay) --}}
-        <div class="relative rounded-xl overflow-hidden bg-[#1a237e] min-h-[300px] md:min-h-[360px] group">
-            <img
-                src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80"
-                alt="Desain Jersey"
-                class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-70 transition-opacity duration-500"
-            >
-            <div class="absolute inset-0 bg-gradient-to-t from-[#1a237e]/90 via-[#1a237e]/50 to-transparent"></div>
-            <div class="relative h-full p-8 flex flex-col justify-end">
-                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
+    <div class="bg-[#f0f4ff] rounded-xl p-8 md:p-10">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 md:divide-x md:divide-[#d0d8f0]">
+            <div class="text-center px-4 py-4">
+                <div class="w-12 h-12 bg-[#1a237e]/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2">Desain Bebas</h3>
-                <p class="text-sm text-white/80 leading-relaxed max-w-md">Bebas menentukan desain, warna, logo, dan ukuran sesuai keinginan Anda. Tim desain kami siap mewujudkan konsep terbaik Anda.</p>
+                <h3 class="font-bold text-gray-900 mb-1">Desain Bebas</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Bebas menentukan desain, warna, logo, dan ukuran sesuai keinginan Anda.</p>
             </div>
-        </div>
-
-        {{-- Card 2: Kualitas Premium (navy gelap) --}}
-        <div class="rounded-xl bg-[#0d1b3e] p-8 md:p-10 min-h-[300px] md:min-h-[360px] flex flex-col justify-end group hover:bg-[#0a1633] transition-colors duration-300">
-            <div class="w-12 h-12 bg-[#ffd700]/20 rounded-xl flex items-center justify-center mb-5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <div class="text-center px-4 py-4">
+                <div class="w-12 h-12 bg-[#ffd700]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">Kualitas Premium</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Bahan Dryfit Premium grade A dengan jahitan presisi tinggi dan QC ketat.</p>
             </div>
-            <h3 class="text-xl font-bold text-white mb-3">Kualitas Premium</h3>
-            <p class="text-sm text-gray-300 leading-relaxed mb-6 max-w-md">Kami hanya menggunakan bahan Dryfit Premium grade A dengan jahitan presisi tinggi. Setiap jersey melewati kontrol kualitas ketat sebelum dikirim.</p>
-            <div class="flex items-center gap-4 text-xs text-gray-400">
-                <span class="flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-[#ffd700]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    Bahan Premium
-                </span>
-                <span class="flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-[#ffd700]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    Jahitan Rapi
-                </span>
-                <span class="flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-[#ffd700]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    Quality Check
-                </span>
-            </div>
-        </div>
-
-        {{-- Baris Bawah --}}
-
-        {{-- Card 3: Tepat Waktu (memanjang) --}}
-        <div class="rounded-xl bg-white border border-gray-200 p-6 flex items-center gap-5 hover:shadow-md transition-shadow">
-            <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div>
+            <div class="text-center px-4 py-4">
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
                 <h3 class="font-bold text-gray-900 mb-1">Tepat Waktu</h3>
                 <p class="text-sm text-gray-500 leading-relaxed">Komitmen pengiriman sesuai jadwal dengan estimasi yang akurat dan jelas.</p>
             </div>
-        </div>
-
-        {{-- Card 4: Harga Terjangkau (memanjang) --}}
-        <div class="rounded-xl bg-white border border-gray-200 p-6 flex items-center gap-5 hover:shadow-md transition-shadow">
-            <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            </div>
-            <div>
+            <div class="text-center px-4 py-4">
+                <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
                 <h3 class="font-bold text-gray-900 mb-1">Harga Terjangkau</h3>
-                <p class="text-sm text-gray-500 leading-relaxed">Harga kompetitif dengan kualitas terbaik. Cocok untuk semua kalangan.</p>
+                <p class="text-sm text-gray-500 leading-relaxed">Harga kompetitif dengan kualitas terbaik, cocok untuk semua kalangan.</p>
             </div>
         </div>
     </div>
