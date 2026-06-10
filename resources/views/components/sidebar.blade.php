@@ -28,7 +28,7 @@
         @foreach($menus as $menu)
             <a href="{{ $menu['url'] }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ $menu['active'] ? 'bg-[#1a237e] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
-                <i data-lucide="{{ $menu['icon'] }}" class="w-5 h-5 {{ $menu['active'] ? 'text-white' : '' }}"></i>
+                <i data-lucide="{{ $menu['icon'] }}" class="w-5 h-5 {{ $menu['active'] ? 'text-white' : 'text-[#1a237e]' }}"></i>
                 <span class="font-medium">{{ $menu['label'] }}</span>
             </a>
         @endforeach
