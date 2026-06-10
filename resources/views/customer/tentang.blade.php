@@ -35,8 +35,8 @@
 <div class="max-w-[1200px] mx-auto px-6 py-16">
     <div class="overflow-hidden">
         {{-- Cerita di Balik Novos --}}
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Cerita di Balik Novos</h2>
-        <div class="space-y-4 text-gray-600 leading-relaxed">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6" data-aos="fade-up" data-aos-delay="100">Cerita di Balik Novos</h2>
+        <div class="space-y-4 text-gray-600 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
             <p>
                 <strong class="text-gray-900">Novos</strong> lahir dari kegelisahan para founder-nya yang merupakan pegiat olahraga di Purwokerto. Mereka merasa sulit mendapatkan jersey custom berkualitas tinggi dengan harga yang masuk akal tanpa harus memesan dari luar kota. Proses yang rumit, komunikasi yang tidak jelas, dan hasil yang tidak sesuai ekspektasi menjadi masalah yang terus berulang.
             </p>
@@ -53,10 +53,10 @@
 {{-- Visi & Misi --}}
 <div class="bg-gray-50 py-16">
     <div class="max-w-[1200px] mx-auto px-6">
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden" data-aos="zoom-in">
             <div class="grid md:grid-cols-[1fr_auto_1fr] divide-y md:divide-y-0">
                 {{-- Visi --}}
-                <div class="p-8 md:p-10 flex flex-col">
+                <div class="p-8 md:p-10 flex flex-col" data-aos="fade-up" data-aos-delay="100">
                     <h2 class="text-xl font-bold text-gray-900 mb-3">Visi</h2>
                     <p class="text-gray-600 leading-relaxed flex-1">
                         Menjadi platform jersey custom nomor satu di Indonesia yang dikenal dengan kualitas terbaik, desain inovatif, dan pelayanan yang memuaskan.
@@ -69,7 +69,7 @@
                 </div>
 
                 {{-- Misi --}}
-                <div class="p-8 md:p-10 flex flex-col">
+                <div class="p-8 md:p-10 flex flex-col" data-aos="fade-up" data-aos-delay="200">
                     <h2 class="text-xl font-bold text-gray-900 mb-3">Misi</h2>
                     <ul class="space-y-3 text-gray-600 flex-1">
                         <li class="flex items-start gap-3">
@@ -151,33 +151,33 @@
 
 {{-- Keunggulan Layanan --}}
 <div class="max-w-[1200px] mx-auto px-6 py-16">
-    <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">Keunggulan Layanan</h2>
-    <p class="text-gray-500 text-center mb-10">Kenapa memilih Novos?</p>
+    <h2 class="text-2xl font-bold text-gray-900 text-center mb-2" data-aos="fade-up">Keunggulan Layanan</h2>
+    <p class="text-gray-500 text-center mb-10" data-aos="fade-up" data-aos-delay="100">Kenapa memilih Novos?</p>
 
-    <div class="bg-[#f0f4ff] rounded-xl p-8 md:p-10">
+    <div class="bg-[#f0f4ff] rounded-xl p-8 md:p-10" data-aos="zoom-in" data-aos-delay="200">
         <div class="grid md:grid-cols-2 lg:grid-cols-4 md:divide-x md:divide-[#d0d8f0]">
-            <div class="text-center px-4 py-4">
+            <div class="text-center px-4 py-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="w-12 h-12 bg-[#1a237e]/10 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
                 </div>
                 <h3 class="font-bold text-gray-900 mb-1">Desain Bebas</h3>
                 <p class="text-sm text-gray-500 leading-relaxed">Bebas menentukan desain, warna, logo, dan ukuran sesuai keinginan Anda.</p>
             </div>
-            <div class="text-center px-4 py-4">
+            <div class="text-center px-4 py-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="w-12 h-12 bg-[#ffd700]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 </div>
                 <h3 class="font-bold text-gray-900 mb-1">Kualitas Premium</h3>
                 <p class="text-sm text-gray-500 leading-relaxed">Bahan Dryfit Premium grade A dengan jahitan presisi tinggi dan QC ketat.</p>
             </div>
-            <div class="text-center px-4 py-4">
+            <div class="text-center px-4 py-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <h3 class="font-bold text-gray-900 mb-1">Tepat Waktu</h3>
                 <p class="text-sm text-gray-500 leading-relaxed">Komitmen pengiriman sesuai jadwal dengan estimasi yang akurat dan jelas.</p>
             </div>
-            <div class="text-center px-4 py-4">
+            <div class="text-center px-4 py-4" data-aos="fade-up" data-aos-delay="400">
                 <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </div>
@@ -211,6 +211,8 @@
     [data-aos-delay="100"].aos-visible { transition-delay: 0.1s; }
     [data-aos-delay="200"].aos-visible { transition-delay: 0.2s; }
     [data-aos-delay="300"].aos-visible { transition-delay: 0.3s; }
+    [data-aos-delay="400"].aos-visible { transition-delay: 0.4s; }
+    [data-aos-delay="500"].aos-visible { transition-delay: 0.5s; }
 </style>
 @endpush
 
