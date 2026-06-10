@@ -68,7 +68,7 @@
         <div class="flex flex-col justify-center py-20 md:py-0">
 
             {{-- headline --}}
-            <h1 class="text-5xl md:text-[56px] font-extrabold leading-tight text-white mb-5 max-w-2xl">
+            <h1 class="text-5xl md:text-[56px] font-bold leading-tight text-white mb-5 max-w-2xl">
                 Pesan Jersey Custom Impianmu
             </h1>
 
