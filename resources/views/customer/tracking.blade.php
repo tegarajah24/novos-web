@@ -51,51 +51,56 @@
             </div>
         </div>
 
-        {{-- Timeline --}}
-        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-6">Riwayat Status</h3>
+        {{-- Stepper Horizontal --}}
+        <div class="bg-white rounded-xl border border-gray-200 p-6 md:p-8 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-8">Riwayat Status</h3>
 
-            <div class="relative">
-                <template x-for="(stage, i) in stages" :key="i">
-                    <div class="flex gap-5 pb-8 relative last:pb-0">
-                        {{-- Connecting Line --}}
-                        <div
-                            x-show="i < stages.length - 1"
-                            :class="stage.done ? 'bg-green-500' : 'bg-gray-200'"
-                            class="absolute left-[15px] top-10 w-0.5 bottom-0 -z-10 transition-colors"
-                        ></div>
+            <div class="overflow-x-auto pb-2 stepper-scroll">
+                <div class="relative flex items-start justify-between min-w-[640px] md:min-w-0 px-1 pt-6">
+                    {{-- Progress bar background --}}
+                    <div class="absolute top-[43px] left-[4%] right-[4%] h-1 bg-gray-200 rounded-full"></div>
 
-                        {{-- Circle Indicator --}}
-                        <div class="flex flex-col items-center shrink-0">
-                            <div
-                                :class="stage.done ? 'bg-green-500' : stage.active ? 'bg-blue-900 ring-4 ring-blue-100' : 'bg-gray-200'"
-                                class="w-[30px] h-[30px] rounded-full flex items-center justify-center transition-all duration-300"
-                            >
-                                {{-- Checkmark for done --}}
-                                <svg x-show="stage.done" class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                {{-- Pulse dot for active --}}
-                                <span x-show="stage.active && !stage.done" class="relative flex h-3 w-3">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-900"></span>
-                                </span>
-                                {{-- Number for pending --}}
-                                <span x-show="!stage.done && !stage.active" class="text-xs font-bold text-white" x-text="i + 1"></span>
+                    {{-- Progress bar fill (animated) --}}
+                    <div class="absolute top-[43px] left-[4%] h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-1000 ease-out"
+                         :style="`width: ${animateProgress ? progressPercent : 0}%`"></div>
+
+                    {{-- Stages --}}
+                    <template x-for="(stage, i) in stages" :key="i">
+                        <div class="flex flex-col items-center text-center relative z-10" style="width: 16.666%">
+                            {{-- Circle --}}
+                            <div class="relative">
+                                {{-- Ping ring for active --}}
+                                <template x-if="stage.active && !stage.done">
+                                    <span class="absolute -inset-1.5 flex">
+                                        <span class="animate-ping absolute inset-0 rounded-full bg-blue-400/40"></span>
+                                        <span class="absolute inset-0 rounded-full bg-blue-300/20"></span>
+                                    </span>
+                                </template>
+
+                                {{-- Circle body --}}
+                                <div :class="stage.done ? 'bg-green-500 shadow-lg shadow-green-200' : stage.active ? 'bg-blue-900 ring-4 ring-blue-200 shadow-lg shadow-blue-200 animate-glow' : 'bg-gray-200'"
+                                     class="w-[38px] h-[38px] rounded-full flex items-center justify-center transition-all duration-500 relative">
+                                    {{-- Checkmark for done --}}
+                                    <svg x-show="stage.done" class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    {{-- White dot for active --}}
+                                    <span x-show="stage.active && !stage.done" class="w-3 h-3 bg-white rounded-full"></span>
+                                    {{-- Number for pending --}}
+                                    <span x-show="!stage.done && !stage.active" class="text-xs font-bold"
+                                          :class="stage.pending ? 'text-gray-400' : 'text-white'" x-text="i + 1"></span>
+                                </div>
+                            </div>
+
+                            {{-- Label below --}}
+                            <div class="mt-3 max-w-[90px]">
+                                <p :class="stage.active ? 'text-blue-900 font-bold' : stage.done ? 'text-gray-900 font-semibold' : 'text-gray-400'"
+                                   class="text-[11px] md:text-xs leading-tight transition-colors" x-text="stage.label"></p>
+                                <p class="text-[10px] mt-1 font-medium"
+                                   :class="stage.done ? 'text-green-600' : stage.active ? 'text-blue-600' : 'text-gray-300'"
+                                   x-text="stage.done ? 'Selesai' : stage.active ? 'Berjalan' : 'Belum'"></p>
                             </div>
                         </div>
-
-                        {{-- Content --}}
-                        <div class="flex-1 min-w-0 pt-1">
-                            <p
-                                :class="stage.active ? 'text-blue-900 font-bold' : stage.done ? 'text-gray-900 font-semibold' : 'text-gray-400'"
-                                class="transition-colors"
-                                x-text="stage.label"
-                            ></p>
-                            <p x-show="stage.done" class="text-sm text-gray-500 mt-0.5">Selesai</p>
-                            <p x-show="stage.active" class="text-sm text-blue-600 font-medium mt-0.5">Sedang berjalan</p>
-                            <p x-show="!stage.done && !stage.active" class="text-sm text-gray-400 mt-0.5">Belum</p>
-                        </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -143,12 +148,23 @@
 
 <style>
 [x-cloak] { display: none !important; }
+.stepper-scroll { overflow-x: auto; }
+.stepper-scroll::-webkit-scrollbar { height: 4px; }
+.stepper-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+.stepper-scroll::-webkit-scrollbar-thumb { background: #c4c4c4; border-radius: 10px; }
+.stepper-scroll::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+@keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(37, 99, 235, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.6); }
+}
+.animate-glow { animation: glow-pulse 2s ease-in-out infinite; }
 </style>
 
 <script>
 function trackingForm() {
     return {
         searched: false,
+        animateProgress: false,
         searchQuery: 'NVS-20240601-001',
         order: {
             id: 'NVS-20240601-001',
@@ -212,8 +228,27 @@ function trackingForm() {
             });
         },
 
+        get progressPercent() {
+            const doneCount = this.stages.filter(s => s.done).length;
+            const total = this.stages.length - 1;
+            return total > 0 ? (doneCount / total) * 100 : 0;
+        },
+
+        get progressReady() {
+            return this.progressPercent;
+        },
+
+        init() {
+            this.$nextTick(() => {
+                setTimeout(() => { this.animateProgress = true; }, 200);
+            });
+        },
+
         searchOrder() {
             this.searched = true;
+            this.$nextTick(() => {
+                setTimeout(() => { this.animateProgress = true; }, 200);
+            });
         },
 
         accDesign() {
