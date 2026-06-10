@@ -32,6 +32,10 @@ Route::middleware('auth')->group(function () {
         return view('internal.laporan');
     })->name('admin.laporan');
 
+    Route::get('/admin/kelola-produk', function () {
+        return view('internal.kelola-produk');
+    })->name('admin.kelola-produk');
+
     Route::get('/admin/kelola-pengguna', function () {
         return view('internal.kelola-pengguna');
     })->name('admin.kelola-pengguna');

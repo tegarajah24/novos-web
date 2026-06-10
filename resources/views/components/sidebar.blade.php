@@ -14,12 +14,13 @@
         @php
             $menus = [
                 ['label' => 'Dashboard', 'url' => url('admin/dashboard'), 'icon' => 'layout-dashboard', 'active' => request()->is('admin/dashboard')],
-                ['label' => 'Summary', 'url' => url('internal/summary'), 'icon' => 'pie-chart', 'active' => request()->is('internal/summary')],
-                ['label' => 'Daftar Pesanan', 'url' => url('internal/daftarpesanan'), 'icon' => 'shopping-bag', 'active' => request()->is('internal/daftarpesanan*') || request()->is('internal/detail-pesanan*') || request()->is('internal/chat*')],
-                ['label' => 'Design', 'url' => url('internal/design'), 'icon' => 'pen-tool', 'active' => request()->is('internal/design')],
-                ['label' => 'Produksi', 'url' => url('internal/produksi'), 'icon' => 'scissors', 'active' => request()->is('internal/produksi')],
-                ['label' => 'Stress Test', 'url' => url('internal/stress-test'), 'icon' => 'activity', 'active' => request()->is('internal/stress-test')],
-                ['label' => 'Laporan', 'url' => url('internal/laporan'), 'icon' => 'file-text', 'active' => request()->is('internal/laporan')],
+                ['label' => 'Summary', 'url' => url('admin/summary'), 'icon' => 'pie-chart', 'active' => request()->is('admin/summary')],
+                ['label' => 'Daftar Pesanan', 'url' => url('admin/daftar-pesanan'), 'icon' => 'shopping-bag', 'active' => request()->is('admin/daftar-pesanan*') || request()->is('internal/detail-pesanan*') || request()->is('internal/chat*')],
+                ['label' => 'Design', 'url' => url('admin/design'), 'icon' => 'pen-tool', 'active' => request()->is('admin/design')],
+                ['label' => 'Produksi', 'url' => url('admin/produksi'), 'icon' => 'scissors', 'active' => request()->is('admin/produksi')],
+                ['label' => 'Stress Test', 'url' => url('admin/stress-test'), 'icon' => 'activity', 'active' => request()->is('admin/stress-test')],
+                ['label' => 'Laporan', 'url' => url('admin/laporan'), 'icon' => 'file-text', 'active' => request()->is('admin/laporan')],
+                ['label' => 'Kelola Produk', 'url' => url('admin/kelola-produk'), 'icon' => 'package', 'active' => request()->is('admin/kelola-produk')],
                 ['label' => 'Kelola Pengguna', 'url' => url('admin/kelola-pengguna'), 'icon' => 'users', 'active' => request()->is('admin/kelola-pengguna*')],
             ];
         @endphp
