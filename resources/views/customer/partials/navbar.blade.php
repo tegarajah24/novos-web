@@ -1,7 +1,10 @@
 {{-- ============================================================ --}}
 {{-- NAVBAR CUSTOMER --}}
 {{-- ============================================================ --}}
-<nav class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50">
+<nav x-data="{ lastScroll: 0, hidden: false }"
+     @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true } else if (y < lastScroll) { hidden = false }; lastScroll = y"
+     :class="hidden ? '-translate-y-full' : 'translate-y-0'"
+     class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
         {{-- Left: Logo --}}
         <a href="{{ route('customer.beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
