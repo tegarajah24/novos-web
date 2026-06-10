@@ -9,18 +9,18 @@ function katalogData() {
             currentPage: 1,
             perPage: 12,
             products: [
-                { id: 1,  name: 'Jersey Basket Elite',        category: 'Basket',     price: 98000,  badge: null,       image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc' },
-                { id: 2,  name: 'Jersey Sepak Bola Ultra',    category: 'Sepak Bola', price: 98000,  badge: null,       image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55' },
-                { id: 3,  name: 'Jersey Running Pro',         category: 'Running',    price: 77000,  badge: 'Populer',  image: 'https://images.unsplash.com/photo-1552674605-15c2145efa38' },
-                { id: 4,  name: 'Jersey Voli Premium',        category: 'Voli',       price: 79000,  badge: null,       image: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1' },
-                { id: 5,  name: 'Jersey Basket Street',       category: 'Basket',     price: 82000,  badge: null,       image: 'https://images.unsplash.com/photo-1519861531473-9200262188bf' },
-                { id: 6,  name: 'Jersey Futsal Pro Max',      category: 'Futsal',     price: 88000,  badge: 'Populer',  image: 'https://images.unsplash.com/photo-1536560032543-39d115ee60cb' },
-                { id: 7,  name: 'Jersey Sepak Bola Classic',  category: 'Sepak Bola', price: null,   badge: null,       image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2' },
-                { id: 8,  name: 'Jersey Running Lite',        category: 'Running',    price: null,   badge: null,       image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211' },
-                { id: 9,  name: 'Jersey Voli Classic',        category: 'Voli',       price: null,   badge: null,       image: 'https://images.unsplash.com/photo-1593787406536-3676a152d9ce' },
-                { id: 10, name: 'Jersey Futsal Elite',        category: 'Futsal',     price: 95000,  badge: null,       image: 'https://images.unsplash.com/photo-1518605368461-1e1e11415082' },
-                { id: 11, name: 'Jersey Basket Pro',          category: 'Basket',     price: 105000, badge: 'Terlaris', image: 'https://images.unsplash.com/photo-1504450758481-7338eba7524a' },
-                { id: 12, name: 'Jersey Running Speed',       category: 'Running',    price: 85000,  badge: null,       image: 'https://images.unsplash.com/photo-1538333581680-29ead0704dd7' },
+                { id: 1,  name: 'Jersey Basket Elite',        category: 'Basket',     price: 98000,  badge: null,       image: '{{ asset("images/produk/novos-Photoroom.png") }}' },
+                { id: 2,  name: 'Jersey Sepak Bola Ultra',    category: 'Sepak Bola', price: 98000,  badge: null,       image: '{{ asset("images/produk/novos2-Photoroom.png") }}' },
+                { id: 3,  name: 'Jersey Running Pro',         category: 'Running',    price: 77000,  badge: 'Populer',  image: '{{ asset("images/produk/novos3-Photoroom.png") }}' },
+                { id: 4,  name: 'Jersey Voli Premium',        category: 'Voli',       price: 79000,  badge: null,       image: '{{ asset("images/produk/novos4-Photoroom.png") }}' },
+                { id: 5,  name: 'Jersey Basket Street',       category: 'Basket',     price: 82000,  badge: null,       image: '{{ asset("images/produk/novos5-Photoroom.png") }}' },
+                { id: 6,  name: 'Jersey Futsal Pro Max',      category: 'Futsal',     price: 88000,  badge: 'Populer',  image: '{{ asset("images/produk/novos6-Photoroom.png") }}' },
+                { id: 7,  name: 'Jersey Sepak Bola Classic',  category: 'Sepak Bola', price: null,   badge: null,       image: '{{ asset("images/produk/novos7-Photoroom.png") }}' },
+                { id: 8,  name: 'Jersey Running Lite',        category: 'Running',    price: null,   badge: null,       image: '{{ asset("images/produk/novos8-Photoroom.png") }}' },
+                { id: 9,  name: 'Jersey Voli Classic',        category: 'Voli',       price: null,   badge: null,       image: '{{ asset("images/produk/novos-coklat-Photoroom.png") }}' },
+                { id: 10, name: 'Jersey Futsal Elite',        category: 'Futsal',     price: 95000,  badge: null,       image: '{{ asset("images/produk/novos-hijau-Photoroom.png") }}' },
+                { id: 11, name: 'Jersey Basket Pro',          category: 'Basket',     price: 105000, badge: 'Terlaris', image: '{{ asset("images/produk/novos-merah-Photoroom.png") }}' },
+                { id: 12, name: 'Jersey Running Speed',       category: 'Running',    price: 85000,  badge: null,       image: '{{ asset("images/produk/novos2-Photoroom.png") }}' },
             ],
 
             init() {
@@ -141,24 +141,26 @@ function katalogData() {
                 <template x-for="product in pagedProducts" :key="product.id">
                     <div @click="window.location.href = '{{ route('customer.pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '')" class="group cursor-pointer bg-gray-50">
                         {{-- Image --}}
-                        <div class="relative w-full overflow-hidden p-2" style="aspect-ratio:3/4">
-                            <img
-                                :src="product.image || 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey'"
-                                :alt="product.name"
-                                class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-                            >
-                            {{-- Category Badge --}}
-                            <span
-                                class="absolute top-3 left-3 px-2.5 py-1 bg-[#1a237e]/80 text-white text-[10px] font-semibold"
-                                x-text="product.category"
-                            ></span>
-                            {{-- Optional Product Badge --}}
-                            <template x-if="product.badge">
+                        <div class="p-2">
+                            <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
+                                <img
+                                    :src="product.image || 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey'"
+                                    :alt="product.name"
+                                    class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                                >
+                                {{-- Category Badge --}}
                                 <span
-                                    class="absolute top-3 right-3 px-2.5 py-1 bg-[#00bcd4] text-white text-[10px] font-semibold shadow-sm"
-                                    x-text="product.badge"
+                                    class="absolute top-3 left-3 px-2.5 py-1 bg-[#1a237e]/80 text-white text-[10px] font-semibold"
+                                    x-text="product.category"
                                 ></span>
-                            </template>
+                                {{-- Optional Product Badge --}}
+                                <template x-if="product.badge">
+                                    <span
+                                        class="absolute top-3 right-3 px-2.5 py-1 bg-[#00bcd4] text-white text-[10px] font-semibold shadow-sm"
+                                        x-text="product.badge"
+                                    ></span>
+                                </template>
+                            </div>
                         </div>
                         {{-- Card Body --}}
                         <div class="p-3 text-center bg-gray-50">
