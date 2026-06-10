@@ -147,25 +147,22 @@
                 ['Custom',     'https://images.unsplash.com/photo-1552674605-15c2145efa38?w=400&q=80', 'Jersey Custom Full',    'Rp 200.000'],
                 ['Training',   'https://images.unsplash.com/photo-1596728325488-58c87691e9af?w=400&q=80', 'Jersey Training Pro',   'Rp 160.000'],
                 ['Running',    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80', 'Jersey Running Elite',  'Rp 180.000'],
+                ['Voli',       'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Voli Pro',       'Rp 170.000'],
+                ['Tenis',      'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Tenis Sport',    'Rp 190.000'],
             ] as $p)
-            <div class="product-card-glow flex-shrink-0 w-[280px] group relative rounded-2xl bg-white border border-gray-100 shadow-sm p-5">
-
-                {{-- image area --}}
-                <div class="relative w-full overflow-hidden" style="aspect-ratio:1/1">
+            <div class="flex-shrink-0 w-[270px] group">
+                <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
                     <img src="{{ $p[1] }}"
                          alt="{{ $p[0] }}"
-                         class="w-full h-full object-cover drop-shadow-lg
-                                transition-transform duration-300 ease-out
+                         class="w-full h-full object-cover transition-transform duration-300 ease-out
                                 group-hover:scale-105">
-                    <span class="absolute top-0 left-0 px-3 py-1 bg-[#00e5ff] text-[#1a1a2e] text-[11px] font-bold">
+                    <span class="absolute top-0 left-0 px-2 py-0.5 bg-[#00e5ff] text-[#1a1a2e] text-[10px] font-bold">
                         {{ $p[0] }}
                     </span>
                 </div>
-
-                {{-- body --}}
-                <div class="text-center mt-4">
+                <div class="mt-2 text-center">
                     <h3 class="text-[#1a237e] text-sm font-bold">{{ $p[2] }}</h3>
-                    <p class="text-black text-base font-bold mt-1">{{ $p[3] }}</p>
+                    <p class="text-black text-sm font-semibold mt-0.5">{{ $p[3] }}</p>
                 </div>
             </div>
             @endforeach
