@@ -171,6 +171,64 @@
 </section>
 
 {{-- ============================================================ --}}
+{{-- 2B. PRODUK TERBARU --}}
+{{-- ============================================================ --}}
+<section x-data="{ scrolledLeft2: false, scrolledRight2: false, updateScroll2() { let el = $refs.scroll2; this.scrolledLeft2 = el.scrollLeft > 5; this.scrolledRight2 = (el.scrollLeft + el.clientWidth) >= (el.scrollWidth - 5); }, scrollLeft2() { let el = $refs.scroll2; el.scrollBy({ left: -320, behavior: 'smooth' }); }, scrollRight2() { let el = $refs.scroll2; el.scrollBy({ left: 320, behavior: 'smooth' }); } }" class="bg-white pb-20">
+    <div class="max-w-[1200px] mx-auto px-6">
+
+        <div class="flex items-end justify-between mb-2">
+            <h2 class="text-3xl font-bold text-[#1a237e]">Produk Terbaru</h2>
+            <div class="flex items-center gap-1">
+                <a href="{{ route('customer.katalog') }}" class="text-sm font-semibold text-black border-b border-black transition-colors">
+                    Lihat Semua
+                </a>
+                <button @click="scrollLeft2()"
+                    :class="scrolledLeft2 ? 'text-black hover:text-gray-500 cursor-pointer' : 'text-gray-300 cursor-default'"
+                    class="px-1 transition-colors font-thin text-2xl leading-none">
+                    &lt;
+                </button>
+                <button @click="scrollRight2()"
+                    :class="!scrolledRight2 ? 'text-black hover:text-gray-500 cursor-pointer' : 'text-gray-300 cursor-default'"
+                    class="px-1 transition-colors font-thin text-2xl leading-none">
+                    &gt;
+                </button>
+            </div>
+        </div>
+        <div class="w-full h-0.5 bg-gradient-to-r from-[#00e5ff] to-transparent mb-8"></div>
+
+        {{-- horizontal scroll --}}
+        <div x-ref="scroll2" id="product-scroll2" @scroll="updateScroll2()" class="flex gap-6 overflow-x-auto pb-4 no-scrollbar scroll-smooth">
+            @foreach([
+                ['Sepak Bola', 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Tim Premium',   'Rp 150.000'],
+                ['Basket',     'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Basket Pro',     'Rp 175.000'],
+                ['Futsal',     'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&q=80', 'Jersey Futsal Elite',   'Rp 135.000'],
+                ['Custom',     'https://images.unsplash.com/photo-1552674605-15c2145efa38?w=400&q=80', 'Jersey Custom Full',    'Rp 200.000'],
+                ['Training',   'https://images.unsplash.com/photo-1596728325488-58c87691e9af?w=400&q=80', 'Jersey Training Pro',   'Rp 160.000'],
+                ['Running',    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80', 'Jersey Running Elite',  'Rp 180.000'],
+                ['Voli',       'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Voli Pro',       'Rp 170.000'],
+                ['Tenis',      'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Tenis Sport',    'Rp 190.000'],
+            ] as $p)
+            <div class="flex-shrink-0 w-[270px] group">
+                <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
+                    <img src="{{ $p[1] }}"
+                         alt="{{ $p[0] }}"
+                         class="w-full h-full object-cover transition-transform duration-300 ease-out
+                                group-hover:scale-105">
+                    <span class="absolute top-0 left-0 px-2 py-0.5 bg-[#00e5ff] text-[#1a1a2e] text-[10px] font-bold">
+                        {{ $p[0] }}
+                    </span>
+                </div>
+                <div class="mt-2 text-center">
+                    <h3 class="text-[#1a237e] text-sm font-bold">{{ $p[2] }}</h3>
+                    <p class="text-black text-sm font-semibold mt-0.5">{{ $p[3] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ============================================================ --}}
 {{-- 3. CARA PEMESANAN --}}
 {{-- ============================================================ --}}
 <section class="bg-white py-20">
