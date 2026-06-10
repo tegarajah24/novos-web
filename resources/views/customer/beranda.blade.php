@@ -46,12 +46,12 @@
 {{-- ============================================================ --}}
 {{-- 1. HERO - Asymmetric Split Layout --}}
 {{-- ============================================================ --}}
-<section class="relative w-full bg-gradient-to-br from-[#1e3a5f] to-[#0f2040] overflow-hidden" style="min-height:600px">
+<section class="relative w-full bg-[#0f2040] overflow-hidden" style="min-height:600px">
 
     {{-- background image --}}
     <div class="absolute inset-0 z-0">
         <img src="{{ asset('images/hero-bg.png') }}" alt=""
-             class="w-full h-full object-cover opacity-[0.12]">
+             class="w-full h-full object-cover opacity-[0.50]">
     </div>
 
     {{-- mesh overlay --}}
