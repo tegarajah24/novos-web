@@ -7,7 +7,7 @@ function katalogData() {
             selectedCats: [],
             searchQuery: '',
             currentPage: 1,
-            perPage: 9,
+            perPage: 12,
             products: [
                 { id: 1,  name: 'Jersey Basket Elite',        category: 'Basket',     price: 98000,  badge: null,       image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc' },
                 { id: 2,  name: 'Jersey Sepak Bola Ultra',    category: 'Sepak Bola', price: 98000,  badge: null,       image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55' },
@@ -88,18 +88,33 @@ function katalogData() {
 }
 </script>
 
-<div
-    x-data="katalogData()"
-    class="min-h-screen bg-[#f5f6f8]"
->
-    {{-- ===== PAGE HEADER ===== --}}
-    <div class="max-w-[1200px] mx-auto px-6 pt-8 pb-4">
-        <h1 class="text-2xl font-bold text-gray-900" x-text="activeLabel"></h1>
-        <p class="text-gray-500 mt-1">Temukan Jersey custom sempurna untuk tim Anda</p>
-    </div>
+<div x-data="katalogData()">
+    {{-- Hero --}}
+    <section class="relative w-full bg-[#0f2040] overflow-hidden" style="min-height:400px">
+        <div class="absolute inset-0 z-0">
+            <img src="{{ asset('images/hero-katalog.png') }}" alt=""
+                 class="w-full h-full object-cover opacity-[0.50]">
+        </div>
+        <div class="absolute inset-0 opacity-[0.03] z-[1]"
+             style="background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:20px 20px"></div>
+        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-[#00e5ff] opacity-[0.05] rounded-full blur-3xl z-[1]"></div>
+        <div class="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-[#00e5ff] opacity-[0.05] rounded-full blur-3xl z-[1]"></div>
+        <div class="relative z-10 max-w-[1200px] mx-auto px-6 flex items-center" style="min-height:400px">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-[56px] font-bold leading-tight text-white mb-5" data-aos="fade-up" data-aos-delay="100">
+                    Katalog <span class="text-[#00e5ff]">Produk</span>
+                </h1>
+                <p class="text-base md:text-lg text-[#c8d6e0] leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+                    Temukan jersey custom sempurna untuk tim dan komunitas Anda.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="min-h-screen bg-white">
 
     {{-- ===== MAIN CONTENT ===== --}}
-    <div class="max-w-[1200px] mx-auto px-6 pb-10 flex flex-col">
+    <div class="max-w-[1200px] mx-auto px-6 pt-10 pb-10 flex flex-col">
 
         {{-- ============================== PRODUCT AREA ============================== --}}
         <div class="flex-1 min-w-0">
@@ -119,57 +134,41 @@ function katalogData() {
                         class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e]"
                     >
                 </div>
-                <p class="text-sm text-gray-500 whitespace-nowrap">
-                    Menampilkan <span class="font-semibold text-[#1a237e]" x-text="pagedProducts.length"></span>
-                    dari <span class="font-semibold text-[#1a237e]" x-text="filteredProducts.length"></span>
-                    produk
-                </p>
             </div>
 
             {{-- Product Grid --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <template x-for="product in pagedProducts" :key="product.id">
-                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+                    <div @click="window.location.href = '{{ route('customer.pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '')" class="group cursor-pointer bg-gray-50">
                         {{-- Image --}}
-                        <div class="relative aspect-[4/3] bg-[#e8eaf6] overflow-hidden">
+                        <div class="relative w-full overflow-hidden p-2" style="aspect-ratio:3/4">
                             <img
                                 :src="product.image || 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey'"
                                 :alt="product.name"
-                                class="w-full h-full object-cover"
+                                class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
                             >
                             {{-- Category Badge --}}
                             <span
-                                class="absolute top-3 left-3 px-2.5 py-1 bg-[#1a237e]/80 text-white text-[10px] font-semibold rounded-md backdrop-blur-sm"
+                                class="absolute top-3 left-3 px-2.5 py-1 bg-[#1a237e]/80 text-white text-[10px] font-semibold"
                                 x-text="product.category"
                             ></span>
                             {{-- Optional Product Badge --}}
                             <template x-if="product.badge">
                                 <span
-                                    class="absolute top-3 right-3 px-2.5 py-1 bg-[#00bcd4] text-white text-[10px] font-semibold rounded-md shadow-sm"
+                                    class="absolute top-3 right-3 px-2.5 py-1 bg-[#00bcd4] text-white text-[10px] font-semibold shadow-sm"
                                     x-text="product.badge"
                                 ></span>
                             </template>
                         </div>
                         {{-- Card Body --}}
-                        <div class="p-4">
-                            <h3 class="text-sm font-semibold text-[#1a237e] mb-1 leading-snug" x-text="product.name"></h3>
-                            {{-- FIX: gunakan x-if dengan perbandingan eksplisit agar price: 0 tidak dianggap "tanpa harga" --}}
+                        <div class="p-3 text-center bg-gray-50">
+                            <h3 class="text-sm font-semibold text-[#1a237e] leading-snug" x-text="product.name"></h3>
                             <template x-if="product.price !== null">
-                                <p class="text-xs text-gray-500 mb-1">
-                                    Mulai <span class="text-lg font-bold text-[#1a237e]" x-text="formatRupiah(product.price)"></span>/pcs
-                                </p>
+                                <p class="text-sm font-bold text-[#1a237e] mt-0.5" x-text="formatRupiah(product.price)"></p>
                             </template>
                             <template x-if="product.price === null">
-                                <p class="text-xs text-gray-400 mb-1">Hubungi CS</p>
+                                <p class="text-xs text-gray-400 mt-0.5">Hubungi CS</p>
                             </template>
-                            <div class="mt-3">
-                                <button
-                                    @click="window.location.href = '{{ route('customer.pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '')"
-                                    class="w-full py-2 border border-[#1a237e] text-[#1a237e] text-xs font-semibold rounded-lg hover:bg-[#1a237e]/5 transition-colors"
-                                >
-                                    Pesan Sekarang
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </template>
@@ -239,5 +238,6 @@ function katalogData() {
 
         </div>
     </div>
+</div>
 </div>
 @endsection
