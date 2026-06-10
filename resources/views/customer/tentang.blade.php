@@ -32,97 +32,60 @@
 </section>
 
 {{-- Profil Singkat & Identitas Brand --}}
-<div class="max-w-5xl mx-auto px-4 py-16">
-    <div class="grid md:grid-cols-5 gap-10 items-start">
+<div class="max-w-[1200px] mx-auto px-6 py-16">
+    <div class="overflow-hidden">
         {{-- Cerita di Balik Novos --}}
-        <div class="md:col-span-3">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Cerita di Balik Novos</h2>
-            <div class="space-y-4 text-gray-600 leading-relaxed">
-                <p>
-                    <strong class="text-gray-900">Novos</strong> lahir dari kegelisahan para founder-nya yang merupakan pegiat olahraga di Purwokerto. Mereka merasa sulit mendapatkan jersey custom berkualitas tinggi dengan harga yang masuk akal tanpa harus memesan dari luar kota. Proses yang rumit, komunikasi yang tidak jelas, dan hasil yang tidak sesuai ekspektasi menjadi masalah yang terus berulang.
-                </p>
-                <p>
-                    Nama <strong class="text-gray-900">"Novos"</strong> berasal dari Bahasa Latin yang berarti <em>"baru"</em> atau <em>"pembaruan"</em>. Filosofi ini menjadi semangat kami untuk <strong class="text-gray-900">memperbarui cara orang memesan jersey custom</strong> — dari proses yang rumit menjadi mudah, dari harga yang mahal menjadi terjangkau, dari kualitas standar menjadi premium.
-                </p>
-                <p>
-                    Berdiri sejak tahun 2022, Novos fokus menyediakan jersey olahraga berkualitas tinggi untuk berbagai cabang olahraga seperti sepak bola, futsal, basket, voli, hingga running. Setiap jersey yang kami produksi menggunakan bahan <strong class="text-gray-900">Dryfit Premium</strong> yang nyaman dipakai, ringan, dan cepat kering.
-                </p>
-            </div>
-        </div>
-
-        {{-- Lokasi (Lokal Prides) --}}
-        <div class="md:col-span-2">
-            <div class="bg-gradient-to-br from-[#1a237e] to-[#283593] rounded-xl p-6 text-white">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>
-                <h3 class="text-lg font-bold mb-2">Lokal Prides</h3>
-                <p class="text-white/80 text-sm leading-relaxed mb-4">
-                    Novos adalah <strong class="text-white">brand lokal asli Purwokerto</strong> yang bangga menjadi bagian dari ekosistem olahraga regional.
-                </p>
-                <div class="flex items-center gap-3 bg-white/10 rounded-lg px-4 py-3">
-                    <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="text-sm">Purwokerto, Jawa Tengah</span>
-                </div>
-                <p class="text-white/60 text-xs mt-4 leading-relaxed">
-                    Dengan menjadi bagian dari Novos, Anda turut mendukung pertumbuhan industri kreatif dan UMKM lokal di Purwokerto.
-                </p>
-            </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Cerita di Balik Novos</h2>
+        <div class="space-y-4 text-gray-600 leading-relaxed">
+            <p>
+                <strong class="text-gray-900">Novos</strong> lahir dari kegelisahan para founder-nya yang merupakan pegiat olahraga di Purwokerto. Mereka merasa sulit mendapatkan jersey custom berkualitas tinggi dengan harga yang masuk akal tanpa harus memesan dari luar kota. Proses yang rumit, komunikasi yang tidak jelas, dan hasil yang tidak sesuai ekspektasi menjadi masalah yang terus berulang.
+            </p>
+            <p>
+                Nama <strong class="text-gray-900">"Novos"</strong> berasal dari Bahasa Latin yang berarti <em>"baru"</em> atau <em>"pembaruan"</em>. Filosofi ini menjadi semangat kami untuk <strong class="text-gray-900">memperbarui cara orang memesan jersey custom</strong> — dari proses yang rumit menjadi mudah, dari harga yang mahal menjadi terjangkau, dari kualitas standar menjadi premium.
+            </p>
+            <p>
+                Berdiri sejak tahun 2022, Novos fokus menyediakan jersey olahraga berkualitas tinggi untuk berbagai cabang olahraga seperti sepak bola, futsal, basket, voli, hingga running. Setiap jersey yang kami produksi menggunakan bahan <strong class="text-gray-900">Dryfit Premium</strong> yang nyaman dipakai, ringan, dan cepat kering.
+            </p>
         </div>
     </div>
 </div>
 
-{{-- Visi & Misi (Split Screen) --}}
+{{-- Visi & Misi --}}
 <div class="bg-gray-50 py-16">
-    <div class="max-w-5xl mx-auto px-4">
-        <div class="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-lg">
-            {{-- Kiri: Gambar --}}
-            <div class="relative h-72 md:h-auto bg-[#1a237e] overflow-hidden">
-                <img
-                    src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80"
-                    alt="Jersey Olahraga Novos"
-                    class="absolute inset-0 w-full h-full object-cover opacity-90"
-                >
-                <div class="absolute inset-0 bg-gradient-to-r from-[#1a237e]/60 to-transparent md:bg-gradient-to-t md:from-[#1a237e]/40 md:to-transparent"></div>
-            </div>
-
-            {{-- Kanan: Visi & Misi --}}
-            <div class="bg-white p-8 md:p-12 flex flex-col justify-center space-y-8">
+    <div class="max-w-[1200px] mx-auto px-6">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="grid md:grid-cols-[1fr_auto_1fr] divide-y md:divide-y-0">
                 {{-- Visi --}}
-                <div>
-                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e3a5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    </div>
+                <div class="p-8 md:p-10 flex flex-col">
                     <h2 class="text-xl font-bold text-gray-900 mb-3">Visi</h2>
-                    <p class="text-gray-600 leading-relaxed">
+                    <p class="text-gray-600 leading-relaxed flex-1">
                         Menjadi platform jersey custom nomor satu di Indonesia yang dikenal dengan kualitas terbaik, desain inovatif, dan pelayanan yang memuaskan.
                     </p>
                 </div>
 
                 {{-- Divider --}}
-                <div class="border-t border-gray-100"></div>
+                <div class="hidden md:flex items-stretch">
+                    <div class="w-px bg-gray-100 my-8"></div>
+                </div>
 
                 {{-- Misi --}}
-                <div>
-                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e3a5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                    </div>
+                <div class="p-8 md:p-10 flex flex-col">
                     <h2 class="text-xl font-bold text-gray-900 mb-3">Misi</h2>
-                    <ul class="space-y-3 text-gray-600">
+                    <ul class="space-y-3 text-gray-600 flex-1">
                         <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
                             <span>Menyediakan jersey custom berkualitas tinggi dengan bahan terbaik</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
                             <span>Memberikan kemudahan pemesanan melalui sistem online yang transparan</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
                             <span>Mendukung pelaku olahraga, komunitas, dan bisnis lokal</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
                             <span>Terus berinovasi dalam desain dan teknologi produksi</span>
                         </li>
                     </ul>
@@ -134,7 +97,7 @@
 
 {{-- Tim --}}
 <div class="bg-gray-50 py-16">
-    <div class="max-w-5xl mx-auto px-4">
+    <div class="max-w-[1200px] mx-auto px-6">
         <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">Tim Kami</h2>
         <p class="text-gray-500 text-center mb-10">Orang-orang hebat di balik Novos</p>
 
@@ -172,7 +135,7 @@
 </div>
 
 {{-- Keunggulan Layanan --}}
-<div class="max-w-5xl mx-auto px-4 py-16">
+<div class="max-w-[1200px] mx-auto px-6 py-16">
     <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">Keunggulan Layanan</h2>
     <p class="text-gray-500 text-center mb-10">Kenapa memilih Novos?</p>
 
