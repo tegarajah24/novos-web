@@ -38,6 +38,36 @@
 
     .no-scrollbar::-webkit-scrollbar { display:none; }
     .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+
+    [data-aos] {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    [data-aos].aos-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    [data-aos="fade-in"] {
+        opacity: 0;
+        transform: none;
+    }
+    [data-aos="fade-in"].aos-visible {
+        opacity: 1;
+    }
+    [data-aos="zoom-in"] {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    [data-aos="zoom-in"].aos-visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+    [data-aos-delay="100"].aos-visible { transition-delay: 0.1s; }
+    [data-aos-delay="200"].aos-visible { transition-delay: 0.2s; }
+    [data-aos-delay="300"].aos-visible { transition-delay: 0.3s; }
+    [data-aos-delay="400"].aos-visible { transition-delay: 0.4s; }
+    [data-aos-delay="500"].aos-visible { transition-delay: 0.5s; }
 </style>
 @endpush
 
@@ -118,7 +148,7 @@
 <section x-data="{ scrolledLeft: false, scrolledRight: false, updateScroll() { let el = $refs.scroll; this.scrolledLeft = el.scrollLeft > 5; this.scrolledRight = (el.scrollLeft + el.clientWidth) >= (el.scrollWidth - 5); }, scrollLeft() { let el = $refs.scroll; el.scrollBy({ left: -320, behavior: 'smooth' }); }, scrollRight() { let el = $refs.scroll; el.scrollBy({ left: 320, behavior: 'smooth' }); } }" class="bg-white py-20">
     <div class="max-w-[1200px] mx-auto px-6">
 
-        <div class="flex items-end justify-between mb-2">
+        <div class="flex items-end justify-between mb-2" data-aos="fade-up">
             <h2 class="text-3xl font-bold text-[#1a237e]">Produk Terlaris</h2>
             <div class="flex items-center gap-1">
                 <a href="{{ route('customer.katalog') }}" class="text-sm font-semibold text-black border-b border-black transition-colors">
@@ -149,8 +179,8 @@
                 ['Running',    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80', 'Jersey Running Elite',  'Rp 180.000'],
                 ['Voli',       'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Voli Pro',       'Rp 170.000'],
                 ['Tenis',      'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Tenis Sport',    'Rp 190.000'],
-            ] as $p)
-            <div class="flex-shrink-0 w-[270px] group">
+            ] as $i => $p)
+            <div class="flex-shrink-0 w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
                 <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
                     <img src="{{ $p[1] }}"
                          alt="{{ $p[0] }}"
@@ -176,7 +206,7 @@
 <section x-data="{ scrolledLeft2: false, scrolledRight2: false, updateScroll2() { let el = $refs.scroll2; this.scrolledLeft2 = el.scrollLeft > 5; this.scrolledRight2 = (el.scrollLeft + el.clientWidth) >= (el.scrollWidth - 5); }, scrollLeft2() { let el = $refs.scroll2; el.scrollBy({ left: -320, behavior: 'smooth' }); }, scrollRight2() { let el = $refs.scroll2; el.scrollBy({ left: 320, behavior: 'smooth' }); } }" class="bg-white pb-20">
     <div class="max-w-[1200px] mx-auto px-6">
 
-        <div class="flex items-end justify-between mb-2">
+        <div class="flex items-end justify-between mb-2" data-aos="fade-up">
             <h2 class="text-3xl font-bold text-[#1a237e]">Produk Terbaru</h2>
             <div class="flex items-center gap-1">
                 <a href="{{ route('customer.katalog') }}" class="text-sm font-semibold text-black border-b border-black transition-colors">
@@ -207,8 +237,8 @@
                 ['Running',    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80', 'Jersey Running Elite',  'Rp 180.000'],
                 ['Voli',       'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Voli Pro',       'Rp 170.000'],
                 ['Tenis',      'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Tenis Sport',    'Rp 190.000'],
-            ] as $p)
-            <div class="flex-shrink-0 w-[270px] group">
+            ] as $i => $p)
+            <div class="flex-shrink-0 w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
                 <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
                     <img src="{{ $p[1] }}"
                          alt="{{ $p[0] }}"
@@ -235,7 +265,7 @@
     <div class="max-w-[1200px] mx-auto px-6">
 
         {{-- heading --}}
-        <div class="text-center mb-16">
+        <div class="text-center mb-16" data-aos="fade-up">
             <h2 class="text-4xl font-bold text-[#1a237e] mb-2">Cara Pemesanan</h2>
             <p class="text-[#757575]">Proses mudah dalam 5 langkah</p>
         </div>
@@ -254,7 +284,7 @@
                 ['ACC Desain',         'Setujui desain final dari tim',    false, false],
                 ['Produksi & Selesai', 'Diproduksi & dikirim ke kamu',    false, false],
             ] as $i => $s)
-            <div class="flex-shrink-0 flex flex-col items-center text-center relative z-10 w-[140px] md:w-auto md:flex-1 px-2">
+            <div class="flex-shrink-0 flex flex-col items-center text-center relative z-10 w-[140px] md:w-auto md:flex-1 px-2" data-aos="fade-up" data-aos-delay="{{ $i * 100 }}">
 
                 {{-- step label --}}
                 <span class="text-[10px] font-semibold text-black uppercase tracking-widest mb-2">
@@ -305,7 +335,7 @@
 {{-- ============================================================ --}}
 {{-- 4. STATS BANNER — Gradient Cyan --}}
 {{-- ============================================================ --}}
-<section class="bg-[#f8f9fa] py-16">
+<section class="bg-[#f8f9fa] py-16" data-aos="fade-in">
     <div class="max-w-[1200px] mx-auto px-6">
         <div class="bg-white rounded-2xl shadow-sm px-6 py-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-0">
@@ -331,12 +361,12 @@
 <section class="bg-[#f8f9fa] py-20">
     <div class="max-w-[1200px] mx-auto px-6">
 
-        <h2 class="text-4xl font-bold text-[#1a237e] text-center mb-12">Apa Kata Mereka?</h2>
+        <h2 class="text-4xl font-bold text-[#1a237e] text-center mb-12" data-aos="fade-up">Apa Kata Mereka?</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
 
             {{-- Testi 1 — besar, col-span-2 row-span-2 --}}
-            <div class="bento-card md:col-span-2 md:row-span-2 bg-white rounded-2xl p-8 md:p-10 shadow-sm">
+            <div class="bento-card md:col-span-2 md:row-span-2 bg-white rounded-2xl p-8 md:p-10 shadow-sm" data-aos="fade-up" data-aos-delay="100">
                 {{-- stars --}}
                 <div class="flex items-center gap-1 mb-5">
                     @for($s = 0; $s < 5; $s++)
@@ -364,7 +394,7 @@
             </div>
 
             {{-- Testi 2 --}}
-            <div class="bento-card bg-white rounded-2xl p-6 shadow-sm">
+            <div class="bento-card bg-white rounded-2xl p-6 shadow-sm" data-aos="fade-up" data-aos-delay="200">
                 {{-- stars --}}
                 <div class="flex items-center gap-0.5 mb-3">
                     @for($s = 0; $s < 5; $s++)
@@ -390,7 +420,7 @@
             </div>
 
             {{-- Testi 3 --}}
-            <div class="bento-card bg-white rounded-2xl p-6 shadow-sm">
+            <div class="bento-card bg-white rounded-2xl p-6 shadow-sm" data-aos="fade-up" data-aos-delay="300">
                 {{-- stars --}}
                 <div class="flex items-center gap-0.5 mb-3">
                     @for($s = 0; $s < 5; $s++)
@@ -419,3 +449,22 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('[data-aos]').forEach(function(el) {
+        observer.observe(el);
+    });
+});
+</script>
+@endpush
