@@ -83,10 +83,6 @@
                    class="px-8 py-3.5 bg-[#00e5ff] text-[#1a237e] text-sm font-bold rounded-[4px] hover:bg-[#00d0ea] transition-all shadow-lg shadow-[#00e5ff]/20">
                     Buat Pesanan Sekarang
                 </a>
-                <a href="{{ route('customer.katalog') }}"
-                   class="px-8 py-3.5 border-2 border-white/60 text-white text-sm font-semibold rounded-[4px] hover:bg-white/10 hover:border-white transition-all">
-                    Lihat Katalog
-                </a>
             </div>
         </div>
 
