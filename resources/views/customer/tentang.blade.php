@@ -96,43 +96,58 @@
 </div>
 
 {{-- Tim --}}
-<div class="bg-gray-50 py-16">
+<section x-data="{ scrolledLeft: false, scrolledRight: false, updateScroll() { let el = $refs.timScroll; this.scrolledLeft = el.scrollLeft > 5; this.scrolledRight = (el.scrollLeft + el.clientWidth) >= (el.scrollWidth - 5); }, scrollLeft() { let el = $refs.timScroll; el.scrollBy({ left: -320, behavior: 'smooth' }); }, scrollRight() { let el = $refs.timScroll; el.scrollBy({ left: 320, behavior: 'smooth' }); } }" class="bg-gray-50 py-16">
     <div class="max-w-[1200px] mx-auto px-6">
-        <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">Tim Kami</h2>
-        <p class="text-gray-500 text-center mb-10">Orang-orang hebat di balik Novos</p>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                <div class="w-24 h-24 rounded-full bg-blue-100 mx-auto mb-4 flex items-center justify-center">
-                    <span class="text-3xl font-bold text-blue-900">A</span>
-                </div>
-                <h3 class="font-bold text-gray-900">Ahmad Rizki</h3>
-                <p class="text-sm text-gray-500">Founder & CEO</p>
+        <div class="flex items-center justify-between mb-2" data-aos="fade-up">
+            <div class="flex-1"></div>
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-gray-900">Tim Kami</h2>
+                <p class="text-gray-500 mt-1">Orang-orang hebat di balik Novos</p>
             </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                <div class="w-24 h-24 rounded-full bg-purple-100 mx-auto mb-4 flex items-center justify-center">
-                    <span class="text-3xl font-bold text-purple-900">S</span>
-                </div>
-                <h3 class="font-bold text-gray-900">Sarah Putri</h3>
-                <p class="text-sm text-gray-500">Head of Design</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                <div class="w-24 h-24 rounded-full bg-green-100 mx-auto mb-4 flex items-center justify-center">
-                    <span class="text-3xl font-bold text-green-900">D</span>
-                </div>
-                <h3 class="font-bold text-gray-900">Dimas Pratama</h3>
-                <p class="text-sm text-gray-500">Head of Production</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                <div class="w-24 h-24 rounded-full bg-amber-100 mx-auto mb-4 flex items-center justify-center">
-                    <span class="text-3xl font-bold text-amber-900">R</span>
-                </div>
-                <h3 class="font-bold text-gray-900">Rina Fitriani</h3>
-                <p class="text-sm text-gray-500">Customer Service</p>
+            <div class="flex-1 flex items-center justify-end gap-1">
+                <button @click="scrollLeft()"
+                    :class="scrolledLeft ? 'text-black hover:text-gray-500 cursor-pointer' : 'text-gray-300 cursor-default'"
+                    class="px-1 transition-colors font-thin text-2xl leading-none">
+                    &lt;
+                </button>
+                <button @click="scrollRight()"
+                    :class="!scrolledRight ? 'text-black hover:text-gray-500 cursor-pointer' : 'text-gray-300 cursor-default'"
+                    class="px-1 transition-colors font-thin text-2xl leading-none">
+                    &gt;
+                </button>
             </div>
         </div>
+        <div class="mx-auto w-20 h-0.5 bg-gray-900 mb-8"></div>
+
+        <div x-ref="timScroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto pb-4 no-scrollbar scroll-smooth">
+            @foreach([
+                ['Ahmad Rizki', 'Founder & CEO', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80'],
+                ['Sarah Putri', 'Head of Design', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80'],
+                ['Dimas Pratama', 'Head of Production', 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80'],
+                ['Rina Fitriani', 'Customer Service', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80'],
+                ['Budi Santoso', 'Lead Designer', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80'],
+                ['Sari Dewi', 'Marketing Manager', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80'],
+                ['Adi Nugroho', 'Production Staff', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80'],
+                ['Dian Permata', 'Quality Control', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80'],
+                ['Fajar Hidayat', 'Logistics', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80'],
+                ['Maya Anggraini', 'Admin', 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&q=80'],
+            ] as $t)
+            <div class="flex-shrink-0 w-[220px] group" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 5) * 100 }}">
+                <div class="relative w-full overflow-hidden rounded-lg" style="aspect-ratio:3/4">
+                    <img src="{{ $t[2] }}"
+                         alt="{{ $t[0] }}"
+                         class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105">
+                </div>
+                <div class="mt-3 text-center">
+                    <h3 class="text-gray-900 text-sm font-bold">{{ $t[0] }}</h3>
+                    <p class="text-gray-500 text-xs mt-0.5">{{ $t[1] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
     </div>
-</div>
+</section>
 
 {{-- Keunggulan Layanan --}}
 <div class="max-w-[1200px] mx-auto px-6 py-16">
