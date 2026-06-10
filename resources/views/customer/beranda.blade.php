@@ -244,7 +244,7 @@
         <div class="relative flex justify-between items-start overflow-x-auto no-scrollbar">
 
             {{-- dashed connector --}}
-            <div class="absolute top-[28px] left-[10%] right-[10%] h-0
+            <div class="absolute top-[50px] left-[10%] right-[10%] h-0
                         border-t-2 border-dashed border-[#1a237e]/20 z-0 hidden md:block"></div>
 
             @foreach([
@@ -257,7 +257,7 @@
             <div class="flex-shrink-0 flex flex-col items-center text-center relative z-10 w-[140px] md:w-auto md:flex-1 px-2">
 
                 {{-- step label --}}
-                <span class="text-[10px] font-semibold text-[#00e5ff] uppercase tracking-widest mb-2">
+                <span class="text-[10px] font-semibold text-black uppercase tracking-widest mb-2">
                     Langkah {{ $i + 1 }}
                 </span>
 
@@ -305,21 +305,22 @@
 {{-- ============================================================ --}}
 {{-- 4. STATS BANNER — Gradient Cyan --}}
 {{-- ============================================================ --}}
-<section class="bg-gradient-to-r from-[#00e5ff] to-[#0097a7] py-16">
+<section class="bg-[#f8f9fa] py-16">
     <div class="max-w-[1200px] mx-auto px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-0">
-            @foreach([
-                ['500+',    'Pesanan Selesai'],
-                ['50+',     'Desain Tersedia'],
-                ['4.9★',    'Rating Customer'],
-                ['3-7 Hari','Waktu Pengerjaan'],
-            ] as $i => $stat)
-            <div class="flex flex-col items-center text-center py-6 px-4
-                        {{ $i < 3 ? 'border-r border-white/20' : '' }}">
-                <p class="text-4xl md:text-5xl font-extrabold text-white mb-1 stat-glow">{{ $stat[0] }}</p>
-                <p class="text-sm text-white/80 font-medium">{{ $stat[1] }}</p>
+        <div class="bg-white rounded-2xl shadow-sm px-6 py-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-0">
+                @foreach([
+                    ['500+',    'Pesanan Selesai'],
+                    ['50+',     'Desain Tersedia'],
+                    ['4.9★',    'Rating Customer'],
+                    ['3-7 Hari','Waktu Pengerjaan'],
+                ] as $i => $stat)
+                <div class="flex flex-col items-center text-center py-4 px-4 {{ $i < 3 ? 'border-r border-[#1a237e]/20' : '' }}">
+                    <p class="text-4xl md:text-5xl font-extrabold text-[#1a237e] mb-1">{{ $stat[0] }}</p>
+                    <p class="text-sm text-[#1a237e]/70 font-medium">{{ $stat[1] }}</p>
+                </div>
+                @endforeach
             </div>
-            @endforeach
         </div>
     </div>
 </section>
