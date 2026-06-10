@@ -46,7 +46,13 @@
     </div>
 
     {{-- Step 1: Pilih Jenis Pesanan --}}
-    <div x-show="step === 1" x-cloak>
+    <div x-show="step === 1" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-6"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-6">
         <h2 class="text-lg font-semibold text-gray-900">Pilih Jenis Pesanan</h2>
         <p class="text-sm text-gray-500 mt-1">Pilih jenis pesanan yang sesuai kebutuhan Anda</p>
 
@@ -55,7 +61,8 @@
             <div
                 @click="jenis = 'custom'"
                 :class="jenis === 'custom' ? 'border-blue-900 bg-blue-50 ring-2 ring-blue-900' : 'border-gray-200 hover:border-gray-300'"
-                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200"
+                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
+                style="animation-delay:0.1s"
             >
                 <div :class="jenis === 'custom' ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
@@ -68,7 +75,8 @@
             <div
                 @click="jenis = 'katalog'"
                 :class="jenis === 'katalog' ? 'border-blue-900 bg-blue-50 ring-2 ring-blue-900' : 'border-gray-200 hover:border-gray-300'"
-                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200"
+                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
+                style="animation-delay:0.2s"
             >
                 <div :class="jenis === 'katalog' ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
@@ -92,7 +100,13 @@
     </div>
 
     {{-- Step 2: Detail & Upload --}}
-    <div x-show="step === 2" x-cloak>
+    <div x-show="step === 2" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-6"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-6">
         <h2 class="text-lg font-semibold text-gray-900">Detail & Upload</h2>
         <p class="text-sm text-gray-500 mt-1">Lengkapi informasi pesanan dan upload file desain Anda</p>
 
@@ -318,7 +332,13 @@
     </div>
 
     {{-- Step 3: Prioritas & Pembayaran --}}
-    <div x-show="step === 3" x-cloak>
+    <div x-show="step === 3" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-6"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-6">
         <h2 class="text-lg font-semibold text-gray-900">Prioritas &amp; Pembayaran</h2>
         <p class="text-sm text-gray-500 mt-1">Pilih prioritas pengerjaan dan metode pembayaran</p>
 
@@ -331,7 +351,8 @@
                         <div
                             @click="prioritas = p.value"
                             :class="prioritas === p.value ? 'border-blue-900 bg-blue-50 ring-2 ring-blue-900' : 'border-gray-200 hover:border-gray-300'"
-                            class="border-2 rounded-xl p-4 cursor-pointer transition-all"
+                            class="border-2 rounded-xl p-4 cursor-pointer transition-all animate-fade-slide"
+                            :style="`animation-delay: ${0.05 + i * 0.07}s`"
                         >
                             <div class="flex items-center justify-between mb-1">
                                 <div class="flex items-center gap-3">
@@ -399,21 +420,24 @@
                         <button
                             @click="pembayaran = 'transfer'"
                             :class="pembayaran === 'transfer' ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'"
-                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors"
+                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors animate-fade-slide"
+                            style="animation-delay:0.3s"
                         >
                             Transfer Bank
                         </button>
                         <button
                             @click="pembayaran = 'qris'"
                             :class="pembayaran === 'qris' ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'"
-                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors"
+                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors animate-fade-slide"
+                            style="animation-delay:0.37s"
                         >
                             QRIS
                         </button>
                         <button
                             @click="pembayaran = 'va'"
                             :class="pembayaran === 'va' ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'"
-                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors"
+                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors animate-fade-slide"
+                            style="animation-delay:0.44s"
                         >
                             Virtual Account
                         </button>
@@ -442,7 +466,10 @@
     </div>
 
     {{-- Step 4: Konfirmasi --}}
-    <div x-show="step === 4" x-cloak>
+    <div x-show="step === 4" x-cloak
+         x-transition:enter="transition ease-out duration-400"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100">
         <div class="text-center max-w-lg mx-auto py-4">
             {{-- Green Checkmark --}}
             <div class="flex justify-center mb-6">
@@ -453,11 +480,11 @@
                 </div>
             </div>
 
-            <h2 class="text-xl font-bold text-green-600 mb-2">Pesanan Berhasil Dibuat!</h2>
-            <p class="text-gray-500 text-sm mb-8">Tim kami akan segera memproses pesanan Anda. Pantau status pesanan melalui halaman Tracking.</p>
+            <h2 class="text-xl font-bold text-green-600 mb-2 animate-fade-slide" style="animation-delay:0.15s">Pesanan Berhasil Dibuat!</h2>
+            <p class="text-gray-500 text-sm mb-8 animate-fade-slide" style="animation-delay:0.3s">Tim kami akan segera memproses pesanan Anda. Pantau status pesanan melalui halaman Tracking.</p>
 
             {{-- Order ID --}}
-            <div class="mb-6">
+            <div class="mb-6 animate-fade-slide" style="animation-delay:0.45s">
                 <p class="text-sm text-gray-500 mb-1">Order ID:</p>
                 <div class="flex items-center justify-center gap-2">
                     <span class="text-lg font-mono font-bold text-gray-900 tracking-wider" x-text="orderNumber" id="orderNumber"></span>
@@ -472,7 +499,7 @@
             </div>
 
             {{-- Ringkasan Pesanan --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-8 text-left max-w-sm mx-auto">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-8 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.6s">
                 <div class="space-y-2.5 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-500">Tim</span>
@@ -503,7 +530,7 @@
             </div>
 
             {{-- Buttons --}}
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <div class="flex flex-col sm:flex-row gap-3 justify-center animate-fade-slide" style="animation-delay:0.75s">
                 <a href="{{ route('customer.tracking') }}" class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors text-center">
                     Tracking Pesanan
                 </a>
@@ -522,6 +549,15 @@
     0% { transform: scale(0); opacity: 0; }
     50% { transform: scale(1.2); }
     100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-slide {
+    opacity: 0;
+    animation: fadeSlideUp 0.5s ease-out forwards;
 }
 </style>
 
