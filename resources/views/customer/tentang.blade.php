@@ -2,14 +2,34 @@
 
 @section('content')
 {{-- Hero --}}
-<div class="bg-gradient-to-br from-blue-900 to-blue-700 text-white">
-    <div class="max-w-5xl mx-auto px-4 py-20 text-center">
-        <h1 class="text-4xl font-bold mb-4">Tentang Novos</h1>
-        <p class="text-blue-200 text-lg max-w-2xl mx-auto leading-relaxed">
-            Novos adalah platform pemesanan jersey custom terpercaya untuk kebutuhan tim, komunitas, dan bisnis Anda. Kami menggabungkan kualitas premium dengan layanan yang mudah dan cepat.
-        </p>
+<section class="relative w-full bg-[#0f2040] overflow-hidden" style="min-height:400px">
+
+    {{-- background image --}}
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('images/bg-tentang.png') }}" alt=""
+             class="w-full h-full object-cover opacity-[0.50]">
     </div>
-</div>
+
+    {{-- mesh overlay --}}
+    <div class="absolute inset-0 opacity-[0.03] z-[1]"
+         style="background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:20px 20px"></div>
+
+    <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-[#00e5ff] opacity-[0.05] rounded-full blur-3xl z-[1]"></div>
+    <div class="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-[#00e5ff] opacity-[0.05] rounded-full blur-3xl z-[1]"></div>
+
+    {{-- content --}}
+    <div class="relative z-10 max-w-[1200px] mx-auto px-6 flex items-center" style="min-height:400px">
+
+        <div class="max-w-2xl">
+            <h1 class="text-4xl md:text-[56px] font-bold leading-tight text-white mb-5" data-aos="fade-up" data-aos-delay="100">
+                Tentang <span class="text-[#00e5ff]">Novos</span>
+            </h1>
+            <p class="text-base md:text-lg text-[#c8d6e0] leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+                Platform pemesanan jersey custom terpercaya untuk kebutuhan tim, komunitas, dan bisnis Anda. Kualitas premium, layanan mudah dan cepat.
+            </p>
+        </div>
+    </div>
+</section>
 
 {{-- Profil Singkat & Identitas Brand --}}
 <div class="max-w-5xl mx-auto px-4 py-16">
@@ -225,3 +245,46 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    [data-aos] {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    [data-aos].aos-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    [data-aos="zoom-in"] {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    [data-aos="zoom-in"].aos-visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+    [data-aos-delay="100"].aos-visible { transition-delay: 0.1s; }
+    [data-aos-delay="200"].aos-visible { transition-delay: 0.2s; }
+    [data-aos-delay="300"].aos-visible { transition-delay: 0.3s; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('[data-aos]').forEach(function(el) {
+        observer.observe(el);
+    });
+});
+</script>
+@endpush
