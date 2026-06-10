@@ -17,18 +17,18 @@
             <a href="{{ route('customer.tentang') }}"
                class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.tentang') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Tentang Kami</a>
 
-            <div x-data="{ katalogOpen: false }" @mouseenter="katalogOpen = true" @mouseleave="katalogOpen = false" class="relative">
+            <div x-data="{ katalogOpen: false, hoverTimer: null }" @mouseenter="clearTimeout(hoverTimer); katalogOpen = true" @mouseleave="hoverTimer = setTimeout(() => katalogOpen = false, 150)" class="relative flex items-center">
                 <a href="{{ route('customer.katalog') }}"
                    class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.katalog') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
-                <div x-show="katalogOpen" x-cloak @mouseenter="katalogOpen = true" @mouseleave="katalogOpen = false"
-                     class="absolute top-full left-0 pt-2 w-64 z-50">
-                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2"
+                <div x-show="katalogOpen" x-cloak @mouseenter="clearTimeout(hoverTimer); katalogOpen = true" @mouseleave="hoverTimer = setTimeout(() => katalogOpen = false, 150)"
                      x-transition:enter="transition ease-out duration-150"
-                     x-transition:enter-start="opacity-0 translate-y-1"
+                     x-transition:enter-start="opacity-0 translate-y-2"
                      x-transition:enter-end="opacity-100 translate-y-0"
                      x-transition:leave="transition ease-in duration-100"
                      x-transition:leave-start="opacity-100 translate-y-0"
-                     x-transition:leave-end="opacity-0 translate-y-1">
+                     x-transition:leave-end="opacity-0 translate-y-2"
+                     class="absolute top-full left-0 pt-2 w-64 z-50">
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2">
                     <a href="{{ route('customer.katalog') }}"
                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors font-medium">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -75,7 +75,9 @@
                 </a>
 
                 {{-- User dropdown --}}
-                <div class="relative" x-data="{ userOpen: false }" @click.away="userOpen = false">
+                <div class="relative" x-data="{ userOpen: false, hoverTimer: null }"
+                     @mouseenter="clearTimeout(hoverTimer); userOpen = true"
+                     @mouseleave="hoverTimer = setTimeout(() => userOpen = false, 150)">
                     <button @click="userOpen = !userOpen"
                         class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                         <svg class="w-7 h-7 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -85,8 +87,16 @@
                         <svg class="w-3.5 h-3.5 text-gray-400 hidden sm:block transition-transform" :class="userOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
 
-                    <div x-show="userOpen" x-cloak @click="userOpen = false"
-                        class="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-[70]">
+                    <div x-show="userOpen" x-cloak
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-1"
+                         class="absolute right-0 top-full z-[70]">
+                        <div class="h-2"></div>
+                        <div class="w-56 bg-white border border-gray-100 rounded-xl shadow-lg py-2">
                         {{-- User info --}}
                         <div class="px-4 py-3 border-b border-gray-100">
                             <p class="text-sm font-semibold text-gray-900 truncate">{{ Auth::user()->name }}</p>
@@ -94,12 +104,12 @@
                         </div>
 
                         {{-- Menu items --}}
-                        <button @click="userOpen = false; profileOpen = true"
+                        <button @click="profileOpen = true"
                            class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors text-left">
                             <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             Profil Saya
                         </button>
-                        <button @click="userOpen = false; passwordOpen = true"
+                        <button @click="passwordOpen = true"
                            class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors text-left">
                             <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
                             Ganti Password
