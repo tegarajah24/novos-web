@@ -8,7 +8,12 @@
         0%, 100% { transform: translateY(0px); }
         50% { transform: translateY(-12px); }
     }
+    @keyframes float-slow {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+    }
     .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
     .card-product { box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); transition: box-shadow .25s ease; }
     .card-product:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.08); }
     .card-testi { box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: box-shadow .25s ease; }
@@ -84,7 +89,7 @@
             </div>
 
             {{-- secondary decorative image (belakang) — efek depth of field --}}
-            <div class="absolute bottom-0 right-0 md:-right-6 z-0 opacity-[0.45] hidden md:block pointer-events-none">
+            <div class="absolute bottom-0 right-0 md:-right-6 z-0 opacity-[0.45] hidden md:block pointer-events-none animate-float-slow">
                 <img src="{{ asset('images/jersey-belakang.png') }}"
                      alt=""
                      class="w-[220px] h-auto object-contain drop-shadow-lg
