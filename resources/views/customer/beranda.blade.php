@@ -151,13 +151,13 @@
             <div class="product-card-glow flex-shrink-0 w-[280px] group relative rounded-2xl bg-white border border-gray-100 shadow-sm p-5">
 
                 {{-- image area --}}
-                <div class="relative flex items-center justify-center min-h-[200px]">
+                <div class="relative w-full overflow-hidden" style="aspect-ratio:1/1">
                     <img src="{{ $p[1] }}"
                          alt="{{ $p[0] }}"
-                         class="w-full h-auto max-h-[200px] object-contain drop-shadow-lg
+                         class="w-full h-full object-cover drop-shadow-lg
                                 transition-transform duration-300 ease-out
                                 group-hover:scale-105">
-                    <span class="absolute top-0 left-0 px-3 py-1 bg-[#00e5ff] text-[#1a1a2e] text-[11px] font-bold rounded-md">
+                    <span class="absolute top-0 left-0 px-3 py-1 bg-[#00e5ff] text-[#1a1a2e] text-[11px] font-bold">
                         {{ $p[0] }}
                     </span>
                 </div>
@@ -165,13 +165,7 @@
                 {{-- body --}}
                 <div class="text-center mt-4">
                     <h3 class="text-[#1a237e] text-sm font-bold">{{ $p[2] }}</h3>
-                    <p class="text-[#9e9e9e] text-xs mt-1">Mulai dari</p>
-                    <p class="text-[#00e5ff] text-2xl font-extrabold mt-1">{{ $p[3] }}</p>
-                    <a href="{{ route('customer.pemesanan') }}"
-                       class="block w-full mt-4 py-2.5 border-2 border-[#1a237e] text-[#1a237e] text-sm font-semibold rounded-xl
-                              hover:bg-[#1a237e] hover:text-white transition-all">
-                        Pesan Sekarang
-                    </a>
+                    <p class="text-black text-base font-bold mt-1">{{ $p[3] }}</p>
                 </div>
             </div>
             @endforeach
