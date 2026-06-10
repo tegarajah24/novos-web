@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\LaporanController;
+
 Route::middleware('auth')->group(function () {
     // Admin routes
     Route::get('/admin/dashboard', function () {
@@ -28,9 +30,7 @@ Route::middleware('auth')->group(function () {
         return view('internal.stress-test');
     })->name('admin.stress-test');
 
-    Route::get('/admin/laporan', function () {
-        return view('internal.laporan');
-    })->name('admin.laporan');
+    Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('admin.laporan');
 
     Route::get('/admin/kelola-produk', function () {
         return view('internal.kelola-produk');
