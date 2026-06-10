@@ -11,28 +11,28 @@
 
 {{-- Filter Bar --}}
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
-    <form method="GET" action="{{ route('internal.laporan') }}" id="filterForm">
+    <form method="GET" action="{{ route(request()->route()?->getName() ?? 'internal.laporan') }}" id="filterForm">
         <div class="flex flex-wrap items-center gap-2">
             <div class="flex gap-1.5">
                 @foreach(['today' => 'Hari Ini', 'week' => 'Minggu Ini', 'month' => 'Bulan Ini', 'custom' => 'Custom'] as $key => $label)
-                    <a href="{{ $key !== 'custom' ? route('internal.laporan', ['filter' => $key]) : '#' }}"
+                    <a href="{{ $key !== 'custom' ? route(request()->route()?->getName() ?? 'internal.laporan', ['filter' => $key]) : '#' }}"
                        onclick="{{ $key === 'custom' ? "document.getElementById('customRange').classList.toggle('hidden');return false;" : '' }}"
                        class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors
-                              {{ $filter === $key ? 'bg-[#1a237e] text-white border-[#1a237e]' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50' }}">
+                               {{ ($filter ?? 'today') === $key ? 'bg-[#1a237e] text-white border-[#1a237e]' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50' }}">
                         {{ $label }}
                     </a>
                 @endforeach
             </div>
 
-            <div id="customRange" class="{{ $filter === 'custom' ? 'flex' : 'hidden' }} items-center gap-1.5">
+            <div id="customRange" class="{{ ($filter ?? 'today') === 'custom' ? 'flex' : 'hidden' }} items-center gap-1.5">
                 <div>
                     <label class="block text-[11px] text-gray-500 mb-0.5">Dari</label>
-                    <input type="date" name="start_date" value="{{ request('start_date', $startDate->format('Y-m-d')) }}"
+                    <input type="date" name="start_date" value="{{ request('start_date', ($startDate ?? \Carbon\Carbon::today())->format('Y-m-d')) }}"
                            class="text-xs border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] px-2 py-1.5">
                 </div>
                 <div>
                     <label class="block text-[11px] text-gray-500 mb-0.5">Sampai</label>
-                    <input type="date" name="end_date" value="{{ request('end_date', $endDate->format('Y-m-d')) }}"
+                    <input type="date" name="end_date" value="{{ request('end_date', ($endDate ?? \Carbon\Carbon::now())->format('Y-m-d')) }}"
                            class="text-xs border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] px-2 py-1.5">
                 </div>
                 <input type="hidden" name="filter" value="custom">
@@ -59,7 +59,7 @@
 
         <p class="text-[11px] text-gray-400 mt-2">
             <i data-lucide="calendar-range" class="w-3 h-3 inline-block mr-1"></i>
-            Periode: <strong class="text-gray-600">{{ $startDate->format('d M Y') }}</strong> — <strong class="text-gray-600">{{ $endDate->format('d M Y') }}</strong>
+            Periode: <strong class="text-gray-600">{{ ($startDate ?? \Carbon\Carbon::today())->format('d M Y') }}</strong> — <strong class="text-gray-600">{{ ($endDate ?? \Carbon\Carbon::now())->format('d M Y') }}</strong>
         </p>
     </form>
 </div>

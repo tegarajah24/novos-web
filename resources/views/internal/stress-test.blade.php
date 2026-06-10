@@ -17,8 +17,51 @@
 
 <div x-data="stressTestApp()" x-init="initApp()" class="space-y-6">
 
-    <!-- IF MANAGER OR SUPER ADMIN: SHOW ONLY OVERVIEW MANAGER -->
-    @if($isManager)
+    <!-- WELCOME SCREEN -->
+    <div x-show="viewState === 'welcome'" class="flex flex-col items-center justify-center min-h-[60vh] text-center" x-transition.opacity>
+        <div class="mb-6 w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center animate-bounce">
+            <i data-lucide="brain-circuit" class="w-12 h-12 text-[#1a237e]"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Selamat Datang di Menu Stress Test</h2>
+        <p class="text-gray-600 max-w-lg mx-auto mb-8">
+            Kesehatan mental Anda adalah prioritas kami. Luangkan waktu sejenak untuk mengenali tingkat stress Anda saat ini.
+        </p>
+        <button @click="startStressTest()" class="btn bg-[#1a237e] hover:bg-[#283593] text-white px-8 py-3 rounded-full shadow-lg border-0 transition duration-300 transform hover:scale-105">
+            Mulai Sekarang
+            <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+        </button>
+    </div>
+
+    <!-- ANIMATION SCREEN -->
+    <div x-show="viewState === 'animating'" class="flex flex-col items-center justify-center min-h-[60vh] text-center" x-transition.opacity x-cloak>
+        <span class="loading loading-ring w-24 h-24 text-[#1a237e] mb-4"></span>
+        <h3 class="text-xl font-bold text-gray-700 animate-pulse">Menyiapkan sistem...</h3>
+        <p class="text-gray-500 mt-2">Harap tunggu sebentar</p>
+    </div>
+
+    <!-- CHOICE SCREEN (Manager only) -->
+    <div x-show="viewState === 'choice'" class="flex flex-col items-center justify-center min-h-[60vh]" x-transition.opacity x-cloak>
+        <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Pilih Tindakan</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full">
+            <div @click="chooseForm()" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-blue-200 cursor-pointer transition-all duration-300 transform hover:-translate-y-2 group text-center">
+                <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-100 transition-colors">
+                    <i data-lucide="clipboard-edit" class="w-10 h-10 text-[#1a237e]"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Menjawab Pertanyaan</h3>
+                <p class="text-gray-500 text-sm">Isi form assessment stress test untuk mengetahui kondisi Anda saat ini.</p>
+            </div>
+            <div @click="chooseReport()" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-green-200 cursor-pointer transition-all duration-300 transform hover:-translate-y-2 group text-center">
+                <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-green-100 transition-colors">
+                    <i data-lucide="pie-chart" class="w-10 h-10 text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Melihat Laporan</h3>
+                <p class="text-gray-500 text-sm">Lihat hasil dan statistik stress test dari seluruh karyawan.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANAGER REPORT SCREEN -->
+    <div x-show="viewState === 'report'" class="space-y-6" x-cloak>
         <!-- Summary Statistics Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
             <!-- Total -->
@@ -176,11 +219,10 @@
                 </div>
             </div>
         </div>
-    @else
-        <!-- IF REGULAR EMPLOYEE: SHOW ONLY ASSESSMENT FORM OR RESULT -->
-        
-        <!-- FORM ASSESSMENT -->
-        <div x-show="viewState === 'form'" class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    </div> <!-- END MANAGER REPORT SCREEN -->
+
+    <!-- FORM ASSESSMENT -->
+    <div x-show="viewState === 'form'" class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" x-cloak>
             <div class="bg-gradient-to-r from-[#1a237e] to-[#283593] p-6 text-white text-center">
                 <h3 class="text-xl font-bold">📋 STRESS TEST PERIODIK</h3>
                 <p class="text-sm opacity-90 mt-1">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
@@ -243,10 +285,10 @@
                     </button>
                 </div>
             </div>
-        </div>
+    </div>
 
-        <!-- HASIL AFTER SUBMIT -->
-        <div x-show="viewState === 'result'" class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden max-w-3xl mx-auto" x-cloak>
+    <!-- HASIL AFTER SUBMIT -->
+    <div x-show="viewState === 'result'" class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden max-w-3xl mx-auto" x-cloak>
             <div class="bg-gradient-to-r from-teal-600 to-emerald-600 p-6 text-white text-center">
                 <h3 class="text-xl font-bold flex items-center justify-center gap-2">
                     <i data-lucide="check-circle" class="w-6 h-6"></i>
@@ -309,14 +351,21 @@
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         🔄 Isi Ulang
                     </button>
-                    <a href="/dashboard" class="btn bg-[#1a237e] hover:bg-[#283593] text-white border-0 btn-sm rounded-lg flex items-center gap-1.5">
-                        <i data-lucide="home" class="w-4 h-4"></i>
-                        🏠 Kembali ke Dashboard
-                    </a>
+                    <template x-if="currentUser.isManager">
+                        <button @click="viewState = 'choice'; $nextTick(() => { if(window.lucide) window.lucide.createIcons(); })" class="btn bg-gray-600 hover:bg-gray-700 text-white border-0 btn-sm rounded-lg flex items-center gap-1.5">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            🏠 Kembali ke Pilihan
+                        </button>
+                    </template>
+                    <template x-if="!currentUser.isManager">
+                        <a href="{{ url('admin/dashboard') }}" class="btn bg-[#1a237e] hover:bg-[#283593] text-white border-0 btn-sm rounded-lg flex items-center gap-1.5">
+                            <i data-lucide="home" class="w-4 h-4"></i>
+                            🏠 Kembali ke Dashboard
+                        </a>
+                    </template>
                 </div>
             </div>
-        </div>
-    @endif
+    </div>
 
     <!-- MODAL 1: RIWAYAT ASSESSMENT (USER) -->
     <div x-show="showHistoryModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" x-transition x-cloak>
@@ -428,7 +477,8 @@ function stressTestApp() {
         },
 
         // View States
-        viewState: 'form', // 'form' or 'result'
+        viewState: 'welcome', // 'welcome', 'animating', 'choice', 'report', 'form', 'result'
+        hasResult: false, // Flag if user has already submitted a result
         
         // Modal states
         showHistoryModal: false,
@@ -606,14 +656,7 @@ function stressTestApp() {
             if (lastResult) {
                 this.latestResult = JSON.parse(lastResult);
                 this.lastSubmitDate = this.latestResult.date;
-                this.viewState = 'result';
-            }
-            
-            // Initialize chart if manager
-            if (this.currentUser.isManager) {
-                this.$nextTick(() => {
-                    this.initChart();
-                });
+                this.hasResult = true;
             }
             
             // Re-render Lucide icons
@@ -621,6 +664,37 @@ function stressTestApp() {
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
                     window.lucide.createIcons();
                 }
+            });
+        },
+        
+        startStressTest() {
+            this.viewState = 'animating';
+            setTimeout(() => {
+                if (this.currentUser.isManager) {
+                    this.viewState = 'choice';
+                } else {
+                    this.viewState = this.hasResult ? 'result' : 'form';
+                }
+                this.$nextTick(() => {
+                    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                        window.lucide.createIcons();
+                    }
+                });
+            }, 1500); // 1.5 seconds animation
+        },
+        
+        chooseReport() {
+            this.viewState = 'report';
+            this.$nextTick(() => {
+                if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
+                if (!this.chartInstance) this.initChart();
+            });
+        },
+        
+        chooseForm() {
+            this.viewState = this.hasResult ? 'result' : 'form';
+            this.$nextTick(() => {
+                if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
             });
         },
         
@@ -718,9 +792,11 @@ function stressTestApp() {
         
         resetForm() {
             this.currentAnswers = Array(10).fill(null);
-            this.viewState = 'form';
+            this.hasResult = false;
             const latestKey = 'nvs_stress_latest_' + this.currentUser.name;
             localStorage.removeItem(latestKey);
+            // Manager kembali ke choice screen, karyawan biasa langsung ke form
+            this.viewState = this.currentUser.isManager ? 'choice' : 'form';
             this.$nextTick(() => {
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
                     window.lucide.createIcons();
