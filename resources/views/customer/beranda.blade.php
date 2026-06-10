@@ -4,6 +4,11 @@
 
 @push('styles')
 <style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+    }
+    .animate-float { animation: float 4s ease-in-out infinite; }
     .card-product { box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); transition: box-shadow .25s ease; }
     .card-product:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.08); }
     .card-testi { box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: box-shadow .25s ease; }
@@ -66,11 +71,11 @@
 
         {{-- Kanan: Visual Showcase --}}
         <div class="flex items-center justify-center py-16 md:py-0 relative">
-            {{-- background glow untuk gambar --}}
+            {{-- background glow --}}
             <div class="absolute w-[400px] h-[400px] bg-[#00e5ff] opacity-[0.08] rounded-full blur-3xl"></div>
 
-            {{-- primary image (depan) --}}
-            <div class="relative z-10 group">
+            {{-- primary image (depan) dengan floating animation --}}
+            <div class="relative z-10 group animate-float">
                 <img src="{{ asset('images/jersey-depan.png') }}"
                      alt="Jersey Custom Tampak Depan"
                      class="w-full max-w-[380px] h-auto object-contain drop-shadow-2xl
@@ -78,13 +83,13 @@
                             group-hover:-rotate-[10deg] group-hover:scale-[1.02]">
             </div>
 
-            {{-- secondary floating image (belakang) --}}
-            <div class="absolute -bottom-4 -left-4 z-0 opacity-60 hidden md:block">
+            {{-- secondary decorative image (belakang) — efek depth of field --}}
+            <div class="absolute bottom-0 right-0 md:-right-6 z-0 opacity-[0.45] hidden md:block pointer-events-none">
                 <img src="{{ asset('images/jersey-belakang.png') }}"
-                     alt="Jersey Custom Tampak Belakang"
-                     class="w-[160px] h-auto object-contain drop-shadow-lg
-                            rotate-[10deg] transition-all duration-700 ease-out
-                            group-hover:rotate-[6deg] opacity-40 saturate-0">
+                     alt=""
+                     class="w-[220px] h-auto object-contain drop-shadow-lg
+                            rotate-[12deg] transition-all duration-700 ease-out
+                            opacity-70">
             </div>
         </div>
     </div>
