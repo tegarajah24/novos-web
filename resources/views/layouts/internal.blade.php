@@ -30,7 +30,7 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Topbar -->
-        <header class="bg-white border-b border-gray-200 py-4 flex items-center justify-between px-8 shrink-0">
+        <header class="py-4 flex items-center justify-between px-8 shrink-0">
             <!-- Title & Date -->
             <div>
                 @yield('topbar-left')
