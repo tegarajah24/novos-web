@@ -10,76 +10,76 @@
     <!-- Stats Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Card 1: Total Pesanan -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-[#1a237e]/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-[#1a237e] flex items-center justify-center">
+                <div class="w-12 h-12 rounded-xl bg-[#1a237e] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Clipboard List icon (Heroicons) --}}
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500">
+                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     <span>+12%</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">127</h3>
-            <p class="text-gray-500 text-sm mt-1">Total Pesanan</p>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">127</h3>
+            <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
         </div>
 
         <!-- Card 2: Menunggu Verifikasi -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-orange-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Clock icon (Heroicons) --}}
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500">
+                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     <span>+3</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">8</h3>
-            <p class="text-gray-500 text-sm mt-1">Menunggu Verifikasi</p>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">8</h3>
+            <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Verifikasi</p>
         </div>
 
         <!-- Card 3: Sedang Diproses -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-blue-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Cog / Settings icon (Heroicons) --}}
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-red-500">
+                <div class="flex items-center gap-1 text-xs font-semibold text-red-500 bg-red-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
                     <span>-2</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">32</h3>
-            <p class="text-gray-500 text-sm mt-1">Sedang Diproses</p>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">32</h3>
+            <p class="text-gray-500 text-sm mt-2 font-medium">Sedang Diproses</p>
         </div>
 
         <!-- Card 4: Selesai Hari Ini -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-green-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Check Circle icon (Heroicons) --}}
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500">
+                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     <span>+1</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">5</h3>
-            <p class="text-gray-500 text-sm mt-1">Selesai Hari Ini</p>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">5</h3>
+            <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
         </div>
     </div>
 
