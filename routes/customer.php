@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Customer\ProductController;
+use App\Http\Controllers\Customer\OrderController;
 
 // Public routes
 Route::get('/tentang-kami', function () {
@@ -21,6 +22,8 @@ Route::get('/pesan', function () {
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
+
+    Route::post('/pesan', [OrderController::class, 'store'])->name('pesan.store');
 
     Route::get('/tracking', function () {
         return view('customer.tracking');
