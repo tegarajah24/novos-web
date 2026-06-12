@@ -64,7 +64,7 @@ class DashboardController extends Controller
         $statusLabels = ['Menunggu', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'];
         $statusData = [$pending, $design, $acc, $produksi, $selesai];
 
-        return compact(
+        return view('internal.dashboard', compact(
             'totalOrders', 'totalTrend',
             'pendingOrders', 'pendingTrend',
             'inProcessOrders', 'processTrend',
@@ -72,7 +72,7 @@ class DashboardController extends Controller
             'recentOrders',
             'weeklyLabels', 'weeklyData',
             'statusLabels', 'statusData',
-        );
+        ));
     }
 
     public function summary()
@@ -242,12 +242,12 @@ class DashboardController extends Controller
         $priorityExpress = 15;
         $prioritySuper = 7;
 
-        return compact(
+        return view('internal.summary', compact(
             'kpi1', 'kpi2', 'employees', 'activities',
             'chartWeeks', 'chartRevenue', 'chartOrdersIn', 'chartOrdersOut',
             'topProductLabels', 'topProductData',
             'distLabels', 'distData',
             'priorityNormal', 'priorityExpress', 'prioritySuper',
-        );
+        ));
     }
 }
