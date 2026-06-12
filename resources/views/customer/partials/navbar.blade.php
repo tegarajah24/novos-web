@@ -7,19 +7,19 @@
      class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
         {{-- Left: Logo --}}
-        <a href="{{ route('customer.beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
+        <a href="{{ route('beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
 
         {{-- Center: Nav links --}}
         <div class="hidden md:flex items-center gap-8">
-            <a href="{{ route('customer.beranda') }}"
-               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.beranda') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Beranda</a>
+            <a href="{{ route('beranda') }}"
+               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('beranda') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Beranda</a>
 
-            <a href="{{ route('customer.tentang') }}"
-               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.tentang') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Tentang Kami</a>
+            <a href="{{ route('tentang') }}"
+               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('tentang') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Tentang Kami</a>
 
             <div x-data="{ katalogOpen: false, hoverTimer: null }" @mouseenter="clearTimeout(hoverTimer); katalogOpen = true" @mouseleave="hoverTimer = setTimeout(() => katalogOpen = false, 150)" class="relative flex items-center">
-                <a href="{{ route('customer.katalog') }}"
-                   class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.katalog') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
+                <a href="{{ route('katalog') }}"
+                   class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('katalog') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
                 <div x-show="katalogOpen" x-cloak @mouseenter="clearTimeout(hoverTimer); katalogOpen = true" @mouseleave="hoverTimer = setTimeout(() => katalogOpen = false, 150)"
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 translate-y-2"
@@ -29,28 +29,28 @@
                      x-transition:leave-end="opacity-0 translate-y-2"
                      class="absolute top-full left-0 pt-2 w-64 z-50">
                     <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2">
-                    <a href="{{ route('customer.katalog') }}"
+                    <a href="{{ route('katalog') }}"
                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors font-medium">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                         Semua Produk
                     </a>
                     <div class="border-t border-gray-100 my-1"></div>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'running']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'running']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Running</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'sepak-bola-futsal']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Sepak Bola / Futsal</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'tenis']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'tenis']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Tenis</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'basket']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'basket']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Basket</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'gym-training']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Gym / Training</a>
                     </div>
                 </div>
             </div>
 
-            <a href="{{ route('customer.pemesanan') }}"
-               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.pemesanan') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Buat Pesanan</a>
+            <a href="{{ route('pemesanan') }}"
+               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('pemesanan') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Buat Pesanan</a>
         </div>
 
         {{-- Right: Auth --}}
@@ -59,7 +59,7 @@
                 {{-- Wrap with password sidebar state --}}
                 <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-3">
                 {{-- Tracking icon --}}
-                <a href="{{ route('customer.tracking') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Tracking Pesanan">
+                <a href="{{ route('tracking') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Tracking Pesanan">
                     <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                         <line x1="3" y1="9" x2="21" y2="9"/>
@@ -68,7 +68,7 @@
                 </a>
 
                 {{-- Chat icon --}}
-                <a href="{{ route('customer.chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Chat">
+                <a href="{{ route('chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Chat">
                     <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                     </svg>
@@ -118,19 +118,19 @@
                         {{-- Dashboard (khusus internal) --}}
                         @if(Auth::user()->role?->name !== 'Customer')
                         <div class="border-t border-gray-100 my-1"></div>
-                        <a href="{{ route('dashboard') }}"
+                        <a href="{{ url('/staf/dashboard') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                             Dashboard
                         </a>
                         @endif
 
-                        <a href="{{ route('customer.pemesanan') }}"
+                        <a href="{{ route('pemesanan') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
                             Buat Pesanan
                         </a>
-                        <a href="{{ route('customer.tracking') }}"
+                        <a href="{{ route('tracking') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                             Tracking
@@ -431,27 +431,27 @@
 
     {{-- Mobile menu dropdown --}}
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-3">
-        <a href="{{ route('customer.beranda') }}" class="block text-sm font-medium {{ request()->routeIs('customer.beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
-        <a href="{{ route('customer.tentang') }}" class="block text-sm font-medium {{ request()->routeIs('customer.tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
+        <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
+        <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
 
         {{-- Mobile Katalog with sub menu --}}
         <div x-data="{ katalogOpen: false }">
             <button @click="katalogOpen = !katalogOpen"
-                class="flex items-center justify-between w-full text-sm font-medium {{ request()->routeIs('customer.katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">
+                class="flex items-center justify-between w-full text-sm font-medium {{ request()->routeIs('katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">
                 Katalog
                 <svg class="w-4 h-4 transition-transform" :class="katalogOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div x-show="katalogOpen" x-cloak class="mt-2 ml-4 space-y-2">
-                <a href="{{ route('customer.katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
+                <a href="{{ route('katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
+                <a href="{{ route('katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
+                <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
+                <a href="{{ route('katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
+                <a href="{{ route('katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
+                <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
             </div>
         </div>
 
-        <a href="{{ route('customer.pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('customer.pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
+        <a href="{{ route('pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
     </div>
 </nav>
 

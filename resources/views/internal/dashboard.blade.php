@@ -18,12 +18,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
+                    <div class="flex items-center gap-1 text-xs font-semibold {{ $totalTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
+                    @if($totalTrend >= 0)
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                    <span>+12%</span>
+                    @else
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    @endif
+                    <span>{{ $totalTrend >= 0 ? '+'.$totalTrend : $totalTrend }}</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">127</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">{{ $totalOrders }}</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
         </div>
 
@@ -36,12 +40,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
+                <div class="flex items-center gap-1 text-xs font-semibold {{ $pendingTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
+                    @if($pendingTrend >= 0)
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                    <span>+3</span>
+                    @else
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    @endif
+                    <span>{{ $pendingTrend >= 0 ? '+'.$pendingTrend : $pendingTrend }}</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">8</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">{{ $pendingOrders }}</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Verifikasi</p>
         </div>
 
@@ -55,12 +63,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-red-500 bg-red-50 px-2 py-1 rounded-full">
+                <div class="flex items-center gap-1 text-xs font-semibold {{ $processTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
+                    @if($processTrend >= 0)
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    @else
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-                    <span>-2</span>
+                    @endif
+                    <span>{{ $processTrend >= 0 ? '+'.$processTrend : $processTrend }}</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">32</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">{{ $inProcessOrders }}</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Sedang Diproses</p>
         </div>
 
@@ -73,12 +85,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
+                <div class="flex items-center gap-1 text-xs font-semibold {{ $completedTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
+                    @if($completedTrend >= 0)
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                    <span>+1</span>
+                    @else
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    @endif
+                    <span>{{ $completedTrend >= 0 ? '+'.$completedTrend : $completedTrend }}</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">5</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">{{ $completedToday }}</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
         </div>
     </div>
@@ -105,7 +121,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
             <h3 class="font-bold text-gray-900 text-lg">Pesanan Terbaru</h3>
-            <a href="#" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
+            <a href="{{ url('staf/daftar-pesanan') }}" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
                 Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
         </div>
@@ -122,66 +138,24 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                    @forelse($recentOrders as $order)
                     <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-001</td>
-                        <td class="px-6 py-4">Budi S.</td>
-                        <td class="px-6 py-4">Jersey Futsal</td>
-                        <td class="px-6 py-4">2 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="blue">Tahap Desain</x-badge></td>
+                        <td class="px-6 py-4 font-medium text-gray-900">{{ $order->order_number }}</td>
+                        <td class="px-6 py-4">{{ $order->user->name }}</td>
+                        <td class="px-6 py-4">{{ $order->designRequest?->team_name ?? 'Pesanan #'.$order->id }}</td>
+                        <td class="px-6 py-4">{{ $order->created_at->format('j M Y') }}</td>
+                        <td class="px-6 py-4"><x-badge type="{{ $order->status }}">{{ $order->status }}</x-badge></td>
                         <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
+                            <a href="{{ url('staf/detail-pesanan/'.$order->id) }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
                             </a>
                         </td>
                     </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-002</td>
-                        <td class="px-6 py-4">Siti R.</td>
-                        <td class="px-6 py-4">Jersey Basket</td>
-                        <td class="px-6 py-4">2 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="yellow">Menunggu Verifikasi</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-10 text-center text-gray-400">Belum ada pesanan</td>
                     </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-003</td>
-                        <td class="px-6 py-4">Andi K.</td>
-                        <td class="px-6 py-4">Jersey Sepak Bola</td>
-                        <td class="px-6 py-4">1 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="purple">Tahap Produksi</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-004</td>
-                        <td class="px-6 py-4">Maya W.</td>
-                        <td class="px-6 py-4">Jersey Voli</td>
-                        <td class="px-6 py-4">1 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="green">Selesai</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-005</td>
-                        <td class="px-6 py-4">Rizal F.</td>
-                        <td class="px-6 py-4">Jersey Running</td>
-                        <td class="px-6 py-4">31 Mei 2026</td>
-                        <td class="px-6 py-4"><x-badge type="orange">Menunggu ACC</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -197,10 +171,10 @@
                 new Chart(ctxLine.getContext('2d'), {
                     type: 'line',
                     data: {
-                        labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
+                        labels: @json($weeklyLabels),
                         datasets: [{
                             label: 'Pesanan',
-                            data: [10, 19, 14, 25, 22, 29, 27, 36],
+                            data: @json($weeklyData),
                             borderColor: '#1a237e',
                             backgroundColor: 'rgba(26, 35, 126, 0.05)',
                             borderWidth: 2,
@@ -247,9 +221,9 @@
                 new Chart(ctxDonut.getContext('2d'), {
                     type: 'doughnut',
                     data: {
-                        labels: ['Menunggu', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'],
+                        labels: @json($statusLabels),
                         datasets: [{
-                            data: [8, 12, 5, 32, 70],
+                            data: @json($statusData),
                             backgroundColor: [
                                 '#eab308', // yellow-500
                                 '#3b82f6', // blue-500

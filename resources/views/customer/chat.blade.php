@@ -188,34 +188,7 @@ function chatApp() {
         selectedFile: null,
         selectedFilePreview: null,
         selectedFileIsImage: false,
-        chats: [
-            {
-                id: 1,
-                name: 'Admin Novos',
-                lastMessage: 'Baik, akan kami proses',
-                time: '10:32',
-                unread: 2,
-                online: true,
-                messages: [
-                    { from: 'admin', text: 'Halo Kak, ada yang bisa kami bantu?', time: '10:30' },
-                    { from: 'customer', text: 'Halo, saya mau tanya status pesanan NVS-20240601-001', time: '10:31' },
-                    { from: 'admin', text: 'Sebentar ya Kak, kami cek dulu', time: '10:31' },
-                    { from: 'admin', text: 'Baik, akan kami proses', time: '10:32' }
-                ]
-            },
-            {
-                id: 2,
-                name: 'Tim Design',
-                lastMessage: 'Desain sedang dikerjakan',
-                time: '09:15',
-                unread: 0,
-                online: false,
-                messages: [
-                    { from: 'admin', text: 'Halo Kak, desain jersey sedang kami kerjakan', time: '09:15' },
-                    { from: 'admin', text: 'Estimasi selesai 2 hari lagi', time: '09:15' }
-                ]
-            }
-        ],
+        chats: @json($chats),
 
         get currentChat() {
             return this.chats.find(c => c.id === this.activeChat);
@@ -287,7 +260,7 @@ function chatApp() {
             }
 
             try {
-                const response = await fetch('{{ route("customer.chat.send") }}', {
+                const response = await fetch('{{ route("chat.send") }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -326,31 +299,6 @@ function chatApp() {
                 this.removeSelectedFile();
 
                 this.$nextTick(() => this.scrollToBottom());
-
-                // Simulate admin reply
-                setTimeout(() => {
-                    if (!this.activeChat) return;
-                    this.typing = true;
-                    this.$nextTick(() => this.scrollToBottom());
-
-                    setTimeout(() => {
-                        if (!this.activeChat) return;
-                        this.typing = false;
-                        const replyTime = new Date();
-                        const rt = String(replyTime.getHours()).padStart(2, '0') + ':' + String(replyTime.getMinutes()).padStart(2, '0');
-                        const replies = [
-                            'Baik Kak, akan kami tindak lanjuti',
-                            'Noted Kak, terima kasih informasinya',
-                            'Siap Kak, kami proses segera',
-                            'Baik, akan kami sampaikan ke tim terkait'
-                        ];
-                        const reply = replies[Math.floor(Math.random() * replies.length)];
-                        chat.messages.push({ from: 'admin', text: reply, time: rt });
-                        chat.lastMessage = reply;
-                        chat.time = rt;
-                        this.$nextTick(() => this.scrollToBottom());
-                    }, 1000);
-                }, 2000);
 
             } catch (error) {
                 Swal.fire({

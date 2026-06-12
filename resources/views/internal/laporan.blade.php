@@ -11,11 +11,11 @@
 
 {{-- Filter Bar --}}
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
-    <form method="GET" action="{{ route(request()->route()?->getName() ?? 'internal.laporan') }}" id="filterForm">
+    <form method="GET" action="{{ route(request()->route()?->getName() ?? 'staf.laporan') }}" id="filterForm">
         <div class="flex flex-wrap items-center gap-2">
             <div class="flex gap-1.5">
                 @foreach(['today' => 'Hari Ini', 'week' => 'Minggu Ini', 'month' => 'Bulan Ini', 'custom' => 'Custom'] as $key => $label)
-                    <a href="{{ $key !== 'custom' ? route(request()->route()?->getName() ?? 'internal.laporan', ['filter' => $key]) : '#' }}"
+                    <a href="{{ $key !== 'custom' ? route(request()->route()?->getName() ?? 'staf.laporan', ['filter' => $key]) : '#' }}"
                        onclick="{{ $key === 'custom' ? "document.getElementById('customRange').classList.toggle('hidden');return false;" : '' }}"
                        class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors
                                {{ ($filter ?? 'today') === $key ? 'bg-[#1a237e] text-white border-[#1a237e]' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50' }}">
@@ -42,11 +42,11 @@
             </div>
 
             <div class="ml-auto flex gap-1.5">
-                <a href="{{ route('internal.laporan.csv', request()->query()) }}"
+                <a href="{{ route('staf.laporan.csv', request()->query()) }}"
                    class="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors">
                     <i data-lucide="file-text" class="w-3.5 h-3.5"></i> CSV
                 </a>
-                <a href="{{ route('internal.laporan.excel', request()->query()) }}"
+                <a href="{{ route('staf.laporan.excel', request()->query()) }}"
                    class="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors">
                     <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Excel
                 </a>
