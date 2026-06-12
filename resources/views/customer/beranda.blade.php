@@ -170,32 +170,25 @@
 
         {{-- horizontal scroll --}}
         <div x-ref="scroll" id="product-scroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth">
-            @foreach([
-                ['Sepak Bola', 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Tim Premium',   'Rp 150.000'],
-                ['Basket',     'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Basket Pro',     'Rp 175.000'],
-                ['Futsal',     'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&q=80', 'Jersey Futsal Elite',   'Rp 135.000'],
-                ['Custom',     'https://images.unsplash.com/photo-1552674605-15c2145efa38?w=400&q=80', 'Jersey Custom Full',    'Rp 200.000'],
-                ['Training',   'https://images.unsplash.com/photo-1596728325488-58c87691e9af?w=400&q=80', 'Jersey Training Pro',   'Rp 160.000'],
-                ['Running',    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80', 'Jersey Running Elite',  'Rp 180.000'],
-                ['Voli',       'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Voli Pro',       'Rp 170.000'],
-                ['Tenis',      'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Tenis Sport',    'Rp 190.000'],
-            ] as $i => $p)
+            @forelse($bestSellers as $i => $product)
             <div class="flex-shrink-0 w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
                 <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
-                    <img src="{{ $p[1] }}"
-                         alt="{{ $p[0] }}"
+                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
+                         alt="{{ $product->name }}"
                          class="w-full h-full object-cover transition-transform duration-300 ease-out
                                 group-hover:scale-105">
                     <span class="absolute top-0 left-0 px-2 py-0.5 bg-[#00e5ff] text-[#1a1a2e] text-[10px] font-bold">
-                        {{ $p[0] }}
+                        {{ $product->category?->name ?? 'Kategori' }}
                     </span>
                 </div>
                 <div class="mt-2 text-center">
-                    <h3 class="text-[#1a237e] text-sm font-bold">{{ $p[2] }}</h3>
-                    <p class="text-black text-sm font-semibold mt-0.5">{{ $p[3] }}</p>
+                    <h3 class="text-[#1a237e] text-sm font-bold">{{ $product->name }}</h3>
+                    <p class="text-black text-sm font-semibold mt-0.5">{{ $product->price ? 'Rp ' . number_format($product->price, 0, ',', '.') : '' }}</p>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="text-center text-gray-400 py-10 w-full">Belum ada produk</div>
+            @endforelse
         </div>
     </div>
 </section>
@@ -228,32 +221,25 @@
 
         {{-- horizontal scroll --}}
         <div x-ref="scroll2" id="product-scroll2" @scroll="updateScroll2()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth">
-            @foreach([
-                ['Sepak Bola', 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Tim Premium',   'Rp 150.000'],
-                ['Basket',     'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Basket Pro',     'Rp 175.000'],
-                ['Futsal',     'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&q=80', 'Jersey Futsal Elite',   'Rp 135.000'],
-                ['Custom',     'https://images.unsplash.com/photo-1552674605-15c2145efa38?w=400&q=80', 'Jersey Custom Full',    'Rp 200.000'],
-                ['Training',   'https://images.unsplash.com/photo-1596728325488-58c87691e9af?w=400&q=80', 'Jersey Training Pro',   'Rp 160.000'],
-                ['Running',    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80', 'Jersey Running Elite',  'Rp 180.000'],
-                ['Voli',       'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80', 'Jersey Voli Pro',       'Rp 170.000'],
-                ['Tenis',      'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', 'Jersey Tenis Sport',    'Rp 190.000'],
-            ] as $i => $p)
+            @forelse($latestProducts as $i => $product)
             <div class="flex-shrink-0 w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
                 <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
-                    <img src="{{ $p[1] }}"
-                         alt="{{ $p[0] }}"
+                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
+                         alt="{{ $product->name }}"
                          class="w-full h-full object-cover transition-transform duration-300 ease-out
                                 group-hover:scale-105">
                     <span class="absolute top-0 left-0 px-2 py-0.5 bg-[#00e5ff] text-[#1a1a2e] text-[10px] font-bold">
-                        {{ $p[0] }}
+                        {{ $product->category?->name ?? 'Kategori' }}
                     </span>
                 </div>
                 <div class="mt-2 text-center">
-                    <h3 class="text-[#1a237e] text-sm font-bold">{{ $p[2] }}</h3>
-                    <p class="text-black text-sm font-semibold mt-0.5">{{ $p[3] }}</p>
+                    <h3 class="text-[#1a237e] text-sm font-bold">{{ $product->name }}</h3>
+                    <p class="text-black text-sm font-semibold mt-0.5">{{ $product->price ? 'Rp ' . number_format($product->price, 0, ',', '.') : '' }}</p>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="text-center text-gray-400 py-10 w-full">Belum ada produk</div>
+            @endforelse
         </div>
     </div>
 </section>
@@ -339,12 +325,15 @@
     <div class="max-w-[1200px] mx-auto px-6">
         <div class="bg-white rounded-2xl shadow-sm px-6 py-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-0">
-                @foreach([
-                    ['500+',    'Pesanan Selesai'],
-                    ['50+',     'Desain Tersedia'],
-                    ['4.9★',    'Rating Customer'],
-                    ['3-7 Hari','Waktu Pengerjaan'],
-                ] as $i => $stat)
+                @php
+                    $stats = [
+                        [$totalOrders . '+', 'Pesanan Selesai'],
+                        [$totalProducts . '+', 'Desain Tersedia'],
+                        ['4.9★', 'Rating Customer'],
+                        ['3-7 Hari', 'Waktu Pengerjaan'],
+                    ];
+                @endphp
+                @foreach($stats as $i => $stat)
                 <div class="flex flex-col items-center text-center py-4 px-4 {{ $i < 3 ? 'border-r border-[#1a237e]/20' : '' }}">
                     <p class="text-4xl md:text-5xl font-extrabold text-[#1a237e] mb-1">{{ $stat[0] }}</p>
                     <p class="text-sm text-[#1a237e]/70 font-medium">{{ $stat[1] }}</p>
