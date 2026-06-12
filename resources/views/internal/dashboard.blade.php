@@ -86,14 +86,14 @@
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Line Chart -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Pesanan Per Minggu</h3>
             <div class="h-64">
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
         <!-- Donut Chart -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Status Pesanan Saat Ini</h3>
             <div class="h-64 flex justify-center">
                 <canvas id="donutChart"></canvas>
@@ -102,7 +102,7 @@
     </div>
 
     <!-- Table Row -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
             <h3 class="font-bold text-gray-900 text-lg">Pesanan Terbaru</h3>
             <a href="#" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
@@ -122,8 +122,8 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-001</td>
+                    <tr class="hover:bg-gray-50 transition-all duration-200 group">
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-001</td>
                         <td class="px-6 py-4">Budi S.</td>
                         <td class="px-6 py-4">Jersey Futsal</td>
                         <td class="px-6 py-4">2 Jun 2026</td>
@@ -134,8 +134,8 @@
                             </a>
                         </td>
                     </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-002</td>
+                    <tr class="hover:bg-gray-50 transition-all duration-200 group">
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-002</td>
                         <td class="px-6 py-4">Siti R.</td>
                         <td class="px-6 py-4">Jersey Basket</td>
                         <td class="px-6 py-4">2 Jun 2026</td>
@@ -146,8 +146,8 @@
                             </a>
                         </td>
                     </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-003</td>
+                    <tr class="hover:bg-gray-50 transition-all duration-200 group">
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-003</td>
                         <td class="px-6 py-4">Andi K.</td>
                         <td class="px-6 py-4">Jersey Sepak Bola</td>
                         <td class="px-6 py-4">1 Jun 2026</td>
@@ -158,8 +158,8 @@
                             </a>
                         </td>
                     </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-004</td>
+                    <tr class="hover:bg-gray-50 transition-all duration-200 group">
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-004</td>
                         <td class="px-6 py-4">Maya W.</td>
                         <td class="px-6 py-4">Jersey Voli</td>
                         <td class="px-6 py-4">1 Jun 2026</td>
@@ -170,8 +170,8 @@
                             </a>
                         </td>
                     </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-005</td>
+                    <tr class="hover:bg-gray-50 transition-all duration-200 group">
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-005</td>
                         <td class="px-6 py-4">Rizal F.</td>
                         <td class="px-6 py-4">Jersey Running</td>
                         <td class="px-6 py-4">31 Mei 2026</td>
