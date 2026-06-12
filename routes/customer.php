@@ -23,11 +23,6 @@ Route::get('/pesan', function () {
 // Authenticated routes
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        $orders = auth()->user()->orders()->latest()->get();
-        return view('customer.dashboard', compact('orders'));
-    })->name('dashboard');
-
     Route::get('/tracking', function () {
         return view('customer.tracking');
     })->name('tracking');
