@@ -20,8 +20,23 @@
         * { font-family: 'Poppins', sans-serif; }
         [x-cloak] { display: none !important; }
     </style>
+    {{-- Migrate old cookie name (sidebar.open) → sidebar_open to fix PHP dot-conversion bug --}}
+    <script>
+        (function () {
+            var oldVal = document.cookie.match(/(?:^|;\s*)sidebar\.open=([^;]*)/);
+            if (oldVal) {
+                var val = oldVal[1];
+                // Delete the old cookie
+                document.cookie = 'sidebar.open=; path=/; max-age=0';
+                // Write new cookie only if sidebar_open not already set
+                if (!document.cookie.match(/(?:^|;\s*)sidebar_open=/)) {
+                    document.cookie = 'sidebar_open=' + val + '; path=/; SameSite=Lax; max-age=' + (60 * 60 * 24 * 365);
+                }
+            }
+        })();
+    </script>
 </head>
-<body class="bg-[#f5f5f5] text-[#212121] antialiased flex h-screen overflow-hidden">
+<body class="bg-[#f5f5f5] text-[#212121] antialiased flex h-screen overflow-hidden" x-data>
 
     <!-- Sidebar -->
     @include('components.sidebar')
@@ -30,21 +45,41 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Topbar -->
-        <header class="bg-white border-b border-gray-200 py-4 flex items-center justify-between px-8 shrink-0">
-            <!-- Title & Date -->
-            <div>
-                @yield('topbar-left')
+        <header class="py-4 flex items-center justify-between px-8 shrink-0">
+            <!-- Left Section -->
+            <div class="flex items-center gap-3">
+                <button @click="$dispatch('sidebar-toggle')" class="text-gray-500 hover:text-[#1a237e]">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <!-- Title & Date -->
+                <div>
+                    @yield('topbar-left')
+                </div>
             </div>
 
-            <!-- Dropdown Profil -->
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 focus:outline-none">
-                    <div class="w-8 h-8 bg-[#1a237e] rounded-full flex items-center justify-center">
-                        <span class="text-white font-bold text-xs">SA</span>
-                    </div>
-                    <span class="text-gray-700 font-medium text-sm">Super Admin</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
-                </button>
+            <!-- Right Section: Chat, Notifikasi, Profil -->
+            <div class="flex items-center gap-8">
+                <!-- Chat & Notifikasi -->
+                <div class="flex items-center gap-3">
+                    <a href="{{ url('/internal/chat') }}" class="relative p-2 text-gray-500 hover:text-[#1a237e]">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">18</span>
+                    </a>
+                    <a href="#" class="relative p-2 text-gray-500 hover:text-[#1a237e]">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">52</span>
+                    </a>
+                </div>
+
+                <!-- Dropdown Profil -->
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 focus:outline-none">
+                        <div class="w-8 h-8 bg-[#1a237e] rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-xs">SA</span>
+                        </div>
+                        <span class="text-gray-700 font-medium text-sm">Super Admin</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
+                    </button>
 
                 <!-- Dropdown Menu -->
                 <div x-show="open" x-cloak
