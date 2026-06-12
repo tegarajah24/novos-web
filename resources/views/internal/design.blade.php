@@ -247,7 +247,7 @@ function designApp() {
         uploadedFiles: [],
         updateStatus: '',
         
-        orders: [],
+        orders: @json($orders),
 
         openDetail(order) {
             this.selectedOrder = order;
