@@ -19,7 +19,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center px-6 border-b border-gray-200 overflow-hidden">
-        <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-2">
+        <a href="{{ url('/internal/dashboard') }}" class="flex items-center gap-2">
             <div class="w-8 h-8 bg-[#1a237e] rounded-lg flex items-center justify-center shrink-0">
                 <span class="text-white font-bold text-lg">N</span>
             </div>
@@ -35,15 +35,15 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @php
             $menus = [
-                ['label' => 'Dashboard',       'url' => url('admin/dashboard'),       'icon' => 'layout-dashboard', 'active' => request()->is('admin/dashboard')],
-                ['label' => 'Summary',         'url' => url('admin/summary'),         'icon' => 'pie-chart',        'active' => request()->is('admin/summary')],
-                ['label' => 'Daftar Pesanan',  'url' => url('admin/daftar-pesanan'),  'icon' => 'shopping-bag',     'active' => request()->is('admin/daftar-pesanan*') || request()->is('internal/detail-pesanan*') || request()->is('internal/chat*')],
-                ['label' => 'Design',          'url' => url('admin/design'),          'icon' => 'pen-tool',         'active' => request()->is('admin/design')],
-                ['label' => 'Produksi',        'url' => url('admin/produksi'),        'icon' => 'scissors',         'active' => request()->is('admin/produksi')],
-                ['label' => 'Stress Test',     'url' => url('admin/stress-test'),     'icon' => 'activity',         'active' => request()->is('admin/stress-test')],
-                ['label' => 'Laporan',         'url' => url('admin/laporan'),         'icon' => 'file-text',        'active' => request()->is('admin/laporan')],
-                ['label' => 'Kelola Produk',   'url' => url('admin/kelola-produk'),   'icon' => 'package',          'active' => request()->is('admin/kelola-produk')],
-                ['label' => 'Kelola Pengguna', 'url' => url('admin/kelola-pengguna'), 'icon' => 'users',            'active' => request()->is('admin/kelola-pengguna*')],
+                ['label' => 'Dashboard',       'url' => url('internal/dashboard'),       'icon' => 'layout-dashboard', 'active' => request()->is('internal/dashboard')],
+                ['label' => 'Summary',         'url' => url('internal/summary'),         'icon' => 'pie-chart',        'active' => request()->is('internal/summary')],
+                ['label' => 'Daftar Pesanan',  'url' => url('internal/daftar-pesanan'),  'icon' => 'shopping-bag',     'active' => request()->is('internal/daftar-pesanan') || request()->is('internal/detail-pesanan*') || request()->is('internal/chat*')],
+                ['label' => 'Design',          'url' => url('internal/design'),          'icon' => 'pen-tool',         'active' => request()->is('internal/design')],
+                ['label' => 'Produksi',        'url' => url('internal/produksi'),        'icon' => 'scissors',         'active' => request()->is('internal/produksi')],
+                ['label' => 'Stress Test',     'url' => url('internal/stress-test'),     'icon' => 'activity',         'active' => request()->is('internal/stress-test')],
+                ['label' => 'Laporan',         'url' => url('internal/laporan'),         'icon' => 'file-text',        'active' => request()->is('internal/laporan')],
+                ['label' => 'Kelola Produk',   'url' => url('internal/kelola-produk'),   'icon' => 'package',          'active' => request()->is('internal/kelola-produk')],
+                ['label' => 'Kelola Pengguna', 'url' => url('internal/kelola-pengguna'), 'icon' => 'users',            'active' => request()->is('internal/kelola-pengguna*')],
             ];
         @endphp
 

@@ -23,7 +23,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 @section('internal-content')
 {{-- Kembali --}}
 <div class="mb-5">
-    <a href="{{ url('internal/daftarpesanan') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1a237e] transition-colors">
+    <a href="{{ url('internal/daftar-pesanan') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1a237e] transition-colors">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
         Kembali ke Daftar Pesanan
     </a>

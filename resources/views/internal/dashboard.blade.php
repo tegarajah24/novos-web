@@ -121,7 +121,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
             <h3 class="font-bold text-gray-900 text-lg">Pesanan Terbaru</h3>
-            <a href="#" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
+            <a href="{{ url('internal/daftar-pesanan') }}" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
                 Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
         </div>
