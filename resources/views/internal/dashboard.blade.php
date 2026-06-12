@@ -115,21 +115,21 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wider">
-                        <th class="px-6 py-4 font-semibold">Order ID</th>
-                        <th class="px-6 py-4 font-semibold">Customer</th>
-                        <th class="px-6 py-4 font-semibold">Produk</th>
-                        <th class="px-6 py-4 font-semibold">Tanggal</th>
-                        <th class="px-6 py-4 font-semibold">Status</th>
+                        <th class="px-6 py-4 font-semibold text-center">Order ID</th>
+                        <th class="px-6 py-4 font-semibold text-center">Customer</th>
+                        <th class="px-6 py-4 font-semibold text-center">Produk</th>
+                        <th class="px-6 py-4 font-semibold text-center">Tanggal</th>
+                        <th class="px-6 py-4 font-semibold text-center">Status</th>
                         <th class="px-6 py-4 font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
                     <tr class="hover:bg-gray-50 transition-all duration-200 group">
-                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-001</td>
-                        <td class="px-6 py-4">Budi S.</td>
-                        <td class="px-6 py-4">Jersey Futsal</td>
-                        <td class="px-6 py-4">2 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="blue">Tahap Desain</x-badge></td>
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200 text-center">NVS-2026-001</td>
+                        <td class="px-6 py-4 text-center">Budi S.</td>
+                        <td class="px-6 py-4 text-center">Jersey Futsal</td>
+                        <td class="px-6 py-4 text-center">2 Jun 2026</td>
+                        <td class="px-6 py-4 text-center"><x-badge type="blue">Tahap Desain</x-badge></td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
@@ -137,11 +137,11 @@
                         </td>
                     </tr>
                     <tr class="hover:bg-gray-50 transition-all duration-200 group">
-                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-002</td>
-                        <td class="px-6 py-4">Siti R.</td>
-                        <td class="px-6 py-4">Jersey Basket</td>
-                        <td class="px-6 py-4">2 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="yellow">Menunggu Verifikasi</x-badge></td>
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200 text-center">NVS-2026-002</td>
+                        <td class="px-6 py-4 text-center">Siti R.</td>
+                        <td class="px-6 py-4 text-center">Jersey Basket</td>
+                        <td class="px-6 py-4 text-center">2 Jun 2026</td>
+                        <td class="px-6 py-4 text-center"><x-badge type="yellow">Menunggu Verifikasi</x-badge></td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
@@ -149,11 +149,11 @@
                         </td>
                     </tr>
                     <tr class="hover:bg-gray-50 transition-all duration-200 group">
-                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-003</td>
-                        <td class="px-6 py-4">Andi K.</td>
-                        <td class="px-6 py-4">Jersey Sepak Bola</td>
-                        <td class="px-6 py-4">1 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="purple">Tahap Produksi</x-badge></td>
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200 text-center">NVS-2026-003</td>
+                        <td class="px-6 py-4 text-center">Andi K.</td>
+                        <td class="px-6 py-4 text-center">Jersey Sepak Bola</td>
+                        <td class="px-6 py-4 text-center">1 Jun 2026</td>
+                        <td class="px-6 py-4 text-center"><x-badge type="purple">Tahap Produksi</x-badge></td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
@@ -161,11 +161,11 @@
                         </td>
                     </tr>
                     <tr class="hover:bg-gray-50 transition-all duration-200 group">
-                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-004</td>
-                        <td class="px-6 py-4">Maya W.</td>
-                        <td class="px-6 py-4">Jersey Voli</td>
-                        <td class="px-6 py-4">1 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="green">Selesai</x-badge></td>
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200 text-center">NVS-2026-004</td>
+                        <td class="px-6 py-4 text-center">Maya W.</td>
+                        <td class="px-6 py-4 text-center">Jersey Voli</td>
+                        <td class="px-6 py-4 text-center">1 Jun 2026</td>
+                        <td class="px-6 py-4 text-center"><x-badge type="green">Selesai</x-badge></td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
@@ -173,11 +173,11 @@
                         </td>
                     </tr>
                     <tr class="hover:bg-gray-50 transition-all duration-200 group">
-                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200">NVS-2026-005</td>
-                        <td class="px-6 py-4">Rizal F.</td>
-                        <td class="px-6 py-4">Jersey Running</td>
-                        <td class="px-6 py-4">31 Mei 2026</td>
-                        <td class="px-6 py-4"><x-badge type="orange">Menunggu ACC</x-badge></td>
+                        <td class="px-6 py-4 font-medium text-gray-900 border-l-2 border-l-transparent group-hover:border-l-[#1a237e] transition-all duration-200 text-center">NVS-2026-005</td>
+                        <td class="px-6 py-4 text-center">Rizal F.</td>
+                        <td class="px-6 py-4 text-center">Jersey Running</td>
+                        <td class="px-6 py-4 text-center">31 Mei 2026</td>
+                        <td class="px-6 py-4 text-center"><x-badge type="orange">Menunggu ACC</x-badge></td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
