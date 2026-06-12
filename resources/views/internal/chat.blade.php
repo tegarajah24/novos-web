@@ -132,7 +132,7 @@ function internalChatApp() {
         activeChat: null,
         message: '',
         typing: false,
-        chats: [],
+        chats: @json($chats),
 
         get currentChat() {
             return this.chats.find(c => c.id === this.activeChat);
