@@ -11,4 +11,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    // Tambahkan bagian ini di bawah plugins biar HP bisa baca CSS dari laptop
+    server: {
+        host: true,
+        hmr: {
+            host: '192.168.18.50',
+        },
+    },
 })
