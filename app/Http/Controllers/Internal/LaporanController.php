@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Internal;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
@@ -35,7 +36,6 @@ class LaporanController extends Controller
 
         $callback = function () use ($data) {
             $file = fopen('php://output', 'w');
-            // BOM untuk Excel
             fputs($file, "\xEF\xBB\xBF");
 
             fputcsv($file, ['LAPORAN NOVOS', '', '']);
@@ -185,7 +185,6 @@ class LaporanController extends Controller
 
     private function getReportData(Request $request): array
     {
-        // Reuse logic — panggil index dan ambil data dari view
         $filter    = $request->get('filter', 'today');
         $startDate = null;
         $endDate   = Carbon::now()->endOfDay();

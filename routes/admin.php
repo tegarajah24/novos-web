@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\Internal\LaporanController;
 
 Route::middleware('auth')->group(function () {
     // Admin routes
