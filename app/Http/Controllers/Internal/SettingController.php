@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
 
-class ProductController extends Controller
+class SettingController extends Controller
 {
     //
 }
