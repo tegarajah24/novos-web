@@ -9,24 +9,6 @@
 
 @section('internal-content')
 @php
-$orders = [
-    ['order_id' => 'NVS-2026-081', 'customer' => 'Budi Santoso', 'produk' => 'Jersey Futsal Elite', 'qty' => 22, 'total' => 1870000, 'tanggal' => '2 Jun 2026', 'status' => 'tahap_desain', 'assignee' => 'Andi Desainer', 'assignee_role' => 'Designer', 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-082', 'customer' => 'Siti Rahmawati', 'produk' => 'Jersey Basket Premium', 'qty' => 15, 'total' => 1425000, 'tanggal' => '2 Jun 2026', 'status' => 'menunggu_verifikasi', 'assignee' => 'Budi Admin', 'assignee_role' => 'Admin', 'priority' => 'Express'],
-    ['order_id' => 'NVS-2026-083', 'customer' => 'Andi Kurniawan', 'produk' => 'Jersey Sepak Bola Pro', 'qty' => 30, 'total' => 2850000, 'tanggal' => '1 Jun 2026', 'status' => 'tahap_produksi', 'assignee' => 'Chiko Produksi', 'assignee_role' => 'Produksi', 'priority' => 'Super Express'],
-    ['order_id' => 'NVS-2026-084', 'customer' => 'Maya Wijaya', 'produk' => 'Jersey Voli Classic', 'qty' => 12, 'total' => 900000, 'tanggal' => '1 Jun 2026', 'status' => 'selesai', 'assignee' => 'Dini CS', 'assignee_role' => 'CS', 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-085', 'customer' => 'Rizal Fadhilah', 'produk' => 'Jersey Running Lite', 'qty' => 8, 'total' => 600000, 'tanggal' => '31 Mei 2026', 'status' => 'menunggu_acc', 'assignee' => 'Eva Desainer', 'assignee_role' => 'Designer', 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-086', 'customer' => 'Dewi Pertiwi', 'produk' => 'Jersey Futsal Pro Max', 'qty' => 20, 'total' => 1800000, 'tanggal' => '31 Mei 2026', 'status' => 'menunggu_verifikasi', 'assignee' => null, 'assignee_role' => null, 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-087', 'customer' => 'Hendra Gunawan', 'produk' => 'Jersey Sepak Bola Classic', 'qty' => 18, 'total' => 1404000, 'tanggal' => '30 Mei 2026', 'status' => 'selesai', 'assignee' => 'Budi Admin', 'assignee_role' => 'Admin', 'priority' => 'Normal'],
-];
-
-$assignees = [
-    ['name' => 'Andi Desainer', 'role' => 'Designer', 'color' => 'purple'],
-    ['name' => 'Budi Admin', 'role' => 'Admin', 'color' => 'blue'],
-    ['name' => 'Chiko Produksi', 'role' => 'Produksi', 'color' => 'orange'],
-    ['name' => 'Dini CS', 'role' => 'Customer Service', 'color' => 'green'],
-    ['name' => 'Eva Desainer', 'role' => 'Designer', 'color' => 'purple'],
-];
-
 function avatar($name, $color) {
     $initials = collect(explode(' ', $name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('');
     $colors = ['purple' => 'bg-purple-500', 'blue' => 'bg-blue-500', 'orange' => 'bg-orange-500', 'green' => 'bg-green-500', 'gray' => 'bg-gray-400'];
@@ -166,7 +148,7 @@ function rupiah($n) {
                         <td class="px-5 py-4 whitespace-nowrap">{!! badge($o['status']) !!}</td>
                         <td class="px-5 py-4 text-center whitespace-nowrap">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ url('internal/detail-pesanan/'.$o['order_id']) }}" class="p-1.5 rounded-lg text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 transition-colors" title="Lihat Detail">
+                                <a href="{{ url('staf/detail-pesanan/'.$o['order_id']) }}" class="p-1.5 rounded-lg text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 transition-colors" title="Lihat Detail">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                 </a>
                                 <button @click="editMode = true" class="p-1.5 rounded-lg text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 transition-colors" title="Edit">
@@ -239,7 +221,7 @@ function rupiah($n) {
 
     {{-- PAGINATION --}}
     <div class="flex items-center justify-between text-sm text-gray-500">
-        <span>Menampilkan 1–{{ count($orders) }} dari {{ count($orders) }} pesanan</span>
+        <span>Menampilkan {{ count($orders) }} pesanan</span>
         <div class="flex items-center gap-1">
             <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-gray-50 disabled:opacity-40" disabled>&lt; Prev</button>
             <button class="px-3 py-1.5 bg-[#1a237e] text-white rounded-lg text-xs">1</button>

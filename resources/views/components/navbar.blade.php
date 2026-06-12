@@ -1,6 +1,6 @@
 <nav class="navbar bg-base-100 shadow-md">
     <div class="flex-1">
-        <a href="{{ route('dashboard') }}" class="btn btn-ghost text-xl">{{ config('app.name', 'Novos') }}</a>
+        <a href="{{ url('/staf/dashboard') }}" class="btn btn-ghost text-xl">{{ config('app.name', 'Novos') }}</a>
     </div>
     <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
