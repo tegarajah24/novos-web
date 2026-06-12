@@ -26,6 +26,8 @@
                     @endif
                     <span>{{ $totalTrend >= 0 ? '+'.$totalTrend : $totalTrend }}</span>
                 </div>
+                <h3 class="text-4xl font-bold text-gray-900 tracking-tight">127</h3>
+                <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
             </div>
             <h3 class="text-4xl font-bold text-gray-900 tracking-tight">{{ $totalOrders }}</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
@@ -102,14 +104,14 @@
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Line Chart -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Pesanan Per Minggu</h3>
             <div class="h-64">
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
         <!-- Donut Chart -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Status Pesanan Saat Ini</h3>
             <div class="h-64 flex justify-center">
                 <canvas id="donutChart"></canvas>
@@ -118,7 +120,7 @@
     </div>
 
     <!-- Table Row -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
             <h3 class="font-bold text-gray-900 text-lg">Pesanan Terbaru</h3>
             <a href="{{ url('staf/daftar-pesanan') }}" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
