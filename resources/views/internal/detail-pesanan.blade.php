@@ -1,29 +1,9 @@
 @extends('layouts.internal')
 
 @php
-$order = [
-    'order_id' => 'NVS-2026-081',
-    'customer' => ['name'=>'Budi Santoso','email'=>'budi@email.com','phone'=>'+62 812-3456-7890','address'=>'Jl. Merdeka No. 45','city'=>'Jakarta','postal_code'=>'12345'],
-    'payment' => ['subtotal'=>1720000,'biaya_prioritas'=>150000,'total'=>1870000,'status'=>'lunas','method'=>'Transfer BCA'],
-    'product' => ['type'=>'Custom','sport'=>'Futsal','team_name'=>'Garuda FC','quantity'=>22,'primary_color'=>'Navy','secondary_color'=>'Electric','notes'=>'Warna utama bisa Navy, namun punggung menggunakan font bold, logo tim di sisi kiri.'],
-    'sizes' => ['XS'=>2,'S'=>4,'M'=>6,'L'=>5,'XL'=>3,'XXL'=>2],
-    'current_status' => 'tahap_desain',
-    'last_update' => '2 Jun 2026',
-    'design_files' => [['name'=>'Logo TIM'],['name'=>'Referensi 1'],['name'=>'Referensi 2']],
-    'history_notes' => [
-        ['date'=>'2 Jun 2026 10:30','user'=>'Admin Budi','note'=>'Pesanan masuk, menunggu verifikasi'],
-        ['date'=>'2 Jun 2026 14:15','user'=>'Admin Budi','note'=>'Pembayaran diverifikasi, lanjut desain'],
-        ['date'=>'3 Jun 2026 09:00','user'=>'Andi Desainer','note'=>'Mulai pengerjaan desain jersey'],
-        ['date'=>'4 Jun 2026 16:30','user'=>'Andi Desainer','note'=>'Desain selesai, menunggu ACC customer'],
-    ],
-    'status_history' => [
-        ['date'=>'2 Jun 2026','status'=>'menunggu_verifikasi','note'=>'Pesanan baru masuk'],
-        ['date'=>'2 Jun 2026','status'=>'tahap_desain','note'=>'Pembayaran terverifikasi'],
-        ['date'=>'4 Jun 2026','status'=>'menunggu_acc','note'=>'Desain selesai, menunggu ACC'],
-    ],
-];
-$badgeType = match($order['current_status']) { 'menunggu_verifikasi'=>'yellow','tahap_desain'=>'blue','menunggu_acc'=>'orange','tahap_produksi'=>'purple','selesai'=>'green',default=>'gray' };
-$badgeLabel = match($order['current_status']) { 'menunggu_verifikasi'=>'Menunggu Verifikasi','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','tahap_produksi'=>'Produksi','selesai'=>'Selesai',default=>$order['current_status'] };
+$order = [];
+$badgeType = 'gray';
+$badgeLabel = '-';
 $noteColors = ['bg-green-500','bg-yellow-500','bg-blue-500','bg-purple-500'];
 function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 @endphp

@@ -247,43 +247,7 @@ function designApp() {
         uploadedFiles: [],
         updateStatus: '',
         
-        // Data Dummy untuk simulasi UI
-        orders: [
-            {
-                id: 1,
-                order_id: 'NVS-20260607-001',
-                customer: 'Budi Santoso',
-                customer_contact: '0812-3456-7890',
-                team_name: 'Garuda FC',
-                material: 'Milano (Premium)',
-                collar: 'V-Neck Rib',
-                pattern: 'Full Printing',
-                deadline: '10 Jun 2026',
-                priority: 'High',
-                notes: 'Tolong <strong>logo garuda</strong> di dada kiri dibuat agak besar (sekitar 8cm). Warna dominan merah maroon dengan corak emas di samping.<br><br>- Nama pemain di belakang warna emas.<br>- Font nomor pakai yang tegas.',
-                reference_files: [
-                    'https://placehold.co/300x300/1a237e/ffffff?text=Logo+Tim',
-                    'https://placehold.co/300x300/e2e8f0/64748b?text=Ref+Corak',
-                    'https://placehold.co/300x300/e2e8f0/64748b?text=Ref+Warna',
-                ]
-            },
-            {
-                id: 2,
-                order_id: 'NVS-20260607-002',
-                customer: 'Siti Rahayu',
-                customer_contact: '0857-1122-3344',
-                team_name: 'Bina Bangsa Volley',
-                material: 'Benzema',
-                collar: 'O-Neck Standard',
-                pattern: 'Kombinasi Polos',
-                deadline: '12 Jun 2026',
-                priority: 'Normal',
-                notes: 'Warna biru dongker dengan strip putih. Tidak pakai logo, hanya nama tim di dada depan.',
-                reference_files: [
-                    'https://placehold.co/300x300/e2e8f0/64748b?text=Contoh+Kaos'
-                ]
-            }
-        ],
+        orders: [],
 
         openDetail(order) {
             this.selectedOrder = order;

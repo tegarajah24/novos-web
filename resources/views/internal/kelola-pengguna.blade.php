@@ -95,115 +95,11 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700" id="userTableBody">
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold">AD</div>
-                                <span class="font-medium text-gray-900">Admin Dedi</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">admindedi</td>
-                        <td class="px-6 py-4">admin@novos.com</td>
-                        <td class="px-6 py-4"><x-badge type="blue">Admin</x-badge></td>
-                        <td class="px-6 py-4"><x-badge type="green">Aktif</x-badge></td>
-                        <td class="px-6 py-4 text-gray-500">1 Jan 2026</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="openDetail(1)" class="p-2 text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 rounded-lg transition-colors" title="Lihat Detail">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                                <button onclick="openEdit(1)" class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
-                                <button onclick="confirmHapus(1, 'Admin Dedi')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors" title="Hapus">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-bold">MN</div>
-                                <span class="font-medium text-gray-900">Manager Novos</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">managernovos</td>
-                        <td class="px-6 py-4">manager@novos.com</td>
-                        <td class="px-6 py-4"><x-badge type="purple">Manager</x-badge></td>
-                        <td class="px-6 py-4"><x-badge type="green">Aktif</x-badge></td>
-                        <td class="px-6 py-4 text-gray-500">15 Feb 2026</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="openDetail(2)" class="p-2 text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 rounded-lg transition-colors" title="Lihat Detail">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                                <button onclick="openEdit(2)" class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
-                                <button onclick="confirmHapus(2, 'Manager Novos')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors" title="Hapus">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">DS</div>
-                                <span class="font-medium text-gray-900">Desainer Satu</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">desainersatu</td>
-                        <td class="px-6 py-4">design@novos.com</td>
-                        <td class="px-6 py-4"><x-badge type="orange">Design</x-badge></td>
-                        <td class="px-6 py-4"><x-badge type="green">Aktif</x-badge></td>
-                        <td class="px-6 py-4 text-gray-500">10 Mar 2026</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="openDetail(3)" class="p-2 text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 rounded-lg transition-colors" title="Lihat Detail">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                                <button onclick="openEdit(3)" class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
-                                <button onclick="confirmHapus(3, 'Desainer Satu')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors" title="Hapus">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">PR</div>
-                                <span class="font-medium text-gray-900">Produksi Rudi</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">produksirudi</td>
-                        <td class="px-6 py-4">produksi@novos.com</td>
-                        <td class="px-6 py-4"><x-badge type="blue">Produksi</x-badge></td>
-                        <td class="px-6 py-4"><x-badge type="red">Nonaktif</x-badge></td>
-                        <td class="px-6 py-4 text-gray-500">5 Apr 2026</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="openDetail(4)" class="p-2 text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 rounded-lg transition-colors" title="Lihat Detail">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                                <button onclick="openEdit(4)" class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
-                                <button onclick="confirmHapus(4, 'Produksi Rudi')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors" title="Hapus">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
         <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-white">
-            <p class="text-sm text-gray-500">Menampilkan 1-4 dari <span id="totalDisplay">4</span> pengguna</p>
+            <p class="text-sm text-gray-500">Menampilkan 0 dari <span id="totalDisplay">0</span> pengguna</p>
             <div class="flex items-center gap-2">
                 <button class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50 transition-colors" disabled>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>

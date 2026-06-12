@@ -201,15 +201,7 @@ function kelolaProdukApp() {
     return {
         formMode: 'create',
         
-        categories: [
-            { id: 1, name: 'Sepak Bola' },
-            { id: 2, name: 'Futsal' },
-            { id: 3, name: 'Basket' },
-            { id: 4, name: 'Running' },
-            { id: 5, name: 'Gym' },
-            { id: 6, name: 'Tenis' },
-            { id: 7, name: 'E-Sports' }
-        ],
+        categories: [],
         
         products: [],
         
@@ -230,45 +222,6 @@ function kelolaProdukApp() {
         },
         
         initApp() {
-            const stored = localStorage.getItem('nvs_dummy_products');
-            if (stored) {
-                this.products = JSON.parse(stored);
-            } else {
-                this.products = [
-                    {
-                        id: 1,
-                        name: 'Novos Red Maroon FC',
-                        category_id: 1,
-                        price: 155000,
-                        description: 'Bahan dry-fit premium dengan sublimasi anti luntur.',
-                        image_depan: null,
-                        image_belakang: null,
-                        is_featured: true
-                    },
-                    {
-                        id: 2,
-                        name: 'Novos Velocity Runner',
-                        category_id: 4,
-                        price: 135000,
-                        description: 'Ultra light running tee, sangat ringan dan cepat kering.',
-                        image_depan: null,
-                        image_belakang: null,
-                        is_featured: false
-                    },
-                    {
-                        id: 3,
-                        name: 'Novos Hoop Legend',
-                        category_id: 3,
-                        price: 165000,
-                        description: 'Setelan jersey basket lengkap dengan celana.',
-                        image_depan: null,
-                        image_belakang: null,
-                        is_featured: false
-                    }
-                ];
-                this.saveToStorage();
-            }
-            
             this.renderIcons();
         },
         
@@ -453,7 +406,7 @@ function kelolaProdukApp() {
         },
         
         saveToStorage() {
-            localStorage.setItem('nvs_dummy_products', JSON.stringify(this.products));
+            localStorage.setItem('nvs_products', JSON.stringify(this.products));
         },
         
         renderIcons() {

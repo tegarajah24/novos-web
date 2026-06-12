@@ -9,23 +9,8 @@
 
 @section('internal-content')
 @php
-$orders = [
-    ['order_id' => 'NVS-2026-081', 'customer' => 'Budi Santoso', 'produk' => 'Jersey Futsal Elite', 'qty' => 22, 'total' => 1870000, 'tanggal' => '2 Jun 2026', 'status' => 'tahap_desain', 'assignee' => 'Andi Desainer', 'assignee_role' => 'Designer', 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-082', 'customer' => 'Siti Rahmawati', 'produk' => 'Jersey Basket Premium', 'qty' => 15, 'total' => 1425000, 'tanggal' => '2 Jun 2026', 'status' => 'menunggu_verifikasi', 'assignee' => 'Budi Admin', 'assignee_role' => 'Admin', 'priority' => 'Express'],
-    ['order_id' => 'NVS-2026-083', 'customer' => 'Andi Kurniawan', 'produk' => 'Jersey Sepak Bola Pro', 'qty' => 30, 'total' => 2850000, 'tanggal' => '1 Jun 2026', 'status' => 'tahap_produksi', 'assignee' => 'Chiko Produksi', 'assignee_role' => 'Produksi', 'priority' => 'Super Express'],
-    ['order_id' => 'NVS-2026-084', 'customer' => 'Maya Wijaya', 'produk' => 'Jersey Voli Classic', 'qty' => 12, 'total' => 900000, 'tanggal' => '1 Jun 2026', 'status' => 'selesai', 'assignee' => 'Dini CS', 'assignee_role' => 'CS', 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-085', 'customer' => 'Rizal Fadhilah', 'produk' => 'Jersey Running Lite', 'qty' => 8, 'total' => 600000, 'tanggal' => '31 Mei 2026', 'status' => 'menunggu_acc', 'assignee' => 'Eva Desainer', 'assignee_role' => 'Designer', 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-086', 'customer' => 'Dewi Pertiwi', 'produk' => 'Jersey Futsal Pro Max', 'qty' => 20, 'total' => 1800000, 'tanggal' => '31 Mei 2026', 'status' => 'menunggu_verifikasi', 'assignee' => null, 'assignee_role' => null, 'priority' => 'Normal'],
-    ['order_id' => 'NVS-2026-087', 'customer' => 'Hendra Gunawan', 'produk' => 'Jersey Sepak Bola Classic', 'qty' => 18, 'total' => 1404000, 'tanggal' => '30 Mei 2026', 'status' => 'selesai', 'assignee' => 'Budi Admin', 'assignee_role' => 'Admin', 'priority' => 'Normal'],
-];
-
-$assignees = [
-    ['name' => 'Andi Desainer', 'role' => 'Designer', 'color' => 'purple'],
-    ['name' => 'Budi Admin', 'role' => 'Admin', 'color' => 'blue'],
-    ['name' => 'Chiko Produksi', 'role' => 'Produksi', 'color' => 'orange'],
-    ['name' => 'Dini CS', 'role' => 'Customer Service', 'color' => 'green'],
-    ['name' => 'Eva Desainer', 'role' => 'Designer', 'color' => 'purple'],
-];
+$orders = [];
+$assignees = [];
 
 function avatar($name, $color) {
     $initials = collect(explode(' ', $name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('');
@@ -239,7 +224,7 @@ function rupiah($n) {
 
     {{-- PAGINATION --}}
     <div class="flex items-center justify-between text-sm text-gray-500">
-        <span>Menampilkan 1–{{ count($orders) }} dari {{ count($orders) }} pesanan</span>
+        <span>Menampilkan {{ count($orders) }} pesanan</span>
         <div class="flex items-center gap-1">
             <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-gray-50 disabled:opacity-40" disabled>&lt; Prev</button>
             <button class="px-3 py-1.5 bg-[#1a237e] text-white rounded-lg text-xs">1</button>

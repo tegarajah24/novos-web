@@ -132,47 +132,7 @@ function internalChatApp() {
         activeChat: null,
         message: '',
         typing: false,
-        chats: [
-            {
-                id: 1,
-                name: 'Budi Santoso',
-                lastMessage: 'Halo, saya mau tanya status pesanan',
-                time: '10:31',
-                unread: 2,
-                online: true,
-                messages: [
-                    { from: 'customer', text: 'Halo, saya mau tanya status pesanan NVS-2026-001', time: '10:30' },
-                    { from: 'admin', text: 'Halo Kak Budi, pesanan sedang dalam tahap desain ya', time: '10:31' },
-                    { from: 'customer', text: 'Oke, kira-kira kapan selesai?', time: '10:31' },
-                ]
-            },
-            {
-                id: 2,
-                name: 'Siti Rahayu',
-                lastMessage: 'Terima kasih infonya',
-                time: '09:15',
-                unread: 0,
-                online: false,
-                messages: [
-                    { from: 'customer', text: 'Kak, pembayaran saya sudah transfer', time: '09:10' },
-                    { from: 'admin', text: 'Baik Kak, sedang kami verifikasi ya', time: '09:12' },
-                    { from: 'customer', text: 'Terima kasih infonya', time: '09:15' },
-                ]
-            },
-            {
-                id: 3,
-                name: 'Andi Kurniawan',
-                lastMessage: 'Siap, ditunggu ya',
-                time: 'Kemarin',
-                unread: 0,
-                online: false,
-                messages: [
-                    { from: 'customer', text: 'Desain saya bisa direvisi tidak?', time: '14:00' },
-                    { from: 'admin', text: 'Bisa Kak, silakan kirim file revisinya', time: '14:05' },
-                    { from: 'customer', text: 'Siap, ditunggu ya', time: '14:06' },
-                ]
-            },
-        ],
+        chats: [],
 
         get currentChat() {
             return this.chats.find(c => c.id === this.activeChat);

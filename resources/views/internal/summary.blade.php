@@ -8,31 +8,10 @@
 
 @section('internal-content')
 @php
-$kpi1 = [
-    ['v'=>'127','l'=>'Total Pesanan','c'=>'+12%','up'=>true,'bg'=>'bg-blue-50','tc'=>'text-blue-600','icon'=>'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'],
-    ['v'=>'Rp 234,5jt','l'=>'Revenue','c'=>'+7%','up'=>true,'bg'=>'bg-green-50','tc'=>'text-green-600','icon'=>'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
-    ['v'=>'87','l'=>'Customer Aktif','c'=>'+5%','up'=>true,'bg'=>'bg-indigo-50','tc'=>'text-indigo-600','icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
-    ['v'=>'5.2 hari','l'=>'Avg Processing Time','c'=>'-0.3 hari','up'=>false,'bg'=>'bg-orange-50','tc'=>'text-orange-500','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-];
-$kpi2 = [
-    ['v'=>'8','l'=>'Menunggu Verifikasi','c'=>'+3','up'=>true,'bg'=>'bg-yellow-50','tc'=>'text-yellow-600','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-    ['v'=>'23','l'=>'Tahap Desain','c'=>'-2','up'=>false,'bg'=>'bg-purple-50','tc'=>'text-purple-600','icon'=>'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'],
-    ['v'=>'15','l'=>'Selesai Bulan Ini','c'=>'+8','up'=>true,'bg'=>'bg-green-50','tc'=>'text-green-600','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
-    ['v'=>'42','l'=>'Produk Terjual','c'=>'+15%','up'=>true,'bg'=>'bg-teal-50','tc'=>'text-teal-600','icon'=>'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
-];
-$employees = [
-    ['name'=>'Andi Desainer','role'=>'Designer','orders'=>42,'avg'=>'2.2 hari','load'=>65],
-    ['name'=>'Budi Admin','role'=>'Admin','orders'=>127,'avg'=>'0.5 hari','load'=>30],
-    ['name'=>'Chiko Produksi','role'=>'Produksi','orders'=>89,'avg'=>'4.1 hari','load'=>85],
-    ['name'=>'Dini CS','role'=>'CS','orders'=>230,'avg'=>'0.2 hari','load'=>15],
-    ['name'=>'Eva Desainer','role'=>'Designer','orders'=>38,'avg'=>'2.5 hari','load'=>60],
-];
-$activities = [
-    ['time'=>'Hari ini, 10:30','color'=>'bg-green-500','text'=>'Pesanan baru dari Budi S. (NVS-001)'],
-    ['time'=>'Kemarin, 14:15','color'=>'bg-yellow-500','text'=>'Status NVS-002 diupdate ke "Tahap Desain"'],
-    ['time'=>'2 Jun 2026','color'=>'bg-blue-500','text'=>'Desain untuk NVS-003 telah diupload oleh Andi'],
-    ['time'=>'1 Jun 2026','color'=>'bg-purple-500','text'=>'Pembayaran NVS-004 terverifikasi oleh Budi'],
-];
+$kpi1 = [];
+$kpi2 = [];
+$employees = [];
+$activities = [];
 @endphp
 
 {{-- ─── KPI BARIS 1 ───────────────────────────────────────────────────── --}}

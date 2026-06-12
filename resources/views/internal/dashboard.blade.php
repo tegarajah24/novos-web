@@ -20,10 +20,10 @@
                 </div>
                 <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                    <span>+12%</span>
+                    <span>--</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">127</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
         </div>
 
@@ -38,10 +38,10 @@
                 </div>
                 <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                    <span>+3</span>
+                    <span>--</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">8</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Verifikasi</p>
         </div>
 
@@ -57,10 +57,10 @@
                 </div>
                 <div class="flex items-center gap-1 text-xs font-semibold text-red-500 bg-red-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-                    <span>-2</span>
+                    <span>--</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">32</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Sedang Diproses</p>
         </div>
 
@@ -75,10 +75,10 @@
                 </div>
                 <div class="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                    <span>+1</span>
+                    <span>--</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">5</h3>
+            <h3 class="text-4xl font-bold text-gray-900 tracking-tight">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
         </div>
     </div>
@@ -122,66 +122,6 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-001</td>
-                        <td class="px-6 py-4">Budi S.</td>
-                        <td class="px-6 py-4">Jersey Futsal</td>
-                        <td class="px-6 py-4">2 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="blue">Tahap Desain</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-002</td>
-                        <td class="px-6 py-4">Siti R.</td>
-                        <td class="px-6 py-4">Jersey Basket</td>
-                        <td class="px-6 py-4">2 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="yellow">Menunggu Verifikasi</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-003</td>
-                        <td class="px-6 py-4">Andi K.</td>
-                        <td class="px-6 py-4">Jersey Sepak Bola</td>
-                        <td class="px-6 py-4">1 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="purple">Tahap Produksi</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-004</td>
-                        <td class="px-6 py-4">Maya W.</td>
-                        <td class="px-6 py-4">Jersey Voli</td>
-                        <td class="px-6 py-4">1 Jun 2026</td>
-                        <td class="px-6 py-4"><x-badge type="green">Selesai</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">NVS-2026-005</td>
-                        <td class="px-6 py-4">Rizal F.</td>
-                        <td class="px-6 py-4">Jersey Running</td>
-                        <td class="px-6 py-4">31 Mei 2026</td>
-                        <td class="px-6 py-4"><x-badge type="orange">Menunggu ACC</x-badge></td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ url('/admin/orders/detail') }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
-                            </a>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -200,7 +140,7 @@
                         labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
                         datasets: [{
                             label: 'Pesanan',
-                            data: [10, 19, 14, 25, 22, 29, 27, 36],
+                            data: [],
                             borderColor: '#1a237e',
                             backgroundColor: 'rgba(26, 35, 126, 0.05)',
                             borderWidth: 2,
