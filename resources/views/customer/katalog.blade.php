@@ -59,20 +59,7 @@ function katalogData() {
             searchQuery: '',
             currentPage: 1,
             perPage: 12,
-            products: [
-                { id: 1,  name: 'Jersey Basket Elite',        category: 'Basket',     price: 98000,  badge: null,       image: '{{ asset("images/produk/novos-Photoroom.png") }}' },
-                { id: 2,  name: 'Jersey Sepak Bola Ultra',    category: 'Sepak Bola', price: 98000,  badge: null,       image: '{{ asset("images/produk/novos2-Photoroom.png") }}' },
-                { id: 3,  name: 'Jersey Running Pro',         category: 'Running',    price: 77000,  badge: 'Populer',  image: '{{ asset("images/produk/novos3-Photoroom.png") }}' },
-                { id: 4,  name: 'Jersey Voli Premium',        category: 'Voli',       price: 79000,  badge: null,       image: '{{ asset("images/produk/novos4-Photoroom.png") }}' },
-                { id: 5,  name: 'Jersey Basket Street',       category: 'Basket',     price: 82000,  badge: null,       image: '{{ asset("images/produk/novos5-Photoroom.png") }}' },
-                { id: 6,  name: 'Jersey Futsal Pro Max',      category: 'Futsal',     price: 88000,  badge: 'Populer',  image: '{{ asset("images/produk/novos6-Photoroom.png") }}' },
-                { id: 7,  name: 'Jersey Sepak Bola Classic',  category: 'Sepak Bola', price: null,   badge: null,       image: '{{ asset("images/produk/novos7-Photoroom.png") }}' },
-                { id: 8,  name: 'Jersey Running Lite',        category: 'Running',    price: null,   badge: null,       image: '{{ asset("images/produk/novos8-Photoroom.png") }}' },
-                { id: 9,  name: 'Jersey Voli Classic',        category: 'Voli',       price: null,   badge: null,       image: '{{ asset("images/produk/novos-coklat-Photoroom.png") }}' },
-                { id: 10, name: 'Jersey Futsal Elite',        category: 'Futsal',     price: 95000,  badge: null,       image: '{{ asset("images/produk/novos-hijau-Photoroom.png") }}' },
-                { id: 11, name: 'Jersey Basket Pro',          category: 'Basket',     price: 105000, badge: 'Terlaris', image: '{{ asset("images/produk/novos-merah-Photoroom.png") }}' },
-                { id: 12, name: 'Jersey Running Speed',       category: 'Running',    price: 85000,  badge: null,       image: '{{ asset("images/produk/novos2-Photoroom.png") }}' },
-            ],
+            products: @json($products),
 
             init() {
                 const params = new URLSearchParams(window.location.search);

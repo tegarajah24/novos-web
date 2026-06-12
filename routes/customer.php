@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Customer\ProductController;
 
 // Public routes
 Route::get('/tentang-kami', function () {
     return view('customer.tentang-kami');
 })->name('tentang');
 
-Route::get('/katalog', function () {
-        return view('customer.katalog');
-    })->name('katalog');
+Route::get('/katalog', [ProductController::class, 'index'])->name('katalog');
 
 Route::get('/pesan', function () {
         return view('customer.pemesanan', [
