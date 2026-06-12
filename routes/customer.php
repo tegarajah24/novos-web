@@ -5,6 +5,7 @@ use App\Http\Controllers\Customer\ProductController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\TrackingController;
 use App\Http\Controllers\Customer\ChatController;
+use App\Http\Controllers\Customer\ProfileController;
 
 // Public routes
 Route::get('/tentang-kami', function () {
@@ -35,5 +36,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 });
