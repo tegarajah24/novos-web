@@ -99,19 +99,19 @@
             <div class="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-2 md:bg-transparent md:backdrop-blur-none md:border-none md:p-0">
 
             {{-- headline --}}
-            <h1 class="text-lg md:text-5xl md:text-[56px] font-bold leading-tight text-white mb-2 md:mb-5 max-w-2xl" data-aos="fade-up" data-aos-delay="100">
+            <h1 class="text-4xl md:text-[56px] font-bold leading-tight text-white mb-5 max-w-2xl" data-aos="fade-up" data-aos-delay="100">
                 Pesan Jersey Custom Impianmu
             </h1>
 
             {{-- deskripsi --}}
-            <p class="text-[10px] md:text-base md:text-lg text-[#c8d6e0] max-w-xl mb-2 md:mb-10 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+            <p class="text-base md:text-lg text-[#c8d6e0] max-w-xl mb-10 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
                 Desain bebas, kualitas premium, pengerjaan cepat dan tepat waktu
             </p>
 
             {{-- CTA inline --}}
             <div class="flex flex-wrap items-center gap-3" data-aos="fade-up" data-aos-delay="300">
                 <a href="{{ route('pemesanan') }}"
-                   class="px-3 py-1.5 md:px-8 md:py-3.5 bg-[#00e5ff] text-[#1a237e] text-[10px] md:text-sm font-bold rounded-[4px] hover:bg-[#00d0ea] transition-all shadow-lg shadow-[#00e5ff]/20">
+                   class="px-3 py-1.5 md:px-8 md:py-3.5 bg-[#00e5ff] text-[#1a237e] text-sm font-bold rounded-[4px] hover:bg-[#00d0ea] transition-all shadow-lg shadow-[#00e5ff]/20">
                     Buat Pesanan Sekarang
                 </a>
             </div>
