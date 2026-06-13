@@ -247,11 +247,11 @@ function trackingForm() {
         lightboxImage: '',
         revisionOpen: false,
         revisionNote: '',
-        searchQuery: 'NVS-20240601-001',
+        searchQuery: '',
         order: {
-            id: 'NVS-20240601-001',
-            date: '1 Juni 2024',
-            status: 'di_design'
+            id: '',
+            date: '',
+            status: 'pending'
         },
 
         get statusLabel() {
@@ -326,21 +326,50 @@ function trackingForm() {
             });
         },
 
-        searchOrder() {
-            this.searched = true;
-            this.$nextTick(() => {
-                setTimeout(() => { this.animateProgress = true; }, 200);
-            });
+        async searchOrder() {
+            if (!this.searchQuery.trim()) return;
+            try {
+                const res = await fetch('{{ route("tracking.search") }}?q=' + encodeURIComponent(this.searchQuery), {
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                });
+                const data = await res.json();
+                if (!data.found) {
+                    Swal.fire({ icon: 'error', title: 'Tidak ditemukan', text: data.message });
+                    return;
+                }
+                this.order = data.order;
+                this.searched = true;
+                this.$nextTick(() => {
+                    setTimeout(() => { this.animateProgress = true; }, 200);
+                });
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Gagal mencari', text: 'Terjadi kesalahan' });
+            }
         },
 
-        accDesign() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Desain Disetujui!',
-                text: 'Desain telah Anda setujui. Pesanan akan dilanjutkan ke produksi.',
-                confirmButtonColor: '#1e3a5f',
-                confirmButtonText: 'OK'
-            });
+        async accDesign() {
+            try {
+                const res = await fetch('/tracking/' + this.order.id + '/acc', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
+                    return;
+                }
+                this.order.status = data.status;
+                this.$nextTick(() => { setTimeout(() => { this.animateProgress = true; }, 200); });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Desain Disetujui!',
+                    text: 'Desain telah Anda setujui. Pesanan akan dilanjutkan ke tahap berikutnya.',
+                    confirmButtonColor: '#1e3a5f',
+                    confirmButtonText: 'OK'
+                });
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' });
+            }
         },
 
         openLightbox(img) {
@@ -360,7 +389,7 @@ function trackingForm() {
             if (!this.revisionOpen) this.revisionNote = '';
         },
 
-        sendRevision() {
+        async sendRevision() {
             if (!this.revisionNote.trim()) {
                 Swal.fire({
                     icon: 'warning',
@@ -371,16 +400,30 @@ function trackingForm() {
                 });
                 return;
             }
-            Swal.fire({
-                icon: 'success',
-                title: 'Revisi Dikirim!',
-                text: 'Catatan revisi Anda telah dikirim ke tim desain.',
-                confirmButtonColor: '#1e3a5f',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                this.revisionOpen = false;
-                this.revisionNote = '';
-            });
+            try {
+                const res = await fetch('/tracking/' + this.order.id + '/revision', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ note: this.revisionNote })
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
+                    return;
+                }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Revisi Dikirim!',
+                    text: 'Catatan revisi Anda telah dikirim ke tim desain.',
+                    confirmButtonColor: '#1e3a5f',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    this.revisionOpen = false;
+                    this.revisionNote = '';
+                });
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' });
+            }
         }
     }
 }

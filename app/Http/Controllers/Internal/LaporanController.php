@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Internal;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
@@ -20,7 +21,7 @@ class LaporanController extends Controller
 
     public function exportPdf(Request $request)
     {
-        return redirect()->route('internal.laporan', $request->query());
+        return redirect()->route('staf.laporan', $request->query());
     }
 
     public function exportCsv(Request $request)
@@ -35,7 +36,6 @@ class LaporanController extends Controller
 
         $callback = function () use ($data) {
             $file = fopen('php://output', 'w');
-            // BOM untuk Excel
             fputs($file, "\xEF\xBB\xBF");
 
             fputcsv($file, ['LAPORAN NOVOS', '', '']);
@@ -185,7 +185,6 @@ class LaporanController extends Controller
 
     private function getReportData(Request $request): array
     {
-        // Reuse logic — panggil index dan ambil data dari view
         $filter    = $request->get('filter', 'today');
         $startDate = null;
         $endDate   = Carbon::now()->endOfDay();
@@ -266,46 +265,6 @@ class LaporanController extends Controller
 
         $produkTerbanyak = $produkStats->first();
         $produkTersedikit = $produkStats->last();
-
-        if ($totalPesanan === 0) {
-            $totalPesanan = 128;
-            $pesananSelesai = 96;
-            $pesananDiproses = 18;
-            $pesananDibatalkan = 5;
-            $pesananPending = 9;
-            $totalCustomer = 85;
-            $totalPendapatan = 47850000;
-            $avgTransaksi = 498437;
-            $pesananTerlambat = 3;
-            $pesananPerAdmin = collect([
-                (object) ['admin_name' => 'Ahmad Fauzi', 'role_name' => 'Admin', 'jumlah' => 42],
-                (object) ['admin_name' => 'Siti Rahma', 'role_name' => 'Admin', 'jumlah' => 31],
-                (object) ['admin_name' => 'Budi Santoso', 'role_name' => 'Manager', 'jumlah' => 23],
-            ]);
-            $produkStats = collect([
-                (object) ['produk' => 'Polyester Dryfit', 'jumlah_pesanan' => 58],
-                (object) ['produk' => 'Cotton Combed 30s', 'jumlah_pesanan' => 35],
-                (object) ['produk' => 'Nylon Taffeta', 'jumlah_pesanan' => 22],
-                (object) ['produk' => 'Spandek', 'jumlah_pesanan' => 13],
-            ]);
-            $pesananPerKategori = collect([
-                (object) ['kategori' => 'Round Neck', 'jumlah' => 52],
-                (object) ['kategori' => 'Polo Neck', 'jumlah' => 31],
-                (object) ['kategori' => 'V-Neck', 'jumlah' => 28],
-                (object) ['kategori' => 'Henley Neck', 'jumlah' => 17],
-            ]);
-            $pendapatanHarian = collect([
-                (object) ['tanggal' => '2026-06-02', 'jumlah' => 18, 'pendapatan' => 7200000],
-                (object) ['tanggal' => '2026-06-03', 'jumlah' => 22, 'pendapatan' => 9350000],
-                (object) ['tanggal' => '2026-06-04', 'jumlah' => 15, 'pendapatan' => 6100000],
-                (object) ['tanggal' => '2026-06-05', 'jumlah' => 27, 'pendapatan' => 11200000],
-                (object) ['tanggal' => '2026-06-06', 'jumlah' => 20, 'pendapatan' => 8450000],
-                (object) ['tanggal' => '2026-06-07', 'jumlah' => 14, 'pendapatan' => 5550000],
-                (object) ['tanggal' => '2026-06-08', 'jumlah' => 12, 'pendapatan' => 5100000],
-            ]);
-            $produkTerbanyak = $produkStats->first();
-            $produkTersedikit = $produkStats->last();
-        }
 
         return compact(
             'filter', 'startDate', 'endDate',

@@ -1,25 +1,34 @@
 {{-- ============================================================ --}}
 {{-- NAVBAR CUSTOMER --}}
 {{-- ============================================================ --}}
-<nav x-data="{ lastScroll: 0, hidden: false }"
-     @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true } else if (y < lastScroll) { hidden = false }; lastScroll = y"
-     :class="hidden ? '-translate-y-full' : 'translate-y-0'"
+<div x-data="{ mobileOpen: false, lastScroll: 0, hidden: false }"
+     @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true; mobileOpen = false } else if (y < lastScroll) { hidden = false }; lastScroll = y">
+<nav :class="hidden ? '-translate-y-full' : 'translate-y-0'"
      class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
-        {{-- Left: Logo --}}
-        <a href="{{ route('customer.beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
+        {{-- Mobile hamburger --}}
+        <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-[#616161] hover:text-[#1a237e]">
+            <svg :class="{'hidden': mobileOpen, 'inline-flex': ! mobileOpen}" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg :class="{'hidden': ! mobileOpen, 'inline-flex': mobileOpen}" class="hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        {{-- Center: Logo --}}
+        <a href="{{ route('beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
 
         {{-- Center: Nav links --}}
         <div class="hidden md:flex items-center gap-8">
-            <a href="{{ route('customer.beranda') }}"
-               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.beranda') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Beranda</a>
+            <a href="{{ route('beranda') }}"
+               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('beranda') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Beranda</a>
 
-            <a href="{{ route('customer.tentang') }}"
-               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.tentang') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Tentang Kami</a>
+            <a href="{{ route('tentang') }}"
+               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('tentang') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Tentang Kami</a>
 
             <div x-data="{ katalogOpen: false, hoverTimer: null }" @mouseenter="clearTimeout(hoverTimer); katalogOpen = true" @mouseleave="hoverTimer = setTimeout(() => katalogOpen = false, 150)" class="relative flex items-center">
-                <a href="{{ route('customer.katalog') }}"
-                   class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.katalog') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
+                <a href="{{ route('katalog') }}"
+                   class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('katalog') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Katalog</a>
                 <div x-show="katalogOpen" x-cloak @mouseenter="clearTimeout(hoverTimer); katalogOpen = true" @mouseleave="hoverTimer = setTimeout(() => katalogOpen = false, 150)"
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 translate-y-2"
@@ -29,28 +38,28 @@
                      x-transition:leave-end="opacity-0 translate-y-2"
                      class="absolute top-full left-0 pt-2 w-64 z-50">
                     <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2">
-                    <a href="{{ route('customer.katalog') }}"
+                    <a href="{{ route('katalog') }}"
                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors font-medium">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                         Semua Produk
                     </a>
                     <div class="border-t border-gray-100 my-1"></div>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'running']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'running']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Running</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'sepak-bola-futsal']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Sepak Bola / Futsal</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'tenis']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'tenis']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Tenis</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'basket']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'basket']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Basket</a>
-                    <a href="{{ route('customer.katalog', ['kategori' => 'gym-training']) }}"
+                    <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}"
                        class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Gym / Training</a>
                     </div>
                 </div>
             </div>
 
-            <a href="{{ route('customer.pemesanan') }}"
-               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('customer.pemesanan') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Buat Pesanan</a>
+            <a href="{{ route('pemesanan') }}"
+               class="nav-link text-sm font-medium transition-colors {{ request()->routeIs('pemesanan') ? 'font-semibold text-[#1a237e] nav-link-active' : 'text-[#616161] hover:text-[#1a237e]' }}">Buat Pesanan</a>
         </div>
 
         {{-- Right: Auth --}}
@@ -59,7 +68,7 @@
                 {{-- Wrap with password sidebar state --}}
                 <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-3">
                 {{-- Tracking icon --}}
-                <a href="{{ route('customer.tracking') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Tracking Pesanan">
+                <a href="{{ route('tracking') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Tracking Pesanan">
                     <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                         <line x1="3" y1="9" x2="21" y2="9"/>
@@ -68,16 +77,15 @@
                 </a>
 
                 {{-- Chat icon --}}
-                <a href="{{ route('customer.chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Chat">
+                <a href="{{ route('chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Chat">
                     <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                     </svg>
                 </a>
 
                 {{-- User dropdown --}}
-                <div class="relative" x-data="{ userOpen: false, hoverTimer: null }"
-                     @mouseenter="clearTimeout(hoverTimer); userOpen = true"
-                     @mouseleave="hoverTimer = setTimeout(() => userOpen = false, 150)">
+                <div class="relative" x-data="{ userOpen: false }"
+                     @click.away="userOpen = false">
                     <button @click="userOpen = !userOpen"
                         class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                         <svg class="w-7 h-7 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -118,19 +126,19 @@
                         {{-- Dashboard (khusus internal) --}}
                         @if(Auth::user()->role?->name !== 'Customer')
                         <div class="border-t border-gray-100 my-1"></div>
-                        <a href="{{ route('dashboard') }}"
+                        <a href="{{ route('staf.dashboard') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                             Dashboard
                         </a>
                         @endif
 
-                        <a href="{{ route('customer.pemesanan') }}"
+                        <a href="{{ route('pemesanan') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
                             Buat Pesanan
                         </a>
-                        <a href="{{ route('customer.tracking') }}"
+                        <a href="{{ route('tracking') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                             Tracking
@@ -261,8 +269,8 @@
                 </template>
                 </div>
             @else
-                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @click.away="open = false">
-                    <svg class="w-8 h-8 text-[#9e9e9e] hover:text-[#1a237e] transition-colors cursor-pointer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <svg @click="open = !open" class="w-8 h-8 text-[#9e9e9e] hover:text-[#1a237e] transition-colors cursor-pointer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <div x-show="open" x-cloak @mouseenter="open = true"
@@ -421,39 +429,43 @@
             </template>
         </div>
 
-        {{-- Mobile hamburger --}}
-        <button id="mobile-menu-btn" class="md:hidden p-2 text-[#616161] hover:text-[#1a237e]">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-        </button>
     </div>
+</nav>
 
-    {{-- Mobile menu dropdown --}}
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-3">
-        <a href="{{ route('customer.beranda') }}" class="block text-sm font-medium {{ request()->routeIs('customer.beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
-        <a href="{{ route('customer.tentang') }}" class="block text-sm font-medium {{ request()->routeIs('customer.tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
+{{-- Mobile menu dropdown --}}
+<div x-show="mobileOpen" x-cloak
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0 -translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100 translate-y-0"
+     x-transition:leave-end="opacity-0 -translate-y-2"
+     class="fixed top-16 left-1/2 -translate-x-1/2 w-full max-w-[1440px] bg-white border-t border-[#f0f0f0] z-40">
+    <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
+        <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
+        <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
 
         {{-- Mobile Katalog with sub menu --}}
         <div x-data="{ katalogOpen: false }">
             <button @click="katalogOpen = !katalogOpen"
-                class="flex items-center justify-between w-full text-sm font-medium {{ request()->routeIs('customer.katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">
+                class="flex items-center justify-between w-full text-sm font-medium {{ request()->routeIs('katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">
                 Katalog
                 <svg class="w-4 h-4 transition-transform" :class="katalogOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div x-show="katalogOpen" x-cloak class="mt-2 ml-4 space-y-2">
-                <a href="{{ route('customer.katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
-                <a href="{{ route('customer.katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
+                <a href="{{ route('katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
+                <a href="{{ route('katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
+                <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
+                <a href="{{ route('katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
+                <a href="{{ route('katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
+                <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
             </div>
         </div>
 
-        <a href="{{ route('customer.pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('customer.pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
+        <a href="{{ route('pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
     </div>
-</nav>
+</div>
+</div>
 
 <style>
     .nav-link {
@@ -505,10 +517,6 @@
 </style>
 
 <script>
-    document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
-        document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-
     function authSidebar() {
         return {
             sidebarOpen: false,

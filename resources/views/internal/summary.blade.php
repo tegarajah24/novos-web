@@ -2,37 +2,15 @@
 @section('title', 'Summary')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-[#1a237e]">Summary</h1>
-    <p class="text-sm text-gray-500 mt-0.5">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+    <h1 class="text-xl font-bold text-black">Summary</h1>
 @endsection
 
 @section('internal-content')
 @php
-$kpi1 = [
-    ['v'=>'127','l'=>'Total Pesanan','c'=>'+12%','up'=>true,'bg'=>'bg-blue-50','tc'=>'text-blue-600','icon'=>'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'],
-    ['v'=>'Rp 234,5jt','l'=>'Revenue','c'=>'+7%','up'=>true,'bg'=>'bg-green-50','tc'=>'text-green-600','icon'=>'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
-    ['v'=>'87','l'=>'Customer Aktif','c'=>'+5%','up'=>true,'bg'=>'bg-indigo-50','tc'=>'text-indigo-600','icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
-    ['v'=>'5.2 hari','l'=>'Avg Processing Time','c'=>'-0.3 hari','up'=>false,'bg'=>'bg-orange-50','tc'=>'text-orange-500','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-];
-$kpi2 = [
-    ['v'=>'8','l'=>'Menunggu Verifikasi','c'=>'+3','up'=>true,'bg'=>'bg-yellow-50','tc'=>'text-yellow-600','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-    ['v'=>'23','l'=>'Tahap Desain','c'=>'-2','up'=>false,'bg'=>'bg-purple-50','tc'=>'text-purple-600','icon'=>'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'],
-    ['v'=>'15','l'=>'Selesai Bulan Ini','c'=>'+8','up'=>true,'bg'=>'bg-green-50','tc'=>'text-green-600','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
-    ['v'=>'42','l'=>'Produk Terjual','c'=>'+15%','up'=>true,'bg'=>'bg-teal-50','tc'=>'text-teal-600','icon'=>'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
-];
-$employees = [
-    ['name'=>'Andi Desainer','role'=>'Designer','orders'=>42,'avg'=>'2.2 hari','load'=>65],
-    ['name'=>'Budi Admin','role'=>'Admin','orders'=>127,'avg'=>'0.5 hari','load'=>30],
-    ['name'=>'Chiko Produksi','role'=>'Produksi','orders'=>89,'avg'=>'4.1 hari','load'=>85],
-    ['name'=>'Dini CS','role'=>'CS','orders'=>230,'avg'=>'0.2 hari','load'=>15],
-    ['name'=>'Eva Desainer','role'=>'Designer','orders'=>38,'avg'=>'2.5 hari','load'=>60],
-];
-$activities = [
-    ['time'=>'Hari ini, 10:30','color'=>'bg-green-500','text'=>'Pesanan baru dari Budi S. (NVS-001)'],
-    ['time'=>'Kemarin, 14:15','color'=>'bg-yellow-500','text'=>'Status NVS-002 diupdate ke "Tahap Desain"'],
-    ['time'=>'2 Jun 2026','color'=>'bg-blue-500','text'=>'Desain untuk NVS-003 telah diupload oleh Andi'],
-    ['time'=>'1 Jun 2026','color'=>'bg-purple-500','text'=>'Pembayaran NVS-004 terverifikasi oleh Budi'],
-];
+$kpi1 = [];
+$kpi2 = [];
+$employees = [];
+$activities = [];
 @endphp
 
 {{-- ─── KPI BARIS 1 ───────────────────────────────────────────────────── --}}
@@ -88,7 +66,7 @@ $activities = [
                 <label class="block text-xs text-gray-500 mb-1 font-medium">Assignee</label>
                 <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
                     <option>Semua</option>
-                    <option>Andi Desainer</option><option>Budi Admin</option><option>Chiko Produksi</option><option>Dini CS</option><option>Eva Desainer</option>
+
                 </select>
             </div>
             <div>
@@ -217,16 +195,16 @@ $activities = [
         <h3 class="font-semibold text-gray-900 mb-4">⚡ Priority Breakdown</h3>
         <div class="space-y-4">
             <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Normal</span><span class="text-gray-500 font-semibold">78%</span></div>
-                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-emerald-500 h-2.5 rounded-full" style="width:78%"></div></div>
+                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Normal</span><span class="text-gray-500 font-semibold">{{ $priorityNormal }}%</span></div>
+                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-emerald-500 h-2.5 rounded-full" style="width:{{ $priorityNormal }}%"></div></div>
             </div>
             <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Express</span><span class="text-gray-500 font-semibold">15%</span></div>
-                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-yellow-400 h-2.5 rounded-full" style="width:15%"></div></div>
+                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Express</span><span class="text-gray-500 font-semibold">{{ $priorityExpress }}%</span></div>
+                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-yellow-400 h-2.5 rounded-full" style="width:{{ $priorityExpress }}%"></div></div>
             </div>
             <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Super Express</span><span class="text-gray-500 font-semibold">7%</span></div>
-                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-red-500 h-2.5 rounded-full" style="width:7%"></div></div>
+                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Super Express</span><span class="text-gray-500 font-semibold">{{ $prioritySuper }}%</span></div>
+                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-red-500 h-2.5 rounded-full" style="width:{{ $prioritySuper }}%"></div></div>
             </div>
         </div>
     </div>
@@ -250,20 +228,20 @@ $activities = [
 {{-- ─── CHART.JS ────────────────────────────────────────────────────────── --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const weeks = ['W1','W2','W3','W4','W5','W6','W7','W8'];
+const weeks = @json($chartWeeks);
 const chartDefaults = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{ family:"'Poppins',sans-serif", size:11 }}}}, scales:{ x:{ grid:{display:false}, border:{display:false}}, y:{ grid:{color:'#f3f4f6'}, border:{display:false}}}};
 
 new Chart(document.getElementById('chartRevenue'), {
     type:'line',
-    data:{ labels:weeks, datasets:[{ label:'Revenue (jt)', data:[45,52,48,62,58,71,68,85], borderColor:'#1a237e', backgroundColor:'rgba(26,35,126,0.07)', borderWidth:2, tension:0.4, fill:true, pointBackgroundColor:'#1a237e', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4 }]},
+    data:{ labels:weeks, datasets:[{ label:'Revenue (jt)', data:@json($chartRevenue), borderColor:'#1a237e', backgroundColor:'rgba(26,35,126,0.07)', borderWidth:2, tension:0.4, fill:true, pointBackgroundColor:'#1a237e', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4 }]},
     options:{...chartDefaults, plugins:{...chartDefaults.plugins, legend:{display:false}}}
 });
 
 new Chart(document.getElementById('chartOrders'), {
     type:'line',
     data:{ labels:weeks, datasets:[
-        { label:'Masuk', data:[12,15,18,22,20,25,28,32], borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.07)', borderWidth:2, tension:0.4, fill:true, pointBackgroundColor:'#3b82f6', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4 },
-        { label:'Selesai', data:[8,10,14,18,19,22,26,30], borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:2, tension:0.4, fill:true, pointBackgroundColor:'#22c55e', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4 }
+        { label:'Masuk', data:@json($chartOrdersIn), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.07)', borderWidth:2, tension:0.4, fill:true, pointBackgroundColor:'#3b82f6', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4 },
+        { label:'Selesai', data:@json($chartOrdersOut), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:2, tension:0.4, fill:true, pointBackgroundColor:'#22c55e', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4 }
     ]},
     options:chartDefaults
 });
@@ -271,15 +249,15 @@ new Chart(document.getElementById('chartOrders'), {
 new Chart(document.getElementById('chartTop5'), {
     type:'bar',
     data:{
-        labels:['Jersey Futsal','Jersey Basket','Jersey Sepak Bola','Jersey Voli','Jersey Running'],
-        datasets:[{ label:'Terjual', data:[42,38,35,28,25], backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'], borderRadius:6 }]
+        labels:@json($topProductLabels),
+        datasets:[{ label:'Terjual', data:@json($topProductData), backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'], borderRadius:6 }]
     },
     options:{...chartDefaults, indexAxis:'y', plugins:{...chartDefaults.plugins, legend:{display:false}}}
 });
 
 new Chart(document.getElementById('chartDist'), {
     type:'doughnut',
-    data:{ labels:['Custom','Produk Katalog'], datasets:[{ data:[65,35], backgroundColor:['#1a237e','#38bdf8'], borderWidth:3, borderColor:'#fff', hoverOffset:4 }]},
+    data:{ labels:@json($distLabels), datasets:[{ data:@json($distData), backgroundColor:['#1a237e','#38bdf8'], borderWidth:3, borderColor:'#fff', hoverOffset:4 }]},
     options:{ responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{ position:'bottom', labels:{ padding:20, usePointStyle:true, pointStyle:'circle', font:{ family:"'Poppins',sans-serif", size:12 }}}}}
 });
 </script>

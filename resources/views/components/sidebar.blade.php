@@ -15,11 +15,11 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     @sidebar-toggle.window="toggle()"
     :style="{ width: sidebarOpen ? '16rem' : '5rem' }"
     style="width: {{ $isSidebarOpen ? '16rem' : '5rem' }}; transition: width 0.3s ease;"
-    class="bg-white/40 backdrop-blur-[6px] min-h-screen border-r border-white/40 flex flex-col shrink-0 shadow-[2px_0_12px_rgba(0,0,0,0.06)]">
+    class="glass-sidebar min-h-screen border-r border-white/30 flex flex-col shrink-0">
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center px-6 border-b border-gray-200 overflow-hidden">
-        <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-2">
+        <a href="{{ route('staf.dashboard') }}" class="flex items-center gap-2">
             <div class="w-8 h-8 bg-[#1a237e] rounded-lg flex items-center justify-center shrink-0">
                 <span class="text-white font-bold text-lg">N</span>
             </div>
@@ -35,22 +35,21 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @php
             $menus = [
-                ['label' => 'Dashboard',       'url' => url('admin/dashboard'),       'icon' => 'layout-dashboard', 'active' => request()->is('admin/dashboard')],
-                ['label' => 'Summary',         'url' => url('admin/summary'),         'icon' => 'pie-chart',        'active' => request()->is('admin/summary')],
-                ['label' => 'Daftar Pesanan',  'url' => url('admin/daftar-pesanan'),  'icon' => 'shopping-bag',     'active' => request()->is('admin/daftar-pesanan*') || request()->is('internal/detail-pesanan*') || request()->is('internal/chat*')],
-                ['label' => 'Design',          'url' => url('admin/design'),          'icon' => 'pen-tool',         'active' => request()->is('admin/design')],
-                ['label' => 'Produksi',        'url' => url('admin/produksi'),        'icon' => 'scissors',         'active' => request()->is('admin/produksi')],
-                ['label' => 'Stress Test',     'url' => url('admin/stress-test'),     'icon' => 'activity',         'active' => request()->is('admin/stress-test')],
-                ['label' => 'Laporan',         'url' => url('admin/laporan'),         'icon' => 'file-text',        'active' => request()->is('admin/laporan')],
-                ['label' => 'Kelola Produk',   'url' => url('admin/kelola-produk'),   'icon' => 'package',          'active' => request()->is('admin/kelola-produk')],
-                ['label' => 'Kelola Pengguna', 'url' => url('admin/kelola-pengguna'), 'icon' => 'users',            'active' => request()->is('admin/kelola-pengguna*')],
+                ['label' => 'Dashboard',       'url' => route('staf.dashboard'),       'icon' => 'layout-dashboard', 'active' => request()->routeIs('staf.dashboard')],
+                ['label' => 'Summary',         'url' => route('staf.summary'),         'icon' => 'pie-chart',        'active' => request()->routeIs('staf.summary')],
+                ['label' => 'Daftar Pesanan',  'url' => route('staf.daftar-pesanan'),  'icon' => 'shopping-bag',     'active' => request()->routeIs('staf.daftar-pesanan') || request()->routeIs('staf.detail-pesanan') || request()->routeIs('staf.chat')],
+                ['label' => 'Design',          'url' => route('staf.design'),          'icon' => 'pen-tool',         'active' => request()->routeIs('staf.design')],
+                ['label' => 'Produksi',        'url' => route('staf.produksi'),        'icon' => 'scissors',         'active' => request()->routeIs('staf.produksi')],
+                ['label' => 'Stress Test',     'url' => route('staf.stress-test'),     'icon' => 'activity',         'active' => request()->routeIs('staf.stress-test')],
+                ['label' => 'Laporan',         'url' => route('staf.laporan'),         'icon' => 'file-text',        'active' => request()->routeIs('staf.laporan')],
+                ['label' => 'Kelola Produk',   'url' => route('staf.kelola-produk'),   'icon' => 'package',          'active' => request()->routeIs('staf.kelola-produk')],
+                ['label' => 'Kelola Pengguna', 'url' => route('staf.kelola-pengguna'), 'icon' => 'users',            'active' => request()->routeIs('staf.kelola-pengguna')],
             ];
         @endphp
 
         @foreach($menus as $menu)
             <a href="{{ $menu['url'] }}"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ $menu['active'] ? 'bg-[#1a237e] text-white' : 'text-gray-600 hover:bg-gray-100' }}"
-               :class="sidebarOpen ? '' : 'justify-center'">
+               class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ $menu['active'] ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-white/25' }}">
                 <i data-lucide="{{ $menu['icon'] }}" class="w-5 h-5 shrink-0 {{ $menu['active'] ? 'text-white' : 'text-[#1a237e]' }}"></i>
                 <span x-show="sidebarOpen"
                       @if(!$isSidebarOpen) style="display:none" @endif

@@ -358,7 +358,7 @@
                         </button>
                     </template>
                     <template x-if="!currentUser.isManager">
-                        <a href="{{ url('admin/dashboard') }}" class="btn bg-[#1a237e] hover:bg-[#283593] text-white border-0 btn-sm rounded-lg flex items-center gap-1.5">
+                        <a href="{{ route('staf.dashboard') }}" class="btn bg-[#1a237e] hover:bg-[#283593] text-white border-0 btn-sm rounded-lg flex items-center gap-1.5">
                             <i data-lucide="home" class="w-4 h-4"></i>
                             🏠 Kembali ke Dashboard
                         </a>
@@ -497,21 +497,10 @@ function stressTestApp() {
         resultsHistory: [],
         
         // Current assessment state
-        currentAnswers: Array(10).fill(null),
+        currentAnswers: [],
         
         // Question bank
-        questions: [
-            { id: 1, text: 'Saya merasa kewalahan dengan volume pekerjaan' },
-            { id: 2, text: 'Saya sulit berkonsentrasi karena tekanan kerja' },
-            { id: 3, text: 'Saya merasa lelah dan tidak bersemangat dalam bekerja' },
-            { id: 4, text: 'Saya merasa tidak bisa menyelesaikan semua tugas yang diberikan' },
-            { id: 5, text: 'Saya sudah tidak merasa menikmati pekerjaan saya' },
-            { id: 6, text: 'Saya merasa tidak mendapat dukungan dari tim' },
-            { id: 7, text: 'Saya sering melakukan kesalahan dalam bekerja' },
-            { id: 8, text: 'Saya merasa waktu istirahat saya terganggu pekerjaan' },
-            { id: 9, text: 'Saya merasa pekerjaan saya tidak dihargai' },
-            { id: 10, text: 'Saya merasa tidak memiliki kendali atas pekerjaan saya' }
-        ],
+        questions: [],
         
         // Manager Overview Sync Data (initialized in localStorage)
         employees: [],
@@ -621,23 +610,6 @@ function stressTestApp() {
             const storedEmployees = localStorage.getItem('nvs_employees_data');
             if (storedEmployees) {
                 this.employees = JSON.parse(storedEmployees);
-            } else {
-                // Default dummy employee results if never stored before
-                this.employees = [
-                    { name: 'Andi Desainer', dept: 'Designer', date: '7 Jun 2026', score: 32, answers: [3,4,3,4,3,2,3,2,4,4] },
-                    { name: 'Budi Admin', dept: 'Admin', date: '6 Jun 2026', score: 16, answers: [2,2,1,2,2,1,2,2,2,2] },
-                    { name: 'Chiko Produksi', dept: 'Produksi', date: '7 Jun 2026', score: 22, answers: [3,3,2,3,3,2,2,2,2,2] },
-                    { name: 'Dini CS', dept: 'CS', date: '5 Jun 2026', score: 15, answers: [2,1,1,2,1,2,1,2,2,1] },
-                    { name: 'Eva Desainer', dept: 'Designer', date: '7 Jun 2026', score: 35, answers: [4,4,4,3,4,3,4,3,4,3] },
-                    { name: 'Fahmi Produksi', dept: 'Produksi', date: '6 Jun 2026', score: 20, answers: [2,2,2,2,2,2,2,2,2,2] },
-                    { name: 'Gita Admin', dept: 'Admin', date: '5 Jun 2026', score: 12, answers: [1,1,2,1,1,2,1,1,1,1] },
-                    { name: 'Hendra Designer', dept: 'Designer', date: '7 Jun 2026', score: 26, answers: [3,3,3,2,3,2,3,2,3,2] },
-                    { name: 'Irma CS', dept: 'CS', date: '4 Jun 2026', score: 24, answers: [2,3,2,3,2,2,3,2,3,2] },
-                    { name: 'Joko Produksi', dept: 'Produksi', date: '7 Jun 2026', score: 38, answers: [4,4,4,4,4,3,4,4,3,4] },
-                    { name: 'Kiki Admin', dept: 'Admin', date: '4 Jun 2026', score: 14, answers: [1,2,1,2,1,1,2,1,2,1] },
-                    { name: 'Lani CS', dept: 'CS', date: '5 Jun 2026', score: 19, answers: [2,2,2,2,1,2,2,2,2,2] }
-                ];
-                localStorage.setItem('nvs_employees_data', JSON.stringify(this.employees));
             }
 
             // 2. Loading personal assessment history

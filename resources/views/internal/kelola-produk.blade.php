@@ -33,8 +33,8 @@
 
             <!-- Tombol Tambah -->
             <div>
-                <button @click="openCreateForm()" class="btn btn-sm bg-[#1a237e] hover:bg-[#283593] text-white rounded-lg flex items-center gap-1.5 border-0">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
+                <button @click="openCreateForm()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shadow-sm">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
                     Tambah Produk Baru
                 </button>
             </div>
@@ -58,13 +58,23 @@
                         <tr class="hover:bg-gray-50 border-b border-gray-100 transition">
                             <td class="text-center text-gray-500 font-medium" x-text="prod.id"></td>
                             <td>
-                                <div class="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                    <template x-if="prod.image">
-                                        <img :src="prod.image" class="object-cover w-full h-full" alt="Foto">
-                                    </template>
-                                    <template x-if="!prod.image">
-                                        <i data-lucide="image" class="w-5 h-5 text-gray-400"></i>
-                                    </template>
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                                        <template x-if="prod.image_depan">
+                                            <img :src="prod.image_depan" class="object-cover w-full h-full" alt="Depan">
+                                        </template>
+                                        <template x-if="!prod.image_depan">
+                                            <i data-lucide="image" class="w-4 h-4 text-gray-400"></i>
+                                        </template>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                                        <template x-if="prod.image_belakang">
+                                            <img :src="prod.image_belakang" class="object-cover w-full h-full" alt="Belakang">
+                                        </template>
+                                        <template x-if="!prod.image_belakang">
+                                            <i data-lucide="image" class="w-4 h-4 text-gray-400"></i>
+                                        </template>
+                                    </div>
                                 </div>
                             </td>
                             <td class="font-bold text-gray-900" x-text="prod.name"></td>
@@ -140,19 +150,9 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="space-y-1.5">
-                            <label class="text-sm font-semibold text-gray-700">Harga (Rp) <span class="text-red-500">*</span></label>
-                            <input type="number" x-model="formData.price" required min="0" class="input input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20" placeholder="Contoh: 150000">
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="text-sm font-semibold text-gray-700 block">Tema Warna Background (Hero) <span class="text-red-500">*</span></label>
-                            <div class="flex items-center gap-3">
-                                <input type="color" x-model="formData.theme_color" required class="w-10 h-10 rounded cursor-pointer border border-gray-300 p-0.5">
-                                <span class="text-sm font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded border border-gray-200" x-text="formData.theme_color || '#000000'"></span>
-                                <div class="text-xs text-gray-500 flex-1">Warna latar saat produk jadi model utama.</div>
-                            </div>
-                        </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-semibold text-gray-700">Harga (Rp) <span class="text-red-500">*</span></label>
+                        <input type="number" x-model="formData.price" required min="0" class="input input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20" placeholder="Contoh: 150000">
                     </div>
 
                     <div class="space-y-1.5">
@@ -160,11 +160,20 @@
                         <textarea x-model="formData.description" class="textarea textarea-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20" rows="3" placeholder="Detail bahan, printing, dsb..."></textarea>
                     </div>
 
-                    <div class="space-y-1.5">
-                        <label class="text-sm font-semibold text-gray-700">Foto Jersey (Format .png transparan disarankan)</label>
-                        <input type="file" @change="handleFileUpload" accept="image/*" class="file-input file-input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20 text-sm">
-                        <div x-show="formData.imagePreview" class="mt-3 w-24 h-24 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                            <img :src="formData.imagePreview" class="object-cover w-full h-full">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-semibold text-gray-700">Foto Tampak Depan</label>
+                            <input type="file" @change="handleUploadDepan" accept="image/*" class="file-input file-input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20 text-sm">
+                            <div x-show="formData.imageDepanPreview" class="mt-2 w-24 h-24 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                                <img :src="formData.imageDepanPreview" class="object-cover w-full h-full">
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-semibold text-gray-700">Foto Tampak Belakang</label>
+                            <input type="file" @change="handleUploadBelakang" accept="image/*" class="file-input file-input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20 text-sm">
+                            <div x-show="formData.imageBelakangPreview" class="mt-2 w-24 h-24 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                                <img :src="formData.imageBelakangPreview" class="object-cover w-full h-full">
+                            </div>
                         </div>
                     </div>
 
@@ -192,17 +201,9 @@ function kelolaProdukApp() {
     return {
         formMode: 'create',
         
-        categories: [
-            { id: 1, name: 'Sepak Bola' },
-            { id: 2, name: 'Futsal' },
-            { id: 3, name: 'Basket' },
-            { id: 4, name: 'Running' },
-            { id: 5, name: 'Gym' },
-            { id: 6, name: 'Tenis' },
-            { id: 7, name: 'E-Sports' }
-        ],
+        categories: @json($categories),
         
-        products: [],
+        products: @json($products),
         
         filters: {
             search: '',
@@ -215,51 +216,12 @@ function kelolaProdukApp() {
             category_id: '',
             price: '',
             description: '',
-            theme_color: '#4a0404',
-            imagePreview: null,
+            imageDepanPreview: null,
+            imageBelakangPreview: null,
             is_featured: false
         },
         
         initApp() {
-            const stored = localStorage.getItem('nvs_dummy_products');
-            if (stored) {
-                this.products = JSON.parse(stored);
-            } else {
-                this.products = [
-                    {
-                        id: 1,
-                        name: 'Novos Red Maroon FC',
-                        category_id: 1,
-                        price: 155000,
-                        description: 'Bahan dry-fit premium dengan sublimasi anti luntur.',
-                        theme_color: '#7a1111',
-                        image: null,
-                        is_featured: true
-                    },
-                    {
-                        id: 2,
-                        name: 'Novos Velocity Runner',
-                        category_id: 4,
-                        price: 135000,
-                        description: 'Ultra light running tee, sangat ringan dan cepat kering.',
-                        theme_color: '#1e3a8a',
-                        image: null,
-                        is_featured: false
-                    },
-                    {
-                        id: 3,
-                        name: 'Novos Hoop Legend',
-                        category_id: 3,
-                        price: 165000,
-                        description: 'Setelan jersey basket lengkap dengan celana.',
-                        theme_color: '#f59e0b',
-                        image: null,
-                        is_featured: false
-                    }
-                ];
-                this.saveToStorage();
-            }
-            
             this.renderIcons();
         },
         
@@ -288,8 +250,8 @@ function kelolaProdukApp() {
                 category_id: '',
                 price: '',
                 description: '',
-                theme_color: '#4a0404',
-                imagePreview: null,
+                imageDepanPreview: null,
+                imageBelakangPreview: null,
                 is_featured: false
             };
             document.getElementById('modal_tambah_produk').showModal();
@@ -304,8 +266,8 @@ function kelolaProdukApp() {
                 category_id: product.category_id,
                 price: product.price,
                 description: product.description,
-                theme_color: product.theme_color || '#4a0404',
-                imagePreview: product.image,
+                imageDepanPreview: product.image_depan,
+                imageBelakangPreview: product.image_belakang,
                 is_featured: product.is_featured
             };
             document.getElementById('modal_tambah_produk').showModal();
@@ -316,12 +278,22 @@ function kelolaProdukApp() {
             document.getElementById('modal_tambah_produk').close();
         },
         
-        handleFileUpload(event) {
+        handleUploadDepan(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.formData.imagePreview = e.target.result;
+                    this.formData.imageDepanPreview = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        handleUploadBelakang(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.formData.imageBelakangPreview = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
@@ -336,8 +308,8 @@ function kelolaProdukApp() {
                     category_id: parseInt(this.formData.category_id),
                     price: parseInt(this.formData.price),
                     description: this.formData.description,
-                    theme_color: this.formData.theme_color,
-                    image: this.formData.imagePreview,
+                    image_depan: this.formData.imageDepanPreview,
+                    image_belakang: this.formData.imageBelakangPreview,
                     is_featured: this.formData.is_featured
                 });
                 
@@ -357,8 +329,8 @@ function kelolaProdukApp() {
                         category_id: parseInt(this.formData.category_id),
                         price: parseInt(this.formData.price),
                         description: this.formData.description,
-                        theme_color: this.formData.theme_color,
-                        image: this.formData.imagePreview,
+                        image_depan: this.formData.imageDepanPreview,
+                        image_belakang: this.formData.imageBelakangPreview,
                         is_featured: this.formData.is_featured
                     };
                     
@@ -434,7 +406,7 @@ function kelolaProdukApp() {
         },
         
         saveToStorage() {
-            localStorage.setItem('nvs_dummy_products', JSON.stringify(this.products));
+            localStorage.setItem('nvs_products', JSON.stringify(this.products));
         },
         
         renderIcons() {

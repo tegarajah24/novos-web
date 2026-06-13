@@ -31,12 +31,12 @@ class AuthenticatedSessionController extends Controller
         $role = auth()->user()->role?->name;
 
         return match($role) {
-            'Super Admin' => redirect('/superadmin/dashboard'),
-            'Manager'     => redirect('/manager/dashboard'),
-            'Admin'       => redirect('/admin/dashboard'),
-            'Design'      => redirect('/design/dashboard'),
-            'Produksi'    => redirect('/produksi/dashboard'),
-            default       => redirect('/customer/beranda'), // Customer
+            'Super Admin' => redirect()->intended(route('staf.dashboard')),
+            'Manager'     => redirect()->intended(route('staf.dashboard')),
+            'Admin'       => redirect()->intended(route('staf.dashboard')),
+            'Design'      => redirect()->intended(route('staf.dashboard')),
+            'Produksi'    => redirect()->intended(route('staf.dashboard')),
+            default       => redirect()->intended(route('beranda')),
         };
     }
 
@@ -51,6 +51,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('beranda');
     }
 }
