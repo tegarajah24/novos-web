@@ -19,7 +19,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center px-6 border-b border-gray-200 overflow-hidden">
-        <a href="{{ url('/staf/dashboard') }}" class="flex items-center gap-2">
+        <a href="{{ route('staf.dashboard') }}" class="flex items-center gap-2">
             <div class="w-8 h-8 bg-[#1a237e] rounded-lg flex items-center justify-center shrink-0">
                 <span class="text-white font-bold text-lg">N</span>
             </div>
@@ -35,15 +35,15 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @php
             $menus = [
-                ['label' => 'Dashboard',       'url' => url('staf/dashboard'),       'icon' => 'layout-dashboard', 'active' => request()->is('staf/dashboard')],
-                ['label' => 'Summary',         'url' => url('staf/summary'),         'icon' => 'pie-chart',        'active' => request()->is('staf/summary')],
-                ['label' => 'Daftar Pesanan',  'url' => url('staf/daftar-pesanan'),  'icon' => 'shopping-bag',     'active' => request()->is('staf/daftar-pesanan') || request()->is('staf/detail-pesanan*') || request()->is('staf/chat*')],
-                ['label' => 'Design',          'url' => url('staf/design'),          'icon' => 'pen-tool',         'active' => request()->is('staf/design')],
-                ['label' => 'Produksi',        'url' => url('staf/produksi'),        'icon' => 'scissors',         'active' => request()->is('staf/produksi')],
-                ['label' => 'Stress Test',     'url' => url('staf/stress-test'),     'icon' => 'activity',         'active' => request()->is('staf/stress-test')],
-                ['label' => 'Laporan',         'url' => url('staf/laporan'),         'icon' => 'file-text',        'active' => request()->is('staf/laporan')],
-                ['label' => 'Kelola Produk',   'url' => url('staf/kelola-produk'),   'icon' => 'package',          'active' => request()->is('staf/kelola-produk')],
-                ['label' => 'Kelola Pengguna', 'url' => url('staf/kelola-pengguna'), 'icon' => 'users',            'active' => request()->is('staf/kelola-pengguna*')],
+                ['label' => 'Dashboard',       'url' => route('staf.dashboard'),       'icon' => 'layout-dashboard', 'active' => request()->routeIs('staf.dashboard')],
+                ['label' => 'Summary',         'url' => route('staf.summary'),         'icon' => 'pie-chart',        'active' => request()->routeIs('staf.summary')],
+                ['label' => 'Daftar Pesanan',  'url' => route('staf.daftar-pesanan'),  'icon' => 'shopping-bag',     'active' => request()->routeIs('staf.daftar-pesanan') || request()->routeIs('staf.detail-pesanan') || request()->routeIs('staf.chat')],
+                ['label' => 'Design',          'url' => route('staf.design'),          'icon' => 'pen-tool',         'active' => request()->routeIs('staf.design')],
+                ['label' => 'Produksi',        'url' => route('staf.produksi'),        'icon' => 'scissors',         'active' => request()->routeIs('staf.produksi')],
+                ['label' => 'Stress Test',     'url' => route('staf.stress-test'),     'icon' => 'activity',         'active' => request()->routeIs('staf.stress-test')],
+                ['label' => 'Laporan',         'url' => route('staf.laporan'),         'icon' => 'file-text',        'active' => request()->routeIs('staf.laporan')],
+                ['label' => 'Kelola Produk',   'url' => route('staf.kelola-produk'),   'icon' => 'package',          'active' => request()->routeIs('staf.kelola-produk')],
+                ['label' => 'Kelola Pengguna', 'url' => route('staf.kelola-pengguna'), 'icon' => 'users',            'active' => request()->routeIs('staf.kelola-pengguna')],
             ];
         @endphp
 

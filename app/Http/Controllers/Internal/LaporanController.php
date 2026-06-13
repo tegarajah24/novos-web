@@ -21,7 +21,7 @@ class LaporanController extends Controller
 
     public function exportPdf(Request $request)
     {
-        return redirect()->route('internal.laporan', $request->query());
+        return redirect()->route('staf.laporan', $request->query());
     }
 
     public function exportCsv(Request $request)

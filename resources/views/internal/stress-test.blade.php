@@ -358,7 +358,7 @@
                         </button>
                     </template>
                     <template x-if="!currentUser.isManager">
-                        <a href="{{ url('staf/dashboard') }}" class="btn bg-[#1a237e] hover:bg-[#283593] text-white border-0 btn-sm rounded-lg flex items-center gap-1.5">
+                        <a href="{{ route('staf.dashboard') }}" class="btn bg-[#1a237e] hover:bg-[#283593] text-white border-0 btn-sm rounded-lg flex items-center gap-1.5">
                             <i data-lucide="home" class="w-4 h-4"></i>
                             🏠 Kembali ke Dashboard
                         </a>
