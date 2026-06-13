@@ -349,7 +349,7 @@ function trackingForm() {
 
         async accDesign() {
             try {
-                const res = await fetch('{{ route("tracking.acc", "") }}/' + this.order.id, {
+                const res = await fetch('/tracking/' + this.order.id + '/acc', {
                     method: 'POST',
                     headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
                 });
@@ -401,7 +401,7 @@ function trackingForm() {
                 return;
             }
             try {
-                const res = await fetch('{{ route("tracking.revision", "") }}/' + this.order.id, {
+                const res = await fetch('/tracking/' + this.order.id + '/revision', {
                     method: 'POST',
                     headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' },
                     body: JSON.stringify({ note: this.revisionNote })
