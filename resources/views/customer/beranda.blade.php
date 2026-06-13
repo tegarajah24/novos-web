@@ -76,7 +76,7 @@
 {{-- ============================================================ --}}
 {{-- 1. HERO - Asymmetric Split Layout --}}
 {{-- ============================================================ --}}
-<section class="relative w-full bg-[#0f2040] overflow-hidden" style="min-height:600px">
+<section class="relative w-full bg-[#0f2040] overflow-x-clip" style="min-height:400px">
 
     {{-- background image --}}
     <div class="absolute inset-0 z-0">
@@ -92,13 +92,13 @@
     <div class="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-[#00e5ff] opacity-[0.05] rounded-full blur-3xl z-[1]"></div>
 
     {{-- content --}}
-    <div class="relative z-10 max-w-[1200px] mx-auto px-6 grid md:grid-cols-2 gap-8 items-center" style="min-height:600px">
+    <div class="relative z-10 max-w-[1200px] mx-auto px-6 md:grid md:grid-cols-2 gap-3 md:gap-8 items-center" style="min-height:400px">
 
         {{-- Kiri: Content Panel --}}
-        <div class="flex flex-col justify-center py-20 md:py-0">
+        <div class="relative z-10 w-[70%] md:w-auto min-h-[400px] md:min-h-0 flex flex-col justify-center py-4 md:py-0">
 
             {{-- headline --}}
-            <h1 class="text-5xl md:text-[56px] font-bold leading-tight text-white mb-5 max-w-2xl" data-aos="fade-up" data-aos-delay="100">
+            <h1 class="text-4xl md:text-[56px] font-bold leading-tight text-white mb-5 max-w-2xl" data-aos="fade-up" data-aos-delay="100">
                 Pesan Jersey Custom Impianmu
             </h1>
 
@@ -110,22 +110,24 @@
             {{-- CTA inline --}}
             <div class="flex flex-wrap items-center gap-3" data-aos="fade-up" data-aos-delay="300">
                 <a href="{{ route('pemesanan') }}"
-                   class="px-8 py-3.5 bg-[#00e5ff] text-[#1a237e] text-sm font-bold rounded-[4px] hover:bg-[#00d0ea] transition-all shadow-lg shadow-[#00e5ff]/20">
+                   class="px-3 py-1.5 md:px-8 md:py-3.5 bg-[#00e5ff] text-[#1a237e] text-sm font-bold rounded-[4px] hover:bg-[#00d0ea] transition-all shadow-lg shadow-[#00e5ff]/20">
                     Buat Pesanan Sekarang
                 </a>
             </div>
         </div>
 
         {{-- Kanan: Visual Showcase --}}
-        <div class="flex items-center justify-center py-16 md:py-0 relative" data-aos="zoom-in" data-aos-delay="400">
+        <div class="absolute -right-4 top-0 bottom-0 w-[65%] z-0 overflow-visible flex items-center justify-center
+                    md:static md:w-auto md:z-auto md:flex md:items-center md:justify-center md:py-0 md:relative"
+             data-aos="zoom-in" data-aos-delay="400">
             {{-- background glow --}}
-            <div class="absolute w-[400px] h-[400px] bg-[#00e5ff] opacity-[0.08] rounded-full blur-3xl"></div>
+            <div class="absolute w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-[#00e5ff] opacity-[0.08] rounded-full blur-3xl"></div>
 
             {{-- primary image (depan) dengan floating animation --}}
             <div class="relative z-10 group animate-float">
                 <img src="{{ asset('images/jersey-depan.png') }}"
                      alt="Jersey Custom Tampak Depan"
-                     class="w-full max-w-[380px] h-auto object-contain drop-shadow-2xl
+                     class="w-full md:max-w-[380px] h-auto object-contain drop-shadow-2xl
                             -rotate-[15deg] transition-all duration-700 ease-out
                             group-hover:-rotate-[10deg] group-hover:scale-[1.02]">
             </div>

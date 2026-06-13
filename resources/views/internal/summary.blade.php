@@ -6,12 +6,6 @@
 @endsection
 
 @section('internal-content')
-@php
-$kpi1 = [];
-$kpi2 = [];
-$employees = [];
-$activities = [];
-@endphp
 
 {{-- ─── KPI BARIS 1 ───────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
