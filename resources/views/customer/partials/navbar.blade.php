@@ -6,7 +6,16 @@
      :class="hidden ? '-translate-y-full' : 'translate-y-0'"
      class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
-        {{-- Left: Logo --}}
+        {{-- Mobile hamburger --}}
+        <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-[#616161] hover:text-[#1a237e]">
+            <svg :class="{'hidden': mobileOpen, 'inline-flex': ! mobileOpen}" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg :class="{'hidden': ! mobileOpen, 'inline-flex': mobileOpen}" class="hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        {{-- Center: Logo --}}
         <a href="{{ route('beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
 
         {{-- Center: Nav links --}}
@@ -420,15 +429,6 @@
             </template>
         </div>
 
-        {{-- Mobile hamburger --}}
-        <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-[#616161] hover:text-[#1a237e]">
-            <svg :class="{'hidden': mobileOpen, 'inline-flex': ! mobileOpen}" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-            <svg :class="{'hidden': ! mobileOpen, 'inline-flex': mobileOpen}" class="hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-        </button>
     </div>
 
     {{-- Mobile menu dropdown --}}
