@@ -23,6 +23,10 @@ Route::middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])->g
         return view('internal.chat');
     })->name('internal.chat');
 
+    Route::get('/internal/notifikasi', function () {
+        return view('internal.notifikasi');
+    })->name('internal.notifikasi');
+
     Route::get('/internal/stress-test', function () {
         return view('internal.stress-test');
     });
