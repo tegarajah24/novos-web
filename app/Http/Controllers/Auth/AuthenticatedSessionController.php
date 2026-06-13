@@ -31,12 +31,12 @@ class AuthenticatedSessionController extends Controller
         $role = auth()->user()->role?->name;
 
         return match($role) {
-            'Super Admin' => redirect('/superadmin/dashboard'),
-            'Manager'     => redirect('/manager/dashboard'),
-            'Admin'       => redirect('/admin/dashboard'),
-            'Design'      => redirect('/design/dashboard'),
-            'Produksi'    => redirect('/produksi/dashboard'),
-            default       => redirect('/customer/beranda'), // Customer
+            'Super Admin' => redirect('/staf/dashboard'),
+            'Manager'     => redirect('/staf/dashboard'),
+            'Admin'       => redirect('/staf/dashboard'),
+            'Design'      => redirect('/staf/dashboard'),
+            'Produksi'    => redirect('/staf/dashboard'),
+            default       => redirect('/'), // Customer ke beranda
         };
     }
 
