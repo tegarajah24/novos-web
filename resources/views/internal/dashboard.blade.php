@@ -26,7 +26,7 @@
                     @endif
                     <span>{{ $totalTrend >= 0 ? '+'.$totalTrend : $totalTrend }}</span>
                 </div>
-                <h3 class="text-4xl font-bold text-gray-900 tracking-tight">127</h3>
+                <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="127">0</h3>
                 <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
             </div>
             <h3 class="text-4xl font-bold text-gray-900 tracking-tight">{{ $totalOrders }}</h3>
@@ -104,14 +104,14 @@
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Line Chart -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
+        <div class="glass-card glass-card-hover rounded-xl p-6">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Pesanan Per Minggu</h3>
             <div class="h-64">
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
         <!-- Donut Chart -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
+        <div class="glass-card glass-card-hover rounded-xl p-6">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Status Pesanan Saat Ini</h3>
             <div class="h-64 flex justify-center">
                 <canvas id="donutChart"></canvas>
@@ -120,8 +120,8 @@
     </div>
 
     <!-- Table Row -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
+    <div class="glass-card glass-card-hover rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-white/30 flex justify-between items-center bg-white/25">
             <h3 class="font-bold text-gray-900 text-lg">Pesanan Terbaru</h3>
             <a href="{{ url('staf/daftar-pesanan') }}" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
                 Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -131,11 +131,11 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wider">
-                        <th class="px-6 py-4 font-semibold">Order ID</th>
-                        <th class="px-6 py-4 font-semibold">Customer</th>
-                        <th class="px-6 py-4 font-semibold">Produk</th>
-                        <th class="px-6 py-4 font-semibold">Tanggal</th>
-                        <th class="px-6 py-4 font-semibold">Status</th>
+                        <th class="px-6 py-4 font-semibold text-center">Order ID</th>
+                        <th class="px-6 py-4 font-semibold text-center">Customer</th>
+                        <th class="px-6 py-4 font-semibold text-center">Produk</th>
+                        <th class="px-6 py-4 font-semibold text-center">Tanggal</th>
+                        <th class="px-6 py-4 font-semibold text-center">Status</th>
                         <th class="px-6 py-4 font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -167,10 +167,100 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Line Chart (Pesanan Per Minggu)
+            // Easing function: easeOutQuart
+            const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+            
+            // Interpolate value with easing
+            const interpolate = (start, end, progress, easing) => {
+                const easedProgress = easing(progress);
+                return start + (end - start) * easedProgress;
+            };
+
+            // ==================== PREMIUM ENTRANCE ANIMATIONS ====================
+            const premiumEasing = 'cubic-bezier(0.22, 1, 0.36, 1)';
+            
+            // Select all main dashboard cards (white background with rounded corners)
+            const dashboardCards = document.querySelectorAll(
+                '.bg-white.rounded-2xl, .bg-white.rounded-xl'
+            );
+            
+            // Start hidden - page appears empty initially
+            dashboardCards.forEach((card) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = `opacity 1s ${premiumEasing}, transform 1s ${premiumEasing}`;
+                card.style.willChange = 'transform, opacity';
+            });
+            
+            // Sequential entrance: top to bottom, each card fades in from below
+            dashboardCards.forEach((card, index) => {
+                const staggerDelay = index * 150 + 300;
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, staggerDelay);
+            });
+            
+            // Hover: floating effect after entrance completes
+            const totalEntranceTime = (dashboardCards.length - 1) * 150 + 300 + 1000;
+            setTimeout(() => {
+                dashboardCards.forEach(card => {
+                    card.style.transition = `all 0.35s ${premiumEasing}`;
+                    card.style.willChange = 'transform';
+                    
+                    card.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-6px)';
+                        this.style.boxShadow = '0 12px 30px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.05)';
+                        this.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                    });
+                    
+                    card.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = '';
+                        this.style.borderColor = '';
+                    });
+                });
+            }, totalEntranceTime);
+
+            // ==================== STATS COUNTER ANIMATION ====================
+            const counters = document.querySelectorAll('.stats-counter');
+            counters.forEach((counter, index) => {
+                const target = parseInt(counter.getAttribute('data-target'), 10) || 0;
+                const duration = 1500; // 1.5 seconds (within 1.2 - 1.8 seconds range)
+                let startTime = null;
+
+                const animateCount = (timestamp) => {
+                    if (!startTime) startTime = timestamp;
+                    const progress = Math.min((timestamp - startTime) / duration, 1);
+                    const easedProgress = easeOutQuart(progress);
+                    const currentValue = Math.floor(easedProgress * target);
+                    
+                    counter.textContent = currentValue;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateCount);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+
+                // Stagger delay matches parent card entrance delay
+                const staggerDelay = index * 150 + 300;
+                setTimeout(() => {
+                    requestAnimationFrame(animateCount);
+                }, staggerDelay);
+            });
+
+            // ==================== LINE CHART - PREMIUM DRAW ANIMATION ====================
             const ctxLine = document.getElementById('lineChart');
             if (ctxLine) {
-                new Chart(ctxLine.getContext('2d'), {
+                const targetData = [10, 19, 14, 25, 22, 29, 27, 36];
+                const animDuration = 1800;
+                const pointStagger = 140;
+                const numPoints = targetData.length;
+                
+                const lineChart = new Chart(ctxLine.getContext('2d'), {
                     type: 'line',
                     data: {
                         labels: @json($weeklyLabels),
@@ -178,20 +268,23 @@
                             label: 'Pesanan',
                             data: @json($weeklyData),
                             borderColor: '#1a237e',
-                            backgroundColor: 'rgba(26, 35, 126, 0.05)',
+                            backgroundColor: 'rgba(26, 35, 126, 0)',
                             borderWidth: 2,
                             tension: 0.4,
                             fill: true,
                             pointBackgroundColor: '#1a237e',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: 0,
                             pointHoverRadius: 6
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: {
+                            duration: 0
+                        },
                         plugins: {
                             legend: { display: false },
                             tooltip: {
@@ -215,23 +308,70 @@
                         }
                     }
                 });
+
+                // Custom progressive animation
+                const startTime = performance.now();
+                const totalDuration = animDuration + (numPoints - 1) * pointStagger;
+                
+                const animateLine = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    
+                    // Update each data point with stagger
+                    targetData.forEach((targetVal, index) => {
+                        const pointStartTime = index * pointStagger;
+                        const pointElapsed = elapsed - pointStartTime;
+                        
+                        if (pointElapsed > 0) {
+                            const pointProgress = Math.min(pointElapsed / animDuration, 1);
+                            const currentVal = interpolate(0, targetVal, pointProgress, easeOutQuart);
+                            lineChart.data.datasets[0].data[index] = currentVal;
+                            
+                            // Point radius: appears at 40% progress
+                            if (pointProgress > 0.4 && lineChart.data.datasets[0].pointRadius === 0) {
+                                lineChart.data.datasets[0].pointRadius = 4;
+                            }
+                        }
+                    });
+                    
+                    // Update chart without animation
+                    lineChart.update('none');
+                    
+                    if (elapsed < totalDuration + 100) {
+                        requestAnimationFrame(animateLine);
+                    } else {
+                        // Ensure final values are exact
+                        lineChart.data.datasets[0].data = [...targetData];
+                        lineChart.data.datasets[0].pointRadius = 4;
+                        lineChart.data.datasets[0].backgroundColor = 'rgba(26, 35, 126, 0.05)';
+                        lineChart.update();
+                    }
+                };
+                
+                // Start after short delay
+                setTimeout(() => {
+                    requestAnimationFrame(animateLine);
+                }, 500);
             }
 
-            // Donut Chart (Status Pesanan Saat Ini)
+            // ==================== DOUGHNUT CHART - PROGRESSIVE ANIMATION ====================
             const ctxDonut = document.getElementById('donutChart');
             if (ctxDonut) {
-                new Chart(ctxDonut.getContext('2d'), {
+                const donutTargetData = [8, 12, 5, 32, 70];
+                const donutAnimDuration = 1400;
+                const donutStagger = 120;
+
+                const donutChart = new Chart(ctxDonut.getContext('2d'), {
                     type: 'doughnut',
                     data: {
                         labels: @json($statusLabels),
                         datasets: [{
                             data: @json($statusData),
                             backgroundColor: [
-                                '#eab308', // yellow-500
-                                '#3b82f6', // blue-500
-                                '#f97316', // orange-500
-                                '#a855f7', // purple-500
-                                '#22c55e'  // green-500
+                                '#eab308',
+                                '#3b82f6',
+                                '#f97316',
+                                '#a855f7',
+                                '#22c55e'
                             ],
                             borderWidth: 2,
                             borderColor: '#ffffff',
@@ -242,6 +382,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         cutout: '75%',
+                        animation: { duration: 0 },
                         plugins: {
                             legend: {
                                 position: 'bottom',
@@ -260,7 +401,42 @@
                         }
                     }
                 });
+
+                // Custom progressive animation for donut segments
+                const donutTotalDuration = donutAnimDuration + (donutTargetData.length - 1) * donutStagger;
+                const donutStartTime = performance.now();
+
+                const animateDonut = (currentTime) => {
+                    const elapsed = currentTime - donutStartTime;
+
+                    donutTargetData.forEach((targetVal, index) => {
+                        const segStartTime = index * donutStagger;
+                        const segElapsed = elapsed - segStartTime;
+
+                        if (segElapsed > 0) {
+                            const segProgress = Math.min(segElapsed / donutAnimDuration, 1);
+                            const easedProgress = easeOutQuart(segProgress);
+                            donutChart.data.datasets[0].data[index] = targetVal * easedProgress;
+                        }
+                    });
+
+                    donutChart.update('none');
+
+                    if (elapsed < donutTotalDuration + 100) {
+                        requestAnimationFrame(animateDonut);
+                    } else {
+                        // Ensure final values are exact
+                        donutChart.data.datasets[0].data = [...donutTargetData];
+                        donutChart.update();
+                    }
+                };
+
+                setTimeout(() => {
+                    requestAnimationFrame(animateDonut);
+                }, 600);
             }
+
         });
     </script>
+
 @endsection

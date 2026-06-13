@@ -69,6 +69,7 @@
                                 </span>
                                 <span x-show="order.priority !== 'High'" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200">
                                     Normal
+                                
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
