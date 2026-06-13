@@ -15,7 +15,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     @sidebar-toggle.window="toggle()"
     :style="{ width: sidebarOpen ? '16rem' : '5rem' }"
     style="width: {{ $isSidebarOpen ? '16rem' : '5rem' }}; transition: width 0.3s ease;"
-    class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0">
+    class="glass-sidebar min-h-screen border-r border-white/30 flex flex-col shrink-0">
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center px-6 border-b border-gray-200 overflow-hidden">
@@ -49,7 +49,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 
         @foreach($menus as $menu)
             <a href="{{ $menu['url'] }}"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ $menu['active'] ? 'bg-[#1a237e] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+               class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ $menu['active'] ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-white/25' }}">
                 <i data-lucide="{{ $menu['icon'] }}" class="w-5 h-5 shrink-0 {{ $menu['active'] ? 'text-white' : 'text-[#1a237e]' }}"></i>
                 <span x-show="sidebarOpen"
                       @if(!$isSidebarOpen) style="display:none" @endif
