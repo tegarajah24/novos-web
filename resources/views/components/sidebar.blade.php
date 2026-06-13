@@ -15,7 +15,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     @sidebar-toggle.window="toggle()"
     :style="{ width: sidebarOpen ? '16rem' : '5rem' }"
     style="width: {{ $isSidebarOpen ? '16rem' : '5rem' }}; transition: width 0.3s ease;"
-    class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0">
+    class="bg-white/40 backdrop-blur-[6px] min-h-screen border-r border-white/40 flex flex-col shrink-0 shadow-[2px_0_12px_rgba(0,0,0,0.06)]">
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center px-6 border-b border-gray-200 overflow-hidden">
