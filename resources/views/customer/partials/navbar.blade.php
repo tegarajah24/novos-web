@@ -1,7 +1,8 @@
 {{-- ============================================================ --}}
 {{-- NAVBAR CUSTOMER --}}
 {{-- ============================================================ --}}
-<nav x-data="{ lastScroll: 0, hidden: false, mobileOpen: false }"
+<div x-data="{ mobileOpen: false }">
+<nav x-data="{ lastScroll: 0, hidden: false }"
      @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true } else if (y < lastScroll) { hidden = false }; lastScroll = y"
      :class="hidden ? '-translate-y-full' : 'translate-y-0'"
      class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
@@ -430,41 +431,42 @@
         </div>
 
     </div>
-
-    {{-- Mobile menu dropdown --}}
-    <div x-show="mobileOpen" x-cloak
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 -translate-y-2"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-2"
-         class="md:hidden bg-white border-t border-[#f0f0f0]">
-        <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
-            <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
-            <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
-
-            {{-- Mobile Katalog with sub menu --}}
-            <div x-data="{ katalogOpen: false }">
-                <button @click="katalogOpen = !katalogOpen"
-                    class="flex items-center justify-between w-full text-sm font-medium {{ request()->routeIs('katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">
-                    Katalog
-                    <svg class="w-4 h-4 transition-transform" :class="katalogOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                <div x-show="katalogOpen" x-cloak class="mt-2 ml-4 space-y-2">
-                    <a href="{{ route('katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
-                    <a href="{{ route('katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
-                    <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
-                    <a href="{{ route('katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
-                    <a href="{{ route('katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
-                    <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
-                </div>
-            </div>
-
-            <a href="{{ route('pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
-        </div>
-    </div>
 </nav>
+
+{{-- Mobile menu dropdown --}}
+<div x-show="mobileOpen" x-cloak
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0 -translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100 translate-y-0"
+     x-transition:leave-end="opacity-0 -translate-y-2"
+     class="fixed top-16 left-1/2 -translate-x-1/2 w-full max-w-[1440px] bg-white border-t border-[#f0f0f0] z-40">
+    <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
+        <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
+        <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
+
+        {{-- Mobile Katalog with sub menu --}}
+        <div x-data="{ katalogOpen: false }">
+            <button @click="katalogOpen = !katalogOpen"
+                class="flex items-center justify-between w-full text-sm font-medium {{ request()->routeIs('katalog') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">
+                Katalog
+                <svg class="w-4 h-4 transition-transform" :class="katalogOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div x-show="katalogOpen" x-cloak class="mt-2 ml-4 space-y-2">
+                <a href="{{ route('katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
+                <a href="{{ route('katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
+                <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
+                <a href="{{ route('katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
+                <a href="{{ route('katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
+                <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
+            </div>
+        </div>
+
+        <a href="{{ route('pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
+    </div>
+</div>
+</div>
 
 <style>
     .nav-link {
