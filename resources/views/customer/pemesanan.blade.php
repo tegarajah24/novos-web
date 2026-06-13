@@ -88,7 +88,7 @@
 
         <div class="flex justify-end mt-8">
             <button
-                @click="if(jenis === 'katalog') window.location.href = '{{ route('customer.katalog') }}'; else step = 2;"
+                @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else step = 2;"
                 :disabled="!jenis"
                 :class="jenis ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
@@ -531,7 +531,7 @@
 
             {{-- Buttons --}}
             <div class="flex flex-col sm:flex-row gap-3 justify-center animate-fade-slide" style="animation-delay:0.75s">
-                <a href="{{ route('customer.tracking') }}" class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors text-center">
+                <a href="{{ route('tracking') }}" class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors text-center">
                     Tracking Pesanan
                 </a>
                 <a href="{{ url('/') }}" class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-center">
@@ -722,7 +722,7 @@ function pemesananForm(catalogProduct = null) {
             Login / Daftar
         </a>
         <p class="mt-6 text-sm text-gray-400">
-            <a href="{{ route('customer.beranda') }}" class="text-blue-900 hover:underline">Kembali ke Beranda</a>
+            <a href="{{ route('beranda') }}" class="text-blue-900 hover:underline">Kembali ke Beranda</a>
         </p>
     </div>
 </div>

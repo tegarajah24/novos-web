@@ -1,29 +1,6 @@
 @extends('layouts.internal')
 
 @php
-$order = [
-    'order_id' => 'NVS-2026-081',
-    'customer' => ['name'=>'Budi Santoso','email'=>'budi@email.com','phone'=>'+62 812-3456-7890','address'=>'Jl. Merdeka No. 45','city'=>'Jakarta','postal_code'=>'12345'],
-    'payment' => ['subtotal'=>1720000,'biaya_prioritas'=>150000,'total'=>1870000,'status'=>'lunas','method'=>'Transfer BCA'],
-    'product' => ['type'=>'Custom','sport'=>'Futsal','team_name'=>'Garuda FC','quantity'=>22,'primary_color'=>'Navy','secondary_color'=>'Electric','notes'=>'Warna utama bisa Navy, namun punggung menggunakan font bold, logo tim di sisi kiri.'],
-    'sizes' => ['XS'=>2,'S'=>4,'M'=>6,'L'=>5,'XL'=>3,'XXL'=>2],
-    'current_status' => 'tahap_desain',
-    'last_update' => '2 Jun 2026',
-    'design_files' => [['name'=>'Logo TIM'],['name'=>'Referensi 1'],['name'=>'Referensi 2']],
-    'history_notes' => [
-        ['date'=>'2 Jun 2026 10:30','user'=>'Admin Budi','note'=>'Pesanan masuk, menunggu verifikasi'],
-        ['date'=>'2 Jun 2026 14:15','user'=>'Admin Budi','note'=>'Pembayaran diverifikasi, lanjut desain'],
-        ['date'=>'3 Jun 2026 09:00','user'=>'Andi Desainer','note'=>'Mulai pengerjaan desain jersey'],
-        ['date'=>'4 Jun 2026 16:30','user'=>'Andi Desainer','note'=>'Desain selesai, menunggu ACC customer'],
-    ],
-    'status_history' => [
-        ['date'=>'2 Jun 2026','status'=>'menunggu_verifikasi','note'=>'Pesanan baru masuk'],
-        ['date'=>'2 Jun 2026','status'=>'tahap_desain','note'=>'Pembayaran terverifikasi'],
-        ['date'=>'4 Jun 2026','status'=>'menunggu_acc','note'=>'Desain selesai, menunggu ACC'],
-    ],
-];
-$badgeType = match($order['current_status']) { 'menunggu_verifikasi'=>'yellow','tahap_desain'=>'blue','menunggu_acc'=>'orange','tahap_produksi'=>'purple','selesai'=>'green',default=>'gray' };
-$badgeLabel = match($order['current_status']) { 'menunggu_verifikasi'=>'Menunggu Verifikasi','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','tahap_produksi'=>'Produksi','selesai'=>'Selesai',default=>$order['current_status'] };
 $noteColors = ['bg-green-500','bg-yellow-500','bg-blue-500','bg-purple-500'];
 function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 @endphp
@@ -43,7 +20,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 @section('internal-content')
 {{-- Kembali --}}
 <div class="mb-5">
-    <a href="{{ url('internal/daftarpesanan') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1a237e] transition-colors">
+    <a href="{{ url('staf/daftar-pesanan') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1a237e] transition-colors">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
         Kembali ke Daftar Pesanan
     </a>
@@ -56,16 +33,6 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
     <div class="flex-1 space-y-5 min-w-0">
 
         {{-- Info Pesanan (Stepper) --}}
-        @php
-        $steps = [
-            ['label' => 'Pesanan Masuk',       'date' => '2 Jun 2026', 'done' => true,  'current' => false],
-            ['label' => 'Pembayaran Dikonfirmasi', 'date' => '2 Jun 2026', 'done' => true,  'current' => false],
-            ['label' => 'Proses Desain',        'date' => '3 Jun 2026', 'done' => true,  'current' => true],
-            ['label' => 'Menunggu ACC Customer', 'date' => null,         'done' => false, 'current' => false],
-            ['label' => 'Produksi',             'date' => null,         'done' => false, 'current' => false],
-            ['label' => 'Selesai',              'date' => null,         'done' => false, 'current' => false],
-        ];
-        @endphp
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 class="font-semibold text-gray-900 mb-6 flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -77,7 +44,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
             {{-- Stepper --}}
             <div class="relative flex items-start">
                 {{-- Connector line (behind circles) --}}
-                <div class="absolute top-4 left-4 right-4 h-0.5 bg-gray-200 z-0" style="left: calc(100% / 12); right: calc(100% / 12);">
+                <div class="absolute top-4 left-4 right-4 h-0.5 bg-gray-200 z-0" style="left: calc(100% / {{ count($steps) * 2 }}); right: calc(100% / {{ count($steps) * 2 }});">
                     @php $doneCount = collect($steps)->filter(fn($s)=>$s['done'])->count(); @endphp
                     <div class="h-full bg-[#1a237e] transition-all" style="width: {{ max(0, (($doneCount - 1) / (count($steps) - 1)) * 100) }}%"></div>
                 </div>
@@ -129,7 +96,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 </h3>
                 <div class="flex items-center gap-2">
                     {{-- Tombol Chat (sinkron ke halaman chat internal) --}}
-                    <a href="{{ route('internal.chat') }}" title="Chat dengan Customer" class="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-medium hover:underline">
+                    <a href="{{ route('staf.chat') }}" title="Chat dengan Customer" class="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-medium hover:underline">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                         Chat
                     </a>

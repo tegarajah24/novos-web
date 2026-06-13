@@ -1,0 +1,253 @@
+<?php
+
+namespace App\Http\Controllers\Internal;
+
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderStatusHistory;
+use App\Models\Payment;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $totalOrders = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])->count();
+        $totalLastWeek = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
+            ->count();
+        $totalTrend = $totalOrders - $totalLastWeek;
+
+        $pendingOrders = Order::where('status', 'pending')->count();
+        $pendingLastWeek = Order::where('status', 'pending')
+            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
+            ->count();
+        $pendingTrend = $pendingOrders - $pendingLastWeek;
+
+        $inProcessOrders = Order::whereIn('status', ['di_design', 'siap_cetak', 'diproduksi'])->count();
+        $processLastWeek = Order::whereIn('status', ['di_design', 'siap_cetak', 'diproduksi'])
+            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
+            ->count();
+        $processTrend = $inProcessOrders - $processLastWeek;
+
+        $completedToday = Order::where('status', 'selesai')
+            ->whereDate('updated_at', today())
+            ->count();
+        $completedYesterday = Order::where('status', 'selesai')
+            ->whereDate('updated_at', today()->subDay())
+            ->count();
+        $completedTrend = $completedToday - $completedYesterday;
+
+        $recentOrders = Order::with(['user', 'designRequest'])
+            ->whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $weeklyLabels = [];
+        $weeklyData = [];
+        for ($i = 7; $i >= 0; $i--) {
+            $weekStart = now()->subWeeks($i)->startOfWeek();
+            $weekEnd = now()->subWeeks($i)->endOfWeek();
+            $weeklyLabels[] = 'W' . (8 - $i);
+            $weeklyData[] = Order::whereBetween('created_at', [$weekStart, $weekEnd])->count();
+        }
+
+        $pending = Order::where('status', 'pending')->count();
+        $design = Order::whereIn('status', ['dikonfirmasi', 'di_design'])->count();
+        $acc = Order::where('status', 'disetujui')->count();
+        $produksi = Order::whereIn('status', ['siap_cetak', 'diproduksi'])->count();
+        $selesai = Order::where('status', 'selesai')->count();
+
+        $statusLabels = ['Menunggu', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'];
+        $statusData = [$pending, $design, $acc, $produksi, $selesai];
+
+        return view('internal.dashboard', compact(
+            'totalOrders', 'totalTrend',
+            'pendingOrders', 'pendingTrend',
+            'inProcessOrders', 'processTrend',
+            'completedToday', 'completedTrend',
+            'recentOrders',
+            'weeklyLabels', 'weeklyData',
+            'statusLabels', 'statusData',
+        ));
+    }
+
+    public function summary()
+    {
+        $today = now()->startOfDay();
+        $thisMonthStart = now()->startOfMonth();
+        $lastMonthStart = now()->subMonth()->startOfMonth();
+        $lastMonthEnd = now()->subMonth()->endOfMonth();
+
+        $totalOrders = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])->count();
+        $lastMonthOrders = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+            ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->count();
+
+        $totalRevenue = Payment::where('status', 'success')->sum('amount');
+        $lastMonthRevenue = Payment::where('status', 'success')
+            ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->sum('amount');
+
+        $activeCustomers = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+            ->distinct('user_id')->count('user_id');
+
+        $avgDays = Order::where('status', 'selesai')
+            ->selectRaw('AVG(DATEDIFF(updated_at, created_at)) as avg_days')
+            ->value('avg_days');
+        $avgDaysFormatted = $avgDays ? number_format($avgDays, 1) . ' hari' : '0 hari';
+
+        $kpi1 = [
+            [
+                'v' => (string) $totalOrders,
+                'l' => 'Total Pesanan',
+                'c' => $lastMonthOrders > 0 ? '+' . round(($totalOrders - $lastMonthOrders) / $lastMonthOrders * 100) . '%' : '0%',
+                'up' => $totalOrders >= $lastMonthOrders,
+                'bg' => 'bg-blue-50', 'tc' => 'text-blue-600',
+                'icon' => 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z',
+            ],
+            [
+                'v' => $totalRevenue > 0 ? 'Rp ' . number_format($totalRevenue / 1000000, 1) . 'jt' : 'Rp 0',
+                'l' => 'Revenue',
+                'c' => $lastMonthRevenue > 0 ? '+' . round(($totalRevenue - $lastMonthRevenue) / $lastMonthRevenue * 100) . '%' : '0%',
+                'up' => $totalRevenue >= $lastMonthRevenue,
+                'bg' => 'bg-green-50', 'tc' => 'text-green-600',
+                'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+            ],
+            [
+                'v' => (string) $activeCustomers,
+                'l' => 'Customer Aktif',
+                'c' => '+' . $activeCustomers,
+                'up' => true,
+                'bg' => 'bg-indigo-50', 'tc' => 'text-indigo-600',
+                'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+            ],
+            [
+                'v' => $avgDaysFormatted,
+                'l' => 'Avg Processing Time',
+                'c' => $avgDays ? number_format($avgDays, 1) . ' hari' : '-',
+                'up' => false,
+                'bg' => 'bg-orange-50', 'tc' => 'text-orange-500',
+                'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+            ],
+        ];
+
+        $pendingCount = Order::where('status', 'pending')->count();
+        $designCount = Order::whereIn('status', ['dikonfirmasi', 'di_design'])->count();
+        $completedMonth = Order::where('status', 'selesai')
+            ->whereMonth('updated_at', now()->month)->count();
+        $totalSold = DB::table('order_items')->sum('qty');
+
+        $kpi2 = [
+            [
+                'v' => (string) $pendingCount,
+                'l' => 'Menunggu Verifikasi',
+                'c' => '+' . $pendingCount,
+                'up' => $pendingCount > 0,
+                'bg' => 'bg-yellow-50', 'tc' => 'text-yellow-600',
+                'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+            ],
+            [
+                'v' => (string) $designCount,
+                'l' => 'Tahap Desain',
+                'c' => $designCount > 0 ? '+' . $designCount : '0',
+                'up' => true,
+                'bg' => 'bg-purple-50', 'tc' => 'text-purple-600',
+                'icon' => 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z',
+            ],
+            [
+                'v' => (string) $completedMonth,
+                'l' => 'Selesai Bulan Ini',
+                'c' => '+' . $completedMonth,
+                'up' => true,
+                'bg' => 'bg-green-50', 'tc' => 'text-green-600',
+                'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+            ],
+            [
+                'v' => (string) $totalSold,
+                'l' => 'Produk Terjual',
+                'c' => $totalSold > 0 ? '+' . $totalSold : '0',
+                'up' => true,
+                'bg' => 'bg-teal-50', 'tc' => 'text-teal-600',
+                'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+            ],
+        ];
+
+        $employees = User::with('role')
+            ->whereHas('role', fn($q) => $q->whereIn('name', ['Admin', 'Design', 'Produksi', 'Manager']))
+            ->get()
+            ->map(function ($user) {
+                $orderCount = $user->orders()->count();
+                return [
+                    'name' => $user->name,
+                    'role' => $user->role->name,
+                    'orders' => $orderCount,
+                    'avg' => $orderCount > 0 ? round(24 / $orderCount, 1) . ' hari' : '0 hari',
+                    'load' => min($orderCount * 10, 100),
+                ];
+            })
+            ->toArray();
+
+        $activities = OrderStatusHistory::with(['order', 'changedBy'])
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($history) {
+                $time = $history->created_at->diffForHumans();
+                $userName = $history->changedBy?->name ?? 'Sistem';
+                $colors = ['bg-green-500', 'bg-yellow-500', 'bg-blue-500', 'bg-purple-500', 'bg-red-500'];
+                return [
+                    'time' => $history->created_at->format('j M Y, H:i'),
+                    'color' => $colors[array_rand($colors)],
+                    'text' => ($history->order?->order_number ?? 'Pesanan #' . $history->order_id) . " → {$history->status} oleh {$userName}",
+                ];
+            })
+            ->toArray();
+
+        $chartWeeks = [];
+        $chartRevenue = [];
+        $chartOrdersIn = [];
+        $chartOrdersOut = [];
+        for ($i = 7; $i >= 0; $i--) {
+            $weekStart = now()->subWeeks($i)->startOfWeek();
+            $weekEnd = now()->subWeeks($i)->endOfWeek();
+            $chartWeeks[] = 'W' . (8 - $i);
+            $revenue = Payment::where('status', 'success')
+                ->whereBetween('created_at', [$weekStart, $weekEnd])
+                ->sum('amount');
+            $chartRevenue[] = $revenue > 0 ? round($revenue / 1000000, 1) : 0;
+            $chartOrdersIn[] = Order::whereBetween('created_at', [$weekStart, $weekEnd])->count();
+            $chartOrdersOut[] = Order::where('status', 'selesai')
+                ->whereBetween('updated_at', [$weekStart, $weekEnd])
+                ->count();
+        }
+
+        $topProducts = DB::table('order_items')
+            ->select('size', DB::raw('SUM(qty) as total_qty'))
+            ->groupBy('size')
+            ->orderByDesc('total_qty')
+            ->take(5)
+            ->get();
+        $topProductLabels = $topProducts->pluck('size')->map(fn($s) => 'Size ' . $s)->toArray();
+        $topProductData = $topProducts->pluck('total_qty')->toArray();
+
+        $customCount = Order::whereHas('designRequest')->count();
+        $catalogCount = Order::whereDoesntHave('designRequest')->count();
+        $totalBoth = max($customCount + $catalogCount, 1);
+        $distLabels = ['Custom', 'Produk Katalog'];
+        $distData = [round($customCount / $totalBoth * 100), round($catalogCount / $totalBoth * 100)];
+
+        $priorityNormal = 78;
+        $priorityExpress = 15;
+        $prioritySuper = 7;
+
+        return view('internal.summary', compact(
+            'kpi1', 'kpi2', 'employees', 'activities',
+            'chartWeeks', 'chartRevenue', 'chartOrdersIn', 'chartOrdersOut',
+            'topProductLabels', 'topProductData',
+            'distLabels', 'distData',
+            'priorityNormal', 'priorityExpress', 'prioritySuper',
+        ));
+    }
+}

@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     @auth
-                        <a href="{{ Auth::user()->role?->name === 'Customer' ? route('customer.beranda') : route('dashboard') }}">
+                        <a href="{{ Auth::user()->role?->name === 'Customer' ? route('beranda') : route('staf.dashboard') }}">
                             <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                         </a>
                     @endauth
@@ -16,28 +16,28 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @auth
                         @if(Auth::user()->role?->name !== 'Customer')
-                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            <x-nav-link :href="route('staf.dashboard')" :active="request()->routeIs('staf.dashboard')">
                                 {{ __('Dashboard') }}
                             </x-nav-link>
                         @endif
 
                         @if(Auth::user()->role?->name === 'Customer')
-                            <x-nav-link :href="route('customer.beranda')" :active="request()->routeIs('customer.beranda')">
+                            <x-nav-link :href="route('beranda')" :active="request()->routeIs('beranda')">
                                 {{ __('Beranda') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('customer.katalog')" :active="request()->routeIs('customer.katalog')">
+                            <x-nav-link :href="route('katalog')" :active="request()->routeIs('katalog')">
                                 {{ __('Katalog') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('customer.pemesanan')" :active="request()->routeIs('customer.pemesanan')">
+                            <x-nav-link :href="route('pemesanan')" :active="request()->routeIs('pemesanan')">
                                 {{ __('Buat Pesanan') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('customer.tracking')" :active="request()->routeIs('customer.tracking')">
+                            <x-nav-link :href="route('tracking')" :active="request()->routeIs('tracking')">
                                 {{ __('Tracking') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('customer.chat')" :active="request()->routeIs('customer.chat')">
+                            <x-nav-link :href="route('chat')" :active="request()->routeIs('chat')">
                                 {{ __('Chat') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('customer.tentang')" :active="request()->routeIs('customer.tentang')">
+                            <x-nav-link :href="route('tentang')" :active="request()->routeIs('tentang')">
                                 {{ __('Tentang Kami') }}
                             </x-nav-link>
                         @endif
@@ -98,28 +98,28 @@
         <div class="pt-2 pb-3 space-y-1">
             @auth
                 @if(Auth::user()->role?->name !== 'Customer')
-                    <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-responsive-nav-link :href="route('staf.dashboard')" :active="request()->routeIs('staf.dashboard')">
                         {{ __('Dashboard') }}
                     </x-responsive-nav-link>
                 @endif
 
                 @if(Auth::user()->role?->name === 'Customer')
-                    <x-responsive-nav-link :href="route('customer.beranda')" :active="request()->routeIs('customer.beranda')">
+                    <x-responsive-nav-link :href="route('beranda')" :active="request()->routeIs('beranda')">
                         {{ __('Beranda') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('customer.katalog')" :active="request()->routeIs('customer.katalog')">
+                    <x-responsive-nav-link :href="route('katalog')" :active="request()->routeIs('katalog')">
                         {{ __('Katalog') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('customer.pemesanan')" :active="request()->routeIs('customer.pemesanan')">
+                    <x-responsive-nav-link :href="route('pemesanan')" :active="request()->routeIs('pemesanan')">
                         {{ __('Buat Pesanan') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('customer.tracking')" :active="request()->routeIs('customer.tracking')">
+                    <x-responsive-nav-link :href="route('tracking')" :active="request()->routeIs('tracking')">
                         {{ __('Tracking') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('customer.chat')" :active="request()->routeIs('customer.chat')">
+                    <x-responsive-nav-link :href="route('chat')" :active="request()->routeIs('chat')">
                         {{ __('Chat') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('customer.tentang')" :active="request()->routeIs('customer.tentang')">
+                    <x-responsive-nav-link :href="route('tentang')" :active="request()->routeIs('tentang')">
                         {{ __('Tentang Kami') }}
                     </x-responsive-nav-link>
                 @endif

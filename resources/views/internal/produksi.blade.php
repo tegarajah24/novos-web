@@ -277,54 +277,7 @@ function produksiApp() {
         updateStatus: '',
         productionNote: '',
 
-        orders: [
-            {
-                id: 1,
-                order_id: 'NVS-20260607-001',
-                customer: 'Budi Santoso',
-                customer_contact: '0812-3456-7890',
-                team_name: 'Garuda FC',
-                material: 'Milano (Premium)',
-                collar: 'V-Neck Rib',
-                pattern: 'Full Printing',
-                deadline: '10 Jun 2026',
-                priority: 'High',
-                total_qty: 24,
-                notes: 'Warna marun harus sesuai pantone X12. Jahitan kerah diperkuat.<br>Sablon nama punggung font block tebal.',
-                sizes: { 'S': 2, 'M': 8, 'L': 10, 'XL': 3, 'XXL': 1, '3XL': 0 },
-                reference_files: [
-                    'https://placehold.co/300x300/1a237e/ffffff?text=Mockup+Depan',
-                    'https://placehold.co/300x300/1a237e/ffffff?text=Mockup+Belakang',
-                    'https://placehold.co/300x300/e2e8f0/64748b?text=Detail+Warna',
-                ],
-                design_files: [
-                    { name: 'pola_cetak_garudafc.pdf', type: 'Document/PDF' },
-                    { name: 'vector_logo_garuda.cdr', type: 'Corel/CDR' },
-                ]
-            },
-            {
-                id: 2,
-                order_id: 'NVS-20260607-004',
-                customer: 'Siti Rahayu',
-                customer_contact: '0857-1122-3344',
-                team_name: 'Bina Bangsa Volley',
-                material: 'Benzema',
-                collar: 'O-Neck Standard',
-                pattern: 'Kombinasi Polos',
-                deadline: '12 Jun 2026',
-                priority: 'Normal',
-                total_qty: 12,
-                notes: 'Sablon polyflex untuk nama punggung. Pastikan lurus.',
-                sizes: { 'S': 0, 'M': 4, 'L': 6, 'XL': 2, 'XXL': 0, '3XL': 0 },
-                reference_files: [
-                    'https://placehold.co/300x300/1e3a5f/ffffff?text=Mockup+Kaos',
-                ],
-                design_files: [
-                    { name: 'mockup_binabangsa.png', type: 'Image/PNG' },
-                    { name: 'vector_nama_punggung.cdr', type: 'Corel/CDR' },
-                ]
-            }
-        ],
+        orders: @json($orders),
 
         openDetail(order) {
             this.selectedOrder = order;
