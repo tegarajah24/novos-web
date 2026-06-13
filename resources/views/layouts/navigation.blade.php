@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     @auth
-                        <a href="{{ Auth::user()->role?->name === 'Customer' ? route('beranda') : url('/staf/dashboard') }}">
+                        <a href="{{ Auth::user()->role?->name === 'Customer' ? route('beranda') : route('staf.dashboard') }}">
                             <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                         </a>
                     @endauth
@@ -16,7 +16,7 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @auth
                         @if(Auth::user()->role?->name !== 'Customer')
-                            <x-nav-link :href="url('/staf/dashboard')" :active="request()->routeIs('staf.dashboard')">
+                            <x-nav-link :href="route('staf.dashboard')" :active="request()->routeIs('staf.dashboard')">
                                 {{ __('Dashboard') }}
                             </x-nav-link>
                         @endif
@@ -98,7 +98,7 @@
         <div class="pt-2 pb-3 space-y-1">
             @auth
                 @if(Auth::user()->role?->name !== 'Customer')
-                    <x-responsive-nav-link :href="url('/staf/dashboard')" :active="request()->routeIs('staf.dashboard')">
+                    <x-responsive-nav-link :href="route('staf.dashboard')" :active="request()->routeIs('staf.dashboard')">
                         {{ __('Dashboard') }}
                     </x-responsive-nav-link>
                 @endif

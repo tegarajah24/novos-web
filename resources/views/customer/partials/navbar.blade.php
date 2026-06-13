@@ -1,12 +1,22 @@
 {{-- ============================================================ --}}
 {{-- NAVBAR CUSTOMER --}}
 {{-- ============================================================ --}}
+<div x-data="{ mobileOpen: false }">
 <nav x-data="{ lastScroll: 0, hidden: false }"
      @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true } else if (y < lastScroll) { hidden = false }; lastScroll = y"
      :class="hidden ? '-translate-y-full' : 'translate-y-0'"
      class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
-        {{-- Left: Logo --}}
+        {{-- Mobile hamburger --}}
+        <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-[#616161] hover:text-[#1a237e]">
+            <svg :class="{'hidden': mobileOpen, 'inline-flex': ! mobileOpen}" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg :class="{'hidden': ! mobileOpen, 'inline-flex': mobileOpen}" class="hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        {{-- Center: Logo --}}
         <a href="{{ route('beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
 
         {{-- Center: Nav links --}}
@@ -75,9 +85,8 @@
                 </a>
 
                 {{-- User dropdown --}}
-                <div class="relative" x-data="{ userOpen: false, hoverTimer: null }"
-                     @mouseenter="clearTimeout(hoverTimer); userOpen = true"
-                     @mouseleave="hoverTimer = setTimeout(() => userOpen = false, 150)">
+                <div class="relative" x-data="{ userOpen: false }"
+                     @click.away="userOpen = false">
                     <button @click="userOpen = !userOpen"
                         class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                         <svg class="w-7 h-7 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -118,7 +127,7 @@
                         {{-- Dashboard (khusus internal) --}}
                         @if(Auth::user()->role?->name !== 'Customer')
                         <div class="border-t border-gray-100 my-1"></div>
-                        <a href="{{ url('/staf/dashboard') }}"
+                        <a href="{{ route('staf.dashboard') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                             Dashboard
@@ -261,8 +270,8 @@
                 </template>
                 </div>
             @else
-                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @click.away="open = false">
-                    <svg class="w-8 h-8 text-[#9e9e9e] hover:text-[#1a237e] transition-colors cursor-pointer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <svg @click="open = !open" class="w-8 h-8 text-[#9e9e9e] hover:text-[#1a237e] transition-colors cursor-pointer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <div x-show="open" x-cloak @mouseenter="open = true"
@@ -421,16 +430,19 @@
             </template>
         </div>
 
-        {{-- Mobile hamburger --}}
-        <button id="mobile-menu-btn" class="md:hidden p-2 text-[#616161] hover:text-[#1a237e]">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-        </button>
     </div>
+</nav>
 
-    {{-- Mobile menu dropdown --}}
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-3">
+{{-- Mobile menu dropdown --}}
+<div x-show="mobileOpen" x-cloak
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0 -translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100 translate-y-0"
+     x-transition:leave-end="opacity-0 -translate-y-2"
+     class="fixed top-16 left-1/2 -translate-x-1/2 w-full max-w-[1440px] bg-white border-t border-[#f0f0f0] z-40">
+    <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
         <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
         <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
 
@@ -453,7 +465,8 @@
 
         <a href="{{ route('pemesanan') }}" class="block text-sm font-medium {{ request()->routeIs('pemesanan') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Buat Pesanan</a>
     </div>
-</nav>
+</div>
+</div>
 
 <style>
     .nav-link {
@@ -505,10 +518,6 @@
 </style>
 
 <script>
-    document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
-        document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-
     function authSidebar() {
         return {
             sidebarOpen: false,
