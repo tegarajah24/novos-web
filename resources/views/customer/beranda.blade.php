@@ -92,10 +92,10 @@
     <div class="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-[#00e5ff] opacity-[0.05] rounded-full blur-3xl z-[1]"></div>
 
     {{-- content --}}
-    <div class="relative z-10 max-w-[1200px] mx-auto px-6 grid grid-cols-2 gap-3 md:gap-8 items-center" style="min-height:400px">
+    <div class="relative z-10 max-w-[1200px] mx-auto px-6 md:grid md:grid-cols-2 gap-3 md:gap-8 items-center" style="min-height:400px">
 
         {{-- Kiri: Content Panel --}}
-        <div class="flex flex-col justify-center py-4 md:py-0">
+        <div class="relative z-10 w-[70%] md:w-auto min-h-[400px] md:min-h-0 flex flex-col justify-center py-4 md:py-0">
             <div class="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-2 md:bg-transparent md:backdrop-blur-none md:border-none md:p-0">
 
             {{-- headline --}}
@@ -119,7 +119,9 @@
         </div>
 
         {{-- Kanan: Visual Showcase --}}
-        <div class="flex items-center justify-center py-0 relative overflow-visible -me-[20%] md:me-0" data-aos="zoom-in" data-aos-delay="400">
+        <div class="absolute right-0 top-0 bottom-0 w-[55%] z-0 overflow-visible flex items-center justify-center
+                    md:static md:w-auto md:z-auto md:flex md:items-center md:justify-center md:py-0 md:relative"
+             data-aos="zoom-in" data-aos-delay="400">
             {{-- background glow --}}
             <div class="absolute w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-[#00e5ff] opacity-[0.08] rounded-full blur-3xl"></div>
 
@@ -127,7 +129,7 @@
             <div class="relative z-10 group animate-float">
                 <img src="{{ asset('images/jersey-depan.png') }}"
                      alt="Jersey Custom Tampak Depan"
-                     class="w-full max-w-[200px] md:max-w-[380px] h-auto object-contain drop-shadow-2xl
+                     class="w-full md:max-w-[380px] h-auto object-contain drop-shadow-2xl
                             -rotate-[15deg] transition-all duration-700 ease-out
                             group-hover:-rotate-[10deg] group-hover:scale-[1.02]">
             </div>
