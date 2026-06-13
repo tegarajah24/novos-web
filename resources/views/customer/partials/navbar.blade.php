@@ -439,7 +439,7 @@
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 -translate-y-2"
-         class="md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-3">
+         class="md:hidden bg-white border-t border-[#f0f0f0] max-w-[1200px] mx-auto px-6 py-4 space-y-3">
         <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
         <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
 
