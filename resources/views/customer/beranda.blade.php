@@ -173,19 +173,21 @@
         {{-- horizontal scroll --}}
         <div x-ref="scroll" id="product-scroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth snap-x snap-mandatory">
             @forelse($bestSellers as $i => $product)
-            <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
-                <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
-                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
-                         alt="{{ $product->name }}"
-                         class="w-full h-full object-cover transition-transform duration-300 ease-out
-                                group-hover:scale-105">
-                    <span class="absolute top-0 left-0 px-2 py-0.5 bg-[#00e5ff] text-[#1a1a2e] text-[10px] font-bold">
-                        {{ $product->category?->name ?? 'Kategori' }}
-                    </span>
+            <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group bg-gray-50" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
+                <div class="p-2">
+                    <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
+                             alt="{{ $product->name }}"
+                             class="w-full h-full object-cover transition-transform duration-300 ease-out
+                                    group-hover:scale-105">
+                        <span class="absolute top-3 left-3 px-2.5 py-1 bg-[#1a237e]/80 text-white text-[10px] font-semibold">
+                            {{ $product->category?->name ?? 'Kategori' }}
+                        </span>
+                    </div>
                 </div>
-                <div class="mt-2 text-center">
-                    <h3 class="text-[#1a237e] text-sm font-bold">{{ $product->name }}</h3>
-                    <p class="text-black text-sm font-semibold mt-0.5">{{ $product->price ? 'Rp ' . number_format($product->price, 0, ',', '.') : '' }}</p>
+                <div class="p-3 text-center bg-gray-50">
+                    <h3 class="text-sm font-semibold text-[#1a237e] leading-snug">{{ $product->name }}</h3>
+                    <p class="text-sm font-bold text-[#1a237e] mt-0.5">{{ $product->price ? 'Rp ' . number_format($product->price, 0, ',', '.') : '' }}</p>
                 </div>
             </div>
             @empty
@@ -224,19 +226,21 @@
         {{-- horizontal scroll --}}
         <div x-ref="scroll2" id="product-scroll2" @scroll="updateScroll2()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth snap-x snap-mandatory">
             @forelse($latestProducts as $i => $product)
-            <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
-                <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
-                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
-                         alt="{{ $product->name }}"
-                         class="w-full h-full object-cover transition-transform duration-300 ease-out
-                                group-hover:scale-105">
-                    <span class="absolute top-0 left-0 px-2 py-0.5 bg-[#00e5ff] text-[#1a1a2e] text-[10px] font-bold">
-                        {{ $product->category?->name ?? 'Kategori' }}
-                    </span>
+            <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group bg-gray-50" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
+                <div class="p-2">
+                    <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
+                             alt="{{ $product->name }}"
+                             class="w-full h-full object-cover transition-transform duration-300 ease-out
+                                    group-hover:scale-105">
+                        <span class="absolute top-3 left-3 px-2.5 py-1 bg-[#1a237e]/80 text-white text-[10px] font-semibold">
+                            {{ $product->category?->name ?? 'Kategori' }}
+                        </span>
+                    </div>
                 </div>
-                <div class="mt-2 text-center">
-                    <h3 class="text-[#1a237e] text-sm font-bold">{{ $product->name }}</h3>
-                    <p class="text-black text-sm font-semibold mt-0.5">{{ $product->price ? 'Rp ' . number_format($product->price, 0, ',', '.') : '' }}</p>
+                <div class="p-3 text-center bg-gray-50">
+                    <h3 class="text-sm font-semibold text-[#1a237e] leading-snug">{{ $product->name }}</h3>
+                    <p class="text-sm font-bold text-[#1a237e] mt-0.5">{{ $product->price ? 'Rp ' . number_format($product->price, 0, ',', '.') : '' }}</p>
                 </div>
             </div>
             @empty
