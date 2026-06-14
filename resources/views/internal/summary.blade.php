@@ -10,7 +10,7 @@
 {{-- ─── KPI BARIS 1 ───────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
 @foreach($kpi1 as $k)
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1">
     <div class="flex justify-between items-start mb-3">
         <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center">
             <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
@@ -29,7 +29,7 @@
 {{-- ─── KPI BARIS 2 ───────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
 @foreach($kpi2 as $k)
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1">
     <div class="flex justify-between items-start mb-3">
         <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center">
             <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
@@ -209,12 +209,16 @@
     <span class="font-semibold text-gray-700 text-sm">📎 Export Laporan</span>
     <div class="flex gap-3">
         <button onclick="alert('Fitur sedang dalam pengembangan')" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">
-            <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             Download PDF
         </button>
-        <button onclick="alert('Fitur sedang dalam pengembangan')" class="flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white rounded-lg text-sm hover:bg-[#1a237e]/90 transition-colors font-medium">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <button onclick="alert('Fitur sedang dalam pengembangan')" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+            <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14v6m-3-3l3 3 3-3"/></svg>
             Export Excel
+        </button>
+        <button onclick="alert('Fitur sedang dalam pengembangan')" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+            <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Export CSV
         </button>
     </div>
 </div>
@@ -243,10 +247,85 @@ new Chart(document.getElementById('chartOrders'), {
 new Chart(document.getElementById('chartTop5'), {
     type:'bar',
     data:{
-        labels:@json($topProductLabels),
-        datasets:[{ label:'Terjual', data:@json($topProductData), backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'], borderRadius:6 }]
+        labels: @json($topProductLabels),
+        datasets:[
+            {
+                label:'Terjual',
+                data: @json($topProductData),
+                backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'],
+                borderRadius:6,
+                barPercentage:0.7,
+                categoryPercentage:0.85
+            }
+        ]
     },
-    options:{...chartDefaults, indexAxis:'y', plugins:{...chartDefaults.plugins, legend:{display:false}}}
+    options:{
+        ...chartDefaults,
+        indexAxis:'y',
+        plugins:{...chartDefaults.plugins, legend:{display:false}},
+        animation:{
+            x:{from:0,duration:1200,easing:'easeOutQuart',delay:(ctx)=>ctx.dataIndex*150}
+        },
+        scales:{
+            x:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},border:{display:false},ticks:{font:{size:11}}},
+            y:{grid:{display:false},border:{display:false},ticks:{font:{size:12,family:"'Poppins',sans-serif"}}}
+        },
+        hover:{mode:'nearest',intersect:true}
+    },
+    plugins:[
+        {
+            id:'rankingBadges',
+            afterDatasetsDraw(chart){
+                const ctx=chart.ctx;
+                const meta=chart.getDatasetMeta(0);
+                const badges=['🥇','🥈','🥉'];
+                meta.data.forEach((bar,index)=>{
+                    if(index<3){
+                        ctx.save();
+                        ctx.font='16px serif';
+                        ctx.textAlign='right';
+                        ctx.textBaseline='middle';
+                        ctx.fillText(badges[index],bar.base-12,bar.y);
+                        ctx.restore();
+                    }
+                });
+            }
+        },
+        {
+            id:'valueLabels',
+            afterDatasetsDraw(chart){
+                const ctx=chart.ctx;
+                const meta=chart.getDatasetMeta(0);
+                meta.data.forEach((bar,index)=>{
+                    const value=chart.data.datasets[0].data[index];
+                    ctx.save();
+                    ctx.fillStyle='#1a237e';
+                    ctx.font="bold 11px Poppins, sans-serif";
+                    ctx.textAlign='left';
+                    ctx.textBaseline='middle';
+                    ctx.fillText(value+' terjual',bar.x+10,bar.y);
+                    ctx.restore();
+                });
+            }
+        },
+        {
+            id:'hoverEnlarge',
+            beforeDatasetsDraw(chart){
+                const active=chart.getActiveElements();
+                if(!active.length) return;
+                const ctx=chart.ctx;
+                active.forEach(el=>{
+                    const {x,base,y,width}=el.element;
+                    const thickness=width*1.4;
+                    const newY=y-thickness/2;
+                    ctx.save();
+                    ctx.fillStyle='rgba(26,35,126,0.12)';
+                    ctx.fillRect(base,newY,x-base,thickness);
+                    ctx.restore();
+                });
+            }
+        }
+    ]
 });
 
 new Chart(document.getElementById('chartDist'), {
