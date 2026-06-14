@@ -6,7 +6,7 @@
         {{-- 4 columns --}}
         <div class="flex flex-col md:flex-row gap-12 mb-12">
             {{-- Col 1: Brand --}}
-            <div class="flex-1 max-w-[280px]">
+            <div class="flex-1">
                 <p class="text-white text-2xl font-extrabold tracking-tight mb-4">NOVOS</p>
                 <p class="text-sm text-[#9e9e9e] leading-relaxed mb-6">Custom Sports Jersey — Desain bebas, kualitas premium, pengerjaan cepat dan tepat waktu.</p>
                 <div class="flex items-center gap-3">
