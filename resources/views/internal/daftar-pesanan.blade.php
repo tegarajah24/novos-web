@@ -56,6 +56,8 @@ function rupiah($n) {
                         <option>Menunggu ACC</option>
                         <option>Produksi</option>
                         <option>Selesai</option>
+                        <option>Sedang Diproses</option>
+                        <option>Selesai Hari Ini</option>
                     </select>
                 </div>
                 <div>
