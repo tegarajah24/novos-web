@@ -105,7 +105,7 @@
                 <h2 class="text-2xl font-bold text-gray-900">Tim Kami</h2>
                 <p class="text-gray-500 mt-1">Orang-orang hebat di balik Novos</p>
             </div>
-            <div class="flex-1 flex items-center justify-end gap-1">
+            <div class="flex-1 flex items-center justify-end gap-1 hidden md:flex">
                 <button @click="scrollLeft()"
                     :class="scrolledLeft ? 'text-black hover:text-gray-500 cursor-pointer' : 'text-gray-300 cursor-default'"
                     class="px-1 transition-colors font-thin text-2xl leading-none">
@@ -120,7 +120,7 @@
         </div>
         <div class="mx-auto w-20 h-0.5 bg-gray-900 mb-8"></div>
 
-        <div x-ref="timScroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth">
+        <div x-ref="timScroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth snap-x snap-mandatory">
             @foreach([
                 ['Ahmad Rizki', 'Founder & CEO', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80'],
                 ['Sarah Putri', 'Head of Design', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80'],
@@ -133,7 +133,7 @@
                 ['Fajar Hidayat', 'Logistics', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80'],
                 ['Maya Anggraini', 'Admin', 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&q=80'],
             ] as $t)
-            <div class="flex-shrink-0 w-[220px] group" data-aos="fade-up" data-aos-once="true" data-aos-delay="{{ ($loop->index % 5) * 100 }}">
+            <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group" data-aos="fade-up" data-aos-once="true" data-aos-delay="{{ ($loop->index % 5) * 100 }}">
                 <div class="relative w-full overflow-hidden rounded-lg" style="aspect-ratio:3/4">
                     <img src="{{ $t[2] }}"
                          alt="{{ $t[0] }}"
