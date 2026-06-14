@@ -152,7 +152,7 @@
 
         <div class="flex items-end justify-between mb-2" data-aos="fade-up">
             <h2 class="text-3xl font-bold text-[#1a237e]">Produk Terlaris</h2>
-            <div class="flex items-center gap-1">
+            <div class="hidden md:flex items-center gap-1">
                 <a href="{{ route('katalog') }}" class="text-sm font-semibold text-black border-b border-black transition-colors">
                     Lihat Semua
                 </a>
@@ -171,9 +171,9 @@
         <div class="w-full h-0.5 bg-gradient-to-r from-[#00e5ff] to-transparent mb-8"></div>
 
         {{-- horizontal scroll --}}
-        <div x-ref="scroll" id="product-scroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth">
+        <div x-ref="scroll" id="product-scroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth snap-x snap-mandatory">
             @forelse($bestSellers as $i => $product)
-            <div class="flex-shrink-0 w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
+            <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
                 <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
                     <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
                          alt="{{ $product->name }}"
@@ -203,7 +203,7 @@
 
         <div class="flex items-end justify-between mb-2" data-aos="fade-up">
             <h2 class="text-3xl font-bold text-[#1a237e]">Produk Terbaru</h2>
-            <div class="flex items-center gap-1">
+            <div class="hidden md:flex items-center gap-1">
                 <a href="{{ route('katalog') }}" class="text-sm font-semibold text-black border-b border-black transition-colors">
                     Lihat Semua
                 </a>
@@ -222,9 +222,9 @@
         <div class="w-full h-0.5 bg-gradient-to-r from-[#00e5ff] to-transparent mb-8"></div>
 
         {{-- horizontal scroll --}}
-        <div x-ref="scroll2" id="product-scroll2" @scroll="updateScroll2()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth">
+        <div x-ref="scroll2" id="product-scroll2" @scroll="updateScroll2()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth snap-x snap-mandatory">
             @forelse($latestProducts as $i => $product)
-            <div class="flex-shrink-0 w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
+            <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group" data-aos="fade-up" data-aos-delay="{{ ($i % 4) * 100 }}">
                 <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
                     <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey' }}"
                          alt="{{ $product->name }}"
