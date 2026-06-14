@@ -10,7 +10,7 @@
 {{-- ─── KPI BARIS 1 ───────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
 @foreach($kpi1 as $k)
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1">
     <div class="flex justify-between items-start mb-3">
         <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center">
             <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
@@ -29,7 +29,7 @@
 {{-- ─── KPI BARIS 2 ───────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
 @foreach($kpi2 as $k)
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1">
     <div class="flex justify-between items-start mb-3">
         <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center">
             <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
