@@ -332,7 +332,7 @@
 <section class="bg-[#f8f9fa] py-16" data-aos="fade-in">
     <div class="max-w-[1200px] mx-auto px-6">
         <div class="bg-white rounded-2xl shadow-sm px-6 py-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-0">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-0">
                 @php
                     $stats = [
                         [$totalOrders . '+', 'Pesanan Selesai'],
@@ -342,7 +342,7 @@
                     ];
                 @endphp
                 @foreach($stats as $i => $stat)
-                <div class="flex flex-col items-center text-center py-4 px-4 {{ $i < 3 ? 'border-r border-[#1a237e]/20' : '' }}">
+                <div class="flex flex-col items-center text-center py-4 px-4 {{ $i < 3 ? 'border-b md:border-r border-[#1a237e]/20 md:border-b-0' : '' }}">
                     <p class="text-4xl md:text-5xl font-extrabold text-[#1a237e] mb-1">{{ $stat[0] }}</p>
                     <p class="text-sm text-[#1a237e]/70 font-medium">{{ $stat[1] }}</p>
                 </div>
