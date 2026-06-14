@@ -243,10 +243,85 @@ new Chart(document.getElementById('chartOrders'), {
 new Chart(document.getElementById('chartTop5'), {
     type:'bar',
     data:{
-        labels:@json($topProductLabels),
-        datasets:[{ label:'Terjual', data:@json($topProductData), backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'], borderRadius:6 }]
+        labels: @json($topProductLabels),
+        datasets:[
+            {
+                label:'Terjual',
+                data: @json($topProductData),
+                backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'],
+                borderRadius:6,
+                barPercentage:0.7,
+                categoryPercentage:0.85
+            }
+        ]
     },
-    options:{...chartDefaults, indexAxis:'y', plugins:{...chartDefaults.plugins, legend:{display:false}}}
+    options:{
+        ...chartDefaults,
+        indexAxis:'y',
+        plugins:{...chartDefaults.plugins, legend:{display:false}},
+        animation:{
+            x:{from:0,duration:1200,easing:'easeOutQuart',delay:(ctx)=>ctx.dataIndex*150}
+        },
+        scales:{
+            x:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},border:{display:false},ticks:{font:{size:11}}},
+            y:{grid:{display:false},border:{display:false},ticks:{font:{size:12,family:"'Poppins',sans-serif"}}}
+        },
+        hover:{mode:'nearest',intersect:true}
+    },
+    plugins:[
+        {
+            id:'rankingBadges',
+            afterDatasetsDraw(chart){
+                const ctx=chart.ctx;
+                const meta=chart.getDatasetMeta(0);
+                const badges=['🥇','🥈','🥉'];
+                meta.data.forEach((bar,index)=>{
+                    if(index<3){
+                        ctx.save();
+                        ctx.font='16px serif';
+                        ctx.textAlign='right';
+                        ctx.textBaseline='middle';
+                        ctx.fillText(badges[index],bar.base-12,bar.y);
+                        ctx.restore();
+                    }
+                });
+            }
+        },
+        {
+            id:'valueLabels',
+            afterDatasetsDraw(chart){
+                const ctx=chart.ctx;
+                const meta=chart.getDatasetMeta(0);
+                meta.data.forEach((bar,index)=>{
+                    const value=chart.data.datasets[0].data[index];
+                    ctx.save();
+                    ctx.fillStyle='#1a237e';
+                    ctx.font="bold 11px Poppins, sans-serif";
+                    ctx.textAlign='left';
+                    ctx.textBaseline='middle';
+                    ctx.fillText(value+' terjual',bar.x+10,bar.y);
+                    ctx.restore();
+                });
+            }
+        },
+        {
+            id:'hoverEnlarge',
+            beforeDatasetsDraw(chart){
+                const active=chart.getActiveElements();
+                if(!active.length) return;
+                const ctx=chart.ctx;
+                active.forEach(el=>{
+                    const {x,base,y,width}=el.element;
+                    const thickness=width*1.4;
+                    const newY=y-thickness/2;
+                    ctx.save();
+                    ctx.fillStyle='rgba(26,35,126,0.12)';
+                    ctx.fillRect(base,newY,x-base,thickness);
+                    ctx.restore();
+                });
+            }
+        }
+    ]
 });
 
 new Chart(document.getElementById('chartDist'), {
