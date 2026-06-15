@@ -4,7 +4,7 @@
 <div x-data="{ mobileOpen: false, lastScroll: 0, hidden: false }"
      @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true; mobileOpen = false } else if (y < lastScroll) { hidden = false }; lastScroll = y">
 <nav :class="hidden ? '-translate-y-full' : 'translate-y-0'"
-     class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[1440px] h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
+     class="fixed top-0 left-1/2 -translate-x-1/2 w-full h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
         {{-- Mobile hamburger --}}
         <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-[#616161] hover:text-[#1a237e]">
@@ -440,7 +440,7 @@
      x-transition:leave="transition ease-in duration-150"
      x-transition:leave-start="opacity-100 translate-y-0"
      x-transition:leave-end="opacity-0 -translate-y-2"
-     class="fixed top-16 left-1/2 -translate-x-1/2 w-full max-w-[1440px] bg-white border-t border-[#f0f0f0] z-40">
+     class="fixed top-16 left-1/2 -translate-x-1/2 w-full bg-white border-t border-[#f0f0f0] z-40">
     <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
         <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
         <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>

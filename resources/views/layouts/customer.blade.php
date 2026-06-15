@@ -30,7 +30,7 @@
 </head>
 <body class="bg-[#f5f5f5] text-[#212121] antialiased">
 
-<div class="w-full max-w-[1440px] mx-auto bg-white">
+<div class="w-full bg-white">
 
     {{-- Navbar --}}
     @include('customer.partials.navbar')
