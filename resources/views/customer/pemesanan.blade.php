@@ -455,12 +455,21 @@
             </button>
             <button
                 @click="submitOrder"
-                :disabled="!validateStep3"
-                :class="validateStep3 ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                :disabled="!validateStep3 || loading"
+                :class="(validateStep3 && !loading) ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
             >
-                Konfirmasi Pesanan
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                <span x-show="!loading" class="inline-flex items-center gap-2">
+                    Konfirmasi & Bayar
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </span>
+                <span x-show="loading" class="inline-flex items-center gap-2">
+                    <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                    Memproses...
+                </span>
             </button>
         </div>
     </div>
@@ -561,6 +570,7 @@
 }
 </style>
 
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 <script>
 function pemesananForm(catalogProduct = null) {
     return {
@@ -579,11 +589,12 @@ function pemesananForm(catalogProduct = null) {
             ukuran: { XS: 0, S: 0, M: 0, L: 4, XL: 4, XXL: 2 }
         },
         prioritas: 'normal',
-        pembayaran: null,
+        pembayaran: 'transfer',
         uploads: [],
         orderNumber: null,
         dragOver: false,
         dragOverRef: false,
+        loading: false,
 
         init() {
             if (this.catalogProduct) {
@@ -683,13 +694,63 @@ function pemesananForm(catalogProduct = null) {
         },
 
         submitOrder() {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            const rand = String(Math.floor(Math.random() * 999) + 1).padStart(3, '0');
-            this.orderNumber = 'NVS-' + y + m + d + '-' + rand;
-            this.step = 4;
+            if (this.loading) return;
+            this.loading = true;
+
+            const payload = {
+                team_name: this.form.team_name,
+                kerah: this.form.kerah,
+                bahan: this.form.bahan,
+                catatan: this.form.catatan,
+                ukuran: this.form.ukuran,
+                total_qty: this.totalQty || this.form.jumlah,
+                jumlah: this.form.jumlah,
+                prioritas: this.prioritas,
+                pembayaran: this.pembayaran,
+                warna_utama: this.form.warna_utama,
+                warna_sekunder: this.form.warna_sekunder,
+            };
+
+            fetch('{{ route('pesan.store') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify(payload),
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) throw new Error('Gagal membuat pesanan');
+                this.orderNumber = data.orderNumber;
+                return fetch('{{ url('/payment/snap') }}/' + data.order.id, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                });
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.snap_token) throw new Error('Gagal mendapatkan token pembayaran');
+
+                window.snap.pay(data.snap_token, {
+                    onSuccess: () => {
+                        window.location.href = '{{ route('tracking') }}';
+                    },
+                    onPending: () => {
+                        this.step = 4;
+                        this.loading = false;
+                    },
+                    onClose: () => {
+                        this.step = 4;
+                        this.loading = false;
+                    },
+                    onError: () => {
+                        Swal.fire({ icon: 'error', title: 'Pembayaran Gagal', text: 'Silakan coba lagi.' });
+                        this.loading = false;
+                    }
+                });
+            })
+            .catch(err => {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: err.message || 'Terjadi kesalahan' });
+                this.loading = false;
+            });
         },
 
         copyOrderNumber() {

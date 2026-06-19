@@ -42,12 +42,19 @@ class OrderController extends Controller
             $subtotal = $totalQty * $pricePerItem;
             $totalPrice = $subtotal + $biayaPrioritas;
 
+            $prioritasLabel = match ($data['prioritas'] ?? 'normal') {
+                'express'       => 'Express',
+                'super_express' => 'Super Express',
+                default         => 'Normal',
+            };
+
             $order = Order::create([
                 'user_id'     => auth()->id(),
                 'order_number' => $orderNumber,
                 'status'      => 'pending',
                 'total_price' => $totalPrice,
                 'notes'       => $data['catatan'] ?? null,
+                'admin_notes' => 'Prioritas: ' . $prioritasLabel . ' (' . $biayaPrioritas . ')',
             ]);
 
             $sizes = $data['ukuran'] ?? [];
