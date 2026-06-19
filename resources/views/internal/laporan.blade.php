@@ -43,16 +43,25 @@
 
             <div class="ml-auto flex gap-1.5">
                 <a href="{{ route('staf.laporan.csv', request()->query()) }}"
-                   class="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> CSV
+                   class="flex items-center gap-1 px-3 py-1.5 bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 text-xs font-medium rounded-lg transition-colors">
+                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100">
+                        <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-blue-600"></i>
+                    </span>
+                    CSV
                 </a>
                 <a href="{{ route('staf.laporan.excel', request()->query()) }}"
-                   class="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors">
-                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Excel
+                   class="flex items-center gap-1 px-3 py-1.5 bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 text-xs font-medium rounded-lg transition-colors">
+                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
+                        <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-green-600"></i>
+                    </span>
+                    Excel
                 </a>
                 <button onclick="window.print()"
-                        class="flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF
+                        class="flex items-center gap-1 px-3 py-1.5 bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 text-xs font-medium rounded-lg transition-colors">
+                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5 text-red-600"></i>
+                    </span>
+                    PDF
                 </button>
             </div>
         </div>
