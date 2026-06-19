@@ -22,7 +22,7 @@ class DesignController extends Controller
                     'customer_contact'  => $order->user->phone ?? '-',
                     'team_name'         => $dr?->team_name ?? 'Jersey Custom',
                     'deadline'          => $order->created_at->addDays(7)->format('d M Y'),
-                    'priority'          => 'Normal',
+                    'priority'          => $dr?->priority ?? 'Normal',
                     'material'          => $dr?->material ?? '-',
                     'collar'            => $dr?->collar_style ?? '-',
                     'pattern'           => $dr?->motif ?? '-',

@@ -101,7 +101,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                         Chat
                     </a>
                     {{-- Tombol Edit --}}
-                    <button onclick="alert('Edit customer')" class="flex items-center gap-1 text-xs text-[#1a237e] hover:underline font-medium">
+                    <button class="flex items-center gap-1 text-xs text-gray-400 font-medium cursor-not-allowed">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         Edit
                     </button>
@@ -175,7 +175,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     History Catatan
                 </h3>
-                <button onclick="alert('Tambah catatan')" class="p-1.5 rounded-lg text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 transition-colors">
+                <button class="p-1.5 rounded-lg text-gray-300 cursor-not-allowed">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
                 </button>
             </div>
@@ -249,7 +249,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     @endif
                 </div>
             </div>
-            <button onclick="alert('Bukti pembayaran (dummy)')" class="w-full mt-4 py-2 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors font-medium">
+            <button class="w-full mt-4 py-2 text-xs border border-gray-200 rounded-lg text-gray-400 cursor-not-allowed font-medium">
                 Bukti Pembayaran
             </button>
         </div>
@@ -273,7 +273,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     <label class="block text-xs text-gray-500 mb-1.5 font-medium">Catatan</label>
                     <textarea rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 resize-none" placeholder="Catatan update status..."></textarea>
                 </div>
-                <button onclick="alert('Status berhasil diupdate (dummy)')" class="w-full py-2.5 bg-[#1a237e] text-white rounded-lg text-sm font-semibold hover:bg-[#1a237e]/90 transition-colors">
+                <button class="w-full py-2.5 bg-gray-300 text-white rounded-lg text-sm font-semibold cursor-not-allowed">
                     Update Status
                 </button>
             </div>
@@ -285,47 +285,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Hasil Desain (Siap ACC)
             </h3>
-            
-            {{-- Preview Hasil --}}
-            <div class="space-y-2 mb-4">
-                <div class="flex items-center gap-3 p-2 bg-blue-50/50 border border-blue-100 rounded-lg">
-                    <div class="w-8 h-8 rounded bg-white flex items-center justify-center shrink-0 shadow-sm">
-                        <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-medium text-gray-700 truncate">mockup_garudafc.jpg</p>
-                        <p class="text-[10px] text-gray-400">Di-upload oleh Tim Design</p>
-                    </div>
-                    <button class="text-[#1a237e] hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Lihat">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                    </button>
-                </div>
-                <div class="flex items-center gap-3 p-2 bg-blue-50/50 border border-blue-100 rounded-lg">
-                    <div class="w-8 h-8 rounded bg-white flex items-center justify-center shrink-0 shadow-sm">
-                        <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-medium text-gray-700 truncate">pola_baju_final.pdf</p>
-                        <p class="text-[10px] text-gray-400">Di-upload oleh Tim Design</p>
-                    </div>
-                    <button class="text-[#1a237e] hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Lihat">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                    </button>
-                </div>
-            </div>
-            <button onclick="alert('Kirim ke customer (dummy)')" class="w-full py-2.5 bg-cyan-500 text-white rounded-lg text-sm font-semibold hover:bg-cyan-600 transition-colors mb-3">
-                Kirim ke Customer
-            </button>
-            <div class="grid grid-cols-2 gap-2">
-                <button onclick="alert('Pesanan diverifikasi (dummy)')" class="py-2.5 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors flex items-center justify-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                    Verifikasi
-                </button>
-                <button onclick="alert('Pesanan ditolak (dummy)')" class="py-2.5 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600 transition-colors flex items-center justify-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                    Tolak
-                </button>
-            </div>
+            <p class="text-sm text-gray-400 text-center py-6">Belum ada file desain</p>
         </div>
 
     </div>{{-- end kolom kanan --}}

@@ -253,7 +253,7 @@
             // ==================== LINE CHART - PREMIUM DRAW ANIMATION ====================
             const ctxLine = document.getElementById('lineChart');
             if (ctxLine) {
-                const targetData = [10, 19, 14, 25, 22, 29, 27, 36];
+                const targetData = @json($weeklyData);
                 const animDuration = 1800;
                 const pointStagger = 140;
                 const numPoints = targetData.length;
@@ -354,7 +354,7 @@
             // ==================== DOUGHNUT CHART - PROGRESSIVE ANIMATION ====================
             const ctxDonut = document.getElementById('donutChart');
             if (ctxDonut) {
-                const donutTargetData = [8, 12, 5, 32, 70];
+                const donutTargetData = @json($statusData);
                 const donutAnimDuration = 1400;
                 const donutStagger = 120;
 
