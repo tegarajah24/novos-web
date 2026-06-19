@@ -11,11 +11,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    // PASTIKAN BLOK INI ADA & IP-NYA SUDAH SESUAI:
-    server: {
-        host: '0.0.0.0', // Mengizinkan semua perangkat di Wi-Fi yang sama untuk akses
-        hmr: {
-            host: '192.168.18.50', // IP Laptop kamu
-        },
-    },
+    // Matikan atau hapus blok server jika hanya akses lewat 127.0.0.1
+    // server: {
+    //     host: '0.0.0.0',
+    //     hmr: {
+    //         host: '192.168.18.50',
+    //     },
+    // },
 });
