@@ -3,8 +3,7 @@
 @section('title', 'Daftar Pesanan')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-[#1a237e]">Daftar Pesanan</h1>
-    <p class="text-sm text-gray-500 mt-0.5">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+    <h1 class="text-xl font-bold text-black">Daftar Pesanan</h1>
 @endsection
 
 @section('internal-content')
@@ -57,6 +56,8 @@ function rupiah($n) {
                         <option>Menunggu ACC</option>
                         <option>Produksi</option>
                         <option>Selesai</option>
+                        <option>Sedang Diproses</option>
+                        <option>Selesai Hari Ini</option>
                     </select>
                 </div>
                 <div>
@@ -98,12 +99,16 @@ function rupiah($n) {
 
         <div class="ml-auto flex items-center gap-2">
             <button onclick="alert('Fitur export PDF akan segera tersedia')" class="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
-                <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <svg class="w-4 h-4" style="color: #EF4444" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v6h6"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 13H8"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 17H8"/><path stroke-linecap="round" stroke-linejoin="round" d="M10 9H8"/></svg>
                 PDF
             </button>
             <button onclick="alert('Fitur export Excel akan segera tersedia')" class="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
-                <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <svg class="w-4 h-4" style="color: #22C55E" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v6h6"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 13h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 17h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 11h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 15h2"/></svg>
                 Excel
+            </button>
+            <button onclick="alert('Fitur export CSV akan segera tersedia')" class="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                <svg class="w-4 h-4" style="color: #3B82F6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v6h6"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 13h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 17h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 11h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 15h2"/></svg>
+                CSV
             </button>
         </div>
     </div>

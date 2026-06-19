@@ -3,8 +3,7 @@
 @section('title', 'Katalog Produk')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-[#1a237e]">Katalog Produk</h1>
-    <p class="text-sm text-gray-500 mt-0.5">Kelola data jersey dan tampilan produk unggulan</p>
+    <h1 class="text-xl font-bold text-black">Katalog Produk</h1>
 @endsection
 
 @section('internal-content')
@@ -113,35 +112,28 @@
     </div>
 
     <!-- Modal Form -->
-    <style>
-        #modal_tambah_produk::backdrop {
-            background: transparent !important;
-            background-color: transparent !important;
-        }
-    </style>
-    <dialog id="modal_tambah_produk" class="modal backdrop:bg-transparent">
-        <div class="modal-box max-w-3xl bg-white shadow-2xl">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between -mx-6 -mt-6 mb-6">
+    <div x-show="showModal" x-cloak style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9998;background:rgba(0,0,0,0.5);margin:0;padding:0;">
+        <div @click="showModal = false" style="position:absolute;inset:0;"></div>
+        <div class="relative z-[9999] flex items-center justify-center min-h-screen">
+            <div class="relative bg-white shadow-2xl w-full max-w-[564px] max-h-[665px] flex flex-col overflow-hidden" style="border-radius: 20px;">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between" style="background: #ffffff; border-radius: 20px 20px 0 0;">
                 <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                     <i data-lucide="box" class="w-5 h-5 text-[#1a237e]"></i>
                     <span x-text="formMode === 'create' ? 'Tambah Produk Baru' : 'Edit Produk'"></span>
                 </h3>
-                <button @click="closeForm()" class="btn btn-ghost btn-sm btn-circle">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
             </div>
             
-            <div class="p-1">
-                <form @submit.prevent="saveProduct" class="space-y-5">
+            <div class="p-6 flex-1 overflow-y-auto" style="background: #ffffff;">
+                <form @submit.prevent="saveProduct" class="space-y-4">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
-                            <label class="text-sm font-semibold text-gray-700">Nama Produk <span class="text-red-500">*</span></label>
-                            <input type="text" x-model="formData.name" required class="input input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20" placeholder="Contoh: Novos Performance Jersey">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Nama Produk <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="formData.name" required class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" placeholder="Contoh: Novos Performance Jersey">
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-sm font-semibold text-gray-700">Kategori <span class="text-red-500">*</span></label>
-                            <select x-model="formData.category_id" required class="select select-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Kategori <span class="text-red-500">*</span></label>
+                            <select x-model="formData.category_id" required class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
                                 <option value="" disabled>Pilih Kategori</option>
                                 <template x-for="cat in categories" :key="cat.id">
                                     <option :value="cat.id" x-text="cat.name"></option>
@@ -151,55 +143,57 @@
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-sm font-semibold text-gray-700">Harga (Rp) <span class="text-red-500">*</span></label>
-                        <input type="number" x-model="formData.price" required min="0" class="input input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20" placeholder="Contoh: 150000">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Harga (Rp) <span class="text-red-500">*</span></label>
+                            <input type="number" x-model="formData.price" required min="0" class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" placeholder="Contoh: 150000">
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-sm font-semibold text-gray-700">Deskripsi Produk</label>
-                        <textarea x-model="formData.description" class="textarea textarea-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20" rows="3" placeholder="Detail bahan, printing, dsb..."></textarea>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Deskripsi Produk</label>
+                            <textarea x-model="formData.description" class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" rows="3" placeholder="Detail bahan, printing, dsb..." style="resize:none;"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
-                            <label class="text-sm font-semibold text-gray-700">Foto Tampak Depan</label>
-                            <input type="file" @change="handleUploadDepan" accept="image/*" class="file-input file-input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20 text-sm">
-                            <div x-show="formData.imageDepanPreview" class="mt-2 w-24 h-24 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                <img :src="formData.imageDepanPreview" class="object-cover w-full h-full">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Depan</label>
+                            <div class="flex items-center gap-3">
+                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium cursor-pointer">
+                                    <i data-lucide="upload" class="w-4 h-4"></i> Pilih File
+                                    <input type="file" x-ref="inputDepan" class="hidden" accept="image/*" @change="handleUploadDepan">
+                                </label>
+                                <span class="text-sm text-gray-500" x-text="formData.imageDepanPreview ? 'File dipilih' : 'No file chosen'"></span>
                             </div>
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-sm font-semibold text-gray-700">Foto Tampak Belakang</label>
-                            <input type="file" @change="handleUploadBelakang" accept="image/*" class="file-input file-input-bordered w-full rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20 text-sm">
-                            <div x-show="formData.imageBelakangPreview" class="mt-2 w-24 h-24 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                <img :src="formData.imageBelakangPreview" class="object-cover w-full h-full">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Belakang</label>
+                            <div class="flex items-center gap-3">
+                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium cursor-pointer">
+                                    <i data-lucide="upload" class="w-4 h-4"></i> Pilih File
+                                    <input type="file" x-ref="inputBelakang" class="hidden" accept="image/*" @change="handleUploadBelakang">
+                                </label>
+                                <span class="text-sm text-gray-500" x-text="formData.imageBelakangPreview ? 'File dipilih' : 'No file chosen'"></span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="pt-5 border-t border-gray-100 flex items-center justify-end gap-3 mt-6">
-                        <button type="button" @click="closeForm()" class="btn btn-outline border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg">
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 mt-6">
+                        <button type="button" @click="showModal = false" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm rounded-[10px] hover:bg-gray-50 transition-colors font-medium bg-white">
                             Batal
                         </button>
-                        <button type="submit" class="btn bg-[#1a237e] hover:bg-[#283593] text-white border-0 rounded-lg flex items-center gap-1.5">
-                            <i data-lucide="save" class="w-4 h-4"></i>
+                        <button type="submit" class="px-6 py-2.5 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium flex items-center gap-2 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             Simpan Data
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-        <form method="dialog" class="modal-backdrop bg-transparent" @click="closeForm()">
-            <button>close</button>
-        </form>
-    </dialog>
-
-</div>
+    </div>
 
 <script>
 function kelolaProdukApp() {
     return {
         formMode: 'create',
+        showModal: false,
         
         categories: @json($categories),
         
@@ -254,8 +248,8 @@ function kelolaProdukApp() {
                 imageBelakangPreview: null,
                 is_featured: false
             };
-            document.getElementById('modal_tambah_produk').showModal();
-            this.renderIcons();
+            this.showModal = true;
+            this.$nextTick(() => this.renderIcons());
         },
         
         openEditForm(product) {
@@ -270,12 +264,12 @@ function kelolaProdukApp() {
                 imageBelakangPreview: product.image_belakang,
                 is_featured: product.is_featured
             };
-            document.getElementById('modal_tambah_produk').showModal();
-            this.renderIcons();
+            this.showModal = true;
+            this.$nextTick(() => this.renderIcons());
         },
         
         closeForm() {
-            document.getElementById('modal_tambah_produk').close();
+            this.showModal = false;
         },
         
         handleUploadDepan(event) {
