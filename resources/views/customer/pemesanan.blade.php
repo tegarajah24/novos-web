@@ -140,8 +140,163 @@
                 </div>
 
                 {{-- Ukuran (Qty per Ukuran) --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ukuran (Qty per Ukuran)</label>
+                <div x-data="{ showSizeGuide: false }">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-medium text-gray-700">Ukuran (Qty per Ukuran)</label>
+                        <button
+                            type="button"
+                            @click="showSizeGuide = true"
+                            class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 border border-blue-200 bg-blue-50 hover:bg-blue-100 hover:border-blue-400 px-2.5 py-1 rounded-lg transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/>
+                                <path d="m14.5 12.5 2-2"/>
+                                <path d="m11.5 9.5 2-2"/>
+                                <path d="m8.5 6.5 2-2"/>
+                                <path d="m17.5 15.5 2-2"/>
+                            </svg>
+                            Panduan Ukuran
+                        </button>
+                    </div>
+
+                    {{-- Modal Panduan Ukuran --}}
+                    <div
+                        x-show="showSizeGuide"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        style="background: rgba(0,0,0,0.45);"
+                        @click.self="showSizeGuide = false"
+                    >
+                        <div
+                            x-show="showSizeGuide"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+                            @click.stop
+                        >
+                            {{-- Modal Header --}}
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/>
+                                            <path d="m14.5 12.5 2-2"/>
+                                            <path d="m11.5 9.5 2-2"/>
+                                            <path d="m8.5 6.5 2-2"/>
+                                            <path d="m17.5 15.5 2-2"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-900">Panduan Ukuran Jersey</h3>
+                                </div>
+                                <button
+                                    @click="showSizeGuide = false"
+                                    class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+
+                            {{-- Modal Body --}}
+                            <div class="px-6 py-4 overflow-y-auto max-h-[70vh]">
+                                <p class="text-xs text-gray-500 mb-4">Semua ukuran dalam satuan <strong>cm</strong>. Pilih ukuran yang sesuai dengan tubuh Anda.</p>
+                                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                                    <table class="w-full text-sm">
+                                        <thead>
+                                            <tr class="bg-blue-900 text-white">
+                                                <th class="px-4 py-3 text-left font-semibold">Ukuran</th>
+                                                <th class="px-4 py-3 text-left font-semibold">Lebar Dada (cm)</th>
+                                                <th class="px-4 py-3 text-left font-semibold">Lingkar Dada (cm)</th>
+                                                <th class="px-4 py-3 text-left font-semibold">Panjang Baju (cm)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100">
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">XS</td>
+                                                <td class="px-4 py-2.5 text-gray-700">44 – 46</td>
+                                                <td class="px-4 py-2.5 text-gray-700">88 – 92</td>
+                                                <td class="px-4 py-2.5 text-gray-700">64 – 66</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">S</td>
+                                                <td class="px-4 py-2.5 text-gray-700">47 – 49</td>
+                                                <td class="px-4 py-2.5 text-gray-700">94 – 98</td>
+                                                <td class="px-4 py-2.5 text-gray-700">66 – 68</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">M</td>
+                                                <td class="px-4 py-2.5 text-gray-700">50 – 52</td>
+                                                <td class="px-4 py-2.5 text-gray-700">100 – 104</td>
+                                                <td class="px-4 py-2.5 text-gray-700">69 – 71</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">L</td>
+                                                <td class="px-4 py-2.5 text-gray-700">53 – 55</td>
+                                                <td class="px-4 py-2.5 text-gray-700">106 – 110</td>
+                                                <td class="px-4 py-2.5 text-gray-700">72 – 74</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">56 – 58</td>
+                                                <td class="px-4 py-2.5 text-gray-700">112 – 116</td>
+                                                <td class="px-4 py-2.5 text-gray-700">74 – 76</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">2XL / XXL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">59 – 61</td>
+                                                <td class="px-4 py-2.5 text-gray-700">118 – 122</td>
+                                                <td class="px-4 py-2.5 text-gray-700">76 – 78</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">3XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">62 – 64</td>
+                                                <td class="px-4 py-2.5 text-gray-700">124 – 128</td>
+                                                <td class="px-4 py-2.5 text-gray-700">78 – 80</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">4XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">65 – 67</td>
+                                                <td class="px-4 py-2.5 text-gray-700">130 – 134</td>
+                                                <td class="px-4 py-2.5 text-gray-700">80 – 82</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">5XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">68 – 70</td>
+                                                <td class="px-4 py-2.5 text-gray-700">136 – 140</td>
+                                                <td class="px-4 py-2.5 text-gray-700">82 – 84</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">6XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">71 – 73</td>
+                                                <td class="px-4 py-2.5 text-gray-700">142 – 146</td>
+                                                <td class="px-4 py-2.5 text-gray-700">84 – 86</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-3">* Ukuran dapat sedikit berbeda tergantung bahan yang dipilih. Hubungi kami jika butuh konsultasi ukuran.</p>
+                            </div>
+
+                            {{-- Modal Footer --}}
+                            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                                <button
+                                    @click="showSizeGuide = false"
+                                    class="px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                >
+                                    Mengerti
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
                         <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', 'XXL']" :key="size">
                             <div class="text-center">
