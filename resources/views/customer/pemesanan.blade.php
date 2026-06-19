@@ -125,9 +125,9 @@
             </div>
         </template>
 
-        <div class="grid lg:grid-cols-2 gap-6 mt-6">
-            {{-- Left Column --}}
-            <div class="space-y-5">
+        <div class="space-y-5 mt-6">
+            {{-- Row: Nama Tim + Ukuran --}}
+            <div class="grid lg:grid-cols-2 gap-6">
                 {{-- Nama Tim / Event --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Tim / Event <span class="text-red-500">*</span></label>
@@ -139,6 +139,26 @@
                     >
                 </div>
 
+                {{-- Ukuran (Qty per Ukuran) --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ukuran (Qty per Ukuran)</label>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                        <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', 'XXL']" :key="size">
+                            <div class="text-center">
+                                <span class="block text-xs font-medium text-gray-500 mb-1" x-text="size"></span>
+                                <input
+                                    type="number"
+                                    x-model="form.ukuran[size]"
+                                    min="0"
+                                    class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                                >
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
                 {{-- Jenis Kerah --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Kerah <span class="text-red-500">*</span></label>
@@ -168,64 +188,17 @@
                         <option value="Cotton Combed">Cotton Combed</option>
                     </select>
                 </div>
-
-                {{-- Jumlah Pesanan with +/- --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Jumlah Pesanan</label>
-                    <div class="flex items-center gap-2">
-                        <button
-                            @click="if (form.jumlah > 1) form.jumlah--"
-                            class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <input
-                            type="number"
-                            x-model="form.jumlah"
-                            min="1"
-                            class="w-24 text-center px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
-                        >
-                        <button
-                            @click="form.jumlah++"
-                            class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <span class="text-sm text-gray-500 ml-1">pcs</span>
-                    </div>
-                </div>
             </div>
 
-            {{-- Right Column --}}
-            <div class="space-y-5">
-                {{-- Ukuran (Qty per Ukuran) --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ukuran (Qty per Ukuran)</label>
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                        <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', 'XXL']" :key="size">
-                            <div class="text-center">
-                                <span class="block text-xs font-medium text-gray-500 mb-1" x-text="size"></span>
-                                <input
-                                    type="number"
-                                    x-model="form.ukuran[size]"
-                                    min="0"
-                                    class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
-                                >
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                {{-- Catatan Desain --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan Desain</label>
-                    <textarea
-                        x-model="form.catatan"
-                        rows="4"
-                        placeholder="Deskripsi keseluruhan desain Anda..."
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow resize-none"
-                    ></textarea>
-                </div>
+            {{-- Catatan Desain --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan Desain</label>
+                <textarea
+                    x-model="form.catatan"
+                    rows="4"
+                    placeholder="Deskripsi keseluruhan desain Anda..."
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow resize-none"
+                ></textarea>
             </div>
         </div>
 
@@ -393,8 +366,14 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Jumlah</span>
-                            <span class="font-medium text-gray-900" x-text="(totalQty || form.jumlah) + ' pcs'"></span>
+                            <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
                         </div>
+                        <template x-for="(qty, size) in form.ukuran" :key="size">
+                            <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
+                                <span class="font-medium" x-text="'Ukuran ' + size"></span>
+                                <span x-text="parseInt(qty) + ' pcs'"></span>
+                            </div>
+                        </template>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Harga dasar</span>
                             <span class="font-medium text-gray-900" x-text="formatRupiah(hargaDasar)"></span>
@@ -515,8 +494,14 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Jumlah</span>
-                        <span class="font-medium text-gray-900" x-text="(totalQty || form.jumlah) + ' pcs'"></span>
+                        <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
                     </div>
+                    <template x-for="(qty, size) in form.ukuran" :key="size">
+                        <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
+                            <span class="font-medium" x-text="'Ukuran ' + size"></span>
+                            <span x-text="parseInt(qty) + ' pcs'"></span>
+                        </div>
+                    </template>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Prioritas</span>
                         <span class="font-medium text-gray-900 capitalize" x-text="prioritasText"></span>
@@ -572,11 +557,11 @@ function pemesananForm(catalogProduct = null) {
             team_name: 'FC Garuda',
             kerah: 'Crew Neck',
             bahan: 'Dryfit Premium',
-            jumlah: 10,
+
             warna_utama: '#1e3a5f',
             warna_sekunder: '#ffffff',
             catatan: '',
-            ukuran: { XS: 0, S: 0, M: 0, L: 4, XL: 4, XXL: 2 }
+            ukuran: { XS: 0, S: 0, M: 0, L: 0, XL: 0, XXL: 0 }
         },
         prioritas: 'normal',
         pembayaran: null,
@@ -613,7 +598,7 @@ function pemesananForm(catalogProduct = null) {
         },
 
         get hargaDasar() {
-            return (this.totalQty || this.form.jumlah) * this.basePricePerPcs;
+            return this.totalQty * this.basePricePerPcs;
         },
 
         get biayaPrioritas() {
