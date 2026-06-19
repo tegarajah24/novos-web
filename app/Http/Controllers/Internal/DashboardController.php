@@ -238,16 +238,11 @@ class DashboardController extends Controller
         $distLabels = ['Custom', 'Produk Katalog'];
         $distData = [round($customCount / $totalBoth * 100), round($catalogCount / $totalBoth * 100)];
 
-        $priorityNormal = 78;
-        $priorityExpress = 15;
-        $prioritySuper = 7;
-
         return view('internal.summary', compact(
             'kpi1', 'kpi2', 'employees', 'activities',
             'chartWeeks', 'chartRevenue', 'chartOrdersIn', 'chartOrdersOut',
             'topProductLabels', 'topProductData',
             'distLabels', 'distData',
-            'priorityNormal', 'priorityExpress', 'prioritySuper',
         ));
     }
 }

@@ -166,9 +166,8 @@
     </div>
 </div>
 
-{{-- ─── ACTIVITY + PRIORITY ─────────────────────────────────────────────── --}}
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-    {{-- Recent Activity --}}
+{{-- ─── ACTIVITY ─────────────────────────────────────────────────────────── --}}
+<div class="mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4">🔔 Recent Activity</h3>
         <div class="space-y-4">
@@ -183,45 +182,9 @@
         @endforeach
         </div>
     </div>
-
-    {{-- Priority Breakdown --}}
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">⚡ Priority Breakdown</h3>
-        <div class="space-y-4">
-            <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Normal</span><span class="text-gray-500 font-semibold">{{ $priorityNormal }}%</span></div>
-                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-emerald-500 h-2.5 rounded-full" style="width:{{ $priorityNormal }}%"></div></div>
-            </div>
-            <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Express</span><span class="text-gray-500 font-semibold">{{ $priorityExpress }}%</span></div>
-                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-yellow-400 h-2.5 rounded-full" style="width:{{ $priorityExpress }}%"></div></div>
-            </div>
-            <div>
-                <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">Super Express</span><span class="text-gray-500 font-semibold">{{ $prioritySuper }}%</span></div>
-                <div class="bg-gray-100 rounded-full h-2.5"><div class="bg-red-500 h-2.5 rounded-full" style="width:{{ $prioritySuper }}%"></div></div>
-            </div>
-        </div>
-    </div>
 </div>
 
-{{-- ─── EXPORT ──────────────────────────────────────────────────────────── --}}
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-wrap gap-3 items-center justify-between">
-    <span class="font-semibold text-gray-700 text-sm">📎 Export Laporan</span>
-    <div class="flex gap-3">
-        <button onclick="alert('Fitur sedang dalam pengembangan')" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">
-            <svg class="w-4 h-4" style="color: #EF4444" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v6h6"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 13H8"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 17H8"/><path stroke-linecap="round" stroke-linejoin="round" d="M10 9H8"/></svg>
-            PDF
-        </button>
-        <button onclick="alert('Fitur sedang dalam pengembangan')" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">
-            <svg class="w-4 h-4" style="color: #22C55E" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v6h6"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 13h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 17h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 11h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 15h2"/></svg>
-            Excel
-        </button>
-        <button onclick="alert('Fitur sedang dalam pengembangan')" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">
-            <svg class="w-4 h-4" style="color: #3B82F6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v6h6"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 13h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 17h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 11h2"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 15h2"/></svg>
-            CSV
-        </button>
-    </div>
-</div>
+
 
 {{-- ─── CHART.JS ────────────────────────────────────────────────────────── --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
