@@ -8,19 +8,54 @@
 @endsection
 
 @section('internal-content')
-<div x-data="produksiApp()">
+<div x-data="produksiApp()" x-init="init()">
 
-    {{-- Tabel Antrean Produksi --}}
+
+    {{-- Tabs Navigation Component (Pill Tabs style) --}}
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button @click="activeTab = 'printing'"
+            :class="activeTab === 'printing' ? 'bg-[#1a237e] text-white shadow-sm border-[#1a237e]' : 'bg-white text-gray-600 hover:text-[#1a237e] hover:bg-gray-50 border-gray-200'"
+            class="px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 flex items-center gap-2 border shadow-sm">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Printing</span>
+            <span :class="activeTab === 'printing' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500 border border-gray-200'"
+                class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all duration-200"
+                x-text="orders.filter(o => o.stage === 'printing').length"></span>
+        </button>
+        <button @click="activeTab = 'jahit'"
+            :class="activeTab === 'jahit' ? 'bg-[#1a237e] text-white shadow-sm border-[#1a237e]' : 'bg-white text-gray-600 hover:text-[#1a237e] hover:bg-gray-50 border-gray-200'"
+            class="px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 flex items-center gap-2 border shadow-sm">
+            <i data-lucide="scissors" class="w-4 h-4"></i>
+            <span>Jahit (Sewing)</span>
+            <span :class="activeTab === 'jahit' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500 border border-gray-200'"
+                class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all duration-200"
+                x-text="orders.filter(o => o.stage === 'jahit').length"></span>
+        </button>
+        <button @click="activeTab = 'qc'"
+            :class="activeTab === 'qc' ? 'bg-[#1a237e] text-white shadow-sm border-[#1a237e]' : 'bg-white text-gray-600 hover:text-[#1a237e] hover:bg-gray-50 border-gray-200'"
+            class="px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 flex items-center gap-2 border shadow-sm">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            <span>Quality Control (QC)</span>
+            <span :class="activeTab === 'qc' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500 border border-gray-200'"
+                class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all duration-200"
+                x-text="orders.filter(o => o.stage === 'qc').length"></span>
+        </button>
+    </div>
+
+    {{-- Tabel Antrean Produksi berdasarkan Active Tab --}}
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
         <div class="p-5 border-b border-gray-200 bg-gray-50/50 flex justify-between items-center">
             <h2 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                <i data-lucide="scissors" class="w-4 h-4 text-[#1a237e]"></i>
-                Daftar Pesanan Siap Produksi
+                <i x-show="activeTab === 'printing'" data-lucide="printer" class="w-4 h-4 text-[#1a237e]"></i>
+                <i x-show="activeTab === 'jahit'" data-lucide="scissors" class="w-4 h-4 text-[#1a237e]"></i>
+                <i x-show="activeTab === 'qc'" data-lucide="shield-check" class="w-4 h-4 text-[#1a237e]"></i>
+                <span x-text="activeTab === 'printing' ? 'Daftar Antrean Cetak (Printing)' : (activeTab === 'jahit' ? 'Daftar Antrean Jahit' : 'Daftar Antrean QC & Finishing')"></span>
             </h2>
             <div class="flex gap-2">
-                <span class="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full flex items-center gap-1">
-                    <i data-lucide="loader" class="w-3.5 h-3.5"></i>
-                    <span x-text="orders.length"></span> Antrean
+                <span :class="activeTab === 'printing' ? 'bg-blue-100 text-blue-700' : (activeTab === 'jahit' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700')"
+                    class="px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1 transition-all duration-300">
+                    <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
+                    <span x-text="filteredOrders().length"></span> Antrean
                 </span>
             </div>
         </div>
@@ -38,24 +73,24 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    <template x-if="orders.length === 0">
+                    <template x-if="filteredOrders().length === 0">
                         <tr>
-                            <td colspan="7" class="px-6 py-10 text-center text-gray-500">
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                                 <i data-lucide="check-circle-2" class="w-10 h-10 mx-auto text-green-400 mb-2"></i>
-                                <p class="font-medium">Tidak ada antrean produksi.</p>
-                                <p class="text-xs">Kerja bagus, semua pesanan sudah selesai diproduksi!</p>
+                                <p class="font-medium text-gray-800">Tidak ada antrean di divisi ini.</p>
+                                <p class="text-xs mt-1 text-gray-400" x-text="activeTab === 'printing' ? 'Semua pesanan selesai diprint!' : (activeTab === 'jahit' ? 'Semua pesanan selesai dijahit!' : 'Semua pesanan lolos QC!')"></p>
                             </td>
                         </tr>
                     </template>
-                    <template x-for="order in orders" :key="order.id">
-                        <tr class="hover:bg-purple-50/50 transition-colors cursor-pointer group" @click="openDetail(order)">
+                    <template x-for="order in filteredOrders()" :key="order.id">
+                        <tr class="hover:bg-indigo-50/30 transition-colors cursor-pointer group" @click="openDetail(order)">
                             <td class="px-6 py-4">
-                                <span class="font-semibold text-[#1a237e] group-hover:underline" x-text="order.order_id"></span>
+                                <span class="font-bold text-[#1a237e] group-hover:underline" x-text="order.order_id"></span>
                             </td>
-                            <td class="px-6 py-4 font-medium text-gray-900" x-text="order.customer"></td>
+                            <td class="px-6 py-4 font-semibold text-gray-900" x-text="order.customer"></td>
                             <td class="px-6 py-4" x-text="order.team_name"></td>
                             <td class="px-6 py-4 text-center">
-                                <span class="font-bold text-gray-900 bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md text-xs border border-purple-100" x-text="order.total_qty + ' pcs'"></span>
+                                <span class="font-bold text-gray-900 bg-gray-100 px-2.5 py-1 rounded-md text-xs border border-gray-200" x-text="order.total_qty + ' pcs'"></span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-1.5 text-gray-500">
@@ -69,11 +104,10 @@
                                 </span>
                                 <span x-show="order.priority !== 'High'" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200">
                                     Normal
-                                
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-purple-700 transition-colors flex items-center gap-1.5 ml-auto">
+                                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
                                     Lihat Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
                             </td>
@@ -96,7 +130,8 @@
                 <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <span class="px-2.5 py-1 rounded-md bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Diproduksi</span>
+                            <span class="px-2.5 py-1 rounded-md bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200 uppercase"
+                                x-text="selectedOrder?.stage"></span>
                             <h3 class="text-xl font-bold text-gray-900">Detail Pesanan: <span x-text="selectedOrder?.order_id" class="text-[#1a237e]"></span></h3>
                         </div>
                         <p class="text-sm text-gray-500 flex items-center gap-1.5">
@@ -218,20 +253,41 @@
                             <div class="bg-[#1a237e] px-5 py-4">
                                 <h4 class="font-semibold text-white flex items-center gap-2 text-sm">
                                     <i data-lucide="check-square" class="w-4 h-4"></i>
-                                    Penyelesaian Produksi
+                                    Tindakan Produksi
                                 </h4>
                             </div>
 
                             <div class="p-5 space-y-5">
 
-                                {{-- Status Dropdown --}}
+                                {{-- Status Dropdown berdasarkan stage --}}
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">1. Update Status</label>
-                                    <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                        <option value="">-- Pilih status produksi --</option>
-                                        <option value="diproduksi">Sedang Diproduksi</option>
-                                        <option value="selesai">Selesai Produksi (Siap Kirim)</option>
-                                    </select>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">1. Pilih Tindakan</label>
+                                    
+                                    <!-- Printing Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'printing'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="">-- Pilih tindakan cetak --</option>
+                                            <option value="diproduksi">Selesai Printing & Kirim ke Jahit</option>
+                                            <option value="selesai">Langsung Selesaikan Pesanan (Skip)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Jahit Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'jahit'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="">-- Pilih tindakan jahit --</option>
+                                            <option value="diproduksi">Selesai Jahit & Kirim ke QC</option>
+                                            <option value="selesai">Langsung Selesaikan Pesanan (Skip)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- QC Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'qc'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="">-- Pilih tindakan QC --</option>
+                                            <option value="selesai">Lolos QC & Selesaikan Pesanan</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 {{-- Catatan Opsional --}}
@@ -248,13 +304,19 @@
                                         :disabled="!updateStatus"
                                         class="w-full py-3 px-4 bg-[#1a237e] hover:bg-blue-900 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
                                         <i data-lucide="send" class="w-4 h-4"></i>
-                                        Simpan & Update Status
+                                        <span x-text="updateStatus === 'selesai' ? 'Selesaikan Pesanan' : 'Kirim ke Divisi Berikutnya'"></span>
                                     </button>
                                 </div>
 
                                 <div class="pt-2 border-t border-gray-100">
-                                    <p class="text-[11px] text-gray-400 text-center leading-relaxed">
-                                        Jika status diubah ke <strong class="text-gray-600">Selesai Produksi</strong>,<br>pesanan akan otomatis dinyatakan selesai.
+                                    <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'printing'">
+                                        Memilih <strong class="text-gray-600">Selesai Printing & Kirim ke Jahit</strong> akan memindahkan pesanan ke divisi Jahit.
+                                    </p>
+                                    <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'jahit'">
+                                        Memilih <strong class="text-gray-600">Selesai Jahit & Kirim ke QC</strong> akan memindahkan pesanan ke divisi QC.
+                                    </p>
+                                    <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'qc'">
+                                        Memilih <strong class="text-gray-600">Lolos QC & Selesaikan Pesanan</strong> akan memfinalisasi pesanan ini.
                                     </p>
                                 </div>
                             </div>
@@ -276,8 +338,31 @@ function produksiApp() {
         selectedOrder: null,
         updateStatus: '',
         productionNote: '',
+        activeTab: 'printing',
 
-        orders: @json($orders),
+        orders: @json($orders).map(order => {
+            if (order.status === 'siap_cetak') {
+                order.stage = 'printing';
+            } else if (order.status === 'diproduksi') {
+                const num = parseInt(order.id) || 0;
+                order.stage = (num % 2 === 0) ? 'jahit' : 'qc';
+            } else {
+                order.stage = 'printing';
+            }
+            return order;
+        }),
+
+        init() {
+            this.$watch('activeTab', value => {
+                this.$nextTick(() => {
+                    if (window.lucide) window.lucide.createIcons();
+                });
+            });
+        },
+
+        filteredOrders() {
+            return this.orders.filter(o => o.stage === this.activeTab);
+        },
 
         openDetail(order) {
             this.selectedOrder = order;
@@ -292,11 +377,32 @@ function produksiApp() {
         submitProduksi() {
             if (!this.updateStatus) return;
 
-            const isSelesai = this.updateStatus === 'selesai';
-            const title = isSelesai ? 'Tandai Produksi Selesai?' : 'Update Status Produksi?';
-            const text = isSelesai
-                ? 'Pesanan ini akan ditandai SELESAI dan siap diserahkan.'
-                : 'Status pesanan akan diperbarui menjadi "Sedang Diproduksi".';
+            const targetStatus = this.updateStatus;
+            const currentStage = this.selectedOrder.stage;
+            let nextStage = '';
+            let isSelesai = false;
+
+            if (targetStatus === 'selesai') {
+                isSelesai = true;
+            } else if (targetStatus === 'diproduksi') {
+                if (currentStage === 'printing') {
+                    nextStage = 'jahit';
+                } else if (currentStage === 'jahit') {
+                    nextStage = 'qc';
+                }
+            }
+
+            const title = isSelesai ? 'Tandai Produksi Selesai?' : 'Lanjutkan ke Tahap Berikutnya?';
+            let text = '';
+            if (isSelesai) {
+                text = 'Pesanan ini akan ditandai SELESAI dan siap diserahkan.';
+            } else {
+                if (currentStage === 'printing') {
+                    text = 'Pesanan akan dikirim ke divisi Jahit.';
+                } else if (currentStage === 'jahit') {
+                    text = 'Pesanan akan dikirim ke divisi Quality Control (QC).';
+                }
+            }
 
             Swal.fire({
                 title: title,
@@ -305,7 +411,7 @@ function produksiApp() {
                 showCancelButton: true,
                 confirmButtonColor: isSelesai ? '#16a34a' : '#1a237e',
                 cancelButtonColor: '#d33',
-                confirmButtonText: isSelesai ? 'Ya, Selesai!' : 'Ya, Update!',
+                confirmButtonText: isSelesai ? 'Ya, Selesai!' : 'Ya, Kirim!',
                 cancelButtonText: 'Batal',
                 reverseButtons: true
             }).then((result) => {
@@ -315,7 +421,7 @@ function produksiApp() {
                         title: 'Berhasil!',
                         text: isSelesai
                             ? 'Pesanan dinyatakan selesai diproduksi.'
-                            : 'Status berhasil diperbarui.',
+                            : (currentStage === 'printing' ? 'Pesanan dikirim ke divisi Jahit.' : 'Pesanan dikirim ke divisi QC.'),
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
@@ -323,6 +429,15 @@ function produksiApp() {
                         if (isSelesai) {
                             // Hapus dari antrean jika selesai
                             this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
+                        } else {
+                            // Update stage dan status pesanan lokal
+                            this.orders = this.orders.map(o => {
+                                if (o.id === this.selectedOrder.id) {
+                                    o.stage = nextStage;
+                                    o.status = 'diproduksi';
+                                }
+                                return o;
+                            });
                         }
                     });
                 }
