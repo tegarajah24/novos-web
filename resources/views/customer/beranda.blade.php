@@ -273,8 +273,8 @@
 
             @foreach([
                 ['Buat Pesanan',       'Isi form & upload desain kamu',   true,  false],
-                ['Pembayaran',         'Bayar dp atau lunas via transfer', true,  false],
                 ['Verifikasi Admin',   'Admin cek & konfirmasi pesanan',   false, true ],
+                ['Pembayaran',         'Bayar dp atau lunas via transfer', true,  false],
                 ['ACC Desain',         'Setujui desain final dari tim',    false, false],
                 ['Produksi & Selesai', 'Diproduksi & dikirim ke kamu',    false, false],
             ] as $i => $s)
