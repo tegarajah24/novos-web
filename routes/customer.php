@@ -37,7 +37,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/error', [PaymentController::class, 'error'])->name('payment.error');
 
     Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking');
-    Route::get('/tracking/search', [TrackingController::class, 'search'])->name('tracking.search');
     Route::post('/tracking/{id}/acc', [TrackingController::class, 'accDesign'])->name('tracking.acc');
     Route::post('/tracking/{id}/revision', [TrackingController::class, 'revision'])->name('tracking.revision');
 
