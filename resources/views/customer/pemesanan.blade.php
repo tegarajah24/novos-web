@@ -125,9 +125,9 @@
             </div>
         </template>
 
-        <div class="grid lg:grid-cols-2 gap-6 mt-6">
-            {{-- Left Column --}}
-            <div class="space-y-5">
+        <div class="space-y-5 mt-6">
+            {{-- Row: Nama Tim + Ukuran --}}
+            <div class="grid lg:grid-cols-2 gap-6">
                 {{-- Nama Tim / Event --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Tim / Event <span class="text-red-500">*</span></label>
@@ -139,19 +139,294 @@
                     >
                 </div>
 
+                {{-- Ukuran (Qty per Ukuran) --}}
+                <div x-data="{ showSizeGuide: false }">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-medium text-gray-700">Ukuran (Qty per Ukuran)</label>
+                        <button
+                            type="button"
+                            @click="showSizeGuide = true"
+                            class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 border border-blue-200 bg-blue-50 hover:bg-blue-100 hover:border-blue-400 px-2.5 py-1 rounded-lg transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/>
+                                <path d="m14.5 12.5 2-2"/>
+                                <path d="m11.5 9.5 2-2"/>
+                                <path d="m8.5 6.5 2-2"/>
+                                <path d="m17.5 15.5 2-2"/>
+                            </svg>
+                            Panduan Ukuran
+                        </button>
+                    </div>
+
+                    {{-- Modal Panduan Ukuran --}}
+                    <div
+                        x-show="showSizeGuide"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        style="background: rgba(0,0,0,0.45);"
+                        @click.self="showSizeGuide = false"
+                    >
+                        <div
+                            x-show="showSizeGuide"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+                            @click.stop
+                        >
+                            {{-- Modal Header --}}
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/>
+                                            <path d="m14.5 12.5 2-2"/>
+                                            <path d="m11.5 9.5 2-2"/>
+                                            <path d="m8.5 6.5 2-2"/>
+                                            <path d="m17.5 15.5 2-2"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-900">Panduan Ukuran Jersey</h3>
+                                </div>
+                                <button
+                                    @click="showSizeGuide = false"
+                                    class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+
+                            {{-- Modal Body --}}
+                            <div class="px-6 py-4 overflow-y-auto max-h-[70vh]">
+                                <p class="text-xs text-gray-500 mb-4">Semua ukuran dalam satuan <strong>cm</strong>. Pilih ukuran yang sesuai dengan tubuh Anda.</p>
+                                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                                    <table class="w-full text-sm">
+                                        <thead>
+                                            <tr class="bg-blue-900 text-white">
+                                                <th class="px-4 py-3 text-left font-semibold">Ukuran</th>
+                                                <th class="px-4 py-3 text-left font-semibold">Lebar Dada (cm)</th>
+                                                <th class="px-4 py-3 text-left font-semibold">Lingkar Dada (cm)</th>
+                                                <th class="px-4 py-3 text-left font-semibold">Panjang Baju (cm)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100">
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">XS</td>
+                                                <td class="px-4 py-2.5 text-gray-700">44 – 46</td>
+                                                <td class="px-4 py-2.5 text-gray-700">88 – 92</td>
+                                                <td class="px-4 py-2.5 text-gray-700">64 – 66</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">S</td>
+                                                <td class="px-4 py-2.5 text-gray-700">47 – 49</td>
+                                                <td class="px-4 py-2.5 text-gray-700">94 – 98</td>
+                                                <td class="px-4 py-2.5 text-gray-700">66 – 68</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">M</td>
+                                                <td class="px-4 py-2.5 text-gray-700">50 – 52</td>
+                                                <td class="px-4 py-2.5 text-gray-700">100 – 104</td>
+                                                <td class="px-4 py-2.5 text-gray-700">69 – 71</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">L</td>
+                                                <td class="px-4 py-2.5 text-gray-700">53 – 55</td>
+                                                <td class="px-4 py-2.5 text-gray-700">106 – 110</td>
+                                                <td class="px-4 py-2.5 text-gray-700">72 – 74</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">56 – 58</td>
+                                                <td class="px-4 py-2.5 text-gray-700">112 – 116</td>
+                                                <td class="px-4 py-2.5 text-gray-700">74 – 76</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">2XL / XXL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">59 – 61</td>
+                                                <td class="px-4 py-2.5 text-gray-700">118 – 122</td>
+                                                <td class="px-4 py-2.5 text-gray-700">76 – 78</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">3XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">62 – 64</td>
+                                                <td class="px-4 py-2.5 text-gray-700">124 – 128</td>
+                                                <td class="px-4 py-2.5 text-gray-700">78 – 80</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">4XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">65 – 67</td>
+                                                <td class="px-4 py-2.5 text-gray-700">130 – 134</td>
+                                                <td class="px-4 py-2.5 text-gray-700">80 – 82</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">5XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">68 – 70</td>
+                                                <td class="px-4 py-2.5 text-gray-700">136 – 140</td>
+                                                <td class="px-4 py-2.5 text-gray-700">82 – 84</td>
+                                            </tr>
+                                            <tr class="hover:bg-blue-50 transition-colors">
+                                                <td class="px-4 py-2.5 font-bold text-blue-900">6XL</td>
+                                                <td class="px-4 py-2.5 text-gray-700">71 – 73</td>
+                                                <td class="px-4 py-2.5 text-gray-700">142 – 146</td>
+                                                <td class="px-4 py-2.5 text-gray-700">84 – 86</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-3">* Ukuran dapat sedikit berbeda tergantung bahan yang dipilih. Hubungi kami jika butuh konsultasi ukuran.</p>
+                            </div>
+
+                            {{-- Modal Footer --}}
+                            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                                <button
+                                    @click="showSizeGuide = false"
+                                    class="px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                >
+                                    Mengerti
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                        <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', '2XL / XXL', '3XL', '4XL', '5XL', '6XL']" :key="size">
+                            <div class="text-center">
+                                <span class="block text-xs font-medium text-gray-500 mb-1" x-text="size"></span>
+                                <input
+                                    type="number"
+                                    x-model="form.ukuran[size]"
+                                    min="0"
+                                    class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                                >
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
                 {{-- Jenis Kerah --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Kerah <span class="text-red-500">*</span></label>
+                <div x-data="{ showCollarGuide: false }">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-sm font-medium text-gray-700">Jenis Kerah <span class="text-red-500">*</span></label>
+                        <button
+                            type="button"
+                            @click="showCollarGuide = true"
+                            class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 border border-blue-200 bg-blue-50 hover:bg-blue-100 hover:border-blue-400 px-2.5 py-1 rounded-lg transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4"/>
+                                <path d="M12 8h.01"/>
+                            </svg>
+                            Detail Kerah
+                        </button>
+                    </div>
                     <select
                         x-model="form.kerah"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Jenis Kerah</option>
-                        <option value="Crew Neck">Crew Neck (Bulat)</option>
-                        <option value="Polo">Polo (Kerah)</option>
-                        <option value="V-Neck">V-Neck</option>
-                        <option value="Mock Neck">Mock Neck</option>
+                        <option value="O-NECK V.1">O-NECK V.1</option>
+                        <option value="O-NECK V.2">O-NECK V.2</option>
+                        <option value="O-NECK V.3">O-NECK V.3</option>
+                        <option value="O-NECK V.4">O-NECK V.4</option>
+                        <option value="V-NECK V.5">V-NECK V.5</option>
+                        <option value="V-NECK V.1">V-NECK V.1</option>
+                        <option value="V-NECK V.2">V-NECK V.2</option>
+                        <option value="V-NECK V.3">V-NECK V.3</option>
+                        <option value="V-NECK V.4">V-NECK V.4</option>
+                        <option value="V-NECK V.5">V-NECK V.5</option>
+                        <option value="CLASSIC V.1">CLASSIC V.1</option>
+                        <option value="CLASSIC V.2">CLASSIC V.2</option>
+                        <option value="CLASSIC V.3">CLASSIC V.3</option>
+                        <option value="CLASSIC V.4">CLASSIC V.4</option>
+                        <option value="CLASSIC V.5">CLASSIC V.5</option>
+                        <option value="V-NECK V3 TUMPUK">V-NECK V3 TUMPUK</option>
+                        <option value="TIMNAS">TIMNAS</option>
                     </select>
+
+                    {{-- Modal Detail Kerah --}}
+                    <div
+                        x-show="showCollarGuide"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        style="background: rgba(0,0,0,0.55);"
+                        @click.self="showCollarGuide = false"
+                    >
+                        <div
+                            x-show="showCollarGuide"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden"
+                            @click.stop
+                        >
+                            {{-- Modal Header --}}
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-900">Detail Jenis Kerah Jersey</h3>
+                                </div>
+                                <button
+                                    @click="showCollarGuide = false"
+                                    class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+
+                            {{-- Modal Body --}}
+                            <div class="px-6 py-5 overflow-y-auto max-h-[75vh]">
+                                <p class="text-xs text-gray-500 mb-4">Panduan referensi variasi desain kerah jersey. Pilih jenis kerah yang sesuai dengan selera Anda.</p>
+
+                                {{-- Gambar Panduan Kerah --}}
+                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                                    <img
+                                        src="{{ asset('images/jersey_collar_guide.png') }}"
+                                        alt="Panduan Desain Kerah Jersey"
+                                        class="w-full h-auto object-contain"
+                                    >
+                                </div>
+
+
+
+                                <p class="text-xs text-gray-400 mt-3">* Detail variasi spesifik dapat dikonsultasikan lebih lanjut dengan tim desain kami.</p>
+                            </div>
+
+                            {{-- Modal Footer --}}
+                            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                                <button
+                                    @click="showCollarGuide = false"
+                                    class="px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                >
+                                    Mengerti
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Bahan Jersey --}}
@@ -168,64 +443,17 @@
                         <option value="Cotton Combed">Cotton Combed</option>
                     </select>
                 </div>
-
-                {{-- Jumlah Pesanan with +/- --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Jumlah Pesanan</label>
-                    <div class="flex items-center gap-2">
-                        <button
-                            @click="if (form.jumlah > 1) form.jumlah--"
-                            class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <input
-                            type="number"
-                            x-model="form.jumlah"
-                            min="1"
-                            class="w-24 text-center px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
-                        >
-                        <button
-                            @click="form.jumlah++"
-                            class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <span class="text-sm text-gray-500 ml-1">pcs</span>
-                    </div>
-                </div>
             </div>
 
-            {{-- Right Column --}}
-            <div class="space-y-5">
-                {{-- Ukuran (Qty per Ukuran) --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ukuran (Qty per Ukuran)</label>
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                        <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', 'XXL']" :key="size">
-                            <div class="text-center">
-                                <span class="block text-xs font-medium text-gray-500 mb-1" x-text="size"></span>
-                                <input
-                                    type="number"
-                                    x-model="form.ukuran[size]"
-                                    min="0"
-                                    class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
-                                >
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                {{-- Catatan Desain --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan Desain</label>
-                    <textarea
-                        x-model="form.catatan"
-                        rows="4"
-                        placeholder="Deskripsi keseluruhan desain Anda..."
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow resize-none"
-                    ></textarea>
-                </div>
+            {{-- Catatan Desain --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan Desain</label>
+                <textarea
+                    x-model="form.catatan"
+                    rows="4"
+                    placeholder="Deskripsi keseluruhan desain Anda..."
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow resize-none"
+                ></textarea>
             </div>
         </div>
 
@@ -393,8 +621,14 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Jumlah</span>
-                            <span class="font-medium text-gray-900" x-text="(totalQty || form.jumlah) + ' pcs'"></span>
+                            <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
                         </div>
+                        <template x-for="(qty, size) in form.ukuran" :key="size">
+                            <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
+                                <span class="font-medium" x-text="'Ukuran ' + size"></span>
+                                <span x-text="parseInt(qty) + ' pcs'"></span>
+                            </div>
+                        </template>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Harga dasar</span>
                             <span class="font-medium text-gray-900" x-text="formatRupiah(hargaDasar)"></span>
@@ -493,8 +727,14 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Jumlah</span>
-                        <span class="font-medium text-gray-900" x-text="(totalQty || form.jumlah) + ' pcs'"></span>
+                        <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
                     </div>
+                    <template x-for="(qty, size) in form.ukuran" :key="size">
+                        <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
+                            <span class="font-medium" x-text="'Ukuran ' + size"></span>
+                            <span x-text="parseInt(qty) + ' pcs'"></span>
+                        </div>
+                    </template>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Prioritas</span>
                         <span class="font-medium text-gray-900 capitalize" x-text="prioritasText"></span>
@@ -549,13 +789,13 @@ function pemesananForm(catalogProduct = null) {
         catalogProduct: catalogProduct,
         form: {
             team_name: 'FC Garuda',
-            kerah: 'Crew Neck',
-            bahan: 'Dryfit Premium',
-            jumlah: 10,
+            kerah: '',
+            bahan: '',
+
             warna_utama: '#1e3a5f',
             warna_sekunder: '#ffffff',
             catatan: '',
-            ukuran: { XS: 0, S: 0, M: 0, L: 4, XL: 4, XXL: 2 }
+            ukuran: { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL / XXL': 0, '3XL': 0, '4XL': 0, '5XL': 0, '6XL': 0 }
         },
         prioritas: 'normal',
         pembayaran: 'midtrans',
@@ -593,7 +833,7 @@ function pemesananForm(catalogProduct = null) {
         },
 
         get hargaDasar() {
-            return (this.totalQty || this.form.jumlah) * this.basePricePerPcs;
+            return this.totalQty * this.basePricePerPcs;
         },
 
         get biayaPrioritas() {
