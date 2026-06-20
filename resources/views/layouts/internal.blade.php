@@ -151,13 +151,13 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0 translate-x-0"
                 x-transition:leave-end="opacity-0 translate-y-4 translate-x-4"
-                class="fixed bottom-6 right-6 z-[9999] max-w-sm">
-                <div class="bg-white border border-gray-100 rounded-2xl shadow-2xl p-5">
+                class="fixed bottom-6 right-6 z-[9999] w-80">
+                <div class="bg-white border border-gray-100 rounded-2xl shadow-2xl p-5 h-44 flex flex-col">
 
-                    <p class="font-semibold text-gray-900 mb-1" x-text="activeReminder?.title"></p>
-                    <div class="text-gray-600 text-sm leading-relaxed space-y-1" x-html="activeReminder?.body"></div>
+                    <p class="font-semibold text-gray-900" x-text="activeReminder?.title"></p>
+                    <div class="text-gray-600 text-sm leading-relaxed flex-1 flex items-center" x-html="activeReminder?.body"></div>
                     <button @click="dismissReminder()"
-                        class="mt-3 w-full py-2 bg-[#1a237e]/5 hover:bg-[#1a237e]/10 text-[#1a237e] font-medium text-sm rounded-xl transition-colors">
+                        class="w-full py-2 bg-[#1a237e]/5 hover:bg-[#1a237e]/10 text-[#1a237e] font-medium text-sm rounded-xl transition-colors">
                         Baik, Saya Akan Istirahat
                     </button>
                 </div>
