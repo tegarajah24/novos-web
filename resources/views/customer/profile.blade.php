@@ -121,77 +121,33 @@
                 {{-- Order List --}}
                 <div class="space-y-4">
                     <template x-for="order in getFilteredOrders()" :key="order.id">
-                        <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                            {{-- Card Header --}}
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-                                <div>
+                        <div class="glass-card bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between gap-4">
+                                <div class="flex-1 min-w-0">
                                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">No. Pesanan</p>
-                                    <h3 class="font-bold text-gray-900 text-base font-mono mt-0.5" x-text="order.order_number"></h3>
+                                    <p class="font-bold text-gray-900 text-base font-mono mt-0.5 truncate" x-text="order.order_number"></p>
                                 </div>
-                                <div class="sm:text-right">
-                                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Tanggal</p>
-                                    <p class="text-sm font-semibold text-gray-700 mt-0.5" x-text="formatDate(order.created_at)"></p>
-                                </div>
-                                <div>
-                                    <span :class="getStatusBadgeClass(order.status)"
-                                          class="px-3.5 py-1.5 rounded-full text-xs font-bold capitalize"
-                                          x-text="getStatusLabel(order.status)"></span>
-                                </div>
+                                <span :class="getStatusBadgeClass(order.status)" class="shrink-0 px-3 py-1 rounded-full text-xs font-bold capitalize" x-text="getStatusLabel(order.status)"></span>
                             </div>
-
-                            {{-- Card Body --}}
-                            <div class="py-5 grid md:grid-cols-2 gap-6">
-                                {{-- Detail Desain --}}
-                                <div class="space-y-3">
-                                    <h4 class="font-bold text-sm text-gray-900">Spesifikasi &amp; Detail Desain</h4>
-                                    <div class="space-y-2 text-xs text-gray-600">
-                                        <div class="flex justify-between">
-                                            <span>Nama Tim:</span>
-                                            <span class="font-bold text-gray-900" x-text="order.design_request ? order.design_request.team_name : 'Katalog'"></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Bahan Jersey:</span>
-                                            <span class="font-semibold text-gray-900" x-text="order.design_request ? order.design_request.material : '-'"></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Kerah:</span>
-                                            <span class="font-semibold text-gray-900" x-text="order.design_request ? order.design_request.collar_style : '-'"></span>
-                                        </div>
-                                        <div class="flex justify-between" x-show="order.notes">
-                                            <span>Catatan:</span>
-                                            <span class="font-medium text-gray-700 max-w-[200px] truncate" x-text="order.notes" :title="order.notes"></span>
-                                        </div>
-                                    </div>
+                            <div class="mt-1.5 text-xs text-gray-500">
+                                <span x-text="formatDate(order.created_at)"></span>
+                                <template x-if="order.design_request">
+                                    <span> · <span class="font-medium text-gray-700" x-text="order.design_request.team_name"></span></span>
+                                </template>
+                            </div>
+                            <div class="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-gray-100 pt-4">
+                                <div class="text-sm">
+                                    <span class="text-gray-500">Total: </span>
+                                    <span class="font-bold text-[#1a237e]" x-text="formatRupiah(order.total_price)"></span>
+                                    <template x-if="order.order_item">
+                                        <span class="text-gray-400 text-xs ml-1">(<span x-text="order.order_item.qty"></span> pcs)</span>
+                                    </template>
                                 </div>
-
-                                {{-- Total & Summary --}}
-                                <div class="bg-gray-50/50 rounded-xl p-4 border border-gray-100 flex flex-col justify-between">
-                                    <div class="space-y-1.5 text-xs text-gray-600 mb-4">
-                                        <div class="flex justify-between font-semibold">
-                                            <span>Jumlah Total:</span>
-                                            <span class="text-gray-900" x-text="(order.order_item ? order.order_item.qty : '-') + ' pcs'"></span>
-                                        </div>
-                                        <div class="flex justify-between font-semibold">
-                                            <span>Total Bayar:</span>
-                                            <span class="text-blue-900 font-bold" x-text="formatRupiah(order.total_price)"></span>
-                                        </div>
-                                    </div>
-
-                                    {{-- Actions --}}
-                                    <div class="flex gap-2.5">
-                                        <template x-if="order.status === 'pending'">
-                                            <button @click="payOrder(order.id)"
-                                                class="flex-1 py-2.5 bg-blue-900 text-white rounded-lg text-xs font-bold hover:bg-blue-800 transition-colors shadow-sm flex items-center justify-center gap-1.5">
-                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                                                Bayar Sekarang
-                                            </button>
-                                        </template>
-                                        <a :href="'/tracking?q=' + order.order_number"
-                                           class="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 hover:text-gray-800 transition-colors flex items-center justify-center gap-1.5 text-center">
-                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                            Lacak Pesanan
-                                        </a>
-                                    </div>
+                                <div class="flex gap-2">
+                                    <template x-if="order.status === 'pending'">
+                                        <button @click="payOrder(order.id)" class="px-4 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#283593] transition-colors">Bayar Sekarang</button>
+                                    </template>
+                                    <button @click="openDetail(order)" class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors">Lihat Detail Transaksi</button>
                                 </div>
                             </div>
                         </div>
@@ -207,6 +163,71 @@
                     </div>
                 </div>
             </div>
+
+            {{-- MODAL DETAIL TRANSAKSI --}}
+            <template x-teleport="body">
+                <div x-show="selectedOrder" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="closeDetail()">
+                    <div class="absolute inset-0 bg-black/40"></div>
+                    <div x-show="selectedOrder" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+                            <div>
+                                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Detail Transaksi</p>
+                                <h3 class="font-bold text-gray-900 text-base font-mono mt-0.5" x-text="selectedOrder?.order_number"></h3>
+                            </div>
+                            <button @click="closeDetail()" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <div class="p-6 space-y-5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Status</span>
+                                <span :class="getStatusBadgeClass(selectedOrder?.status)" class="px-3 py-1 rounded-full text-xs font-bold capitalize" x-text="getStatusLabel(selectedOrder?.status)"></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Tanggal</span>
+                                <span class="text-sm font-medium text-gray-900" x-text="formatDate(selectedOrder?.created_at)"></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Nama Tim</span>
+                                <span class="text-sm font-medium text-gray-900" x-text="selectedOrder?.design_request?.team_name || 'Katalog'"></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Bahan Jersey</span>
+                                <span class="text-sm font-medium text-gray-900" x-text="selectedOrder?.design_request?.material || '-'"></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Kerah</span>
+                                <span class="text-sm font-medium text-gray-900" x-text="selectedOrder?.design_request?.collar_style || '-'"></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Pola Jahitan</span>
+                                <span class="text-sm font-medium text-gray-900" x-text="selectedOrder?.design_request?.pattern || '-'"></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Jumlah</span>
+                                <span class="text-sm font-medium text-gray-900" x-text="(selectedOrder?.order_item?.qty || '-') + ' pcs'"></span>
+                            </div>
+                            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                                <span class="text-sm font-semibold text-gray-700">Total Bayar</span>
+                                <span class="text-base font-bold text-[#1a237e]" x-text="formatRupiah(selectedOrder?.total_price)"></span>
+                            </div>
+                            <template x-if="selectedOrder?.notes">
+                                <div class="bg-amber-50/50 rounded-xl p-4 border border-amber-200/60">
+                                    <p class="text-xs text-gray-500 font-medium mb-1">Catatan Pesanan</p>
+                                    <p class="text-sm text-gray-700" x-text="selectedOrder.notes"></p>
+                                </div>
+                            </template>
+                            <div class="flex gap-3 pt-2">
+                                <a :href="'/tracking?q=' + selectedOrder?.order_number" class="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    Lacak Pesanan
+                                </a>
+                                <button @click="closeDetail()" class="flex-1 py-2.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
 
             {{-- 2. TAB: PENGATURAN PROFIL --}}
             <div x-show="activeTab === 'pengaturan'" x-cloak class="space-y-6">
@@ -419,6 +440,15 @@ function profileDashboard(orders = [], user = {}) {
         orderFilter: 'menunggu_pembayaran',
         orders: orders,
         user: user,
+        selectedOrder: null,
+
+        openDetail(order) {
+            this.selectedOrder = order;
+        },
+
+        closeDetail() {
+            this.selectedOrder = null;
+        },
 
         getUserInitials() {
             const displayName = this.user.fullname || this.user.name;
