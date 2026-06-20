@@ -119,6 +119,7 @@
     </div>
 
     {{-- Modal Detail Pesanan & Penyelesaian --}}
+    <template x-teleport="body">
     <div x-show="isDetailOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-cloak>
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
 
@@ -328,6 +329,7 @@
             </div>
         </div>
     </div>
+    </template>
 
 </div>
 
