@@ -153,16 +153,8 @@
                 x-transition:leave-end="opacity-0 translate-y-4 translate-x-4"
                 class="fixed bottom-6 right-6 z-[9999] max-w-sm">
                 <div class="bg-white border border-gray-100 rounded-2xl shadow-2xl p-5">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl" x-text="activeReminder?.icon"></span>
-                            <h3 class="font-semibold text-gray-800 text-sm" x-text="activeReminder?.time"></h3>
-                        </div>
-                        <button @click="dismissReminder()" class="text-gray-300 hover:text-gray-500 transition-colors">
-                            <span class="text-lg leading-none">&times;</span>
-                        </button>
-                    </div>
-                    <p class="font-semibold text-gray-900 mb-2" x-text="activeReminder?.title"></p>
+
+                    <p class="font-semibold text-gray-900 mb-1" x-text="activeReminder?.title"></p>
                     <div class="text-gray-600 text-sm leading-relaxed space-y-1" x-html="activeReminder?.body"></div>
                     <button @click="dismissReminder()"
                         class="mt-3 w-full py-2 bg-[#1a237e]/5 hover:bg-[#1a237e]/10 text-[#1a237e] font-medium text-sm rounded-xl transition-colors">
@@ -186,7 +178,7 @@
                         icon: '⏰',
                         time: 'Pukul 10.00',
                         title: 'Saatnya Micro-Break!',
-                        body: '💧 Minum air putih<br>🤸 Peregangan ringan<br>🌬 Tarik napas 3 kali<br><span class="text-gray-400 italic">(3–5 menit)</span>',
+                        body: 'Minum air putih, peregangan ringan, dan tarik napas 3 kali. (3–5 menit)',
                         hour: 10,
                         min: 0
                     }, {
@@ -194,7 +186,7 @@
                         icon: '🧠',
                         time: 'Pukul 13.00',
                         title: 'Istirahat Sejenak',
-                        body: 'Tubuh Anda juga membutuhkan perhatian.<br>Lakukan teknik <strong>STOP</strong> — <em>Stop, Take a breath, Observe, Proceed</em>.',
+                        body: 'Tubuh Anda juga membutuhkan perhatian. Lakukan teknik STOP — Stop, Take a breath, Observe, Proceed.',
                         hour: 13,
                         min: 0
                     }, {
