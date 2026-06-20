@@ -9,7 +9,7 @@
 @section('internal-content')
 <div x-data="dailyMentalCheck()">
     {{-- Tab Navigation --}}
-    <div class="flex gap-1 bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-white/70 max-w-2xl mr-auto mb-8">
+    <div class="flex gap-1 bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-white/70 max-w-5xl mr-auto mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
             <button @click="activeTab = i"
                 :class="activeTab === i ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'"
@@ -140,7 +140,7 @@
     </div>
 
     {{-- ========== TAB 2: ISI DAILY CHECK ========== --}}
-    <div x-show="activeTab === 1" x-cloak x-transition:enter.duration.300 class="max-w-3xl mx-auto">
+    <div x-show="activeTab === 1" x-cloak x-transition:enter.duration.300 class="max-w-5xl mx-auto">
         {{-- Header --}}
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Bagaimana kondisi Anda hari ini?</h2>
@@ -328,7 +328,7 @@
     </div>
 
     {{-- ========== TAB 3: MICRO-BREAK ========== --}}
-    <div x-show="activeTab === 2" x-cloak x-transition:enter.duration.300 class="max-w-3xl mx-auto">
+    <div x-show="activeTab === 2" x-cloak x-transition:enter.duration.300 class="max-w-5xl mx-auto">
         {{-- Header --}}
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Checklist SMART-WORK Micro-Break</h2>
