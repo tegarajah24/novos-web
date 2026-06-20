@@ -113,8 +113,8 @@
     </div>
 
     {{-- Modal Tambah --}}
-    <div id="modalTambah" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4" onclick="closeModal(event, 'modalTambah')">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div id="modalTambah" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Tambah Pengguna</h3>
                 <button onclick="closeModal(event, 'modalTambah')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -169,8 +169,8 @@
     </div>
 
     {{-- Modal Edit --}}
-    <div id="modalEdit" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4" onclick="closeModal(event, 'modalEdit')">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div id="modalEdit" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Edit Pengguna</h3>
                 <button onclick="closeModal(event, 'modalEdit')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -226,8 +226,8 @@
     </div>
 
     {{-- Modal Detail --}}
-    <div id="modalDetail" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4" onclick="closeModal(event, 'modalDetail')">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md" onclick="event.stopPropagation()">
+    <div id="modalDetail" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Detail Pengguna</h3>
                 <button onclick="closeModal(event, 'modalDetail')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -392,7 +392,6 @@
         }
 
         function closeModal(event, id) {
-            if (event && event.target !== event.currentTarget) return;
             document.getElementById(id).classList.add('hidden');
             document.body.style.overflow = '';
         }
