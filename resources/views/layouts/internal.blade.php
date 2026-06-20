@@ -128,5 +128,117 @@
         
     </div>
 
+    {{-- Micro-Break Reminder --}}
+    <div x-data="microBreakReminder()" x-init="init()">
+        {{-- Test button --}}
+        <button @click="showTestMenu = !showTestMenu"
+            class="fixed bottom-6 left-6 z-[9999] w-10 h-10 bg-gray-200 hover:bg-gray-300 text-gray-500 rounded-full shadow flex items-center justify-center transition-all"
+            title="Test Reminder">
+            <span class="text-lg font-bold" x-text="showTestMenu ? '&times;' : '?'"></span>
+        </button>
+        <div x-show="showTestMenu" x-cloak @click.away="showTestMenu = false"
+            class="fixed bottom-20 left-6 z-[9999] bg-white border border-gray-100 rounded-xl shadow-xl p-3 space-y-1.5 min-w-[180px]">
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Test Reminder</p>
+            <button @click="triggerReminder(0)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">⏰ Jam 10.00</button>
+            <button @click="triggerReminder(1)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">🧠 Jam 13.00</button>
+            <button @click="triggerReminder(2)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">😊 Jam 15.00</button>
+        </div>
+        <template x-teleport="body">
+            <div x-show="activeReminder" x-cloak x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 translate-x-4"
+                x-transition:enter-end="opacity-100 translate-y-0 translate-x-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 translate-x-0"
+                x-transition:leave-end="opacity-0 translate-y-4 translate-x-4"
+                class="fixed bottom-6 right-6 z-[9999] max-w-sm">
+                <div class="bg-white border border-gray-100 rounded-2xl shadow-2xl p-5">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl" x-text="activeReminder?.icon"></span>
+                            <h3 class="font-semibold text-gray-800 text-sm" x-text="activeReminder?.time"></h3>
+                        </div>
+                        <button @click="dismissReminder()" class="text-gray-300 hover:text-gray-500 transition-colors">
+                            <span class="text-lg leading-none">&times;</span>
+                        </button>
+                    </div>
+                    <p class="font-semibold text-gray-900 mb-2" x-text="activeReminder?.title"></p>
+                    <div class="text-gray-600 text-sm leading-relaxed space-y-1" x-html="activeReminder?.body"></div>
+                    <button @click="dismissReminder()"
+                        class="mt-3 w-full py-2 bg-[#1a237e]/5 hover:bg-[#1a237e]/10 text-[#1a237e] font-medium text-sm rounded-xl transition-colors">
+                        Baik, Saya Akan Istirahat
+                    </button>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script>
+        function microBreakReminder() {
+            return {
+                shownSlots: JSON.parse(localStorage.getItem('microbreak_shown') || '[]'),
+                today: localStorage.getItem('microbreak_date') || '',
+                activeReminder: null,
+                reminders: [
+                    {
+                        key: '10',
+                        icon: '⏰',
+                        time: 'Pukul 10.00',
+                        title: 'Saatnya Micro-Break!',
+                        body: '💧 Minum air putih<br>🤸 Peregangan ringan<br>🌬 Tarik napas 3 kali<br><span class="text-gray-400 italic">(3–5 menit)</span>',
+                        hour: 10,
+                        min: 0
+                    }, {
+                        key: '13',
+                        icon: '🧠',
+                        time: 'Pukul 13.00',
+                        title: 'Istirahat Sejenak',
+                        body: 'Tubuh Anda juga membutuhkan perhatian.<br>Lakukan teknik <strong>STOP</strong> — <em>Stop, Take a breath, Observe, Proceed</em>.',
+                        hour: 13,
+                        min: 0
+                    }, {
+                        key: '15',
+                        icon: '😊',
+                        time: 'Pukul 15.00',
+                        title: 'Sudahkah Anda Beristirahat?',
+                        body: 'Berdiri, tarik napas, dan kembali bekerja dengan lebih segar.',
+                        hour: 15,
+                        min: 0
+                    }
+                ],
+                init() {
+                    const d = new Date().toDateString();
+                    if (this.today !== d) {
+                        this.shownSlots = [];
+                        this.today = d;
+                        try {
+                            localStorage.setItem('microbreak_shown', '[]');
+                            localStorage.setItem('microbreak_date', d);
+                        } catch (e) {}
+                    }
+                    this.checkTime();
+                    setInterval(() => this.checkTime(), 60000);
+                },
+                checkTime() {
+                    const now = new Date();
+                    const h = now.getHours();
+                    const m = now.getMinutes();
+                    for (const r of this.reminders) {
+                        if (h === r.hour && m === r.min && !this.shownSlots.includes(r.key)) {
+                            this.activeReminder = r;
+                            this.shownSlots.push(r.key);
+                            try {
+                                localStorage.setItem('microbreak_shown', JSON.stringify(this.shownSlots));
+                            } catch (e) {}
+                            break;
+                        }
+                    }
+                },
+                dismissReminder() {
+                    this.activeReminder = null;
+                }
+            }
+        }
+    </script>
+
 </body>
 </html>
