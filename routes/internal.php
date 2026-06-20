@@ -19,7 +19,7 @@ Route::prefix('staf')
         Route::get('/summary', [DashboardController::class, 'summary'])->name('summary');
 
         Route::get('/daftar-pesanan', [OrderController::class, 'index'])->name('daftar-pesanan');
-        Route::get('/detail-pesanan/{id}', [OrderController::class, 'show'])->name('detail-pesanan');
+        Route::get('/detail-pesanan/{order:order_number}', [OrderController::class, 'show'])->name('detail-pesanan');
 
         Route::get('/design', [DesignController::class, 'index'])->name('design');
         Route::get('/produksi', [ProductionController::class, 'index'])->name('produksi');

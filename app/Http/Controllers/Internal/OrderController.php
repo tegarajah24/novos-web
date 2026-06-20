@@ -64,16 +64,16 @@ class OrderController extends Controller
         return view('internal.daftar-pesanan', compact('orders', 'assignees'));
     }
 
-    public function show($id)
+    public function show(Order $order)
     {
-        $record = Order::with([
+        $order->load([
             'user',
             'orderItem',
             'designRequest',
             'payment',
             'statusHistories.changedBy',
             'productionTask.assignedTo',
-        ])->findOrFail($id);
+        ]);
 
         // Status view mapping
         $badgeStatusMap = [
@@ -98,24 +98,24 @@ class OrderController extends Controller
             'dibatalkan'   => 'dibatalkan',
         ];
 
-        $badgeLabel = $badgeStatusMap[$record->status]['label'] ?? $record->status;
-        $badgeType  = $badgeStatusMap[$record->status]['badge'] ?? 'gray';
+        $badgeLabel = $badgeStatusMap[$order->status]['label'] ?? $order->status;
+        $badgeType  = $badgeStatusMap[$order->status]['badge'] ?? 'gray';
 
         // Sizes
         $sizes = [];
-        if ($record->orderItem) {
-            $sizes[$record->orderItem->size] = $record->orderItem->qty;
+        if ($order->orderItem) {
+            $sizes[$order->orderItem->size] = $order->orderItem->qty;
         }
 
         // Design files
         $designFiles = [];
-        if ($record->designRequest && $record->designRequest->logo) {
-            $designFiles[] = ['name' => basename($record->designRequest->logo)];
+        if ($order->designRequest && $order->designRequest->logo) {
+            $designFiles[] = ['name' => basename($order->designRequest->logo)];
         }
 
         // History notes
         $historyNotes = [];
-        foreach ($record->statusHistories as $h) {
+        foreach ($order->statusHistories as $h) {
             $historyNotes[] = [
                 'date' => $h->created_at->format('j M Y, H:i'),
                 'user' => $h->changedBy?->name ?? 'Sistem',
@@ -125,7 +125,7 @@ class OrderController extends Controller
 
         // Status history table
         $statusHistory = [];
-        foreach ($record->statusHistories as $h) {
+        foreach ($order->statusHistories as $h) {
             $statusHistory[] = [
                 'date'   => $h->created_at->format('j M Y, H:i'),
                 'status' => $badgeStatusCodeMap[$h->status] ?? $h->status,
@@ -145,11 +145,11 @@ class OrderController extends Controller
             'selesai'      => 'Selesai',
         ];
 
-        $currentIdx = array_search($record->status, $stepOrder);
+        $currentIdx = array_search($order->status, $stepOrder);
 
-        if ($currentIdx === false && $record->status === 'dibatalkan') {
+        if ($currentIdx === false && $order->status === 'dibatalkan') {
             $lastNonCancel = null;
-            foreach ($record->statusHistories as $h) {
+            foreach ($order->statusHistories as $h) {
                 if ($h->status !== 'dibatalkan') {
                     $lastNonCancel = $h;
                 }
@@ -163,7 +163,7 @@ class OrderController extends Controller
         }
 
         $stepDates = [];
-        foreach ($record->statusHistories as $h) {
+        foreach ($order->statusHistories as $h) {
             if (!isset($stepDates[$h->status])) {
                 $stepDates[$h->status] = $h->created_at->format('j M Y');
             }
@@ -180,28 +180,28 @@ class OrderController extends Controller
         }
 
         $order = [
-            'order_id'      => $record->order_number,
-            'last_update'   => $record->updated_at->format('j M Y, H:i'),
+            'order_id'      => $order->order_number,
+            'last_update'   => $order->updated_at->format('j M Y, H:i'),
             'customer'      => [
-                'name'  => $record->user->name ?? '-',
-                'email' => $record->user->email ?? '-',
-                'phone' => $record->user->phone ?? '-',
+                'name'  => $order->user->name ?? '-',
+                'email' => $order->user->email ?? '-',
+                'phone' => $order->user->phone ?? '-',
             ],
             'product'       => [
-                'type'  => $record->designRequest ? 'Jersey Custom' : 'Produk Katalog',
-                'sport' => $record->designRequest?->motif ?? 'Umum',
-                'notes' => $record->designRequest?->additional_notes ?? $record->notes ?? '-',
+                'type'  => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog',
+                'sport' => $order->designRequest?->motif ?? 'Umum',
+                'notes' => $order->designRequest?->additional_notes ?? $order->notes ?? '-',
             ],
             'sizes'         => $sizes,
             'design_files'  => $designFiles,
             'history_notes' => $historyNotes,
             'status_history' => $statusHistory,
             'payment'       => [
-                'subtotal'        => (float) ($record->orderItem?->subtotal ?? 0),
+                'subtotal'        => (float) ($order->orderItem?->subtotal ?? 0),
                 'biaya_prioritas' => 0,
-                'total'           => (float) ($record->payment?->amount ?? $record->total_price ?? 0),
-                'method'          => $record->payment?->payment_method ?? '-',
-                'status'          => $record->payment?->status === 'success' ? 'lunas' : 'pending',
+                'total'           => (float) ($order->payment?->amount ?? $order->total_price ?? 0),
+                'method'          => $order->payment?->payment_method ?? '-',
+                'status'          => $order->payment?->status === 'success' ? 'lunas' : 'pending',
             ],
         ];
 
