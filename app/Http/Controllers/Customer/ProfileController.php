@@ -9,13 +9,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Order;
 
 class ProfileController extends Controller
 {
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $orders = Order::where('user_id', $user->id)
+            ->with(['designRequest', 'payment', 'orderItem'])
+            ->latest()
+            ->get();
+
         return view('customer.profile', [
-            'user' => $request->user(),
+            'user' => $user,
+            'orders' => $orders,
         ]);
     }
 
