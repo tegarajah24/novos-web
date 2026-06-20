@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\OrderStatusHistory;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +59,8 @@ class PaymentController extends Controller
         return response()->json([
             'snap_token' => $snapToken,
             'order_id'   => $order->id,
+            'midtrans_order_id' => $midtransOrderId,
+            'order_number' => $order->order_number,
         ]);
     }
 
@@ -114,8 +117,47 @@ class PaymentController extends Controller
 
     public function finish(Request $request)
     {
-        $orderId = $request->query('order_id');
-        return view('customer.payment-finish', compact('orderId'));
+        $midtransOrderId = $request->query('order_id');
+        $orderNumber = null;
+
+        if ($midtransOrderId) {
+            $payment = Payment::where('midtrans_order_id', $midtransOrderId)->first();
+
+            if ($payment && $payment->status !== 'success') {
+                try {
+                    $status = $this->midtrans->checkTransactionStatus($midtransOrderId);
+                    $transactionStatus = $status->transaction_status;
+
+                    if (in_array($transactionStatus, ['capture', 'settlement'])) {
+                        $payment->update([
+                            'status' => 'success',
+                            'paid_at' => now(),
+                        ]);
+
+                        $order = $payment->order;
+                        $order->update(['status' => 'dikonfirmasi']);
+                        $orderNumber = $order->order_number;
+
+                        OrderStatusHistory::create([
+                            'order_id'   => $order->id,
+                            'status'     => 'dikonfirmasi',
+                            'changed_by' => $order->user_id,
+                            'notes'      => 'Pembayaran berhasil dikonfirmasi',
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    // Abaikan error — callback Midtrans akan handle jika nanti reachable
+                }
+            } elseif ($payment && $payment->status === 'success') {
+                $orderNumber = $payment->order->order_number;
+            }
+        }
+
+        if ($orderNumber) {
+            return redirect()->route('tracking', ['q' => $orderNumber]);
+        }
+
+        return redirect()->route('tracking');
     }
 
     public function unfinish(Request $request)

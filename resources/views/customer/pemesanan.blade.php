@@ -950,7 +950,7 @@ function pemesananForm(catalogProduct = null) {
 
                 window.snap.pay(data.snap_token, {
                     onSuccess: () => {
-                        window.location.href = '{{ route('tracking') }}';
+                        window.location.href = '/payment/finish?order_id=' + data.midtrans_order_id;
                     },
                     onPending: () => {
                         this.step = 4;
