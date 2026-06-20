@@ -327,11 +327,35 @@
         </div>
     </div>
 
-    {{-- ========== TAB 3: RIWAYAT ========== --}}
-    <div x-show="activeTab === 2" x-cloak x-transition:enter.duration.300 class="text-center py-20">
-        <span class="text-5xl block mb-3">📊</span>
-        <h3 class="text-lg font-bold text-gray-900 mb-1">Riwayat</h3>
-        <p class="text-sm text-gray-500">Riwayat akan segera hadir.</p>
+    {{-- ========== TAB 3: MICRO-BREAK ========== --}}
+    <div x-show="activeTab === 2" x-cloak x-transition:enter.duration.300>
+        <div class="glass-card rounded-2xl p-6 max-w-2xl">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Jadwal Micro-Break Otomatis</h3>
+            <p class="text-sm text-gray-500 mb-6">Notifikasi pengingat akan muncul otomatis di pojok kanan bawah pada jam-jam berikut:</p>
+            <div class="space-y-4">
+                <div class="flex items-start gap-4 p-4 bg-white/60 rounded-xl">
+                    <span class="text-2xl">⏰</span>
+                    <div>
+                        <p class="font-semibold text-gray-900">Pukul 10.00 — Micro-Break</p>
+                        <p class="text-sm text-gray-500 mt-0.5">Minum air putih, peregangan ringan, dan tarik napas 3 kali (3–5 menit)</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-white/60 rounded-xl">
+                    <span class="text-2xl">🧠</span>
+                    <div>
+                        <p class="font-semibold text-gray-900">Pukul 13.00 — Istirahat Sejenak</p>
+                        <p class="text-sm text-gray-500 mt-0.5">Lakukan teknik STOP — Stop, Take a breath, Observe, Proceed</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-white/60 rounded-xl">
+                    <span class="text-2xl">😊</span>
+                    <div>
+                        <p class="font-semibold text-gray-900">Pukul 15.00 — Istirahat Sore</p>
+                        <p class="text-sm text-gray-500 mt-0.5">Berdiri, tarik napas, dan kembali bekerja dengan lebih segar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- ========== TAB 4: EDUKASI ========== --}}
@@ -367,7 +391,7 @@ function dailyMentalCheck() {
         tabs: [
             { label: 'Dashboard', icon: '&#9632;' },
             { label: 'Isi Daily Check', icon: '&#9998;' },
-            { label: 'Riwayat',    icon: '&#9776;' },
+            { label: 'Micro-Break', icon: '&#9776;' },
             { label: 'Edukasi',    icon: '&#9733;' },
         ],
 
