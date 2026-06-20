@@ -91,9 +91,7 @@
                         @if(Auth::user()->avatar)
                             <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-7 h-7 rounded-full object-cover shrink-0">
                         @else
-                            <svg class="w-7 h-7 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
+                            <div class="w-7 h-7 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0">{{ strtoupper(\Illuminate\Support\Str::of(Auth::user()->fullname ?? Auth::user()->name)->explode(' ')->take(2)->map(fn($w) => $w[0])->implode('') ?: substr(Auth::user()->name, 0, 2)) }}</div>
                         @endif
                         <span class="text-sm font-medium text-[#1a237e] hidden sm:block">{{ Auth::user()->name }}</span>
                         <svg class="w-3.5 h-3.5 text-gray-400 hidden sm:block transition-transform" :class="userOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
