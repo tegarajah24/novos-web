@@ -10,7 +10,7 @@
         border: 1px solid rgba(229, 231, 235, 0.5);
     }
     .profile-avatar-glow {
-        box-shadow: 0 0 20px rgba(26, 35, 126, 0.1);
+        box-shadow: 0 0 20px rgba(26, 35, 126, 0.15);
     }
     [x-cloak] { display: none !important; }
 </style>
@@ -41,11 +41,18 @@
             {{-- Profile Card --}}
             <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
                 {{-- Avatar --}}
-                <div class="w-20 h-20 rounded-full bg-[#1a237e] text-white flex items-center justify-center text-2xl font-bold mb-4 profile-avatar-glow">
-                    <span x-text="getUserInitials()"></span>
+                <div class="w-20 h-20 rounded-full overflow-hidden mb-4 profile-avatar-glow flex items-center justify-center bg-gray-50 border border-gray-150 shrink-0">
+                    <template x-if="user.avatar">
+                        <img :src="'/storage/' + user.avatar" class="w-full h-full object-cover">
+                    </template>
+                    <template x-if="!user.avatar">
+                        <div class="w-full h-full bg-[#1a237e] text-white flex items-center justify-center text-2xl font-bold">
+                            <span x-text="getUserInitials()"></span>
+                        </div>
+                    </template>
                 </div>
                 {{-- Name & Role --}}
-                <h2 class="font-bold text-gray-900 text-lg leading-tight" x-text="user.name"></h2>
+                <h2 class="font-bold text-gray-900 text-lg leading-tight" x-text="user.fullname || user.name"></h2>
                 <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#1a237e] mt-2" x-text="user.role ? user.role.name : 'Customer'"></span>
 
                 {{-- Contact Info --}}
@@ -71,19 +78,19 @@
                         <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                         Riwayat Pembelian
                     </button>
-                    {{-- Tab: Desain Saya --}}
-                    <button @click="activeTab = 'desain'"
-                        :class="activeTab === 'desain' ? 'bg-[#1a237e] text-white' : 'text-gray-700 hover:bg-gray-50'"
+                    {{-- Tab: Pengaturan --}}
+                    <button @click="activeTab = 'pengaturan'"
+                        :class="activeTab === 'pengaturan' ? 'bg-[#1a237e] text-white' : 'text-gray-700 hover:bg-gray-50'"
                         class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all">
-                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/><path d="M12 8V16"/><path d="M8 12H16"/></svg>
-                        Desain &amp; Kustom Saya
+                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        Pengaturan Profil
                     </button>
                     {{-- Tab: Alamat --}}
                     <button @click="activeTab = 'alamat'"
                         :class="activeTab === 'alamat' ? 'bg-[#1a237e] text-white' : 'text-gray-700 hover:bg-gray-50'"
                         class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all">
                         <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Info &amp; Alamat Saya
+                        Alamat Pengiriman
                     </button>
                     {{-- Tab: Keamanan --}}
                     <button @click="activeTab = 'keamanan'"
@@ -239,86 +246,110 @@
                 </div>
             </div>
 
-            {{-- 2. TAB: DESAIN & KUSTOM SAYA --}}
-            <div x-show="activeTab === 'desain'" x-cloak class="space-y-6">
+            {{-- 2. TAB: PENGATURAN PROFIL --}}
+            <div x-show="activeTab === 'pengaturan'" x-cloak class="space-y-6">
                 <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-900 text-lg mb-1">Desain &amp; Kustom Saya</h3>
-                    <p class="text-sm text-gray-500 mb-6">Koleksi mockup desain jersey custom yang pernah Anda pesan di Novos.</p>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">Pengaturan Profil</h3>
+                    <p class="text-sm text-gray-500 mb-6">Kelola biodata diri, kontak utama, dan foto profil Anda.</p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <template x-for="order in orders.filter(o => o.design_request)" :key="order.id">
-                            <div class="border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                <div class="bg-gray-50 p-4 relative flex items-center justify-center min-h-[160px]">
-                                    {{-- Default Mockup Image --}}
-                                    <img src="{{ asset('images/jersey-depan.png') }}" class="h-28 object-contain drop-shadow-md">
-                                    <span class="absolute top-3 left-3 bg-[#1a237e] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider" x-text="order.order_number"></span>
-                                </div>
-                                <div class="p-4 space-y-3.5">
-                                    <h4 class="font-bold text-gray-900 text-sm" x-text="order.design_request.team_name"></h4>
-                                    <div class="grid grid-cols-2 gap-2.5 text-xs text-gray-600">
-                                        <div>
-                                            <span class="text-gray-400">Bahan:</span>
-                                            <p class="font-semibold text-gray-800 mt-0.5" x-text="order.design_request.material"></p>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-400">Kerah:</span>
-                                            <p class="font-semibold text-gray-800 mt-0.5" x-text="order.design_request.collar_style"></p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-1.5 pt-3 border-t border-gray-100">
-                                        <a :href="'/tracking?q=' + order.order_number"
-                                           class="w-full text-center py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-semibold text-gray-700 hover:text-gray-900 transition-colors">
-                                            Lihat Detail Mockup &amp; ACC
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-                    {{-- Empty State --}}
-                    <div x-show="orders.filter(o => o.design_request).length === 0" x-cloak
-                         class="py-16 text-center flex flex-col items-center">
-                        <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-3xl mb-4">🎨</div>
-                        <h4 class="font-bold text-gray-800 text-base mb-1">Belum Ada Desain Custom</h4>
-                        <p class="text-sm text-gray-400 max-w-sm mx-auto">Anda belum pernah melakukan order jersey custom dengan upload rancangan sendiri.</p>
-                        <a href="{{ route('pemesanan') }}" class="mt-5 px-6 py-2.5 bg-blue-900 text-white rounded-lg text-xs font-bold hover:bg-blue-800 transition-colors">Buat Pesanan Custom</a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- 3. TAB: INFO & ALAMAT PENGIRIMAN --}}
-            <div x-show="activeTab === 'alamat'" x-cloak class="space-y-6">
-                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-900 text-lg mb-1">Profil &amp; Alamat Pengiriman</h3>
-                    <p class="text-sm text-gray-500 mb-6">Informasi kontak utama dan alamat default pengiriman pesanan konveksi Anda.</p>
-
-                    <form method="POST" action="{{ route('profile.update') }}" @submit.prevent="if ($event.target.checkValidity()) $event.target.submit()">
+                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                         @csrf
                         @method('patch')
 
+                        {{-- Foto Profil Section --}}
+                        <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-gray-100 mb-6" x-data="{ 
+                            imagePreview: user.avatar ? '/storage/' + user.avatar : null,
+                            handleFileChange(e) {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                        this.imagePreview = event.target.result;
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            }
+                        }">
+                            <div class="w-24 h-24 rounded-full overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 profile-avatar-glow">
+                                <template x-if="imagePreview">
+                                    <img :src="imagePreview" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!imagePreview">
+                                    <div class="w-full h-full bg-[#1a237e] text-white flex items-center justify-center text-3xl font-bold">
+                                        <span x-text="getUserInitials()"></span>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="text-center sm:text-left space-y-2">
+                                <h4 class="font-bold text-sm text-gray-900">Foto Profil</h4>
+                                <p class="text-xs text-gray-500">Mendukung PNG, JPG, JPEG atau WEBP (Maksimal 2MB).</p>
+                                <label class="inline-block px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
+                                    Pilih Foto
+                                    <input type="file" name="avatar" class="hidden" accept="image/*" @change="handleFileChange($event)">
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Biodata Fields --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
+                                <input type="text" name="fullname" value="{{ old('fullname', $user->fullname) }}" placeholder="Nama Lengkap Anda"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Username <span class="text-red-500">*</span></label>
                                 <input type="text" name="name" value="{{ old('name', $user->name) }}" required autocomplete="name"
                                     class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
                             </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat Email <span class="text-red-500">*</span></label>
                                 <input type="email" name="email" value="{{ old('email', $user->email) }}" required autocomplete="username"
                                     class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor Telepon (WhatsApp) <span class="text-red-500">*</span></label>
+                                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" required placeholder="Contoh: 081234567890"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
+                            </div>
                         </div>
 
-                        <div class="mb-5">
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor Telepon (WhatsApp) <span class="text-red-500">*</span></label>
-                            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" required placeholder="Contoh: 081234567890"
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
+                        {{-- Hidden Address input to prevent overwriting it to null during profile update --}}
+                        <input type="hidden" name="address" value="{{ $user->address }}">
+
+                        <div class="flex justify-end pt-3">
+                            <button type="submit"
+                                class="px-6 py-3 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                Simpan Perubahan
+                            </button>
                         </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- 3. TAB: ALAMAT PENGIRIMAN --}}
+            <div x-show="activeTab === 'alamat'" x-cloak class="space-y-6">
+                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">Alamat Pengiriman</h3>
+                    <p class="text-sm text-gray-500 mb-6">Alamat default pengiriman pesanan konveksi Anda.</p>
+
+                    <form method="POST" action="{{ route('profile.update') }}" @submit.prevent="if ($event.target.checkValidity()) $event.target.submit()">
+                        @csrf
+                        @method('patch')
+
+                        {{-- Hidden inputs to preserve biodata --}}
+                        <input type="hidden" name="name" value="{{ $user->name }}">
+                        <input type="hidden" name="email" value="{{ $user->email }}">
+                        <input type="hidden" name="phone" value="{{ $user->phone }}">
+                        <input type="hidden" name="fullname" value="{{ $user->fullname }}">
 
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat Lengkap Pengiriman <span class="text-red-500">*</span></label>
-                            <textarea name="address" rows="4" required placeholder="Tuliskan alamat lengkap beserta kecamatan, kota, dan kode pos..."
+                            <textarea name="address" rows="5" required placeholder="Tuliskan alamat lengkap beserta kecamatan, kota, dan kode pos..."
                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm resize-none">{{ old('address', $user->address) }}</textarea>
                         </div>
 
@@ -326,7 +357,7 @@
                             <button type="submit"
                                 class="px-6 py-3 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center gap-2 shadow-sm">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                                Simpan Profil &amp; Alamat
+                                Simpan Alamat
                             </button>
                         </div>
                     </form>
@@ -403,7 +434,7 @@
                         </div>
                         <div class="border border-gray-150 rounded-xl p-4 hover:bg-gray-50/50 transition-colors">
                             <h5 class="font-bold text-gray-900 text-sm mb-1.5">Berapa lama estimasi pengerjaan jersey custom?</h5>
-                            <p class="text-xs text-gray-500 leading-relaxed">Kami memiliki 3 pilihan prioritas pengerjaan saat checkout: <strong>Normal</strong> (7-14 hari kerja), <strong>Express</strong> (3-6 hari kerja), dan <strong>Super Express</strong> (1-2 hari kerja) terhitung setelah pembayaran DP/Lunas dikonfirmasi.</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">Kami memiliki 3 pilihan prioritas pengerjaan saat checkout: <strong>Normal</strong> (7-14 hari kerja), <strong>Express</strong> (3-6 hari kerja), and <strong>Super Express</strong> (1-2 hari kerja) terhitung setelah pembayaran DP/Lunas dikonfirmasi.</p>
                         </div>
                     </div>
                 </div>
@@ -425,12 +456,13 @@ function profileDashboard(orders = [], user = {}) {
         user: user,
 
         getUserInitials() {
-            if (!this.user.name) return 'U';
-            const parts = this.user.name.split(' ');
+            const displayName = this.user.fullname || this.user.name;
+            if (!displayName) return 'U';
+            const parts = displayName.split(' ');
             if (parts.length > 1) {
                 return (parts[0][0] + parts[1][0]).toUpperCase();
             }
-            return this.user.name.substring(0, 2).toUpperCase();
+            return displayName.substring(0, 2).toUpperCase();
         },
 
         getOrdersCountByFilter(filter) {
