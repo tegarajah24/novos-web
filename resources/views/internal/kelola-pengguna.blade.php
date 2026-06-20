@@ -440,7 +440,7 @@
                     e.preventDefault();
                     const formData = new FormData(this);
 
-                    const result = await submitForm(this.id, '{{ route("kelola-pengguna.store") }}', 'POST', formData);
+                    const result = await submitForm(this.id, '{{ route("staf.kelola-pengguna.store") }}', 'POST', formData);
 
                     if (result) {
                         await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
@@ -457,7 +457,7 @@
                     const formData = new FormData(this);
                     formData.set('_method', 'PUT');
 
-                    const result = await submitForm(this.id, `{{ url('internal/kelola-pengguna') }}/${id}`, 'POST', formData);
+                    const result = await submitForm(this.id, `{{ url('staf/kelola-pengguna') }}/${id}`, 'POST', formData);
 
                     if (result) {
                         await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
@@ -488,7 +488,7 @@
                 if (!result.isConfirmed) return;
 
                 try {
-                    const res = await fetch(`{{ url('internal/kelola-pengguna') }}/${id}`, {
+                    const res = await fetch(`{{ url('staf/kelola-pengguna') }}/${id}`, {
                         method: 'DELETE',
                         headers: {
                             'Accept': 'application/json',
