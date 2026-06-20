@@ -165,6 +165,7 @@ function rupiah($n) {
                             </div>
 
                             {{-- EDIT MODAL --}}
+                            <template x-teleport="body">
                             <div x-show="editMode" x-cloak class="fixed inset-0 z-50 flex items-center justify-center" @keydown.escape.window="editMode = false">
                                 <div class="absolute inset-0 bg-black/30" @click="editMode = false"></div>
                                 <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-6" @click.outside="editMode = false">
@@ -216,6 +217,7 @@ function rupiah($n) {
                                     </div>
                                 </div>
                             </div>
+                            </template>
                         </td>
                     </tr>
                     @endforeach
