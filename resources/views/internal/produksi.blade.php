@@ -274,9 +274,8 @@
                                     <!-- Jahit Stage Actions -->
                                     <div x-show="selectedOrder?.stage === 'jahit'">
                                         <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                            <option value="">-- Pilih tindakan jahit --</option>
-                                            <option value="diproduksi">Selesai Jahit & Kirim ke QC</option>
-                                            <option value="selesai">Langsung Selesaikan Pesanan (Skip)</option>
+                                            <option value="proses_jahit">Sedang Proses</option>
+                                            <option value="selesai_jahit">Selesai</option>
                                         </select>
                                     </div>
 
@@ -303,7 +302,7 @@
                                         :disabled="!updateStatus"
                                         class="w-full py-3 px-4 bg-[#1a237e] hover:bg-blue-900 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
                                         <i data-lucide="send" class="w-4 h-4"></i>
-                                        <span x-text="selectedOrder?.stage === 'printing' ? 'Update' : (updateStatus === 'selesai' ? 'Selesaikan Pesanan' : 'Kirim ke Divisi Berikutnya')"></span>
+                                        <span x-text="'Update'"></span>
                                     </button>
                                 </div>
 
@@ -312,7 +311,7 @@
                                         Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk memperbarui progres, atau <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke divisi Jahit.
                                     </p>
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'jahit'">
-                                        Memilih <strong class="text-gray-600">Selesai Jahit & Kirim ke QC</strong> akan memindahkan pesanan ke divisi QC.
+                                        Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk memperbarui progres jahit, atau <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke Quality Control (QC).
                                     </p>
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'qc'">
                                         Memilih <strong class="text-gray-600">Lolos QC & Selesaikan Pesanan</strong> akan memfinalisasi pesanan ini.
@@ -362,7 +361,32 @@ function produksiApp() {
                     { name: 'pattern_layout_vneck.cdr', type: 'CorelDraw Vector' }
                 ],
                 status: 'siap_cetak',
-                stage: 'printing'
+                stage: 'printing',
+                printing_status: 'proses_printing'
+            },
+            {
+                id: 'dummy-2',
+                order_id: 'NVS-20260620-002',
+                customer: 'Budi Santoso',
+                customer_contact: '0812-9876-5432',
+                team_name: 'Dewa United Futsal',
+                total_qty: 12,
+                deadline: '28 Jun 2026',
+                priority: 'Normal',
+                material: 'Dryfit Jarum',
+                collar: 'O-Neck Rib',
+                pattern: 'Stripes Classic',
+                notes: 'Proses jahit. Harap pastikan benang warna hitam sesuai motif line samping.',
+                sizes: { 'M': 4, 'L': 6, 'XL': 2 },
+                reference_files: [
+                    'https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=600&auto=format&fit=crop'
+                ],
+                design_files: [
+                    { name: 'dewa_united_futsal_blueprint.pdf', type: 'PDF Blueprint' }
+                ],
+                status: 'diproduksi',
+                stage: 'jahit',
+                jahit_status: 'proses_jahit'
             },
             ...@json($orders).map(order => {
                 if (order.status === 'siap_cetak') {
@@ -393,6 +417,8 @@ function produksiApp() {
             this.selectedOrder = order;
             if (order.stage === 'printing') {
                 this.updateStatus = order.printing_status || 'proses_printing';
+            } else if (order.stage === 'jahit') {
+                this.updateStatus = order.jahit_status || 'proses_jahit';
             } else {
                 this.updateStatus = '';
             }
@@ -429,6 +455,20 @@ function produksiApp() {
                     confirmButtonText = 'Ya, Kirim!';
                     successText = 'Proses printing selesai. Pesanan dikirim ke divisi Jahit.';
                 }
+            } else if (currentStage === 'jahit') {
+                if (targetStatus === 'proses_jahit') {
+                    nextStage = 'jahit';
+                    title = 'Update Status Jahit?';
+                    text = 'Status pesanan akan diperbarui menjadi Sedang Proses.';
+                    confirmButtonText = 'Ya, Update!';
+                    successText = 'Status pesanan berhasil diperbarui.';
+                } else if (targetStatus === 'selesai_jahit') {
+                    nextStage = 'qc';
+                    title = 'Selesaikan Jahit?';
+                    text = 'Proses jahit selesai dan pesanan akan dikirim ke divisi QC.';
+                    confirmButtonText = 'Ya, Kirim!';
+                    successText = 'Proses jahit selesai. Pesanan dikirim ke divisi QC.';
+                }
             } else {
                 if (targetStatus === 'selesai') {
                     isSelesai = true;
@@ -457,7 +497,7 @@ function produksiApp() {
                 text: text,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: (isSelesai || targetStatus === 'proses_printing') ? '#16a34a' : '#1a237e',
+                confirmButtonColor: (isSelesai || targetStatus === 'proses_printing' || targetStatus === 'proses_jahit') ? '#16a34a' : '#1a237e',
                 cancelButtonColor: '#d33',
                 confirmButtonText: confirmButtonText,
                 cancelButtonText: 'Batal',
@@ -483,6 +523,11 @@ function produksiApp() {
                                     if (currentStage === 'printing') {
                                         o.printing_status = targetStatus;
                                         if (targetStatus === 'selesai_printing') {
+                                            o.status = 'diproduksi';
+                                        }
+                                    } else if (currentStage === 'jahit') {
+                                        o.jahit_status = targetStatus;
+                                        if (targetStatus === 'selesai_jahit') {
                                             o.status = 'diproduksi';
                                         }
                                     } else {
