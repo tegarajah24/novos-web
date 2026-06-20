@@ -83,7 +83,7 @@
                         </tr>
                     </template>
                     <template x-for="order in filteredOrders()" :key="order.id">
-                        <tr class="hover:bg-indigo-50/30 transition-colors cursor-pointer group" @click="openDetail(order)">
+                        <tr class="hover:bg-indigo-50/30 transition-colors group">
                             <td class="px-6 py-4">
                                 <span class="font-bold text-[#1a237e] group-hover:underline" x-text="order.order_id"></span>
                             </td>
@@ -107,7 +107,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
+                                <button @click="openDetail(order)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
                                     Lihat Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
                             </td>
@@ -124,7 +124,7 @@
 
             <div x-show="isDetailOpen" @click="isDetailOpen = false" x-transition.opacity class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" aria-hidden="true"></div>
 
-            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-5xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#f8fafc] rounded-2xl shadow-2xl border border-gray-200">
+            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-3xl p-6 my-8 max-h-[85vh] overflow-y-auto text-left align-middle transition-all transform bg-[#f8fafc] rounded-2xl shadow-2xl border border-gray-200">
 
                 {{-- Header Modal --}}
                 <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
@@ -266,9 +266,8 @@
                                     <!-- Printing Stage Actions -->
                                     <div x-show="selectedOrder?.stage === 'printing'">
                                         <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                            <option value="">-- Pilih tindakan cetak --</option>
-                                            <option value="diproduksi">Selesai Printing & Kirim ke Jahit</option>
-                                            <option value="selesai">Langsung Selesaikan Pesanan (Skip)</option>
+                                            <option value="proses_printing">Sedang Proses</option>
+                                            <option value="selesai_printing">Selesai</option>
                                         </select>
                                     </div>
 
@@ -304,13 +303,13 @@
                                         :disabled="!updateStatus"
                                         class="w-full py-3 px-4 bg-[#1a237e] hover:bg-blue-900 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
                                         <i data-lucide="send" class="w-4 h-4"></i>
-                                        <span x-text="updateStatus === 'selesai' ? 'Selesaikan Pesanan' : 'Kirim ke Divisi Berikutnya'"></span>
+                                        <span x-text="selectedOrder?.stage === 'printing' ? 'Update' : (updateStatus === 'selesai' ? 'Selesaikan Pesanan' : 'Kirim ke Divisi Berikutnya')"></span>
                                     </button>
                                 </div>
 
                                 <div class="pt-2 border-t border-gray-100">
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'printing'">
-                                        Memilih <strong class="text-gray-600">Selesai Printing & Kirim ke Jahit</strong> akan memindahkan pesanan ke divisi Jahit.
+                                        Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk memperbarui progres, atau <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke divisi Jahit.
                                     </p>
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'jahit'">
                                         Memilih <strong class="text-gray-600">Selesai Jahit & Kirim ke QC</strong> akan memindahkan pesanan ke divisi QC.
@@ -340,17 +339,43 @@ function produksiApp() {
         productionNote: '',
         activeTab: 'printing',
 
-        orders: @json($orders).map(order => {
-            if (order.status === 'siap_cetak') {
-                order.stage = 'printing';
-            } else if (order.status === 'diproduksi') {
-                const num = parseInt(order.id) || 0;
-                order.stage = (num % 2 === 0) ? 'jahit' : 'qc';
-            } else {
-                order.stage = 'printing';
-            }
-            return order;
-        }),
+        orders: [
+            {
+                id: 'dummy-1',
+                order_id: 'NVS-20260620-001',
+                customer: 'Anto Wijaya',
+                customer_contact: '0812-3456-7890',
+                team_name: 'Majestic Esports',
+                total_qty: 15,
+                deadline: '27 Jun 2026',
+                priority: 'High',
+                material: 'Dryfit Premium',
+                collar: 'V-Neck Rib',
+                pattern: 'Geometric Cyberpunk',
+                notes: 'Desain ACC dari Tim Design. Sablon sublimasi fullprint warna gradasi ungu-biru. Logo dada kiri bordir komputer.',
+                sizes: { 'S': 3, 'M': 5, 'L': 5, 'XL': 2 },
+                reference_files: [
+                    'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop'
+                ],
+                design_files: [
+                    { name: 'majestic_esports_blueprint.pdf', type: 'PDF Blueprint' },
+                    { name: 'pattern_layout_vneck.cdr', type: 'CorelDraw Vector' }
+                ],
+                status: 'siap_cetak',
+                stage: 'printing'
+            },
+            ...@json($orders).map(order => {
+                if (order.status === 'siap_cetak') {
+                    order.stage = 'printing';
+                } else if (order.status === 'diproduksi') {
+                    const num = parseInt(order.id) || 0;
+                    order.stage = (num % 2 === 0) ? 'jahit' : 'qc';
+                } else {
+                    order.stage = 'printing';
+                }
+                return order;
+            })
+        ],
 
         init() {
             this.$watch('activeTab', value => {
@@ -366,7 +391,11 @@ function produksiApp() {
 
         openDetail(order) {
             this.selectedOrder = order;
-            this.updateStatus = '';
+            if (order.stage === 'printing') {
+                this.updateStatus = order.printing_status || 'proses_printing';
+            } else {
+                this.updateStatus = '';
+            }
             this.productionNote = '';
             this.isDetailOpen = true;
             setTimeout(() => {
@@ -381,26 +410,45 @@ function produksiApp() {
             const currentStage = this.selectedOrder.stage;
             let nextStage = '';
             let isSelesai = false;
-
-            if (targetStatus === 'selesai') {
-                isSelesai = true;
-            } else if (targetStatus === 'diproduksi') {
-                if (currentStage === 'printing') {
-                    nextStage = 'jahit';
-                } else if (currentStage === 'jahit') {
-                    nextStage = 'qc';
-                }
-            }
-
-            const title = isSelesai ? 'Tandai Produksi Selesai?' : 'Lanjutkan ke Tahap Berikutnya?';
+            let title = '';
             let text = '';
-            if (isSelesai) {
-                text = 'Pesanan ini akan ditandai SELESAI dan siap diserahkan.';
+            let confirmButtonText = '';
+            let successText = '';
+
+            if (currentStage === 'printing') {
+                if (targetStatus === 'proses_printing') {
+                    nextStage = 'printing';
+                    title = 'Update Status Printing?';
+                    text = 'Status pesanan akan diperbarui menjadi Sedang Proses.';
+                    confirmButtonText = 'Ya, Update!';
+                    successText = 'Status pesanan berhasil diperbarui.';
+                } else if (targetStatus === 'selesai_printing') {
+                    nextStage = 'jahit';
+                    title = 'Selesaikan Printing?';
+                    text = 'Proses printing selesai dan pesanan akan dikirim ke divisi Jahit.';
+                    confirmButtonText = 'Ya, Kirim!';
+                    successText = 'Proses printing selesai. Pesanan dikirim ke divisi Jahit.';
+                }
             } else {
-                if (currentStage === 'printing') {
-                    text = 'Pesanan akan dikirim ke divisi Jahit.';
-                } else if (currentStage === 'jahit') {
-                    text = 'Pesanan akan dikirim ke divisi Quality Control (QC).';
+                if (targetStatus === 'selesai') {
+                    isSelesai = true;
+                } else if (targetStatus === 'diproduksi') {
+                    if (currentStage === 'jahit') {
+                        nextStage = 'qc';
+                    }
+                }
+
+                title = isSelesai ? 'Tandai Produksi Selesai?' : 'Lanjutkan ke Tahap Berikutnya?';
+                if (isSelesai) {
+                    text = 'Pesanan ini akan ditandai SELESAI dan siap diserahkan.';
+                    confirmButtonText = 'Ya, Selesai!';
+                    successText = 'Pesanan dinyatakan selesai diproduksi.';
+                } else {
+                    if (currentStage === 'jahit') {
+                        text = 'Pesanan akan dikirim ke divisi Quality Control (QC).';
+                        confirmButtonText = 'Ya, Kirim!';
+                        successText = 'Pesanan dikirim ke divisi QC.';
+                    }
                 }
             }
 
@@ -409,9 +457,9 @@ function produksiApp() {
                 text: text,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: isSelesai ? '#16a34a' : '#1a237e',
+                confirmButtonColor: (isSelesai || targetStatus === 'proses_printing') ? '#16a34a' : '#1a237e',
                 cancelButtonColor: '#d33',
-                confirmButtonText: isSelesai ? 'Ya, Selesai!' : 'Ya, Kirim!',
+                confirmButtonText: confirmButtonText,
                 cancelButtonText: 'Batal',
                 reverseButtons: true
             }).then((result) => {
@@ -419,9 +467,7 @@ function produksiApp() {
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
-                        text: isSelesai
-                            ? 'Pesanan dinyatakan selesai diproduksi.'
-                            : (currentStage === 'printing' ? 'Pesanan dikirim ke divisi Jahit.' : 'Pesanan dikirim ke divisi QC.'),
+                        text: successText,
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
@@ -434,7 +480,14 @@ function produksiApp() {
                             this.orders = this.orders.map(o => {
                                 if (o.id === this.selectedOrder.id) {
                                     o.stage = nextStage;
-                                    o.status = 'diproduksi';
+                                    if (currentStage === 'printing') {
+                                        o.printing_status = targetStatus;
+                                        if (targetStatus === 'selesai_printing') {
+                                            o.status = 'diproduksi';
+                                        }
+                                    } else {
+                                        o.status = 'diproduksi';
+                                    }
                                 }
                                 return o;
                             });
