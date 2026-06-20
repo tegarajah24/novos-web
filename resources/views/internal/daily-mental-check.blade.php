@@ -328,32 +328,383 @@
     </div>
 
     {{-- ========== TAB 3: MICRO-BREAK ========== --}}
-    <div x-show="activeTab === 2" x-cloak x-transition:enter.duration.300>
-        <div class="glass-card rounded-2xl p-6 max-w-2xl">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Jadwal Micro-Break Otomatis</h3>
-            <p class="text-sm text-gray-500 mb-6">Notifikasi pengingat akan muncul otomatis di pojok kanan bawah pada jam-jam berikut:</p>
-            <div class="space-y-4">
-                <div class="flex items-start gap-4 p-4 bg-white/60 rounded-xl">
-                    <span class="text-2xl">⏰</span>
-                    <div>
-                        <p class="font-semibold text-gray-900">Pukul 10.00 — Micro-Break</p>
-                        <p class="text-sm text-gray-500 mt-0.5">Minum air putih, peregangan ringan, dan tarik napas 3 kali (3–5 menit)</p>
+    <div x-show="activeTab === 2" x-cloak x-transition:enter.duration.300 class="max-w-3xl mx-auto">
+        {{-- Header --}}
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-gray-900">Checklist SMART-WORK Micro-Break</h2>
+            <button @click="microPetunjukOpen = true" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#1a237e] bg-white/60 hover:bg-white rounded-lg border border-gray-200 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                Petunjuk Pengisian
+            </button>
+        </div>
+
+        {{-- Sudah diisi --}}
+        <template x-if="microSubmitted">
+            <div class="space-y-6">
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <span class="text-5xl block mb-3" x-text="microScore >= 7 ? '🎉' : microScore >= 4 ? '👍' : '💪'"></span>
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">Micro-Break Hari Ini Selesai</h3>
+                    <p class="text-sm text-gray-500 mb-4">Skor Kepatuhan: <strong class="text-gray-900" x-text="microScore + '/8'"></strong></p>
+                    <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
+                        :class="microLevel.class" x-text="'Kepatuhan ' + microLevel.label"></span>
+                </div>
+
+                {{-- Interpretasi --}}
+                <div class="glass-card rounded-2xl p-6">
+                    <h4 class="font-bold text-gray-900 text-sm mb-4">Interpretasi Kepatuhan</h4>
+                    <div class="overflow-hidden rounded-xl border border-gray-200">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2.5 text-left font-semibold text-gray-700">Skor</th>
+                                    <th class="px-4 py-2.5 text-left font-semibold text-gray-700">Tingkat Kepatuhan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr :class="microScore >= 7 ? 'bg-emerald-50 font-semibold' : ''">
+                                    <td class="px-4 py-2.5 text-gray-700">7 – 8</td>
+                                    <td class="px-4 py-2.5"><span :class="microScore >= 7 ? 'text-emerald-700' : 'text-gray-600'">Tinggi</span></td>
+                                </tr>
+                                <tr :class="microScore >= 4 && microScore <= 6 ? 'bg-amber-50 font-semibold' : ''">
+                                    <td class="px-4 py-2.5 text-gray-700">4 – 6</td>
+                                    <td class="px-4 py-2.5"><span :class="microScore >= 4 && microScore <= 6 ? 'text-amber-700' : 'text-gray-600'">Sedang</span></td>
+                                </tr>
+                                <tr :class="microScore >= 0 && microScore <= 3 ? 'bg-red-50 font-semibold' : ''">
+                                    <td class="px-4 py-2.5 text-gray-700">0 – 3</td>
+                                    <td class="px-4 py-2.5"><span :class="microScore >= 0 && microScore <= 3 ? 'text-red-700' : 'text-gray-600'">Rendah</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 bg-white/60 rounded-xl">
-                    <span class="text-2xl">🧠</span>
-                    <div>
-                        <p class="font-semibold text-gray-900">Pukul 13.00 — Istirahat Sejenak</p>
-                        <p class="text-sm text-gray-500 mt-0.5">Lakukan teknik STOP — Stop, Take a breath, Observe, Proceed</p>
+
+                {{-- Catatan Pekerja --}}
+                <div class="glass-card rounded-2xl p-6" x-show="microForm.catatan_membantu || microForm.catatan_kendala">
+                    <h4 class="font-bold text-gray-900 text-sm mb-4">Catatan Pekerja</h4>
+                    <div class="space-y-3" x-show="microForm.catatan_membantu">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Apa yang paling membantu?</p>
+                        <p class="text-sm text-gray-600 italic bg-white/60 rounded-xl p-4 border border-gray-100" x-text="microForm.catatan_membantu"></p>
+                    </div>
+                    <div class="space-y-3" x-show="microForm.catatan_kendala">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Kendala yang dialami</p>
+                        <p class="text-sm text-gray-600 italic bg-white/60 rounded-xl p-4 border border-gray-100" x-text="microForm.catatan_kendala"></p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 bg-white/60 rounded-xl">
-                    <span class="text-2xl">😊</span>
-                    <div>
-                        <p class="font-semibold text-gray-900">Pukul 15.00 — Istirahat Sore</p>
-                        <p class="text-sm text-gray-500 mt-0.5">Berdiri, tarik napas, dan kembali bekerja dengan lebih segar</p>
+
+                <div class="text-center">
+                    <button @click="resetMicroForm()" class="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-white/60 hover:bg-white rounded-xl border border-gray-200 transition-colors">
+                        Isi Ulang
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        {{-- Form --}}
+        <template x-if="!microSubmitted">
+            <div class="space-y-6">
+                {{-- A. Checklist Pelaksanaan SMART-WORK Micro-Break --}}
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="px-6 pt-5 pb-2">
+                        <h3 class="font-bold text-gray-900">A. Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-50/80">
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 w-10">No</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700">Pernyataan</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-20">Ya</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-20">Tidak</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {{-- Tahap 1 – STOP --}}
+                                <tr>
+                                    <td colspan="4" class="px-4 py-2 bg-gray-50/40">
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tahap 1 – STOP</span>
+                                    </td>
+                                </tr>
+                                <template x-for="q in microChecklist.filter(c => c.stage === 'STOP')" :key="q.id">
+                                    <tr class="hover:bg-white/40 transition-colors">
+                                        <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
+                                        <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 1"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 0"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </template>
+
+                                {{-- Tahap 2 – TAKE A BREATH --}}
+                                <tr>
+                                    <td colspan="4" class="px-4 py-2 bg-gray-50/40">
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tahap 2 – TAKE A BREATH</span>
+                                    </td>
+                                </tr>
+                                <template x-for="q in microChecklist.filter(c => c.stage === 'TAKE A BREATH')" :key="q.id">
+                                    <tr class="hover:bg-white/40 transition-colors">
+                                        <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
+                                        <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 1"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 0"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </template>
+
+                                {{-- Tahap 3 – OBSERVE --}}
+                                <tr>
+                                    <td colspan="4" class="px-4 py-2 bg-gray-50/40">
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tahap 3 – OBSERVE</span>
+                                    </td>
+                                </tr>
+                                <template x-for="q in microChecklist.filter(c => c.stage === 'OBSERVE')" :key="q.id">
+                                    <tr class="hover:bg-white/40 transition-colors">
+                                        <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
+                                        <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 1"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 0"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </template>
+
+                                {{-- Tahap 4 – PROCEED --}}
+                                <tr>
+                                    <td colspan="4" class="px-4 py-2 bg-gray-50/40">
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tahap 4 – PROCEED</span>
+                                    </td>
+                                </tr>
+                                <template x-for="q in microChecklist.filter(c => c.stage === 'PROCEED')" :key="q.id">
+                                    <tr class="hover:bg-white/40 transition-colors">
+                                        <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
+                                        <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 1"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 0"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </template>
+
+                                {{-- Tahap 5 – AKTIVITAS PENDUKUNG --}}
+                                <tr>
+                                    <td colspan="4" class="px-4 py-2 bg-gray-50/40">
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tahap 5 – Aktivitas Pendukung</span>
+                                    </td>
+                                </tr>
+                                <template x-for="q in microChecklist.filter(c => c.stage === 'AKTIVITAS PENDUKUNG')" :key="q.id">
+                                    <tr class="hover:bg-white/40 transition-colors">
+                                        <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
+                                        <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 1"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.checklist[q.id] = 0"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+                {{-- D. Evaluasi Manfaat --}}
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="px-6 pt-5 pb-2">
+                        <h3 class="font-bold text-gray-900">D. Evaluasi Manfaat Setelah Micro-Break</h3>
+                        <p class="text-xs text-gray-500 mt-1">Bagaimana kondisi Anda setelah melakukan micro-break?</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-50/80">
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700">Pertanyaan</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">Lebih Baik</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-20">Sama</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">Lebih Buruk</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr class="hover:bg-white/40 transition-colors">
+                                    <td class="px-4 py-3 text-gray-700">Tingkat stres saya</td>
+                                    <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.eval.stres = val"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.eval.stres === val ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.eval.stres === val ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr class="hover:bg-white/40 transition-colors">
+                                    <td class="px-4 py-3 text-gray-700">Tingkat fokus saya</td>
+                                    <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.eval.fokus = val"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.eval.fokus === val ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.eval.fokus === val ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr class="hover:bg-white/40 transition-colors">
+                                    <td class="px-4 py-3 text-gray-700">Tingkat kenyamanan bekerja saya</td>
+                                    <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
+                                        <td class="px-4 py-3 text-center">
+                                            <label @click="microForm.eval.kenyamanan = val"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                :class="microForm.eval.kenyamanan === val ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
+                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                    :class="microForm.eval.kenyamanan === val ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- Catatan Pekerja --}}
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-gray-900 text-sm mb-4">Catatan Pekerja</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-2">Apa yang paling membantu setelah micro-break hari ini?</label>
+                            <textarea x-model="microForm.catatan_membantu" rows="2"
+                                placeholder="Tuliskan..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-2">Apakah ada kendala melakukan micro-break?</label>
+                            <textarea x-model="microForm.catatan_kendala" rows="2"
+                                placeholder="Tuliskan..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Submit --}}
+                <div class="text-center">
+                    <button @click="submitMicroForm()" :disabled="!allChecklistAnswered || !allEvalAnswered"
+                        :class="allChecklistAnswered && allEvalAnswered ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                        class="px-8 py-3 text-white rounded-xl font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        Kirim Jawaban
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        {{-- Modal Petunjuk Pengisian Micro-Break --}}
+        <div x-show="microPetunjukOpen" x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="microPetunjukOpen = false"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+            <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" @click.stop>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900">Petunjuk Pengisian</h3>
+                    <button @click="microPetunjukOpen = false" class="p-1 text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="text-sm text-gray-600 space-y-3">
+                    <p>Form ini digunakan untuk memantau pelaksanaan <strong>SMART-WORK Micro-Break</strong> yang dilakukan selama 3–5 menit saat bekerja.</p>
+                    <p class="font-semibold text-gray-700">Micro-break dilakukan setiap:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>2–3 jam kerja</li>
+                        <li>saat merasa lelah</li>
+                        <li>saat merasa stres</li>
+                        <li>saat kehilangan fokus</li>
+                        <li>atau ketika beban kerja meningkat</li>
+                    </ul>
+                    <p>Berilah tanda pada kolom yang sesuai.</p>
+                </div>
+                <button @click="microPetunjukOpen = false"
+                    class="w-full mt-5 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors">
+                    Mengerti
+                </button>
             </div>
         </div>
     </div>
@@ -388,6 +739,28 @@ function dailyMentalCheck() {
             { id: 5, text: 'Semangat saya untuk bekerja hari ini' },
         ],
 
+        // Micro-Break form
+        microSubmitted: false,
+        microPetunjukOpen: false,
+
+        microForm: {
+            checklist: { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null },
+            eval: { stres: null, fokus: null, kenyamanan: null },
+            catatan_membantu: '',
+            catatan_kendala: '',
+        },
+
+        microChecklist: [
+            { id: 1, stage: 'STOP', text: 'Saya menghentikan pekerjaan sejenak selama micro-break' },
+            { id: 2, stage: 'TAKE A BREATH', text: 'Saya melakukan latihan napas perlahan minimal 3 kali siklus' },
+            { id: 3, stage: 'OBSERVE', text: 'Saya memperhatikan kondisi tubuh saya (lelah, tegang, atau nyaman)' },
+            { id: 4, stage: 'OBSERVE', text: 'Saya menyadari perasaan atau emosi yang sedang saya alami' },
+            { id: 5, stage: 'PROCEED', text: 'Saya kembali bekerja dengan lebih tenang' },
+            { id: 6, stage: 'PROCEED', text: 'Saya menentukan kembali prioritas pekerjaan sebelum melanjutkan aktivitas' },
+            { id: 7, stage: 'AKTIVITAS PENDUKUNG', text: 'Saya melakukan peregangan ringan saat micro-break' },
+            { id: 8, stage: 'AKTIVITAS PENDUKUNG', text: 'Saya minum air putih saat micro-break' },
+        ],
+
         tabs: [
             { label: 'Dashboard', icon: '&#9632;' },
             { label: 'Isi Daily Check', icon: '&#9998;' },
@@ -397,6 +770,25 @@ function dailyMentalCheck() {
 
         get allAnswered() {
             return Object.values(this.form.answers).every(v => v > 0);
+        },
+
+        get allChecklistAnswered() {
+            return Object.values(this.microForm.checklist).every(v => v !== null);
+        },
+
+        get allEvalAnswered() {
+            return this.microForm.eval.stres !== null && this.microForm.eval.fokus !== null && this.microForm.eval.kenyamanan !== null;
+        },
+
+        get microScore() {
+            return Object.values(this.microForm.checklist).reduce((sum, v) => sum + (v === 1 ? 1 : 0), 0);
+        },
+
+        get microLevel() {
+            const s = this.microScore;
+            if (s >= 7) return { label: 'Tinggi', class: 'bg-emerald-100 text-emerald-800', color: 'text-emerald-700' };
+            if (s >= 4) return { label: 'Sedang', class: 'bg-amber-100 text-amber-800', color: 'text-amber-700' };
+            return { label: 'Rendah', class: 'bg-red-100 text-red-800', color: 'text-red-700' };
         },
 
         get totalScore() {
@@ -453,6 +845,21 @@ function dailyMentalCheck() {
             };
             this.todayFilled = false;
             this.submitted = false;
+        },
+
+        submitMicroForm() {
+            if (!this.allChecklistAnswered || !this.allEvalAnswered) return;
+            this.microSubmitted = true;
+        },
+
+        resetMicroForm() {
+            this.microForm = {
+                checklist: { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null },
+                eval: { stres: null, fokus: null, kenyamanan: null },
+                catatan_membantu: '',
+                catatan_kendala: '',
+            };
+            this.microSubmitted = false;
         },
 
         // Quotes
