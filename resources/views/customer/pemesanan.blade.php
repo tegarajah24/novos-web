@@ -297,8 +297,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                        <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', 'XXL']" :key="size">
+                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                        <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', '2XL / XXL', '3XL', '4XL', '5XL', '6XL']" :key="size">
                             <div class="text-center">
                                 <span class="block text-xs font-medium text-gray-500 mb-1" x-text="size"></span>
                                 <input
@@ -833,7 +833,7 @@ function pemesananForm(catalogProduct = null) {
             warna_utama: '#1e3a5f',
             warna_sekunder: '#ffffff',
             catatan: '',
-            ukuran: { XS: 0, S: 0, M: 0, L: 0, XL: 0, XXL: 0 }
+            ukuran: { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL / XXL': 0, '3XL': 0, '4XL': 0, '5XL': 0, '6XL': 0 }
         },
         prioritas: 'normal',
         pembayaran: null,
