@@ -86,36 +86,27 @@
             {{-- 1. TAB: RIWAYAT PEMBELIAN --}}
             <div x-show="activeTab === 'pembelian'" x-cloak class="space-y-6">
                 {{-- Status Filter Tracker --}}
-                <div class="glass-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <button @click="orderFilter = 'menunggu_pembayaran'"
-                            :class="orderFilter === 'menunggu_pembayaran' ? 'bg-amber-550 border-amber-500 text-amber-900 bg-amber-50' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
-                            class="px-3 py-3.5 border rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-1.5">
-                            <span class="text-lg">📌</span>
-                            Menunggu Pembayaran
-                        </button>
-
-                        <button @click="orderFilter = 'proses'"
-                            :class="orderFilter === 'proses' ? 'bg-blue-50 border-blue-200 text-blue-900' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
-                            class="px-3 py-3.5 border rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-1.5">
-                            <span class="text-lg">⚙️</span>
-                            Proses Produksi
-                        </button>
-
-                        <button @click="orderFilter = 'kirim'"
-                            :class="orderFilter === 'kirim' ? 'bg-orange-50 border-orange-200 text-orange-900' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
-                            class="px-3 py-3.5 border rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-1.5">
-                            <span class="text-lg">🚚</span>
-                            Sedang Dikirim
-                        </button>
-
-                        <button @click="orderFilter = 'selesai'"
-                            :class="orderFilter === 'selesai' ? 'bg-green-50 border-green-200 text-green-900' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
-                            class="px-3 py-3.5 border rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-1.5">
-                            <span class="text-lg">✅</span>
-                            Pesanan Selesai
-                        </button>
-                    </div>
+                <div class="bg-gray-100 rounded-xl p-1.5 inline-flex flex-wrap gap-1">
+                    <button @click="orderFilter = 'menunggu_pembayaran'"
+                        :class="orderFilter === 'menunggu_pembayaran' ? 'bg-blue-100 text-blue-800 shadow-sm' : 'text-gray-600 hover:bg-gray-200'"
+                        class="px-4 py-2 rounded-lg text-xs font-semibold transition-all">
+                        Menunggu Pembayaran
+                    </button>
+                    <button @click="orderFilter = 'proses'"
+                        :class="orderFilter === 'proses' ? 'bg-blue-100 text-blue-800 shadow-sm' : 'text-gray-600 hover:bg-gray-200'"
+                        class="px-4 py-2 rounded-lg text-xs font-semibold transition-all">
+                        Proses Produksi
+                    </button>
+                    <button @click="orderFilter = 'kirim'"
+                        :class="orderFilter === 'kirim' ? 'bg-blue-100 text-blue-800 shadow-sm' : 'text-gray-600 hover:bg-gray-200'"
+                        class="px-4 py-2 rounded-lg text-xs font-semibold transition-all">
+                        Sedang Dikirim
+                    </button>
+                    <button @click="orderFilter = 'selesai'"
+                        :class="orderFilter === 'selesai' ? 'bg-blue-100 text-blue-800 shadow-sm' : 'text-gray-600 hover:bg-gray-200'"
+                        class="px-4 py-2 rounded-lg text-xs font-semibold transition-all">
+                        Pesanan Selesai
+                    </button>
                 </div>
 
                 {{-- Order List --}}
