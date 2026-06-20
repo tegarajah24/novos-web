@@ -120,7 +120,7 @@
 
                 {{-- Order List --}}
                 <div class="space-y-4">
-                    <template x-for="order in getFilteredOrders()" :key="order.id">
+                    <template x-for="order in displayedOrders()" :key="order.id">
                         <div x-data="{ showMenu: false }" :class="showMenu ? 'relative z-10' : ''" class="glass-card bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between gap-4">
                                 <div class="flex-1 min-w-0">
@@ -175,6 +175,30 @@
                         <h4 class="font-bold text-gray-800 text-base mb-1">Belum Ada Pesanan</h4>
                         <p class="text-sm text-gray-400 max-w-sm mx-auto">Tidak menemukan transaksi pada kategori status ini.</p>
                         <a href="{{ route('pemesanan') }}" class="mt-5 px-6 py-2.5 bg-blue-900 text-white rounded-lg text-xs font-bold hover:bg-blue-800 transition-colors">Buat Pesanan Baru</a>
+                    </div>
+
+                    {{-- Pagination --}}
+                    <div x-show="getFilteredOrders().length > 0" x-cloak class="flex items-center justify-between pt-4">
+                        <p class="text-xs text-gray-500">
+                            Menampilkan <span class="font-medium text-gray-700" x-text="Math.min(getFilteredOrders().length, currentPage * perPage)"></span>
+                            dari <span class="font-medium text-gray-700" x-text="getFilteredOrders().length"></span> pesanan
+                        </p>
+                        <div class="flex items-center gap-1.5">
+                            <button @click="prevPage()" :disabled="currentPage === 1"
+                                class="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <template x-for="page in totalPages()" :key="page">
+                                <button @click="goToPage(page)"
+                                    :class="page === currentPage ? 'bg-[#1a237e] text-white border-[#1a237e]' : 'text-gray-600 border-gray-200 hover:bg-gray-50'"
+                                    class="w-8 h-8 text-xs font-bold rounded-lg border transition-colors"
+                                    x-text="page"></button>
+                            </template>
+                            <button @click="nextPage()" :disabled="currentPage === totalPages()"
+                                class="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -456,6 +480,34 @@ function profileDashboard(orders = [], user = {}) {
         orders: orders,
         user: user,
         selectedOrder: null,
+        currentPage: 1,
+        perPage: 5,
+
+        init() {
+            this.$watch('orderFilter', () => this.currentPage = 1);
+        },
+
+        displayedOrders() {
+            const filtered = this.getFilteredOrders();
+            const start = (this.currentPage - 1) * this.perPage;
+            return filtered.slice(start, start + this.perPage);
+        },
+
+        totalPages() {
+            return Math.ceil(this.getFilteredOrders().length / this.perPage) || 1;
+        },
+
+        nextPage() {
+            if (this.currentPage < this.totalPages()) this.currentPage++;
+        },
+
+        prevPage() {
+            if (this.currentPage > 1) this.currentPage--;
+        },
+
+        goToPage(page) {
+            this.currentPage = page;
+        },
 
         openDetail(order) {
             this.selectedOrder = order;
