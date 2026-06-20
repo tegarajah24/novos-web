@@ -336,10 +336,23 @@
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Jenis Kerah</option>
-                        <option value="Crew Neck">Crew Neck (Bulat)</option>
-                        <option value="Polo">Polo (Kerah)</option>
-                        <option value="V-Neck">V-Neck</option>
-                        <option value="Mock Neck">Mock Neck</option>
+                        <option value="O-NECK V.1">O-NECK V.1</option>
+                        <option value="O-NECK V.2">O-NECK V.2</option>
+                        <option value="O-NECK V.3">O-NECK V.3</option>
+                        <option value="O-NECK V.4">O-NECK V.4</option>
+                        <option value="V-NECK V.5">V-NECK V.5</option>
+                        <option value="V-NECK V.1">V-NECK V.1</option>
+                        <option value="V-NECK V.2">V-NECK V.2</option>
+                        <option value="V-NECK V.3">V-NECK V.3</option>
+                        <option value="V-NECK V.4">V-NECK V.4</option>
+                        <option value="V-NECK V.5">V-NECK V.5</option>
+                        <option value="CLASSIC V.1">CLASSIC V.1</option>
+                        <option value="CLASSIC V.2">CLASSIC V.2</option>
+                        <option value="CLASSIC V.3">CLASSIC V.3</option>
+                        <option value="CLASSIC V.4">CLASSIC V.4</option>
+                        <option value="CLASSIC V.5">CLASSIC V.5</option>
+                        <option value="V-NECK V3 TUMPUK">V-NECK V3 TUMPUK</option>
+                        <option value="TIMNAS">TIMNAS</option>
                     </select>
 
                     {{-- Modal Detail Kerah --}}
@@ -398,37 +411,7 @@
                                     >
                                 </div>
 
-                                {{-- Keterangan Singkat --}}
-                                <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
-                                        <div class="w-8 h-8 bg-blue-900 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
-                                        </div>
-                                        <p class="text-xs font-bold text-blue-900">Crew Neck</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">Bulat, sporty</p>
-                                    </div>
-                                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
-                                        <div class="w-8 h-8 bg-blue-900 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
-                                        </div>
-                                        <p class="text-xs font-bold text-blue-900">V-Neck</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">Segitiga, elegan</p>
-                                    </div>
-                                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
-                                        <div class="w-8 h-8 bg-blue-900 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
-                                        </div>
-                                        <p class="text-xs font-bold text-blue-900">Polo</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">Formal, klasik</p>
-                                    </div>
-                                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
-                                        <div class="w-8 h-8 bg-blue-900 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
-                                        </div>
-                                        <p class="text-xs font-bold text-blue-900">Mock Neck</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">Tinggi, modern</p>
-                                    </div>
-                                </div>
+
 
                                 <p class="text-xs text-gray-400 mt-3">* Detail variasi spesifik dapat dikonsultasikan lebih lanjut dengan tim desain kami.</p>
                             </div>
@@ -827,8 +810,8 @@ function pemesananForm(catalogProduct = null) {
         catalogProduct: catalogProduct,
         form: {
             team_name: 'FC Garuda',
-            kerah: 'Crew Neck',
-            bahan: 'Dryfit Premium',
+            kerah: '',
+            bahan: '',
 
             warna_utama: '#1e3a5f',
             warna_sekunder: '#ffffff',
