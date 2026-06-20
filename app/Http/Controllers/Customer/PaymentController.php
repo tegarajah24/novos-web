@@ -46,7 +46,14 @@ class PaymentController extends Controller
             ],
         ];
 
-        $snapToken = $this->midtrans->createSnapToken($params);
+        try {
+            $snapToken = $this->midtrans->createSnapToken($params);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal terhubung ke payment gateway: ' . $e->getMessage(),
+            ], 500);
+        }
 
         return response()->json([
             'snap_token' => $snapToken,

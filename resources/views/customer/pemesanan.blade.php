@@ -713,19 +713,29 @@ function pemesananForm(catalogProduct = null) {
 
             fetch('{{ route('pesan.store') }}', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify(payload),
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    return res.text().then(text => { throw new Error(text.substring(0, 150)); });
+                }
+                return res.json();
+            })
             .then(data => {
                 if (!data.success) throw new Error('Gagal membuat pesanan');
                 this.orderNumber = data.orderNumber;
                 return fetch('{{ url('/payment/snap') }}/' + data.order.id, {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 });
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    return res.text().then(text => { throw new Error(text.substring(0, 150)); });
+                }
+                return res.json();
+            })
             .then(data => {
                 if (!data.snap_token) throw new Error('Gagal mendapatkan token pembayaran');
 
