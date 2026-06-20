@@ -39,13 +39,6 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
         }
 
-        main .bg-white {
-            background-color: rgba(255, 255, 255, 0.75) !important;
-            backdrop-filter: blur(6px) saturate(105%) !important;
-            -webkit-backdrop-filter: blur(6px) saturate(105%) !important;
-            border-color: rgba(255, 255, 255, 0.5) !important;
-        }
-
         main table thead tr {
             background: rgba(255, 255, 255, 0.5) !important;
         }
