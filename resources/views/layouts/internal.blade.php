@@ -134,7 +134,8 @@
         <button @click="showTestMenu = !showTestMenu"
             class="fixed bottom-6 left-6 z-[9999] w-10 h-10 bg-gray-200 hover:bg-gray-300 text-gray-500 rounded-full shadow flex items-center justify-center transition-all"
             title="Test Reminder">
-            <span class="text-lg font-bold" x-text="showTestMenu ? '&times;' : '?'"></span>
+            <span class="text-lg font-bold" x-show="!showTestMenu">?</span>
+            <span class="text-lg leading-none" x-show="showTestMenu" x-cloak>&times;</span>
         </button>
         <div x-show="showTestMenu" x-cloak @click.away="showTestMenu = false"
             class="fixed bottom-20 left-6 z-[9999] bg-white border border-gray-100 rounded-xl shadow-xl p-3 space-y-1.5 min-w-[180px]">
@@ -178,6 +179,7 @@
                 shownSlots: JSON.parse(localStorage.getItem('microbreak_shown') || '[]'),
                 today: localStorage.getItem('microbreak_date') || '',
                 activeReminder: null,
+                showTestMenu: false,
                 reminders: [
                     {
                         key: '10',
@@ -235,6 +237,10 @@
                 },
                 dismissReminder() {
                     this.activeReminder = null;
+                },
+                triggerReminder(index) {
+                    this.activeReminder = this.reminders[index];
+                    this.showTestMenu = false;
                 }
             }
         }
