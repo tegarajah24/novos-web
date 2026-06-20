@@ -10,7 +10,7 @@
 @section('internal-content')
     {{-- Header --}}
     <div class="flex justify-end mb-8">
-        <button onclick="openModal('modalTambah')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shadow-sm">
+        <button onclick="document.getElementById('formTambah').reset(); openModal('modalTambah')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
             Tambah Pengguna
         </button>
@@ -66,6 +66,7 @@
                 </div>
                 <select id="roleFilter" class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
                     <option value="">Semua Role</option>
+                    <option value="Super Admin">Super Admin</option>
                     <option value="Manager">Manager</option>
                     <option value="Admin">Admin</option>
                     <option value="Design">Design</option>
@@ -99,7 +100,7 @@
             </table>
         </div>
         <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-white">
-            <p class="text-sm text-gray-500">Menampilkan 0 dari <span id="totalDisplay">0</span> pengguna</p>
+            <p id="infoDisplay" class="text-sm text-gray-500">Menampilkan 0 dari <span id="totalDisplay">0</span> pengguna</p>
             <div class="flex items-center gap-2">
                 <button class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50 transition-colors" disabled>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -112,42 +113,40 @@
     </div>
 
     {{-- Modal Tambah --}}
-    <div id="modalTambah" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4" onclick="closeModal(event, 'modalTambah')">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div id="modalTambah" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Tambah Pengguna</h3>
                 <button onclick="closeModal(event, 'modalTambah')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
-            <form class="p-6 space-y-5">
+            <form id="formTambah" class="p-6 space-y-5" autocomplete="off">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
-                    <input type="text" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan nama lengkap">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
-                    <input type="text" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan username">
+                    <input type="text" name="name" id="tambahNama" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan nama lengkap">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                    <input type="email" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan email">
+                    <input type="email" name="email" id="tambahEmail" autocomplete="off" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan email">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
-                        <input type="password" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Password">
+                        <input type="password" name="password" id="tambahPassword" autocomplete="new-password" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Password">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Konfirmasi Password</label>
-                        <input type="password" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Konfirmasi password">
+                        <input type="password" name="password_confirmation" id="tambahPasswordConfirmation" autocomplete="new-password" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Konfirmasi password">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Role</label>
-                        <select class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
+                        <select name="role" id="tambahRole" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
                             <option value="">Pilih Role</option>
+                            <option value="Super Admin">Super Admin</option>
                             <option value="Manager">Manager</option>
                             <option value="Admin">Admin</option>
                             <option value="Design">Design</option>
@@ -156,9 +155,8 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
-                        <select class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
-                            <option value="Aktif">Aktif</option>
-                            <option value="Nonaktif">Nonaktif</option>
+                        <select class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" disabled>
+                            <option value="Aktif" selected>Aktif</option>
                         </select>
                     </div>
                 </div>
@@ -171,41 +169,41 @@
     </div>
 
     {{-- Modal Edit --}}
-    <div id="modalEdit" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4" onclick="closeModal(event, 'modalEdit')">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div id="modalEdit" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Edit Pengguna</h3>
                 <button onclick="closeModal(event, 'modalEdit')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
-            <form class="p-6 space-y-5">
+            <form id="formEdit" class="p-6 space-y-5">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="_method" value="PUT">
+                <input type="hidden" id="editId" name="id" value="">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
-                    <input type="text" id="editNama" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan nama lengkap">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
-                    <input type="text" id="editUsername" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan username">
+                    <input type="text" name="name" id="editNama" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" value="Ahmad Fauzi">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                    <input type="email" id="editEmail" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan email">
+                    <input type="email" name="email" id="editEmail" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" value="ahmad@novos.co.id">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Password <span class="text-gray-400 font-normal">(opsional)</span></label>
-                        <input type="password" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Biarkan kosong jika tidak diubah">
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Password <span class="text-gray-400 text-xs">(kosongkan jika tidak diubah)</span></label>
+                        <input type="password" name="password" id="editPassword" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Password baru">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Konfirmasi Password</label>
-                        <input type="password" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Konfirmasi password">
+                        <input type="password" name="password_confirmation" id="editPasswordConfirmation" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Konfirmasi password">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Role</label>
-                        <select id="editRole" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
+                        <select name="role" id="editRole" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
+                            <option value="Super Admin">Super Admin</option>
                             <option value="Manager">Manager</option>
                             <option value="Admin">Admin</option>
                             <option value="Design">Design</option>
@@ -214,9 +212,8 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
-                        <select id="editStatus" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
-                            <option value="Aktif">Aktif</option>
-                            <option value="Nonaktif">Nonaktif</option>
+                        <select class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" disabled>
+                            <option value="Aktif" selected>Aktif</option>
                         </select>
                     </div>
                 </div>
@@ -229,8 +226,8 @@
     </div>
 
     {{-- Modal Detail --}}
-    <div id="modalDetail" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4" onclick="closeModal(event, 'modalDetail')">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md" onclick="event.stopPropagation()">
+    <div id="modalDetail" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Detail Pengguna</h3>
                 <button onclick="closeModal(event, 'modalDetail')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -282,18 +279,22 @@
             document.getElementById('totalProduksiDesign').textContent = __users.filter(u => u.role === 'Produksi' || u.role === 'Design').length;
         }
 
+        function roleBadgeColor(role) {
+            return ({ 'Super Admin': 'red', 'Manager': 'purple', 'Admin': 'blue', 'Design': 'orange', 'Produksi': 'green' })[role] || 'gray';
+        }
+
         function renderTable(data) {
             const tbody = document.getElementById('userTableBody');
             const total = document.getElementById('totalDisplay');
             if (!data.length) {
                 tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500">Tidak ada pengguna ditemukan.</td></tr>';
                 total.textContent = '0';
-                document.querySelector('[id^="Menampilkan"]').textContent = 'Menampilkan 0 dari 0 pengguna';
+                document.getElementById('infoDisplay').textContent = 'Menampilkan 0 dari 0 pengguna';
                 return;
             }
             tbody.innerHTML = data.map(u => {
                 const roleBadge = {
-                    'Manager': 'purple', 'Admin': 'blue', 'Design': 'orange', 'Produksi': 'green'
+                    'Super Admin': 'red', 'Manager': 'purple', 'Admin': 'blue', 'Design': 'orange', 'Produksi': 'green'
                 }[u.role] || 'gray';
                 const initials = u.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
                 return `<tr class="hover:bg-gray-50 transition-colors">
@@ -341,6 +342,34 @@
             renderTable(__users);
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             document.getElementById('roleFilter').addEventListener('change', applyFilters);
+
+            const formTambah = document.getElementById('formTambah');
+            if (formTambah) {
+                formTambah.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const result = await submitForm(this.id, '{{ route("staf.kelola-pengguna.store") }}', 'POST', formData);
+                    if (result) {
+                        await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
+                        refreshTable();
+                    }
+                });
+            }
+
+            const formEdit = document.getElementById('formEdit');
+            if (formEdit) {
+                formEdit.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const id = document.getElementById('editId').value;
+                    const formData = new FormData(this);
+                    formData.set('_method', 'PUT');
+                    const result = await submitForm(this.id, `{{ url('staf/kelola-pengguna') }}/${id}`, 'POST', formData);
+                    if (result) {
+                        await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
+                        refreshTable();
+                    }
+                });
+            }
         });
 
         function refreshData() {
@@ -363,20 +392,79 @@
         }
 
         function closeModal(event, id) {
-            if (event && event.target !== event.currentTarget) return;
             document.getElementById(id).classList.add('hidden');
             document.body.style.overflow = '';
         }
 
         function openDetail(id) {
+            const user = __users.find(u => u.id === id);
+            if (!user) return;
+            const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+            document.getElementById('detailAvatar').textContent = initials;
+            document.getElementById('detailNama').textContent = user.name;
+            document.getElementById('detailEmail').textContent = user.email;
+            document.getElementById('detailUsername').textContent = '@' + user.username;
+            document.getElementById('detailRole').innerHTML = `<x-badge type="${roleBadgeColor(user.role)}">${user.role}</x-badge>`;
+            document.getElementById('detailStatus').innerHTML = `<x-badge type="green">${user.status}</x-badge>`;
+            document.getElementById('detailTanggal').textContent = user.created_at;
             openModal('modalDetail');
         }
 
         function openEdit(id) {
+            const user = __users.find(u => u.id === id);
+            if (!user) return;
+            document.getElementById('editId').value = user.id;
+            document.getElementById('editNama').value = user.name;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editPassword').value = '';
+            document.getElementById('editPasswordConfirmation').value = '';
+            const roleSelect = document.getElementById('editRole');
+            for (let opt of roleSelect.options) {
+                if (opt.value === user.role) { opt.selected = true; break; }
+            }
             openModal('modalEdit');
         }
 
+        async function submitForm(formId, url, method, body) {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body,
+                });
+
+                const result = await res.json();
+
+                if (!res.ok) {
+                    let msg = 'Terjadi kesalahan';
+                    if (result.errors) {
+                        msg = Object.values(result.errors).flat().join('\n');
+                    } else if (result.message) {
+                        msg = result.message;
+                    }
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: msg });
+                    return null;
+                }
+
+                return result;
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi terputus' });
+                return null;
+            }
+        }
+
+        function refreshTable() {
+            window.location.reload();
+        }
+
         function confirmHapus(id, nama) {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             Swal.fire({
                 title: 'Hapus Pengguna',
                 text: `Apakah Anda yakin ingin menghapus pengguna "${nama}"?`,
@@ -392,19 +480,30 @@
                     cancelButton: 'px-5 py-2.5 text-sm font-medium rounded-xl',
                     popup: 'rounded-2xl'
                 }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Terhapus!',
-                        text: `Pengguna "${nama}" berhasil dihapus.`,
-                        icon: 'success',
-                        confirmButtonColor: '#1a237e',
-                        confirmButtonText: 'OK',
-                        customClass: {
-                            confirmButton: 'px-5 py-2.5 text-sm font-semibold rounded-xl',
-                            popup: 'rounded-2xl'
-                        }
+            }).then(async (result) => {
+                if (!result.isConfirmed) return;
+
+                try {
+                    const res = await fetch(`{{ url('staf/kelola-pengguna') }}/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrf,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
                     });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Terjadi kesalahan' });
+                        return;
+                    }
+
+                    await Swal.fire({ icon: 'success', title: 'Terhapus!', text: data.message, timer: 1500, showConfirmButton: false });
+                    refreshTable();
+                } catch (err) {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi terputus' });
                 }
             });
         }
