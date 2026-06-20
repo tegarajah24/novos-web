@@ -163,7 +163,6 @@
                         <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-3xl mb-4">📭</div>
                         <h4 class="font-bold text-gray-800 text-base mb-1">Belum Ada Pesanan</h4>
                         <p class="text-sm text-gray-400 max-w-sm mx-auto">Tidak menemukan transaksi pada kategori status ini.</p>
-                        <a href="{{ route('pemesanan') }}" class="mt-5 px-6 py-2.5 bg-blue-900 text-white rounded-lg text-xs font-bold hover:bg-blue-800 transition-colors">Buat Pesanan Baru</a>
                     </div>
 
                     {{-- Pagination --}}
