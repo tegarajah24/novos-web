@@ -412,37 +412,6 @@
                         <span class="text-xl font-bold text-blue-900" x-text="formatRupiah(estimasiTotal)"></span>
                     </div>
                 </div>
-
-                {{-- Metode Pembayaran --}}
-                <div>
-                    <h3 class="text-base font-semibold text-gray-800 mb-3">Metode Pembayaran</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <button
-                            @click="pembayaran = 'transfer'"
-                            :class="pembayaran === 'transfer' ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'"
-                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors animate-fade-slide"
-                            style="animation-delay:0.3s"
-                        >
-                            Transfer Bank
-                        </button>
-                        <button
-                            @click="pembayaran = 'qris'"
-                            :class="pembayaran === 'qris' ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'"
-                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors animate-fade-slide"
-                            style="animation-delay:0.37s"
-                        >
-                            QRIS
-                        </button>
-                        <button
-                            @click="pembayaran = 'va'"
-                            :class="pembayaran === 'va' ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'"
-                            class="px-4 py-2 border rounded-lg text-sm font-medium transition-colors animate-fade-slide"
-                            style="animation-delay:0.44s"
-                        >
-                            Virtual Account
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -589,7 +558,7 @@ function pemesananForm(catalogProduct = null) {
             ukuran: { XS: 0, S: 0, M: 0, L: 4, XL: 4, XXL: 2 }
         },
         prioritas: 'normal',
-        pembayaran: 'transfer',
+        pembayaran: 'midtrans',
         uploads: [],
         orderNumber: null,
         dragOver: false,
