@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $dbStatuses = ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai', 'dibatalkan'];
 
@@ -29,9 +29,28 @@ class OrderController extends Controller
             'dibatalkan'         => 'dibatalkan',
         ];
 
-        $orders = Order::with(['user', 'orderItem', 'designRequest', 'assignee'])
-            ->whereIn('status', $dbStatuses)
-            ->latest()
+        $filterStatus = $request->query('status');
+        $activeFilter = in_array($filterStatus, array_values($statusMap)) ? $filterStatus : null;
+
+        $query = Order::with(['user', 'orderItem', 'designRequest', 'assignee'])
+            ->whereIn('status', $dbStatuses);
+
+        if ($activeFilter) {
+            $filteredDbStatuses = array_keys(array_filter($statusMap, fn($v) => $v === $activeFilter));
+            $query->whereIn('status', $filteredDbStatuses);
+        }
+
+        $activeDateFrom = $request->query('date_from');
+        $activeDateTo = $request->query('date_to');
+
+        if ($activeDateFrom && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateFrom)) {
+            $query->whereDate('created_at', '>=', $activeDateFrom);
+        }
+        if ($activeDateTo && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateTo)) {
+            $query->whereDate('created_at', '<=', $activeDateTo);
+        }
+
+        $orders = $query->latest()
             ->get()
             ->map(function ($order) use ($statusMap) {
                 $produk = $order->designRequest
@@ -68,7 +87,7 @@ class OrderController extends Controller
             })
             ->toArray();
 
-        return view('internal.daftar-pesanan', compact('orders', 'assignees'));
+        return view('internal.daftar-pesanan', compact('orders', 'assignees', 'activeFilter', 'activeDateFrom', 'activeDateTo'));
     }
 
     public function show(Order $order)

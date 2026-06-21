@@ -10,7 +10,7 @@
     <!-- Stats Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Card 1: Total Pesanan -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-[#1a237e]/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <a href="{{ route('staf.daftar-pesanan') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-[#1a237e]/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
                 <div class="w-12 h-12 rounded-xl bg-[#1a237e] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Clipboard List icon (Heroicons) --}}
@@ -29,10 +29,10 @@
             </div>
             <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $totalOrders }}">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
-        </div>
+        </a>
 
         <!-- Card 2: Menunggu Verifikasi -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-orange-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=menunggu_verifikasi" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-orange-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
                 <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Clock icon (Heroicons) --}}
@@ -51,10 +51,10 @@
             </div>
             <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $pendingOrders }}">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Verifikasi</p>
-        </div>
+        </a>
 
         <!-- Card 3: Sedang Diproses -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-blue-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=tahap_produksi" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-blue-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
                 <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Cog / Settings icon (Heroicons) --}}
@@ -74,10 +74,10 @@
             </div>
             <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $inProcessOrders }}">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Sedang Diproses</p>
-        </div>
+        </a>
 
         <!-- Card 4: Selesai Hari Ini -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-green-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=selesai" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-green-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
                 <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Check Circle icon (Heroicons) --}}
@@ -96,7 +96,7 @@
             </div>
             <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
             <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
-        </div>
+        </a>
     </div>
 
     <!-- Charts Row -->

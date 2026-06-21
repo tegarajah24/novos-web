@@ -194,16 +194,16 @@ function kelolaProdukApp() {
     return {
         formMode: 'create',
         showModal: false,
-        
+
         categories: @json($categories),
-        
+
         products: @json($products),
-        
+
         filters: {
             search: '',
             category: ''
         },
-        
+
         formData: {
             id: null,
             name: '',
@@ -214,11 +214,11 @@ function kelolaProdukApp() {
             imageBelakangPreview: null,
             is_featured: false
         },
-        
+
         initApp() {
             this.renderIcons();
         },
-        
+
         get filteredProducts() {
             return this.products.filter(p => {
                 const matchSearch = p.name.toLowerCase().includes(this.filters.search.toLowerCase());
@@ -226,16 +226,16 @@ function kelolaProdukApp() {
                 return matchSearch && matchCat;
             });
         },
-        
+
         getCategoryName(id) {
             const cat = this.categories.find(c => c.id == id);
             return cat ? cat.name : '-';
         },
-        
+
         formatRupiah(number) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
         },
-        
+
         openCreateForm() {
             this.formMode = 'create';
             this.formData = {
@@ -251,7 +251,7 @@ function kelolaProdukApp() {
             this.showModal = true;
             this.$nextTick(() => this.renderIcons());
         },
-        
+
         openEditForm(product) {
             this.formMode = 'edit';
             this.formData = {
@@ -267,11 +267,11 @@ function kelolaProdukApp() {
             this.showModal = true;
             this.$nextTick(() => this.renderIcons());
         },
-        
+
         closeForm() {
             this.showModal = false;
         },
-        
+
         handleUploadDepan(event) {
             const file = event.target.files[0];
             if (file) {
@@ -292,60 +292,80 @@ function kelolaProdukApp() {
                 reader.readAsDataURL(file);
             }
         },
-        
-        saveProduct() {
-            if (this.formMode === 'create') {
-                const newId = this.products.length > 0 ? Math.max(...this.products.map(p => p.id)) + 1 : 1;
-                this.products.push({
-                    id: newId,
-                    name: this.formData.name,
-                    category_id: parseInt(this.formData.category_id),
-                    price: parseInt(this.formData.price),
-                    description: this.formData.description,
-                    image_depan: this.formData.imageDepanPreview,
-                    image_belakang: this.formData.imageBelakangPreview,
-                    is_featured: this.formData.is_featured
+
+        async saveProduct() {
+            const fd = new FormData();
+            fd.append('name', this.formData.name);
+            fd.append('category_id', this.formData.category_id);
+            fd.append('price', this.formData.price);
+            fd.append('description', this.formData.description || '');
+            fd.append('is_featured', this.formData.is_featured ? '1' : '0');
+
+            const fileInput = this.$refs.inputDepan;
+            if (fileInput && fileInput.files[0]) {
+                fd.append('image', fileInput.files[0]);
+            }
+
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            let url = '{{ route("staf.kelola-produk.store") }}';
+            let method = 'POST';
+
+            if (this.formMode === 'edit') {
+                url = '{{ url("staf/kelola-produk") }}/' + this.formData.id;
+                fd.append('_method', 'PUT');
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json'
+                    },
+                    body: fd
                 });
-                
-                window.Swal.fire({
-                    title: 'Berhasil!',
-                    text: 'Produk baru telah ditambahkan.',
-                    icon: 'success',
-                    confirmButtonColor: '#1a237e',
-                    timer: 1500
-                });
-            } else {
-                const idx = this.products.findIndex(p => p.id === this.formData.id);
-                if (idx !== -1) {
-                    this.products[idx] = {
-                        ...this.products[idx],
-                        name: this.formData.name,
-                        category_id: parseInt(this.formData.category_id),
-                        price: parseInt(this.formData.price),
-                        description: this.formData.description,
-                        image_depan: this.formData.imageDepanPreview,
-                        image_belakang: this.formData.imageBelakangPreview,
-                        is_featured: this.formData.is_featured
-                    };
-                    
+
+                const data = await res.json();
+
+                if (data.success) {
+                    if (this.formMode === 'create') {
+                        this.products.push(data.product);
+                    } else {
+                        const idx = this.products.findIndex(p => p.id === data.product.id);
+                        if (idx !== -1) {
+                            this.products[idx] = data.product;
+                        }
+                    }
+
                     window.Swal.fire({
-                        title: 'Tersimpan!',
-                        text: 'Perubahan produk telah disimpan.',
+                        title: 'Berhasil!',
+                        text: data.message,
                         icon: 'success',
                         confirmButtonColor: '#1a237e',
                         timer: 1500
                     });
+
+                    this.closeForm();
+                    this.renderIcons();
+                } else {
+                    window.Swal.fire({
+                        title: 'Gagal',
+                        text: data.message || 'Terjadi kesalahan',
+                        icon: 'error',
+                        confirmButtonColor: '#dc2626'
+                    });
                 }
+            } catch (e) {
+                window.Swal.fire({
+                    title: 'Kesalahan',
+                    text: 'Gagal terhubung ke server.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc2626'
+                });
             }
-            
-            if (this.formData.is_featured) {
-                this.unfeatureOthers(this.formData.id || Math.max(...this.products.map(p=>p.id)));
-            }
-            
-            this.saveToStorage();
-            this.closeForm();
         },
-        
+
         confirmDelete(id) {
             window.Swal.fire({
                 title: 'Hapus Produk?',
@@ -356,53 +376,87 @@ function kelolaProdukApp() {
                 cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Ya, Hapus',
                 cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.products = this.products.filter(p => p.id !== id);
-                    this.saveToStorage();
+            }).then(async (result) => {
+                if (!result.isConfirmed) return;
+
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+                try {
+                    const res = await fetch('{{ url("staf/kelola-produk") }}/' + id, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': csrf,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        this.products = this.products.filter(p => p.id !== id);
+                        window.Swal.fire({
+                            title: 'Terhapus!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonColor: '#1a237e',
+                            timer: 1500
+                        });
+                    } else {
+                        window.Swal.fire({
+                            title: 'Gagal',
+                            text: data.message || 'Terjadi kesalahan',
+                            icon: 'error',
+                            confirmButtonColor: '#dc2626'
+                        });
+                    }
+                } catch (e) {
                     window.Swal.fire({
-                        title: 'Terhapus!',
-                        text: 'Produk berhasil dihapus.',
-                        icon: 'success',
-                        confirmButtonColor: '#1a237e',
-                        timer: 1500
+                        title: 'Kesalahan',
+                        text: 'Gagal terhubung ke server.',
+                        icon: 'error',
+                        confirmButtonColor: '#dc2626'
                     });
                 }
             });
         },
-        
+
         toggleFeatured(id) {
-            const product = this.products.find(p => p.id === id);
-            if (product) {
-                const newVal = !product.is_featured;
-                product.is_featured = newVal;
-                
-                if (newVal) {
-                    this.unfeatureOthers(id);
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            fetch('{{ url("staf/kelola-produk") }}/' + id + '/featured', {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': csrf,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    this.products.forEach(p => {
+                        p.is_featured = p.id === id ? data.is_featured : false;
+                    });
+
                     window.Swal.fire({
-                        title: 'Hero Beranda Diperbarui!',
-                        text: `Produk ${product.name} sekarang menjadi model utama di beranda.`,
+                        title: data.is_featured ? 'Hero Beranda Diperbarui!' : 'Featured Dinonaktifkan',
+                        text: data.message,
                         icon: 'success',
                         confirmButtonColor: '#1a237e',
                         timer: 2000
                     });
                 }
-                this.saveToStorage();
-            }
-        },
-        
-        unfeatureOthers(excludeId) {
-            this.products.forEach(p => {
-                if (p.id !== excludeId) {
-                    p.is_featured = false;
-                }
+            })
+            .catch(() => {
+                window.Swal.fire({
+                    title: 'Kesalahan',
+                    text: 'Gagal memperbarui status featured.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc2626'
+                });
             });
         },
-        
-        saveToStorage() {
-            localStorage.setItem('nvs_products', JSON.stringify(this.products));
-        },
-        
+
         renderIcons() {
             this.$nextTick(() => {
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
