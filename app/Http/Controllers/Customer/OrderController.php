@@ -21,6 +21,7 @@ class OrderController extends Controller
             'kerah'          => 'required|string|max:100',
             'bahan'          => 'required|string|max:100',
             'jenis_potongan' => 'required|string|in:REGULER,SLIMFIT CEWE,OVERSIZE,TUNIK,SLIM FIT UNISEX',
+            'lengan_jahitan' => 'required|string|in:REGULER OVERDECK,REGULER PAKAI MANSET,RAGLAN A OVERDECK,RAGLAN A PAKAI MANSET,RAGLAN B OVERDECK,RAGLAN B PAKAI MANSET',
             'catatan'        => 'nullable|string|max:2000',
             'ukuran'         => 'nullable|array',
             'ukuran.*'       => 'integer|min:0',
@@ -50,7 +51,7 @@ class OrderController extends Controller
                 default         => 'Normal',
             };
 
-            $catatanText = "Jenis Potongan: " . $data['jenis_potongan'] . ($data['catatan'] ? "\nCatatan: " . $data['catatan'] : "");
+            $catatanText = "Jenis Potongan: " . $data['jenis_potongan'] . "\nModel Lengan & Jahitan: " . $data['lengan_jahitan'] . ($data['catatan'] ? "\nCatatan: " . $data['catatan'] : "");
 
             $order = Order::create([
                 'user_id'     => auth()->id(),

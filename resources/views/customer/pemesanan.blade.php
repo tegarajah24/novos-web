@@ -661,7 +661,23 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
+                </div>
+
+                {{-- Model Lengan & Jahitan --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Model Lengan & Jahitan <span class="text-red-500">*</span></label>
+                    <select
+                        x-model="form.lengan_jahitan"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
+                    >
+                        <option value="">Pilih Model Lengan & Jahitan</option>
+                        <option value="REGULER OVERDECK">REGULER OVERDECK</option>
+                        <option value="REGULER PAKAI MANSET">REGULER PAKAI MANSET</option>
+                        <option value="RAGLAN A OVERDECK">RAGLAN A OVERDECK</option>
+                        <option value="RAGLAN A PAKAI MANSET">RAGLAN A PAKAI MANSET</option>
+                        <option value="RAGLAN B OVERDECK">RAGLAN B OVERDECK</option>
+                        <option value="RAGLAN B PAKAI MANSET">RAGLAN B PAKAI MANSET</option>
+                    </select>
                 </div>
             </div>
 
@@ -852,6 +868,10 @@
                             <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
                         </div>
                         <div class="flex justify-between">
+                            <span class="text-gray-500">Lengan & Jahitan</span>
+                            <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
                             <span class="text-gray-500">Jumlah</span>
                             <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
                         </div>
@@ -970,6 +990,10 @@
                         <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
                     </div>
                     <div class="flex justify-between">
+                        <span class="text-gray-500">Lengan & Jahitan</span>
+                        <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
+                    </div>
+                    <div class="flex justify-between">
                         <span class="text-gray-500">Jumlah</span>
                         <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
                     </div>
@@ -1038,6 +1062,7 @@ function pemesananForm(catalogProduct = null) {
             kerah: '',
             bahan: '',
             jenis_potongan: '',
+            lengan_jahitan: '',
 
             warna_utama: '#1e3a5f',
             warna_sekunder: '#ffffff',
@@ -1094,7 +1119,7 @@ function pemesananForm(catalogProduct = null) {
         },
 
         get validateStep2() {
-            return this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '';
+            return this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '' && this.form.lengan_jahitan !== '';
         },
 
         get validateStep3() {
@@ -1160,6 +1185,7 @@ function pemesananForm(catalogProduct = null) {
                 kerah: this.form.kerah,
                 bahan: this.form.bahan,
                 jenis_potongan: this.form.jenis_potongan,
+                lengan_jahitan: this.form.lengan_jahitan,
                 catatan: this.form.catatan,
                 ukuran: this.form.ukuran,
                 total_qty: this.totalQty || this.form.jumlah,
