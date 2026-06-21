@@ -1,7 +1,8 @@
 @extends('layouts.customer')
 
 @section('content')
-<div class="h-[calc(100vh-4rem)] flex" x-data="chatApp()">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="chatApp()">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[calc(100vh-8rem)] flex">
     {{-- Left Panel: Chat List --}}
     <div class="w-60 shrink-0 bg-white border-r border-gray-200 flex flex-col">
         <div class="p-4 border-b border-gray-100">
@@ -171,6 +172,7 @@
                 </div>
             </div>
         </template>
+    </div>
     </div>
 </div>
 

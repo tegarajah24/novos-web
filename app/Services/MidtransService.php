@@ -2,20 +2,34 @@
 
 namespace App\Services;
 
-use Midtrans;
+use Midtrans\Config;
+use Midtrans\Snap;
+use Midtrans\Notification;
+use Midtrans\Transaction;
 
 class MidtransService
 {
     public function __construct()
     {
-        Midtrans\Config::$serverKey = config('midtrans.server_key');
-        Midtrans\Config::$isProduction = config('midtrans.is_production', false);
-        Midtrans\Config::$isSanitized = true;
-        Midtrans\Config::$is3ds = true;
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production', false);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
     }
 
-    public function createTransaction(array $params): array
+    public function createSnapToken(array $params): string
     {
-        return Midtrans\Snap::createTransaction($params);
+        $snap = Snap::createTransaction($params);
+        return $snap->token;
+    }
+
+    public function handleNotification(): object
+    {
+        return new Notification();
+    }
+
+    public function checkTransactionStatus(string $orderId): object
+    {
+        return Transaction::status($orderId);
     }
 }

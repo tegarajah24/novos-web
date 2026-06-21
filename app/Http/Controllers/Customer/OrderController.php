@@ -21,7 +21,6 @@ class OrderController extends Controller
             'catatan'    => 'nullable|string|max:2000',
             'ukuran'     => 'nullable|array',
             'ukuran.*'   => 'integer|min:0',
-            'jumlah'     => 'nullable|integer|min:1',
             'total_qty'  => 'nullable|integer|min:1',
             'prioritas'  => 'nullable|string|in:normal,express,super_express',
             'pembayaran' => 'nullable|string|max:50',
@@ -32,7 +31,7 @@ class OrderController extends Controller
         $order = DB::transaction(function () use ($data) {
             $orderNumber = 'NVS-' . now()->format('Ymd') . '-' . str_pad(mt_rand(1, 999), 3, '0', STR_PAD_LEFT);
 
-            $totalQty = $data['total_qty'] ?? $data['jumlah'] ?? 0;
+            $totalQty = $data['total_qty'] ?? 0;
             $pricePerItem = 85000;
             $biayaPrioritas = match ($data['prioritas'] ?? 'normal') {
                 'express'       => 50000,
@@ -42,12 +41,19 @@ class OrderController extends Controller
             $subtotal = $totalQty * $pricePerItem;
             $totalPrice = $subtotal + $biayaPrioritas;
 
+            $prioritasLabel = match ($data['prioritas'] ?? 'normal') {
+                'express'       => 'Express',
+                'super_express' => 'Super Express',
+                default         => 'Normal',
+            };
+
             $order = Order::create([
                 'user_id'     => auth()->id(),
                 'order_number' => $orderNumber,
                 'status'      => 'pending',
                 'total_price' => $totalPrice,
                 'notes'       => $data['catatan'] ?? null,
+                'admin_notes' => 'Prioritas: ' . $prioritasLabel . ' (' . $biayaPrioritas . ')',
             ]);
 
             $sizes = $data['ukuran'] ?? [];

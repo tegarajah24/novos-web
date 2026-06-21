@@ -5,31 +5,26 @@
     {{-- Header --}}
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900">Tracking Pesanan</h1>
-        <p class="text-gray-500 mt-1">Cek status terbaru pesanan jersey Anda</p>
+        <p class="text-gray-500 mt-1" x-show="!order.id">Silakan pilih pesanan dari riwayat pembelian Anda</p>
     </div>
 
-    {{-- Search Bar --}}
-    <div class="flex gap-3 max-w-xl mb-8">
-        <div class="relative flex-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input
-                type="text"
-                x-model="searchQuery"
-                placeholder="Masukkan nomor pesanan"
-                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
-            >
-        </div>
-        <button
-            @click="searchOrder"
-            class="px-6 py-3 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-colors flex items-center gap-2"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            Cari
-        </button>
+    {{-- No order selected --}}
+    <div x-show="!order.id" x-cloak class="text-center py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-300 mb-4">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="9" y1="21" x2="9" y2="9"/>
+        </svg>
+        <p class="text-gray-500 font-medium">Belum ada pesanan yang dipilih</p>
+        <p class="text-gray-400 text-sm mt-1">Klik tombol "Tracking" pada pesanan Anda di halaman profil</p>
+        <a href="{{ route('profile.edit') }}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-blue-900 text-white text-sm font-semibold rounded-xl hover:bg-blue-800 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Lihat Riwayat Pesanan
+        </a>
     </div>
 
     {{-- Result Card --}}
-    <div x-show="searched" x-cloak x-transition:enter.duration.300>
+    <div x-show="order.id" x-cloak x-transition:enter.duration.300>
         {{-- Header Info --}}
         <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -241,18 +236,12 @@
 <script>
 function trackingForm() {
     return {
-        searched: false,
         animateProgress: false,
         lightboxOpen: false,
         lightboxImage: '',
         revisionOpen: false,
         revisionNote: '',
-        searchQuery: '',
-        order: {
-            id: '',
-            date: '',
-            status: 'pending'
-        },
+        order: @json($orderData ?? null) || { id: '', date: '', status: 'pending' },
 
         get statusLabel() {
             const labels = {
@@ -321,29 +310,10 @@ function trackingForm() {
         },
 
         init() {
-            this.$nextTick(() => {
-                setTimeout(() => { this.animateProgress = true; }, 200);
-            });
-        },
-
-        async searchOrder() {
-            if (!this.searchQuery.trim()) return;
-            try {
-                const res = await fetch('{{ route("tracking.search") }}?q=' + encodeURIComponent(this.searchQuery), {
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                });
-                const data = await res.json();
-                if (!data.found) {
-                    Swal.fire({ icon: 'error', title: 'Tidak ditemukan', text: data.message });
-                    return;
-                }
-                this.order = data.order;
-                this.searched = true;
+            if (this.order.id) {
                 this.$nextTick(() => {
                     setTimeout(() => { this.animateProgress = true; }, 200);
                 });
-            } catch (e) {
-                Swal.fire({ icon: 'error', title: 'Gagal mencari', text: 'Terjadi kesalahan' });
             }
         },
 

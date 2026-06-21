@@ -369,7 +369,7 @@
 
     <!-- MODAL 1: RIWAYAT ASSESSMENT (USER) -->
     <div x-show="showHistoryModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" x-transition x-cloak>
-        <div class="bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-lg overflow-hidden" @click.away="showHistoryModal = false">
+        <div class="bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-lg overflow-hidden">
             <div class="bg-[#1a237e] p-4 text-white flex justify-between items-center">
                 <h3 class="font-bold flex items-center gap-2">
                     <i data-lucide="history" class="w-5 h-5"></i>
@@ -403,7 +403,7 @@
 
     <!-- MODAL 2: DETAIL JAWABAN KARYAWAN (MANAGER) -->
     <div x-show="showDetailModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" x-transition x-cloak>
-        <div class="bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-2xl overflow-hidden" @click.away="showDetailModal = false">
+        <div class="bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-2xl overflow-hidden">
             <div class="bg-[#1a237e] p-4 text-white flex justify-between items-center">
                 <h3 class="font-bold flex items-center gap-2">
                     <i data-lucide="user-check" class="w-5 h-5"></i>

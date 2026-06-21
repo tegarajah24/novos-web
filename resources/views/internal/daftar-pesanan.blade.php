@@ -165,10 +165,16 @@ function rupiah($n) {
                             </div>
 
                             {{-- EDIT MODAL --}}
+                            <template x-teleport="body">
                             <div x-show="editMode" x-cloak class="fixed inset-0 z-50 flex items-center justify-center" @keydown.escape.window="editMode = false">
-                                <div class="absolute inset-0 bg-black/30" @click="editMode = false"></div>
-                                <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-6" @click.outside="editMode = false">
-                                    <h3 class="text-lg font-bold text-gray-900 mb-5">Edit Pesanan</h3>
+                                <div class="absolute inset-0 bg-black/30"></div>
+                                <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-6">
+                                    <div class="flex items-center justify-between mb-5">
+                                        <h3 class="text-lg font-bold text-gray-900">Edit Pesanan</h3>
+                                        <button @click="editMode = false" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                        </button>
+                                    </div>
                                     <div class="space-y-4">
                                         <div>
                                             <label class="block text-xs text-gray-500 mb-1 font-medium">Order ID</label>
@@ -216,6 +222,7 @@ function rupiah($n) {
                                     </div>
                                 </div>
                             </div>
+                            </template>
                         </td>
                     </tr>
                     @endforeach

@@ -9,42 +9,26 @@ use Illuminate\Http\Request;
 
 class TrackingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('customer.tracking');
-    }
+        $orderData = null;
 
-    public function search(Request $request)
-    {
-        $request->validate(['q' => 'required|string']);
+        if ($request->q) {
+            $order = Order::with(['designRequest', 'orderItem'])
+                ->where('order_number', $request->q)
+                ->where('user_id', auth()->id())
+                ->first();
 
-        $order = Order::with(['designRequest', 'orderItem'])
-            ->where('order_number', $request->q)
-            ->where('user_id', auth()->id())
-            ->first();
-
-        if (!$order) {
-            return response()->json(['found' => false, 'message' => 'Pesanan tidak ditemukan'], 404);
+            if ($order) {
+                $orderData = [
+                    'id'     => $order->order_number,
+                    'date'   => $order->created_at->format('j F Y'),
+                    'status' => $order->status,
+                ];
+            }
         }
 
-        $history = OrderStatusHistory::where('order_id', $order->id)
-            ->orderBy('created_at')
-            ->get()
-            ->map(fn($h) => [
-                'status' => $h->status,
-                'date'   => $h->created_at->format('j F Y'),
-                'note'   => $h->notes,
-            ]);
-
-        return response()->json([
-            'found'   => true,
-            'order'   => [
-                'id'     => $order->order_number,
-                'date'   => $order->created_at->format('j F Y'),
-                'status' => $order->status,
-            ],
-            'history' => $history,
-        ]);
+        return view('customer.tracking', compact('orderData'));
     }
 
     public function accDesign($id)
