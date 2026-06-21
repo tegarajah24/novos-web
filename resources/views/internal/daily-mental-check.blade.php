@@ -155,41 +155,12 @@
             <div class="space-y-6">
                 <div class="glass-card rounded-2xl p-6 text-center">
                     <span class="text-5xl block mb-3" x-text="dailyResult.emoji"></span>
-                    <h3 class="text-lg font-bold text-gray-900 mb-1">Check-in Hari Ini Selesai</h3>
-                    <p class="text-sm text-gray-500 mb-4">Skor Anda: <strong class="text-gray-900" x-text="totalScore + '/15'"></strong></p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Check-in Hari Ini Selesai</h3>
                     <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
                         :class="dailyResult.badgeClass" x-text="dailyResult.category"></span>
                     <p class="text-sm text-gray-600 mt-4" x-text="dailyResult.message"></p>
                 </div>
 
-                {{-- Interpretasi --}}
-                <div class="glass-card rounded-2xl p-6">
-                    <h4 class="font-bold text-gray-900 text-sm mb-4">Interpretasi Hasil</h4>
-                    <div class="overflow-hidden rounded-xl border border-gray-200">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="px-4 py-2.5 text-left font-semibold text-gray-700">Skor Total</th>
-                                    <th class="px-4 py-2.5 text-left font-semibold text-gray-700">Kategori</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                <tr :class="totalScore >= 5 && totalScore <= 7 ? 'bg-emerald-50 font-semibold' : ''">
-                                    <td class="px-4 py-2.5 text-gray-700">5 – 7</td>
-                                    <td class="px-4 py-2.5"><span :class="totalScore >= 5 && totalScore <= 7 ? 'text-emerald-700' : 'text-gray-600'">😊 Kondisi Baik</span></td>
-                                </tr>
-                                <tr :class="totalScore >= 8 && totalScore <= 11 ? 'bg-amber-50 font-semibold' : ''">
-                                    <td class="px-4 py-2.5 text-gray-700">8 – 11</td>
-                                    <td class="px-4 py-2.5"><span :class="totalScore >= 8 && totalScore <= 11 ? 'text-amber-700' : 'text-gray-600'">😐 Perlu Perhatian</span></td>
-                                </tr>
-                                <tr :class="totalScore >= 12 && totalScore <= 15 ? 'bg-red-50 font-semibold' : ''">
-                                    <td class="px-4 py-2.5 text-gray-700">12 – 15</td>
-                                    <td class="px-4 py-2.5"><span :class="totalScore >= 12 && totalScore <= 15 ? 'text-red-700' : 'text-gray-600'">😟 Perlu Pendampingan</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
                 {{-- Catatan bantuan --}}
                             <template x-if="form.needHelp === 'ya' && form.helpNote">
@@ -199,11 +170,6 @@
                                     </div>
                                 </template>
 
-                                <div class="text-center">
-                                    <button @click="resetForm()" class="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-white/60 hover:bg-white rounded-xl border border-gray-200 transition-colors">
-                                        Isi Ulang
-                                    </button>
-                                </div>
                             </div>
                         </template>
 
@@ -218,9 +184,9 @@
                                                 <tr class="bg-gray-50/80">
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700 w-10">No</th>
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Pertanyaan</th>
-                                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">😊 Baik (1)</th>
-                                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">😐 Cukup (2)</th>
-                                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-32">😟 Kurang Baik (3)</th>
+                                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">Baik</th>
+                                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">Cukup</th>
+                                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 w-32">Kurang Baik</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-gray-100">
@@ -231,9 +197,9 @@
                                                         <template x-for="val in [1, 2, 3]" :key="val">
                                                             <td class="px-4 py-3 text-center">
                                                                 <label @click="form.answers[q.id] = val"
-                                                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                                    class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                                     :class="form.answers[q.id] === val ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                                    <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                                    <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                                         :class="form.answers[q.id] === val ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                                     </div>
                                                                 </label>
@@ -430,18 +396,18 @@
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 1"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 0"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -461,18 +427,18 @@
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 1"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 0"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -492,18 +458,18 @@
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 1"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 0"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -523,18 +489,18 @@
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 1"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 0"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -554,18 +520,18 @@
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 1"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 1 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 1 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.checklist[q.id] = 0"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.checklist[q.id] === 0 ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.checklist[q.id] === 0 ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -599,9 +565,9 @@
                                     <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.eval.stres = val"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.eval.stres === val ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.eval.stres === val ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -613,9 +579,9 @@
                                     <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.eval.fokus = val"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.eval.fokus === val ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.eval.fokus === val ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -627,9 +593,9 @@
                                     <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
                                         <td class="px-4 py-3 text-center">
                                             <label @click="microForm.eval.kenyamanan = val"
-                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 cursor-pointer transition-all"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all"
                                                 :class="microForm.eval.kenyamanan === val ? 'border-[#1a237e] bg-[#1a237e]/10 shadow-sm' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'">
-                                                <div class="w-3 h-3 rounded-full transition-all duration-150"
+                                                <div class="w-2.5 h-2.5 rounded-full transition-all duration-150"
                                                     :class="microForm.eval.kenyamanan === val ? 'bg-[#1a237e] scale-100' : 'bg-transparent scale-0'">
                                                 </div>
                                             </label>
@@ -802,21 +768,21 @@ function dailyMentalCheck() {
                     emoji: '😊',
                     category: 'Kondisi Baik',
                     badgeClass: 'bg-emerald-100 text-emerald-800',
-                    message: 'Kondisi mental Anda dalam keadaan baik hari ini. Pertahankan semangat dan jangan lupa untuk tetap melakukan micro-break secara teratur.',
+                    message: 'Kondisi Anda Baik. Silakan melanjutkan pekerjaan seperti biasa. Tetap semangat!',
                 };
             } else if (score >= 8 && score <= 11) {
                 return {
                     emoji: '😐',
                     category: 'Perlu Perhatian',
                     badgeClass: 'bg-amber-100 text-amber-800',
-                    message: 'Kondisi mental Anda perlu mendapat perhatian. Jangan ragu untuk mengambil micro-break sejenak atau bicarakan dengan atasan/rekan kerja jika diperlukan.',
+                    message: 'Kondisi Anda Perlu Perhatian. Sangat disarankan untuk mengambil istirahat singkat (micro-break) 3–5 menit sekarang, lakukan peregangan ringan, minum air putih, atau silakan diskusi singkat dengan PIC jika ada kendala.',
                 };
             } else {
                 return {
                     emoji: '😟',
                     category: 'Perlu Pendampingan',
                     badgeClass: 'bg-red-100 text-red-800',
-                    message: 'Kondisi mental Anda memerlukan pendampingan. Segera hubungi PIC atau manajer Anda untuk mendapatkan dukungan yang diperlukan.',
+                    message: 'Kondisi Anda Perlu Pendampingan. Harap lakukan micro-break berbasis latihan mindfulness STOP segera. Admin/Supervisor akan dihubungi untuk mengevaluasi beban kerja Anda hari ini.',
                 };
             }
         },
@@ -834,7 +800,6 @@ function dailyMentalCheck() {
             if (!this.allAnswered) return;
             this.todayFilled = true;
             this.submitted = true;
-            this.activeTab = 0;
         },
 
         resetForm() {
