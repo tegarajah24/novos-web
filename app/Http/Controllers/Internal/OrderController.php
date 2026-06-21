@@ -57,7 +57,7 @@ class OrderController extends Controller
 
         $colorKeys = ['purple', 'blue', 'orange', 'green', 'gray'];
         $assignees = User::with('role')
-            ->whereHas('role', fn($q) => $q->whereIn('name', ['Admin', 'Design', 'Produksi', 'Manager']))
+            ->whereHas('role', fn($q) => $q->where('name', 'Admin'))
             ->get()
             ->map(function ($user) use ($colorKeys) {
                 return [
