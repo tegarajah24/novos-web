@@ -23,11 +23,8 @@
     {{-- ========== TAB 1: DASHBOARD ========== --}}
     <div x-show="activeTab === 0" x-cloak x-transition:enter.duration.300 class="space-y-6">
         {{-- Poster Banner --}}
-        <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-indigo-100 via-blue-50 to-indigo-100 border border-indigo-200/60 p-8 flex items-center justify-center min-h-[160px]">
-            <div class="text-center">
-                <p class="text-sm text-indigo-400 font-medium">Poster Edukasi Kesehatan Mental</p>
-                <p class="text-xs text-indigo-300 mt-1">Ganti dengan konten poster Anda</p>
-            </div>
+        <div class="rounded-2xl overflow-hidden border border-indigo-200/60 min-h-[160px]">
+            <img src="{{ asset('images/poster-daily-mental-check.jpg') }}" alt="Poster Kesehatan Mental" class="w-full h-full object-cover">
         </div>
 
         {{-- Row 1: Skor Hari Ini + Pesan Motivasi --}}
