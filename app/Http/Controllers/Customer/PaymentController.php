@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\OrderStatusHistory;
+use App\Models\Chat;
+use App\Models\ChatMessage;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -64,6 +66,80 @@ class PaymentController extends Controller
         ]);
     }
 
+    public function approveAndPay(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'menunggu_pembayaran') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status pesanan tidak memungkinkan untuk pembayaran.',
+            ], 422);
+        }
+
+        OrderStatusHistory::create([
+            'order_id'   => $order->id,
+            'status'     => 'menunggu_pembayaran',
+            'changed_by' => auth()->id(),
+            'notes'      => 'Customer menyetujui detail pesanan dan melanjutkan ke pembayaran',
+        ]);
+
+        $midtransOrderId = 'ORDER-' . $order->id . '-' . now()->timestamp;
+
+        $payment = $order->payment;
+        if (!$payment) {
+            $payment = Payment::create([
+                'order_id'          => $order->id,
+                'midtrans_order_id' => $midtransOrderId,
+                'amount'            => $order->total_price,
+                'status'            => 'pending',
+            ]);
+        } else {
+            $payment->update(['midtrans_order_id' => $midtransOrderId]);
+        }
+
+        $params = [
+            'transaction_details' => [
+                'order_id'     => $midtransOrderId,
+                'gross_amount' => (int) $order->total_price,
+            ],
+            'customer_details' => [
+                'first_name' => $order->user->name,
+                'email'      => $order->user->email,
+            ],
+        ];
+
+        try {
+            $snapToken = $this->midtrans->createSnapToken($params);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal terhubung ke payment gateway: ' . $e->getMessage(),
+            ], 500);
+        }
+
+        $chat = Chat::firstOrCreate([
+            'order_id'    => $order->id,
+            'customer_id' => $order->user_id,
+        ]);
+
+        ChatMessage::create([
+            'chat_id'   => $chat->id,
+            'sender_id' => $order->user_id,
+            'message'   => 'Saya telah menyetujui detail pesanan dan melanjutkan ke pembayaran.',
+        ]);
+
+        return response()->json([
+            'success'     => true,
+            'snap_token' => $snapToken,
+            'order_id'   => $order->id,
+            'midtrans_order_id' => $midtransOrderId,
+            'order_number' => $order->order_number,
+        ]);
+    }
+
     public function callback(Request $request)
     {
         try {
@@ -107,6 +183,20 @@ class PaymentController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                $order = $payment->order;
+                $chat = Chat::firstOrCreate([
+                    'order_id'    => $order->id,
+                    'customer_id' => $order->user_id,
+                ]);
+                DB::table('chat_messages')->insert([
+                    'chat_id'    => $chat->id,
+                    'sender_id'  => $order->user_id,
+                    'message'    => 'Pembayaran untuk pesanan ' . $order->order_number . ' telah berhasil dikonfirmasi.',
+                    'is_read'    => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
 
             return response()->json(['message' => 'OK']);
@@ -138,6 +228,16 @@ class PaymentController extends Controller
                     'status'     => 'dikonfirmasi',
                     'changed_by' => $order->user_id,
                     'notes'      => 'Pembayaran berhasil dikonfirmasi',
+                ]);
+
+                $chat = Chat::firstOrCreate([
+                    'order_id'    => $order->id,
+                    'customer_id' => $order->user_id,
+                ]);
+                ChatMessage::create([
+                    'chat_id'   => $chat->id,
+                    'sender_id' => $order->user_id,
+                    'message'   => 'Pembayaran untuk pesanan ' . $order->order_number . ' telah berhasil dikonfirmasi.',
                 ]);
             } elseif ($payment && $payment->status === 'success') {
                 $orderNumber = $payment->order->order_number;

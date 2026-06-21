@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\DesignRequest;
 use App\Models\OrderStatusHistory;
+use App\Models\Chat;
+use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -50,7 +52,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id'     => auth()->id(),
                 'order_number' => $orderNumber,
-                'status'      => 'pending',
+                'status'      => 'menunggu_validasi',
                 'total_price' => $totalPrice,
                 'notes'       => $data['catatan'] ?? null,
                 'admin_notes' => 'Prioritas: ' . $prioritasLabel . ' (' . $biayaPrioritas . ')',
@@ -80,11 +82,13 @@ class OrderController extends Controller
             ]);
 
             OrderStatusHistory::create([
-                'order_id'  => $order->id,
-                'status'    => 'pending',
+                'order_id'   => $order->id,
+                'status'     => 'menunggu_validasi',
                 'changed_by' => auth()->id(),
-                'notes'     => 'Pesanan dibuat oleh customer',
+                'notes'      => 'Pesanan dibuat oleh customer',
             ]);
+
+            $this->sendSystemMessage($order, 'Pesanan Anda telah dibuat dan menunggu validasi admin.');
 
             return $order;
         });
@@ -93,6 +97,20 @@ class OrderController extends Controller
             'success'     => true,
             'order'       => $order,
             'orderNumber' => $order->order_number,
+        ]);
+    }
+
+    private function sendSystemMessage(Order $order, string $message): void
+    {
+        $chat = Chat::firstOrCreate([
+            'order_id'    => $order->id,
+            'customer_id' => $order->user_id,
+        ]);
+
+        ChatMessage::create([
+            'chat_id'   => $chat->id,
+            'sender_id' => $order->user_id,
+            'message'   => $message,
         ]);
     }
 }

@@ -58,7 +58,7 @@
 | id | bigIncrements | |
 | user_id | foreignId | relasi ke users (customer) |
 | order_number | string, unique | contoh: NVS-20240601-001 |
-| status | enum | pending, dikonfirmasi, disetujui, di_design, siap_cetak, diproduksi, selesai, dibatalkan |
+| status | enum | menunggu_validasi, menunggu_pembayaran, dikonfirmasi, disetujui, di_design, siap_cetak, diproduksi, selesai, dibatalkan |
 | notes | text, nullable | catatan dari customer |
 | admin_notes | text, nullable | catatan internal admin |
 | total_price | decimal(10,2) | |

@@ -415,55 +415,6 @@ function produksiApp() {
         },
 
         orders: [
-            {
-                id: 'dummy-1',
-                order_id: 'NVS-20260620-001',
-                customer: 'Anto Wijaya',
-                customer_contact: '0812-3456-7890',
-                team_name: 'Majestic Esports',
-                total_qty: 15,
-                deadline: '27 Jun 2026',
-                priority: 'High',
-                material: 'Dryfit Premium',
-                collar: 'V-Neck Rib',
-                pattern: 'Geometric Cyberpunk',
-                notes: 'Desain ACC dari Tim Design. Sablon sublimasi fullprint warna gradasi ungu-biru. Logo dada kiri bordir komputer.',
-                sizes: { 'S': 3, 'M': 5, 'L': 5, 'XL': 2 },
-                reference_files: [
-                    'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop'
-                ],
-                design_files: [
-                    { name: 'majestic_esports_blueprint.pdf', type: 'PDF Blueprint' },
-                    { name: 'pattern_layout_vneck.cdr', type: 'CorelDraw Vector' }
-                ],
-                status: 'siap_cetak',
-                stage: 'printing',
-                printing_status: 'proses_printing'
-            },
-            {
-                id: 'dummy-2',
-                order_id: 'NVS-20260620-002',
-                customer: 'Budi Santoso',
-                customer_contact: '0812-9876-5432',
-                team_name: 'Dewa United Futsal',
-                total_qty: 12,
-                deadline: '28 Jun 2026',
-                priority: 'Normal',
-                material: 'Dryfit Jarum',
-                collar: 'O-Neck Rib',
-                pattern: 'Stripes Classic',
-                notes: 'Proses jahit. Harap pastikan benang warna hitam sesuai motif line samping.',
-                sizes: { 'M': 4, 'L': 6, 'XL': 2 },
-                reference_files: [
-                    'https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=600&auto=format&fit=crop'
-                ],
-                design_files: [
-                    { name: 'dewa_united_futsal_blueprint.pdf', type: 'PDF Blueprint' }
-                ],
-                status: 'diproduksi',
-                stage: 'jahit',
-                jahit_status: 'proses_jahit'
-            },
             ...@json($orders).map(order => {
                 if (order.status === 'siap_cetak') {
                     order.stage = 'printing';
