@@ -283,18 +283,85 @@
                                     <!-- QC Stage Actions -->
                                     <div x-show="selectedOrder?.stage === 'qc'">
                                         <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                            <option value="">-- Pilih tindakan QC --</option>
-                                            <option value="selesai">Lolos QC & Selesaikan Pesanan</option>
+                                            <option value="proses_qc">Sedang Proses</option>
+                                            <option value="selesai_qc">Selesai</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                {{-- QC Checklist (hanya tampil di stage QC) --}}
+                                <div x-show="selectedOrder?.stage === 'qc'" x-cloak>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                        2. Checklist Quality Control
+                                    </label>
+                                    <div class="space-y-2.5">
+                                        <!-- Item 1: Kualitas Jahitan -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-emerald-50 hover:border-emerald-200 transition-colors group">
+                                            <input type="checkbox" x-model="qcChecklist.jahitan"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-emerald-800">Kualitas Jahitan</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Jahitan rapi, benang tidak loncat, kelim lurus dan sesuai pola.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 2: Tidak Ada Cacat -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-emerald-50 hover:border-emerald-200 transition-colors group">
+                                            <input type="checkbox" x-model="qcChecklist.cacat"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-emerald-800">Bebas Cacat Produksi</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Tidak ada lubang, sobekan, noda, atau warna tidak merata.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 3: Ukuran Sesuai -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-emerald-50 hover:border-emerald-200 transition-colors group">
+                                            <input type="checkbox" x-model="qcChecklist.ukuran"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-emerald-800">Ukuran & Kuantitas Sesuai</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Jumlah pcs per ukuran sesuai dengan pesanan customer.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 4: Desain & Sablon -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-emerald-50 hover:border-emerald-200 transition-colors group">
+                                            <input type="checkbox" x-model="qcChecklist.desain"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-emerald-800">Desain & Sablon/Bordir</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Warna, posisi, dan kualitas sablon/bordir sesuai file desain.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 5: Perlu Revisi -->
+                                        <label class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200 cursor-pointer hover:bg-red-100 hover:border-red-300 transition-colors group">
+                                            <input type="checkbox" x-model="qcChecklist.perluRevisi"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-red-500 focus:ring-red-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-red-700 group-hover:text-red-900">Perlu Revisi / Pengerjaan Ulang</p>
+                                                <p class="text-[11px] text-red-400 mt-0.5">Centang jika ada bagian yang perlu diperbaiki sebelum diserahkan.</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <!-- Progress Bar Checklist -->
+                                    <div class="mt-3 pt-3 border-t border-gray-100">
+                                        <div class="flex justify-between items-center mb-1.5">
+                                            <span class="text-[11px] text-gray-500">Progress QC</span>
+                                            <span class="text-[11px] font-bold text-emerald-600" x-text="qcProgress() + '/' + '4 item'"></span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                            <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                                                :style="'width:' + (qcProgress() / 4 * 100) + '%'"></div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {{-- Catatan Opsional --}}
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">2. Catatan (Opsional)</label>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                                        x-text="selectedOrder?.stage === 'qc' ? '3. Catatan QC (Opsional)' : '2. Catatan (Opsional)'"></label>
                                     <textarea x-model="productionNote" rows="3"
                                         class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm resize-none"
-                                        placeholder="Misal: ada kelebihan 1 pcs size L, warna sedikit lebih tua..."></textarea>
+                                        :placeholder="selectedOrder?.stage === 'qc' ? 'Misal: jahitan bagian bahu kanan perlu dirapikan, ukuran XL ada 1 pcs cacat...' : 'Misal: ada kelebihan 1 pcs size L, warna sedikit lebih tua...'"></textarea>
                                 </div>
 
                                 {{-- Tombol Submit --}}
@@ -315,7 +382,7 @@
                                         Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk memperbarui progres jahit, atau <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke Quality Control (QC).
                                     </p>
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'qc'">
-                                        Memilih <strong class="text-gray-600">Lolos QC & Selesaikan Pesanan</strong> akan memfinalisasi pesanan ini.
+                                        Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk mencatat progres QC, atau <strong class="text-gray-600">Selesai</strong> untuk memfinalisasi dan menyelesaikan pesanan ini.
                                     </p>
                                 </div>
                             </div>
@@ -339,6 +406,13 @@ function produksiApp() {
         updateStatus: '',
         productionNote: '',
         activeTab: 'printing',
+        qcChecklist: {
+            jahitan: false,
+            cacat: false,
+            ukuran: false,
+            desain: false,
+            perluRevisi: false
+        },
 
         orders: [
             {
@@ -415,16 +489,29 @@ function produksiApp() {
             return this.orders.filter(o => o.stage === this.activeTab);
         },
 
+        qcProgress() {
+            let count = 0;
+            if (this.qcChecklist.jahitan) count++;
+            if (this.qcChecklist.cacat) count++;
+            if (this.qcChecklist.ukuran) count++;
+            if (this.qcChecklist.desain) count++;
+            return count;
+        },
+
         openDetail(order) {
             this.selectedOrder = order;
             if (order.stage === 'printing') {
                 this.updateStatus = order.printing_status || 'proses_printing';
             } else if (order.stage === 'jahit') {
                 this.updateStatus = order.jahit_status || 'proses_jahit';
+            } else if (order.stage === 'qc') {
+                this.updateStatus = order.qc_status || 'proses_qc';
             } else {
-                this.updateStatus = '';
+                this.updateStatus = 'proses_qc';
             }
             this.productionNote = '';
+            // Reset checklist QC setiap buka modal
+            this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, perluRevisi: false };
             this.isDetailOpen = true;
             setTimeout(() => {
                 if (window.lucide) window.lucide.createIcons();
@@ -471,53 +558,62 @@ function produksiApp() {
                     confirmButtonText = 'Ya, Kirim!';
                     successText = 'Proses jahit selesai. Pesanan dikirim ke divisi QC.';
                 }
-            } else {
-                if (targetStatus === 'selesai') {
+            } else if (currentStage === 'qc') {
+                if (targetStatus === 'proses_qc') {
+                    nextStage = 'qc';
+                    title = 'Update Status Quality Control?';
+                    text = 'Status QC akan diperbarui menjadi Sedang Proses. Checklist QC telah dicatat.';
+                    confirmButtonText = 'Ya, Update!';
+                    successText = 'Status Quality Control berhasil diperbarui.';
+                } else if (targetStatus === 'selesai_qc') {
                     isSelesai = true;
-                } else if (targetStatus === 'diproduksi') {
-                    if (currentStage === 'jahit') {
-                        nextStage = 'qc';
+                    // Validasi: jika ada flag perlu revisi, tampilkan peringatan
+                    if (this.qcChecklist.perluRevisi) {
+                        Swal.fire({
+                            title: 'Ada Item Perlu Revisi!',
+                            html: 'Kamu mencentang <strong>Perlu Revisi</strong> pada checklist QC.<br>Yakin ingin menyelesaikan pesanan ini?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d97706',
+                            cancelButtonColor: '#6b7280',
+                            confirmButtonText: 'Tetap Selesaikan',
+                            cancelButtonText: 'Batal'
+                        }).then((res) => {
+                            if (!res.isConfirmed) return;
+                            this._doFinishQC();
+                        });
+                        return;
                     }
-                }
-
-                title = isSelesai ? 'Tandai Produksi Selesai?' : 'Lanjutkan ke Tahap Berikutnya?';
-                if (isSelesai) {
-                    text = 'Pesanan ini akan ditandai SELESAI dan siap diserahkan.';
-                    confirmButtonText = 'Ya, Selesai!';
-                    successText = 'Pesanan dinyatakan selesai diproduksi.';
-                } else {
-                    if (currentStage === 'jahit') {
-                        text = 'Pesanan akan dikirim ke divisi Quality Control (QC).';
-                        confirmButtonText = 'Ya, Kirim!';
-                        successText = 'Pesanan dikirim ke divisi QC.';
-                    }
+                    title = 'QC Selesai – Finalisasi Pesanan?';
+                    text = 'Semua item QC telah diperiksa. Pesanan akan ditandai SELESAI dan siap diserahkan ke customer.';
+                    confirmButtonText = 'Ya, Selesaikan!';
+                    successText = 'Quality Control selesai. Pesanan dinyatakan selesai diproduksi.';
                 }
             }
 
             Swal.fire({
                 title: title,
                 text: text,
-                icon: 'question',
+                icon: isSelesai ? 'success' : 'question',
                 showCancelButton: true,
-                confirmButtonColor: (isSelesai || targetStatus === 'proses_printing' || targetStatus === 'proses_jahit') ? '#16a34a' : '#1a237e',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: isSelesai ? '#16a34a' : (targetStatus === 'proses_printing' || targetStatus === 'proses_jahit' || targetStatus === 'proses_qc' ? '#0891b2' : '#1a237e'),
+                cancelButtonColor: '#6b7280',
                 confirmButtonText: confirmButtonText,
                 cancelButtonText: 'Batal',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: successText,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        this.isDetailOpen = false;
-                        if (isSelesai) {
-                            // Hapus dari antrean jika selesai
-                            this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
-                        } else {
+                    if (isSelesai) {
+                        this._doFinishQC();
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: successText,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            this.isDetailOpen = false;
                             // Update stage dan status pesanan lokal
                             this.orders = this.orders.map(o => {
                                 if (o.id === this.selectedOrder.id) {
@@ -532,15 +628,30 @@ function produksiApp() {
                                         if (targetStatus === 'selesai_jahit') {
                                             o.status = 'diproduksi';
                                         }
-                                    } else {
-                                        o.status = 'diproduksi';
+                                    } else if (currentStage === 'qc') {
+                                        o.qc_status = targetStatus;
                                     }
                                 }
                                 return o;
                             });
-                        }
-                    });
+                        });
+                    }
                 }
+            });
+        },
+
+        _doFinishQC() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Quality Control Selesai! 🎉',
+                html: '<p class="text-sm text-gray-600">Pesanan <strong>' + (this.selectedOrder?.order_id || '') + '</strong> dinyatakan <strong class="text-green-600">SELESAI</strong> dan siap diserahkan ke customer.</p>',
+                timer: 3000,
+                showConfirmButton: false,
+                timerProgressBar: true
+            }).then(() => {
+                this.isDetailOpen = false;
+                // Hapus dari antrean QC — produksi selesai
+                this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
             });
         }
     }
