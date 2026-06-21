@@ -139,6 +139,28 @@
                     >
                 </div>
 
+                {{-- No Punggung --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">No Punggung</label>
+                    <input
+                        type="text"
+                        x-model="form.no_punggung"
+                        placeholder="Contoh: 10, 7, 9"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                    >
+                </div>
+
+                {{-- Detail Sponsor --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Sponsor</label>
+                    <input
+                        type="text"
+                        x-model="form.detail_sponsor"
+                        placeholder="Contoh: Logo sponsor di dada"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                    >
+                </div>
+
                 {{-- Ukuran (Qty per Ukuran) --}}
                 <div x-data="{ showSizeGuide: false }">
                     <div class="flex items-center justify-between mb-2">
@@ -612,6 +634,14 @@
                             <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
                         </div>
                         <div class="flex justify-between">
+                            <span class="text-gray-500">No Punggung</span>
+                            <span class="font-medium text-gray-900" x-text="form.no_punggung || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Sponsor</span>
+                            <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
                             <span class="text-gray-500">Kerah</span>
                             <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
                         </div>
@@ -718,6 +748,14 @@
                         <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
                     </div>
                     <div class="flex justify-between">
+                        <span class="text-gray-500">No Punggung</span>
+                        <span class="font-medium text-gray-900" x-text="form.no_punggung || '-'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Sponsor</span>
+                        <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
+                    </div>
+                    <div class="flex justify-between">
                         <span class="text-gray-500">Kerah</span>
                         <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
                     </div>
@@ -789,6 +827,8 @@ function pemesananForm(catalogProduct = null) {
         catalogProduct: catalogProduct,
         form: {
             team_name: '',
+            no_punggung: '',
+            detail_sponsor: '',
             kerah: '',
             bahan: '',
 
@@ -908,6 +948,8 @@ function pemesananForm(catalogProduct = null) {
 
             const payload = {
                 team_name: this.form.team_name,
+                no_punggung: this.form.no_punggung,
+                detail_sponsor: this.form.detail_sponsor,
                 kerah: this.form.kerah,
                 bahan: this.form.bahan,
                 catatan: this.form.catatan,
