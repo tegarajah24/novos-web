@@ -7,7 +7,7 @@
 @endsection
 
 @section('internal-content')
-<div x-data="dailyMentalCheck()">
+<div x-data="dailyMentalCheck">
     {{-- Tab Navigation --}}
     <div class="flex max-w-lg gap-1 bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-white/70 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
@@ -634,8 +634,9 @@
 </div>
 
 <script>
-function dailyMentalCheck() {
-    return {
+document.addEventListener('alpine:init', () => {
+    Alpine.data('dailyMentalCheck', () => {
+        return {
         activeTab: 0,
         todayFilled: false,
         submitted: false,
@@ -856,6 +857,7 @@ function dailyMentalCheck() {
             return days;
         },
     }
-}
+    });
+});
 </script>
 @endsection

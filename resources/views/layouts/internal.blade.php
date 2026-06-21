@@ -99,7 +99,7 @@
                             <i data-lucide="bell" class="w-5 h-5"></i>
                             <span x-show="unreadCount > 0" x-cloak
                                   x-text="unreadCount > 9 ? '9+' : unreadCount"
-                                  class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-red-500 rounded-full min-w-[18px] h-[18px] animate-pulse">
+                                  class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">
                             </span>
                         </button>
 
@@ -119,7 +119,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm font-bold text-gray-900">Notifikasi</span>
                                     <span x-show="unreadCount > 0" x-text="unreadCount"
-                                          class="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-full min-w-[18px]">
+                                          class="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-[#1a237e] rounded-full min-w-[18px]">
                                     </span>
                                 </div>
                                 <button @click="markAllRead()" class="text-xs font-medium text-[#1a237e] hover:underline">Tandai semua dibaca</button>
