@@ -7,7 +7,7 @@
 @endsection
 
 @section('internal-content')
-<div x-data="dailyMentalCheck">
+<div x-data="dailyMentalCheck()">
     {{-- Tab Navigation --}}
     <div class="flex max-w-lg gap-1 bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-white/70 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
@@ -125,7 +125,6 @@
                     </template>
                 </div>
             </div>
-        </div>
     </div>
 
     {{-- ========== TAB 2: ISI DAILY CHECK ========== --}}
@@ -578,9 +577,8 @@
                             <textarea x-model="microForm.catatan_kendala" rows="2"
                                 placeholder="Tuliskan..."
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow resize-none"></textarea>
-                        </div>
-                    </div>
-                </div>
+            </div>
+    </div>
 
                 {{-- Submit --}}
                 <div class="text-center">
@@ -633,10 +631,11 @@
 
 </div>
 
+</div>
+
 <script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('dailyMentalCheck', () => {
-        return {
+function dailyMentalCheck() {
+    return {
         activeTab: 0,
         todayFilled: false,
         submitted: false,
@@ -857,7 +856,6 @@ document.addEventListener('alpine:init', () => {
             return days;
         },
     }
-    });
-});
+}
 </script>
 @endsection
