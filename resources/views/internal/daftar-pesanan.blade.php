@@ -161,7 +161,7 @@ function rupiah($n) {
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($orders as $o)
-                    <tr class="hover:bg-gray-50 transition-colors" x-show="search === '' || '{{ strtolower($o['customer']) }}'.includes(search.toLowerCase()) || '{{ strtolower($o['order_id']) }}'.includes(search.toLowerCase()) || '{{ strtolower($o['produk']) }}'.includes(search.toLowerCase())">
+                    <tr class="hover:bg-gray-50 transition-colors" x-show="search === '' || '{{ addslashes(strtolower($o['customer'])) }}'.includes(search.toLowerCase()) || '{{ addslashes(strtolower($o['order_id'])) }}'.includes(search.toLowerCase()) || '{{ addslashes(strtolower($o['produk'])) }}'.includes(search.toLowerCase())">
                         <td class="px-5 py-4 font-medium text-gray-900 whitespace-nowrap">{{ $o['order_id'] }}</td>
                         <td class="px-5 py-4 text-gray-700 whitespace-nowrap">{{ $o['customer'] }}</td>
                         <td class="px-5 py-4 text-gray-700 whitespace-nowrap">{{ $o['produk'] }}</td>
