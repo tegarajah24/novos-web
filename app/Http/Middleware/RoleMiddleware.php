@@ -13,7 +13,13 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        $userRole = auth()->user()->role->name;
+        $user = auth()->user();
+
+        if (!$user || !$user->role) {
+            abort(403, 'Unauthorized');
+        }
+
+        $userRole = $user->role->name;
 
         if (!in_array($userRole, $roles)) {
             abort(403, 'Unauthorized');
