@@ -309,40 +309,12 @@
             <div class="space-y-6">
                 <div class="glass-card rounded-2xl p-6 text-center">
                     <span class="text-5xl block mb-3" x-text="microScore >= 7 ? '🎉' : microScore >= 4 ? '👍' : '💪'"></span>
-                    <h3 class="text-lg font-bold text-gray-900 mb-1">Micro-Break Hari Ini Selesai</h3>
-                    <p class="text-sm text-gray-500 mb-4">Skor Kepatuhan: <strong class="text-gray-900" x-text="microScore + '/8'"></strong></p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Micro-Break Hari Ini Selesai</h3>
                     <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
                         :class="microLevel.class" x-text="'Kepatuhan ' + microLevel.label"></span>
                 </div>
 
-                {{-- Interpretasi --}}
-                <div class="glass-card rounded-2xl p-6">
-                    <h4 class="font-bold text-gray-900 text-sm mb-4">Interpretasi Kepatuhan</h4>
-                    <div class="overflow-hidden rounded-xl border border-gray-200">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="px-4 py-2.5 text-left font-semibold text-gray-700">Skor</th>
-                                    <th class="px-4 py-2.5 text-left font-semibold text-gray-700">Tingkat Kepatuhan</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                <tr :class="microScore >= 7 ? 'bg-emerald-50 font-semibold' : ''">
-                                    <td class="px-4 py-2.5 text-gray-700">7 – 8</td>
-                                    <td class="px-4 py-2.5"><span :class="microScore >= 7 ? 'text-emerald-700' : 'text-gray-600'">Tinggi</span></td>
-                                </tr>
-                                <tr :class="microScore >= 4 && microScore <= 6 ? 'bg-amber-50 font-semibold' : ''">
-                                    <td class="px-4 py-2.5 text-gray-700">4 – 6</td>
-                                    <td class="px-4 py-2.5"><span :class="microScore >= 4 && microScore <= 6 ? 'text-amber-700' : 'text-gray-600'">Sedang</span></td>
-                                </tr>
-                                <tr :class="microScore >= 0 && microScore <= 3 ? 'bg-red-50 font-semibold' : ''">
-                                    <td class="px-4 py-2.5 text-gray-700">0 – 3</td>
-                                    <td class="px-4 py-2.5"><span :class="microScore >= 0 && microScore <= 3 ? 'text-red-700' : 'text-gray-600'">Rendah</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+
 
                 {{-- Catatan Pekerja --}}
                 <div class="glass-card rounded-2xl p-6" x-show="microForm.catatan_membantu || microForm.catatan_kendala">
@@ -357,11 +329,6 @@
                     </div>
                 </div>
 
-                <div class="text-center">
-                    <button @click="resetMicroForm()" class="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-white/60 hover:bg-white rounded-xl border border-gray-200 transition-colors">
-                        Isi Ulang
-                    </button>
-                </div>
             </div>
         </template>
 
