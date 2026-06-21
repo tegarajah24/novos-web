@@ -306,4 +306,180 @@ class OrderController extends Controller
             'message' => 'Assignee berhasil diperbarui.',
         ]);
     }
+
+    /**
+     * Allowed status transitions per role.
+     */
+    private function getAllowedTransitions(string $currentStatus, string $roleName): array
+    {
+        $transitions = [
+            'menunggu_validasi' => [
+                'menunggu_pembayaran' => ['Admin', 'Manager', 'Super Admin'],
+            ],
+            'dikonfirmasi' => [
+                'disetujui'  => ['Admin', 'Manager', 'Super Admin'],
+                'di_design'  => ['Admin', 'Manager', 'Super Admin'],
+            ],
+            'disetujui' => [
+                'di_design' => ['Admin', 'Manager', 'Super Admin'],
+            ],
+            'di_design' => [
+                'siap_cetak' => ['Design', 'Admin', 'Manager', 'Super Admin'],
+            ],
+            'siap_cetak' => [
+                'diproduksi' => ['Admin', 'Design', 'Manager', 'Super Admin'],
+            ],
+            'diproduksi' => [
+                'selesai' => ['Produksi', 'Admin', 'Manager', 'Super Admin'],
+            ],
+        ];
+
+        // Dibatalkan dari status manapun — Admin / Super Admin
+        if ($currentStatus !== 'dibatalkan' && in_array($roleName, ['Admin', 'Manager', 'Super Admin'])) {
+            $transitions[$currentStatus]['dibatalkan'] = ['Admin', 'Manager', 'Super Admin'];
+        }
+
+        $allowed = [];
+        if (isset($transitions[$currentStatus])) {
+            foreach ($transitions[$currentStatus] as $nextStatus => $roles) {
+                if (in_array($roleName, $roles)) {
+                    $allowed[] = $nextStatus;
+                }
+            }
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Map UI status codes to DB status codes.
+     */
+    private function toDbStatus(string $uiStatus): string
+    {
+        return match($uiStatus) {
+            'menunggu_verifikasi' => 'menunggu_validasi',
+            'menunggu_acc'        => 'dikonfirmasi',
+            'tahap_desain'        => 'di_design',
+            'tahap_produksi'      => 'siap_cetak',
+            default               => $uiStatus,
+        };
+    }
+
+    /**
+     * Map DB status to label for history.
+     */
+    private function statusLabel(string $dbStatus): string
+    {
+        return match($dbStatus) {
+            'menunggu_validasi'   => 'Menunggu Validasi',
+            'menunggu_pembayaran' => 'Menunggu Pembayaran',
+            'dikonfirmasi'        => 'Dikonfirmasi',
+            'disetujui'           => 'Disetujui',
+            'di_design'           => 'Di Design',
+            'siap_cetak'          => 'Siap Cetak',
+            'diproduksi'          => 'Diproduksi',
+            'selesai'             => 'Selesai',
+            'dibatalkan'          => 'Dibatalkan',
+            default               => $dbStatus,
+        };
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $data = $request->validate([
+            'status' => 'required|string',
+            'notes'  => 'nullable|string|max:2000',
+        ]);
+
+        $user = auth()->user();
+        $newDbStatus = $this->toDbStatus($data['status']);
+        $allowed = $this->getAllowedTransitions($order->status, $user->role->name ?? '');
+
+        if (!in_array($newDbStatus, $allowed)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transisi status tidak valid dari "' . $this->statusLabel($order->status) . '".',
+            ], 422);
+        }
+
+        DB::transaction(function () use ($order, $newDbStatus, $data, $user) {
+            $order->update(['status' => $newDbStatus]);
+
+            $order->statusHistories()->create([
+                'status'     => $newDbStatus,
+                'changed_by' => $user->id,
+                'notes'      => $data['notes'] ?? ('Status berubah menjadi ' . $this->statusLabel($newDbStatus)),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Auto chat to customer
+            $chat = \App\Models\Chat::firstOrCreate([
+                'order_id'    => $order->id,
+                'customer_id' => $order->user_id,
+            ]);
+
+            $chatMessage = match($newDbStatus) {
+                'menunggu_pembayaran' => 'Pesanan ' . $order->order_number . ' telah divalidasi. Silakan lakukan pembayaran.',
+                'disetujui'           => 'Pesanan ' . $order->order_number . ' telah disetujui dan akan dikerjakan oleh tim design.',
+                'di_design'           => 'Pesanan ' . $order->order_number . ' sedang dikerjakan oleh tim design.',
+                'siap_cetak'          => 'Desain pesanan ' . $order->order_number . ' telah selesai dan siap diproduksi.',
+                'diproduksi'          => 'Pesanan ' . $order->order_number . ' sedang dalam proses produksi.',
+                'selesai'             => 'Pesanan ' . $order->order_number . ' telah selesai! Terima kasih.',
+                'dibatalkan'          => 'Pesanan ' . $order->order_number . ' telah dibatalkan.',
+                default               => 'Status pesanan ' . $order->order_number . ' telah diperbarui.',
+            };
+
+            \App\Models\ChatMessage::create([
+                'chat_id'   => $chat->id,
+                'sender_id' => $user->id,
+                'message'   => $chatMessage,
+            ]);
+        });
+
+        Notification::sendToAllStaff(
+            'status_update',
+            'Status Diperbarui',
+            "Status pesanan <strong>{$order->order_number}</strong> berubah menjadi <strong>{$this->statusLabel($newDbStatus)}</strong> oleh <strong>{$user->name}</strong>.",
+            [
+                'initials' => collect(explode(' ', $user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role' => $user->role->name,
+                'role_initial' => substr($user->role->name, 0, 1),
+                'role_color' => '#1a237e',
+                'order_number' => $order->order_number,
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pesanan berhasil diperbarui ke "' . $this->statusLabel($newDbStatus) . '".',
+            'new_status' => $newDbStatus,
+        ]);
+    }
+
+    /**
+     * Get allowed next statuses for a given order and current user.
+     * Used by the detail view to populate the dropdown.
+     */
+    public function allowedStatuses(Order $order)
+    {
+        $user = auth()->user();
+        $allowed = $this->getAllowedTransitions($order->status, $user->role->name ?? '');
+
+        $result = [];
+        foreach ($allowed as $dbStatus) {
+            $result[] = [
+                'value' => array_search($dbStatus, [
+                    'menunggu_validasi' => 'menunggu_verifikasi',
+                    'dikonfirmasi'      => 'menunggu_acc',
+                    'di_design'         => 'tahap_desain',
+                    'siap_cetak'        => 'tahap_produksi',
+                ]) ?: $dbStatus,
+                'label' => $this->statusLabel($dbStatus),
+                'db'    => $dbStatus,
+            ];
+        }
+
+        return response()->json(['statuses' => $result]);
+    }
 }

@@ -278,29 +278,34 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
         @endif
 
         {{-- Update Status --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5" x-data="updateStatusSection()" x-init="init()">
             <h3 class="font-semibold text-gray-900 mb-4 text-sm">Update Status</h3>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1.5 font-medium">Status Baru</label>
-                    <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
-                        <option value="tahap_desain" selected>Tahap Desain</option>
-                        <option value="menunggu_verifikasi">Menunggu Verifikasi</option>
-                        <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
-                        <option value="menunggu_acc">Menunggu ACC</option>
-                        <option value="tahap_produksi">Produksi</option>
-                        <option value="selesai">Selesai</option>
-                        <option value="dibatalkan">Dibatalkan</option>
-                    </select>
+            <template x-if="allowedStatuses.length > 0">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1.5 font-medium">Status Baru</label>
+                        <select x-model="selectedStatus" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                            <option value="">-- Pilih Status --</option>
+                            <template x-for="s in allowedStatuses" :key="s.value">
+                                <option :value="s.value" x-text="s.label"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1.5 font-medium">Catatan</label>
+                        <textarea x-model="statusNote" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 resize-none" placeholder="Catatan update status..."></textarea>
+                    </div>
+                    <button @click="submitStatus()" :disabled="!selectedStatus || updating"
+                        class="w-full py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                        :class="selectedStatus && !updating ? 'bg-[#1a237e] hover:bg-[#1a237e]/90 text-white cursor-pointer' : 'bg-gray-300 text-white cursor-not-allowed'">
+                        <svg x-show="updating" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        <span x-text="updating ? 'Memperbarui...' : 'Update Status'"></span>
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1.5 font-medium">Catatan</label>
-                    <textarea rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 resize-none" placeholder="Catatan update status..."></textarea>
-                </div>
-                <button class="w-full py-2.5 bg-gray-300 text-white rounded-lg text-sm font-semibold cursor-not-allowed">
-                    Update Status
-                </button>
-            </div>
+            </template>
+            <template x-if="allowedStatuses.length === 0">
+                <p class="text-sm text-gray-400 text-center py-4">Tidak ada perubahan status yang tersedia untuk saat ini.</p>
+            </template>
         </div>
 
         {{-- File Hasil Desain (Dari Tim Design) --}}
@@ -318,6 +323,87 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 @endsection
 
 <script>
+function updateStatusSection() {
+    return {
+        allowedStatuses: [],
+        selectedStatus: '',
+        statusNote: '',
+        updating: false,
+        async init() {
+            try {
+                const res = await fetch('{{ route("staf.pesanan.allowed-statuses", $order["order_id"]) }}', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                this.allowedStatuses = data.statuses || [];
+            } catch (e) {
+                this.allowedStatuses = [];
+            }
+        },
+        async submitStatus() {
+            if (!this.selectedStatus || this.updating) return;
+
+            const statusObj = this.allowedStatuses.find(s => s.value === this.selectedStatus);
+            const statusLabel = statusObj ? statusObj.label : this.selectedStatus;
+
+            const result = await Swal.fire({
+                title: 'Update Status?',
+                html: 'Status akan diubah menjadi <strong>' + statusLabel + '</strong>.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#1a237e',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Update!',
+                cancelButtonText: 'Batal'
+            });
+
+            if (!result.isConfirmed) return;
+
+            this.updating = true;
+            try {
+                const res = await fetch('{{ route("staf.pesanan.update-status", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: this.selectedStatus,
+                        notes: this.statusNote
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Status Diperbarui!',
+                        text: data.message,
+                        confirmButtonColor: '#1a237e'
+                    });
+                    location.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message || 'Terjadi kesalahan.'
+                    });
+                }
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan',
+                    text: 'Terjadi kesalahan sistem.'
+                });
+            } finally {
+                this.updating = false;
+            }
+        }
+    }
+}
+
 async function validasiPesanan(orderId) {
     const note = document.querySelector('[x-model="validationNote"]')?.value || '';
 
