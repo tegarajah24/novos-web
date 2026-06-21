@@ -22,15 +22,32 @@
 
     {{-- ========== TAB 1: DASHBOARD ========== --}}
     <div x-show="activeTab === 0" x-cloak x-transition:enter.duration.300 class="space-y-6">
-        {{-- Poster Banner --}}
-        <div class="rounded-2xl overflow-hidden border border-indigo-200/60 min-h-[160px]">
-            <img src="{{ asset('images/poster-daily-mental-check.jpg') }}" alt="Poster Kesehatan Mental" class="w-full h-full object-cover">
+        {{-- Row 1: Poster + Pesan Motivasi --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {{-- Poster Banner --}}
+            <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-indigo-200/60 min-h-[160px]">
+                <img src="{{ asset('images/poster-daily-mental-check.jpg') }}" alt="Poster Kesehatan Mental" class="w-full h-full object-cover">
+            </div>
+
+            {{-- Card: Pesan Motivasi Hari Ini --}}
+            <div class="glass-card rounded-2xl p-6 flex flex-col">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Pesan Hari Ini</p>
+                    <button @click="refreshQuote" class="p-1.5 text-gray-400 hover:text-[#1a237e] rounded-lg hover:bg-white/60 transition-colors" title="Ganti kutipan">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                    </button>
+                </div>
+                <div class="flex-1 flex flex-col justify-center">
+                    <p class="text-gray-800 text-sm leading-relaxed italic mb-3">"<span x-text="currentQuote.text"></span>"</p>
+                    <p class="text-xs text-gray-400 font-medium" x-text="currentQuote.author"></p>
+                </div>
+            </div>
         </div>
 
-        {{-- Row 1: Skor Hari Ini + Pesan Motivasi --}}
+        {{-- Row 2: Skor Hari Ini + Reminder + Kepatuhan Micro-Break --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {{-- Card: Skor Hari Ini --}}
-            <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+            <div class="glass-card rounded-2xl p-6 h-full">
                 <template x-if="todayFilled">
                     <div>
                         <div class="flex items-start justify-between mb-4">
@@ -49,55 +66,35 @@
                 </template>
                 <template x-if="!todayFilled">
                     <div class="text-center py-6">
-                        <span class="text-5xl block mb-3">🧠</span>
                         <h3 class="text-lg font-bold text-gray-900 mb-1">Check-in Hari Ini</h3>
-                        <p class="text-sm text-gray-500 mb-6">Luangkan 2 menit untuk cek kondisi mental Anda hari ini.</p>
+                        <p class="text-sm text-gray-500 mb-4">Luangkan 2 menit untuk cek kondisi mental Anda hari ini.</p>
                         <button @click="activeTab = 1"
-                            class="inline-flex items-center gap-2 px-6 py-3 bg-[#1a237e] text-white rounded-xl font-semibold hover:bg-[#283593] transition-colors shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#1a237e] text-white rounded-lg text-sm font-semibold hover:bg-[#283593] transition-colors shadow-sm">
                             Isi Daily Check Sekarang
                         </button>
                     </div>
                 </template>
             </div>
 
-            {{-- Card: Pesan Motivasi Hari Ini --}}
-            <div class="glass-card rounded-2xl p-6 flex flex-col">
-                <div class="flex items-center justify-between mb-3">
-                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Pesan Hari Ini</p>
-                    <button @click="refreshQuote" class="p-1.5 text-gray-400 hover:text-[#1a237e] rounded-lg hover:bg-white/60 transition-colors" title="Ganti kutipan">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                    </button>
-                </div>
-                <div class="flex-1 flex flex-col justify-center">
-                    <p class="text-gray-800 text-sm leading-relaxed italic mb-3">"<span x-text="currentQuote.text"></span>"</p>
-                    <p class="text-xs text-gray-400 font-medium" x-text="currentQuote.author"></p>
-                </div>
-            </div>
-        </div>
-
-        {{-- Row 2: Reminder + Kepatuhan --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {{-- Card: Reminder Berikutnya --}}
-            <div class="glass-card rounded-2xl p-6">
+            <div class="glass-card rounded-2xl p-6 h-full">
                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">Reminder Berikutnya</p>
-                <div class="text-center py-3">
-                    <p class="text-3xl font-bold text-[#1a237e] mb-1" x-text="nextReminder.time"></p>
-                    <p class="text-xs text-gray-500" x-text="nextReminder.label"></p>
+                <div class="text-center py-4">
+                    <p class="text-4xl font-bold text-[#1a237e] mb-1" x-text="nextReminder.time"></p>
+                    <p class="text-sm text-gray-500" x-text="nextReminder.label"></p>
                     <template x-if="nextReminder.countdown !== '—'">
-                        <p class="text-xs text-gray-400 mt-2">
+                        <p class="text-sm text-gray-400 mt-2">
                             <span class="font-semibold text-gray-700" x-text="nextReminder.countdown"></span> lagi
                         </p>
                     </template>
                     <template x-if="nextReminder.countdown === '—'">
-                        <p class="text-xs text-gray-400 mt-2">Waktu kerja sudah selesai</p>
+                        <p class="text-sm text-gray-400 mt-2">Waktu kerja sudah selesai</p>
                     </template>
                 </div>
             </div>
 
             {{-- Card: Kepatuhan Micro-Break --}}
-            <div class="glass-card rounded-2xl p-6">
+            <div class="glass-card rounded-2xl p-6 h-full">
                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">Kepatuhan Micro-Break</p>
                 <div class="text-center py-2">
                     <div class="relative w-20 h-20 mx-auto mb-2">
@@ -115,17 +112,18 @@
             </div>
         </div>
 
-        {{-- Row 3: Mini Riwayat 7 Hari --}}
+        {{-- Row 3: Riwayat 7 Hari --}}
         <div class="glass-card rounded-2xl p-6">
-            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-4">Riwayat 7 Hari Terakhir</p>
-            <div class="flex items-center gap-3 justify-center flex-wrap">
-                <template x-for="(day, i) in weekHistory" :key="i">
-                    <div class="flex flex-col items-center gap-1.5 min-w-[52px]">
-                        <span class="text-2xl" x-text="day.emoji"></span>
-                        <span class="text-[10px] font-medium text-gray-500" x-text="day.label"></span>
-                        <span class="text-[10px] font-semibold" :class="day.filled ? '' : 'text-gray-300'" x-text="day.filled ? day.category : '—'"></span>
-                    </div>
-                </template>
+                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-4">Riwayat 7 Hari Terakhir</p>
+                <div class="flex items-center gap-3 justify-center flex-wrap">
+                    <template x-for="(day, i) in weekHistory" :key="i">
+                        <div class="flex flex-col items-center gap-1.5 min-w-[52px]">
+                            <span class="text-2xl" x-text="day.emoji"></span>
+                            <span class="text-[10px] font-medium text-gray-500" x-text="day.label"></span>
+                            <span class="text-[10px] font-semibold" :class="day.filled ? '' : 'text-gray-300'" x-text="day.filled ? day.category : '—'"></span>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
