@@ -249,7 +249,7 @@ class LaporanController extends Controller
             ->orderByDesc('jumlah')
             ->get();
 
-        $pesananPending = $baseQuery()->where('status', 'pending')->count();
+        $pesananPending = $baseQuery()->where('status', 'menunggu_validasi')->count();
         
         $pendapatanHarian = DB::table('orders')
             ->where('status', 'selesai')

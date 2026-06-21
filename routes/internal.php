@@ -20,6 +20,7 @@ Route::prefix('staf')
 
         Route::get('/daftar-pesanan', [OrderController::class, 'index'])->name('daftar-pesanan');
         Route::get('/detail-pesanan/{order:order_number}', [OrderController::class, 'show'])->name('detail-pesanan');
+        Route::post('/validasi-pesanan/{order:order_number}', [OrderController::class, 'validateOrder'])->name('validasi-pesanan');
 
         Route::get('/design', [DesignController::class, 'index'])->name('design');
         Route::get('/produksi', [ProductionController::class, 'index'])->name('produksi');

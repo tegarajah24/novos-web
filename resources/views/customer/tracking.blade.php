@@ -245,7 +245,8 @@ function trackingForm() {
 
         get statusLabel() {
             const labels = {
-                'pending': 'Pending',
+                'menunggu_validasi': 'Menunggu Validasi',
+                'menunggu_pembayaran': 'Menunggu Pembayaran',
                 'dikonfirmasi': 'Dikonfirmasi',
                 'disetujui': 'Disetujui',
                 'di_design': 'Di Design',
@@ -259,7 +260,8 @@ function trackingForm() {
 
         get statusBadgeClass() {
             const colors = {
-                'pending': 'bg-yellow-100 text-yellow-800',
+                'menunggu_validasi': 'bg-yellow-100 text-yellow-800',
+                'menunggu_pembayaran': 'bg-orange-100 text-orange-800',
                 'dikonfirmasi': 'bg-blue-100 text-blue-800',
                 'disetujui': 'bg-green-100 text-green-800',
                 'di_design': 'bg-purple-100 text-purple-800',
@@ -277,15 +279,15 @@ function trackingForm() {
 
         get stages() {
             const stageDefs = [
-                { key: 'pending', label: 'Pesanan Masuk' },
-                { key: 'dikonfirmasi', label: 'Pembayaran' },
-                { key: 'disetujui', label: 'Verifikasi Admin' },
+                { key: 'menunggu_validasi', label: 'Pesanan Masuk' },
+                { key: 'menunggu_pembayaran', label: 'Menunggu Pembayaran' },
+                { key: 'dikonfirmasi', label: 'Pembayaran Dikonfirmasi' },
                 { key: 'di_design', label: 'Tahap Desain' },
                 { key: 'siap_cetak', label: 'Menunggu ACC Customer' },
                 { key: 'diproduksi', label: 'Produksi & Selesai' }
             ];
 
-            const statusOrder = ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'];
+            const statusOrder = ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'];
             const currentIdx = statusOrder.indexOf(this.order.status);
 
             return stageDefs.map((s, i) => {

@@ -71,9 +71,10 @@ class OrderSeeder extends Seeder
         );
 
         // Riwayat status pesanan 1
-        $this->recordHistory($order1->id, 'pending',     $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order1->id, 'dikonfirmasi', $admin->id,    'Admin mengkonfirmasi pesanan');
-        $this->recordHistory($order1->id, 'disetujui',   $customer->id, 'Customer ACC pesanan');
+        $this->recordHistory($order1->id, 'menunggu_validasi',  $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order1->id, 'menunggu_pembayaran', $admin->id,    'Admin memvalidasi pesanan');
+        $this->recordHistory($order1->id, 'dikonfirmasi', $customer->id, 'Pembayaran berhasil dikonfirmasi');
+        $this->recordHistory($order1->id, 'disetujui',   $admin->id,    'Diteruskan ke tim Design');
         $this->recordHistory($order1->id, 'di_design',   $admin->id,    'Diteruskan ke tim Design');
         $this->recordHistory($order1->id, 'siap_cetak',  $design->id,   'Design selesai, siap ke Produksi');
 
@@ -133,9 +134,10 @@ class OrderSeeder extends Seeder
             ]
         );
 
-        $this->recordHistory($order2->id, 'pending',     $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order2->id, 'dikonfirmasi', $admin->id,    'Admin mengkonfirmasi');
-        $this->recordHistory($order2->id, 'disetujui',   $customer->id, 'Customer ACC');
+        $this->recordHistory($order2->id, 'menunggu_validasi',  $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order2->id, 'menunggu_pembayaran', $admin->id,    'Admin memvalidasi');
+        $this->recordHistory($order2->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order2->id, 'disetujui',   $admin->id,    'Ke tim Design');
         $this->recordHistory($order2->id, 'di_design',   $admin->id,    'Ke tim Design');
         $this->recordHistory($order2->id, 'siap_cetak',  $design->id,   'Design finish');
 
@@ -194,9 +196,10 @@ class OrderSeeder extends Seeder
             ]
         );
 
-        $this->recordHistory($order3->id, 'pending',     $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order3->id, 'dikonfirmasi', $admin->id,   'Admin konfirmasi');
-        $this->recordHistory($order3->id, 'disetujui',   $customer->id, 'Customer ACC');
+        $this->recordHistory($order3->id, 'menunggu_validasi',  $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order3->id, 'menunggu_pembayaran', $admin->id,   'Admin validasi');
+        $this->recordHistory($order3->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order3->id, 'disetujui',   $admin->id,   'Ke Design');
         $this->recordHistory($order3->id, 'di_design',   $admin->id,   'Ke Design');
         $this->recordHistory($order3->id, 'siap_cetak',  $design->id,  'Design selesai');
         $this->recordHistory($order3->id, 'diproduksi',  $admin->id,   'Masuk divisi Produksi — Printing selesai');
@@ -253,9 +256,10 @@ class OrderSeeder extends Seeder
             ]
         );
 
-        $this->recordHistory($order4->id, 'pending',     $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order4->id, 'dikonfirmasi', $admin->id,   'Admin konfirmasi');
-        $this->recordHistory($order4->id, 'disetujui',   $customer->id, 'Customer ACC');
+        $this->recordHistory($order4->id, 'menunggu_validasi',  $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order4->id, 'menunggu_pembayaran', $admin->id,   'Admin validasi');
+        $this->recordHistory($order4->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order4->id, 'disetujui',   $admin->id,   'Ke Design');
         $this->recordHistory($order4->id, 'di_design',   $admin->id,   'Ke Design');
         $this->recordHistory($order4->id, 'siap_cetak',  $design->id,  'Design selesai');
         $this->recordHistory($order4->id, 'diproduksi',  $admin->id,   'Masuk Produksi');
@@ -308,9 +312,10 @@ class OrderSeeder extends Seeder
             ]
         );
 
-        $this->recordHistory($order5->id, 'pending',     $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order5->id, 'dikonfirmasi', $admin->id,   'Admin konfirmasi');
-        $this->recordHistory($order5->id, 'disetujui',   $customer->id, 'Customer ACC');
+        $this->recordHistory($order5->id, 'menunggu_validasi',  $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order5->id, 'menunggu_pembayaran', $admin->id,   'Admin validasi');
+        $this->recordHistory($order5->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order5->id, 'disetujui',   $admin->id,   'Ke Design');
         $this->recordHistory($order5->id, 'di_design',   $admin->id,   'Ke Design');
         $this->recordHistory($order5->id, 'siap_cetak',  $design->id,  'Design selesai');
         $this->recordHistory($order5->id, 'diproduksi',  $admin->id,   'Masuk Produksi');
@@ -372,9 +377,10 @@ class OrderSeeder extends Seeder
             ]
         );
 
-        $this->recordHistory($order6->id, 'pending',     $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order6->id, 'dikonfirmasi', $admin->id,   'Admin konfirmasi');
-        $this->recordHistory($order6->id, 'disetujui',   $customer->id, 'Customer ACC');
+        $this->recordHistory($order6->id, 'menunggu_validasi',  $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order6->id, 'menunggu_pembayaran', $admin->id,   'Admin validasi');
+        $this->recordHistory($order6->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order6->id, 'disetujui',   $admin->id,   'Ke Design');
         $this->recordHistory($order6->id, 'di_design',   $admin->id,   'Ke Design');
         $this->recordHistory($order6->id, 'siap_cetak',  $design->id,  'Design selesai');
         $this->recordHistory($order6->id, 'diproduksi',  $admin->id,   'Masuk Produksi');
