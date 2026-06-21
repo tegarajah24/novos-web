@@ -141,16 +141,29 @@ function internalChatApp() {
         sendMessage() {
             if (!this.message.trim()) return;
             const chat = this.currentChat;
-            const now = new Date();
-            const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-            chat.messages.push({ from: 'admin', text: this.message.trim(), time: t });
-            chat.lastMessage = this.message.trim();
-            chat.time = t;
+            const text = this.message.trim();
             this.message = '';
-            this.$nextTick(() => {
-                const el = this.$refs.messages;
-                if (el) el.scrollTop = el.scrollHeight;
-            });
+
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            fetch('{{ route("staf.chat.send") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chat.id, message: text })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    chat.messages.push(res.message);
+                    chat.lastMessage = text;
+                    const now = new Date();
+                    chat.time = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+                    this.$nextTick(() => {
+                        const el = this.$refs.messages;
+                        if (el) el.scrollTop = el.scrollHeight;
+                    });
+                }
+            })
+            .catch(() => {});
         }
     }
 }
