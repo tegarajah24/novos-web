@@ -179,9 +179,10 @@
                         <button type="button" @click="showModal = false" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm rounded-[10px] hover:bg-gray-50 transition-colors font-medium bg-white">
                             Batal
                         </button>
-                        <button type="submit" class="px-6 py-2.5 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium flex items-center gap-2 shadow-sm">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                            Simpan Data
+                        <button type="submit" :disabled="submitting" class="px-6 py-2.5 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg x-show="submitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                            <svg x-show="!submitting" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitting ? 'Menyimpan...' : 'Simpan Data'"></span>
                         </button>
                     </div>
                 </form>
@@ -194,6 +195,7 @@ function kelolaProdukApp() {
     return {
         formMode: 'create',
         showModal: false,
+        submitting: false,
 
         categories: @json($categories),
 
@@ -294,6 +296,8 @@ function kelolaProdukApp() {
         },
 
         async saveProduct() {
+            if (this.submitting) return;
+            this.submitting = true;
             const fd = new FormData();
             fd.append('name', this.formData.name);
             fd.append('category_id', this.formData.category_id);
@@ -363,6 +367,8 @@ function kelolaProdukApp() {
                     icon: 'error',
                     confirmButtonColor: '#dc2626'
                 });
+            } finally {
+                this.submitting = false;
             }
         },
 

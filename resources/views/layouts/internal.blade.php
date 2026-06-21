@@ -166,9 +166,9 @@
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 focus:outline-none">
                         <div class="w-8 h-8 bg-[#1a237e] rounded-full flex items-center justify-center">
-                            <span class="text-white font-bold text-xs">SA</span>
+                            <span class="text-white font-bold text-xs">{{ collect(explode(' ', auth()->user()->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('') }}</span>
                         </div>
-                        <span class="text-gray-700 font-medium text-sm">Super Admin</span>
+                        <span class="text-gray-700 font-medium text-sm">{{ auth()->user()->role->name ?? auth()->user()->name }}</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
                     </button>
                     <div x-show="open" x-cloak x-transition class="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg z-50">
@@ -189,6 +189,7 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto p-8">
+            @include('components.alert')
             @yield('internal-content')
         </main>
         

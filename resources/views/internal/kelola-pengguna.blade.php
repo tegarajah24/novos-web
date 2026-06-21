@@ -154,7 +154,10 @@
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal(event, 'modalTambah')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#283593] rounded-xl transition-colors">Simpan</button>
+                    <button type="submit" id="btnTambah" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#283593] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        <svg id="spinnerTambah" class="animate-spin w-4 h-4 hidden" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        <span id="btnTextTambah">Simpan</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -211,7 +214,10 @@
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal(event, 'modalEdit')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#283593] rounded-xl transition-colors">Simpan</button>
+                    <button type="submit" id="btnEdit" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#283593] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        <svg id="spinnerEdit" class="animate-spin w-4 h-4 hidden" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        <span id="btnTextEdit">Simpan</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -339,8 +345,17 @@
             if (formTambah) {
                 formTambah.addEventListener('submit', async function(e) {
                     e.preventDefault();
+                    const btn = document.getElementById('btnTambah');
+                    const spinner = document.getElementById('spinnerTambah');
+                    const btnText = document.getElementById('btnTextTambah');
+                    btn.disabled = true;
+                    spinner.classList.remove('hidden');
+                    btnText.textContent = 'Menyimpan...';
                     const formData = new FormData(this);
                     const result = await submitForm(this.id, '{{ route("staf.kelola-pengguna.store") }}', 'POST', formData);
+                    spinner.classList.add('hidden');
+                    btn.disabled = false;
+                    btnText.textContent = 'Simpan';
                     if (result) {
                         await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
                         refreshTable();
@@ -352,10 +367,19 @@
             if (formEdit) {
                 formEdit.addEventListener('submit', async function(e) {
                     e.preventDefault();
+                    const btn = document.getElementById('btnEdit');
+                    const spinner = document.getElementById('spinnerEdit');
+                    const btnText = document.getElementById('btnTextEdit');
+                    btn.disabled = true;
+                    spinner.classList.remove('hidden');
+                    btnText.textContent = 'Menyimpan...';
                     const id = document.getElementById('editId').value;
                     const formData = new FormData(this);
                     formData.set('_method', 'PUT');
                     const result = await submitForm(this.id, `{{ url('staf/kelola-pengguna') }}/${id}`, 'POST', formData);
+                    spinner.classList.add('hidden');
+                    btn.disabled = false;
+                    btnText.textContent = 'Simpan';
                     if (result) {
                         await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
                         refreshTable();

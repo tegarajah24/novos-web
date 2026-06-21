@@ -64,7 +64,10 @@
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-blue-900 transition-colors">Simpan</button>
+                    <button type="submit" :disabled="submitting" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        <svg x-show="submitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        <span x-text="submitting ? 'Menyimpan...' : 'Simpan'"></span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -79,6 +82,7 @@ function kategoriApp() {
         modalOpen: false,
         editId: null,
         name: '',
+        submitting: false,
 
         async init() {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -87,7 +91,9 @@ function kategoriApp() {
                     headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf }
                 });
                 this.categories = await res.json();
-            } catch (e) {}
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal memuat data kategori.' });
+            }
             this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
         },
 
@@ -104,7 +110,8 @@ function kategoriApp() {
         },
 
         async simpan() {
-            if (!this.name.trim()) return;
+            if (!this.name.trim() || this.submitting) return;
+            this.submitting = true;
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             const url = this.editId
                 ? '/staf/kategori/' + this.editId
@@ -125,6 +132,8 @@ function kategoriApp() {
                 }
             } catch (e) {
                 Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
+            } finally {
+                this.submitting = false;
             }
         },
 

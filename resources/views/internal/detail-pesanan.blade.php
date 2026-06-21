@@ -100,11 +100,6 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                         Chat
                     </a>
-                    {{-- Tombol Edit --}}
-                    <button class="flex items-center gap-1 text-xs text-gray-400 font-medium cursor-not-allowed">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                        Edit
-                    </button>
                 </div>
             </div>
             {{-- Grid 2 kolom: label fixed-width, value rapat di sebelahnya --}}
@@ -175,9 +170,6 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     History Catatan
                 </h3>
-                <button class="p-1.5 rounded-lg text-gray-300 cursor-not-allowed">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                </button>
             </div>
             <div class="space-y-3">
                 @foreach($order['history_notes'] as $i => $h)
@@ -249,9 +241,6 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     @endif
                 </div>
             </div>
-            <button class="w-full mt-4 py-2 text-xs border border-gray-200 rounded-lg text-gray-400 cursor-not-allowed font-medium">
-                Bukti Pembayaran
-            </button>
         </div>
 
         {{-- Validasi Pesanan --}}

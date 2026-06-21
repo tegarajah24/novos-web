@@ -7,6 +7,30 @@
 @endsection
 
 @section('internal-content')
+@php
+function statusLabel($status) {
+    return match($status) {
+        'menunggu_verifikasi' => 'Menunggu Verifikasi',
+        'menunggu_pembayaran' => 'Menunggu Pembayaran',
+        'tahap_desain' => 'Tahap Desain',
+        'menunggu_acc' => 'Menunggu ACC',
+        'tahap_produksi' => 'Produksi',
+        'selesai' => 'Selesai',
+        default => ucwords(str_replace('_', ' ', $status)),
+    };
+}
+function statusBadgeType($status) {
+    return match($status) {
+        'menunggu_verifikasi' => 'yellow',
+        'menunggu_pembayaran' => 'orange',
+        'tahap_desain' => 'blue',
+        'menunggu_acc' => 'orange',
+        'tahap_produksi' => 'purple',
+        'selesai' => 'green',
+        default => 'gray',
+    };
+}
+@endphp
     <!-- Stats Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Card 1: Total Pesanan -->
@@ -144,7 +168,7 @@
                         <td class="px-6 py-4">{{ $order->user->name }}</td>
                         <td class="px-6 py-4">{{ $order->designRequest?->team_name ?? 'Pesanan #'.$order->id }}</td>
                         <td class="px-6 py-4">{{ $order->created_at->format('j M Y') }}</td>
-                        <td class="px-6 py-4"><x-badge type="{{ $order->status }}">{{ $order->status }}</x-badge></td>
+                        <td class="px-6 py-4"><x-badge type="{{ statusBadgeType($order->status) }}">{{ statusLabel($order->status) }}</x-badge></td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ route('staf.detail-pesanan', $order->order_number) }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>

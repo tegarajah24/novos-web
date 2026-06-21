@@ -83,7 +83,7 @@
                     <button @click="userOpen = !userOpen"
                         class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                         @if(Auth::user()->avatar)
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-7 h-7 rounded-full object-cover shrink-0">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="w-7 h-7 rounded-full object-cover shrink-0">
                         @else
                             <div class="w-7 h-7 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0">{{ strtoupper(\Illuminate\Support\Str::of(Auth::user()->fullname ?? Auth::user()->name)->explode(' ')->take(2)->map(fn($w) => $w[0])->implode('') ?: substr(Auth::user()->name, 0, 2)) }}</div>
                         @endif

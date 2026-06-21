@@ -36,6 +36,9 @@
     {{-- Navbar --}}
     @include('customer.partials.navbar')
 
+    {{-- Flash Messages --}}
+    @include('components.alert')
+
     {{-- Page Content (padded for fixed navbar height) --}}
     <main class="pt-16">
         {{ $slot ?? '' }}

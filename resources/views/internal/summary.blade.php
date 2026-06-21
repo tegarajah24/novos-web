@@ -137,7 +137,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-            @foreach($employees as $e)
+            @forelse($employees as $e)
             @php
                 $loadColor = $e['load'] >= 75 ? 'bg-red-500' : ($e['load'] >= 50 ? 'bg-yellow-400' : 'bg-emerald-500');
             @endphp
@@ -160,7 +160,14 @@
                     </span>
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="6" class="px-6 py-10 text-center text-gray-400">
+                    <svg class="w-10 h-10 mx-auto mb-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <p class="font-medium">Belum ada data tim</p>
+                </td>
+            </tr>
+            @endforelse
             </tbody>
         </table>
     </div>
@@ -171,7 +178,7 @@
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4">🔔 Recent Activity</h3>
         <div class="space-y-4">
-        @foreach($activities as $a)
+        @forelse($activities as $a)
         <div class="flex gap-3">
             <div class="mt-1 w-2.5 h-2.5 rounded-full {{ $a['color'] }} shrink-0"></div>
             <div>
@@ -179,7 +186,9 @@
                 <p class="text-sm text-gray-700">{{ $a['text'] }}</p>
             </div>
         </div>
-        @endforeach
+        @empty
+        <p class="text-sm text-gray-400 text-center py-4">Belum ada aktivitas terbaru.</p>
+        @endforelse
         </div>
     </div>
 </div>

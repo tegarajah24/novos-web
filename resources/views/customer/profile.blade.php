@@ -282,7 +282,7 @@
                         }">
                             <div class="w-24 h-24 rounded-full overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 profile-avatar-glow">
                                 <template x-if="imagePreview">
-                                    <img :src="imagePreview" class="w-full h-full object-cover">
+                                    <img :src="imagePreview" alt="Preview Avatar" class="w-full h-full object-cover">
                                 </template>
                                 <template x-if="!imagePreview">
                                     <div class="w-full h-full bg-[#1a237e] text-white flex items-center justify-center text-3xl font-bold">
