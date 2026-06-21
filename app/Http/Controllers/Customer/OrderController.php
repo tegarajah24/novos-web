@@ -18,15 +18,17 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'team_name'  => 'required|string|max:255',
-            'kerah'      => 'required|string|max:100',
-            'bahan'      => 'required|string|max:100',
-            'catatan'    => 'nullable|string|max:2000',
-            'ukuran'     => 'nullable|array',
-            'ukuran.*'   => 'integer|min:0',
-            'total_qty'  => 'nullable|integer|min:1',
-            'prioritas'  => 'nullable|string|in:normal,express,super_express',
-            'pembayaran' => 'nullable|string|max:50',
+            'team_name'      => 'required|string|max:255',
+            'kerah'          => 'required|string|max:100',
+            'bahan'          => 'required|string|max:100',
+            'jenis_potongan' => 'required|string|in:REGULER,SLIMFIT CEWE,OVERSIZE,TUNIK,SLIM FIT UNISEX',
+            'lengan_jahitan' => 'required|string|in:REGULER OVERDECK,REGULER PAKAI MANSET,RAGLAN A OVERDECK,RAGLAN A PAKAI MANSET,RAGLAN B OVERDECK,RAGLAN B PAKAI MANSET',
+            'catatan'        => 'nullable|string|max:2000',
+            'ukuran'         => 'nullable|array',
+            'ukuran.*'       => 'integer|min:0',
+            'total_qty'      => 'nullable|integer|min:1',
+            'prioritas'      => 'nullable|string|in:normal,express,super_express',
+            'pembayaran'     => 'nullable|string|max:50',
             'warna_utama'    => 'nullable|string|max:7',
             'warna_sekunder' => 'nullable|string|max:7',
         ]);
@@ -50,12 +52,14 @@ class OrderController extends Controller
                 default         => 'Normal',
             };
 
+            $catatanText = "Jenis Potongan: " . $data['jenis_potongan'] . "\nModel Lengan & Jahitan: " . $data['lengan_jahitan'] . ($data['catatan'] ? "\nCatatan: " . $data['catatan'] : "");
+
             $order = Order::create([
                 'user_id'     => auth()->id(),
                 'order_number' => $orderNumber,
                 'status'      => 'menunggu_validasi',
                 'total_price' => $totalPrice,
-                'notes'       => $data['catatan'] ?? null,
+                'notes'       => $catatanText,
                 'admin_notes' => 'Prioritas: ' . $prioritasLabel . ' (' . $biayaPrioritas . ')',
             ]);
 
@@ -79,7 +83,7 @@ class OrderController extends Controller
                 'collar_style'     => $data['kerah'],
                 'primary_color'    => $data['warna_utama'] ?? null,
                 'secondary_color'  => $data['warna_sekunder'] ?? null,
-                'additional_notes' => $data['catatan'] ?? null,
+                'additional_notes' => $catatanText,
             ]);
 
             OrderStatusHistory::create([
