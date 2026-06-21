@@ -9,6 +9,7 @@ use App\Http\Controllers\Internal\ProductionController;
 use App\Http\Controllers\Internal\ProductController;
 use App\Http\Controllers\Internal\UserController;
 use App\Http\Controllers\Internal\ChatController;
+use App\Http\Controllers\Internal\DailyMentalCheckController;
 
 Route::prefix('staf')
     ->middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])
@@ -32,7 +33,11 @@ Route::prefix('staf')
         Route::delete('/kelola-pengguna/{user}', [UserController::class, 'destroy'])->name('kelola-pengguna.destroy');
 
         Route::get('/chat', [ChatController::class, 'index'])->name('chat');
-        Route::get('/daily-mental-check', fn() => view('internal.daily-mental-check'))->name('daily-mental-check');
+        Route::get('/daily-mental-check', [DailyMentalCheckController::class, 'index'])->name('daily-mental-check');
+        Route::get('/daily-mental-check/today', [DailyMentalCheckController::class, 'getToday'])->name('daily-mental-check.today');
+        Route::post('/daily-mental-check/daily', [DailyMentalCheckController::class, 'storeDailyCheck'])->name('daily-mental-check.store-daily');
+        Route::post('/daily-mental-check/micro', [DailyMentalCheckController::class, 'storeMicroBreak'])->name('daily-mental-check.store-micro');
+        Route::get('/daily-mental-check/history', [DailyMentalCheckController::class, 'getHistory'])->name('daily-mental-check.history');
         Route::get('/notifikasi', fn() => view('internal.notifikasi'))->name('notifikasi');
 
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');

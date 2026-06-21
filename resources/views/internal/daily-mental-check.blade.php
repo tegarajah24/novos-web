@@ -640,6 +640,10 @@ function dailyMentalCheck() {
         todayFilled: false,
         submitted: false,
         petunjukOpen: false,
+        loading: false,
+
+        weekHistory: [],
+        compliancePercent: 0,
 
         form: {
             answers: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
@@ -682,6 +686,46 @@ function dailyMentalCheck() {
             { label: 'Isi Daily Check', icon: '&#9998;' },
             { label: 'Micro-Break', icon: '&#9776;' },
         ],
+
+        async init() {
+            const csrf = document.querySelector('meta[name="csrf-token"]').content;
+            const headers = { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf };
+
+            try {
+                const todayRes = await fetch('/staf/daily-mental-check/today', { headers });
+                const todayData = await todayRes.json();
+
+                if (todayData.daily_check) {
+                    this.todayFilled = true;
+                    this.submitted = true;
+                    const a = todayData.daily_check.answers;
+                    this.form.answers = { 1: a[0] || 0, 2: a[1] || 0, 3: a[2] || 0, 4: a[3] || 0, 5: a[4] || 0 };
+                    this.form.needHelp = todayData.daily_check.need_help ? 'ya' : 'tidak';
+                    this.form.helpNote = todayData.daily_check.help_note || '';
+                }
+
+                if (todayData.micro_break) {
+                    this.microSubmitted = true;
+                    const cl = todayData.micro_break.checklist;
+                    this.microForm.checklist = { 1: cl[0], 2: cl[1], 3: cl[2], 4: cl[3], 5: cl[4], 6: cl[5], 7: cl[6], 8: cl[7] };
+                    this.microForm.eval = todayData.micro_break.eval;
+                    this.microForm.catatan_membantu = todayData.micro_break.catatan_membantu || '';
+                    this.microForm.catatan_kendala = todayData.micro_break.catatan_kendala || '';
+                }
+            } catch (e) { console.error('Failed to load today data:', e); }
+
+            try {
+                const histRes = await fetch('/staf/daily-mental-check/history', { headers });
+                const histData = await histRes.json();
+                this.weekHistory = histData.week_history.map(d => ({
+                    label: d.label,
+                    emoji: d.daily_check ? d.daily_check.emoji : '—',
+                    filled: !!d.daily_check,
+                    category: d.daily_check ? (d.daily_check.category === 'baik' ? 'Baik' : d.daily_check.category === 'perlu_perhatian' ? 'Sedang' : 'Buruk') : '',
+                }));
+                this.compliancePercent = histData.compliance_percent;
+            } catch (e) { console.error('Failed to load history:', e); }
+        },
 
         get allAnswered() {
             return Object.values(this.form.answers).every(v => v > 0);
@@ -745,10 +789,27 @@ function dailyMentalCheck() {
             return new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         },
 
-        submitForm() {
-            if (!this.allAnswered) return;
-            this.todayFilled = true;
-            this.submitted = true;
+        async submitForm() {
+            if (!this.allAnswered || this.loading) return;
+            this.loading = true;
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const res = await fetch('/staf/daily-mental-check/daily', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    body: JSON.stringify({
+                        answers: [this.form.answers[1], this.form.answers[2], this.form.answers[3], this.form.answers[4], this.form.answers[5]],
+                        need_help: this.form.needHelp || 'tidak',
+                        help_note: this.form.helpNote,
+                    }),
+                });
+                if (res.ok) {
+                    this.todayFilled = true;
+                    this.submitted = true;
+                    this.loadHistory();
+                }
+            } catch (e) { console.error('Failed to submit daily check:', e); }
+            this.loading = false;
         },
 
         resetForm() {
@@ -761,9 +822,27 @@ function dailyMentalCheck() {
             this.submitted = false;
         },
 
-        submitMicroForm() {
-            if (!this.allChecklistAnswered || !this.allEvalAnswered) return;
-            this.microSubmitted = true;
+        async submitMicroForm() {
+            if (!this.allChecklistAnswered || !this.allEvalAnswered || this.loading) return;
+            this.loading = true;
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const res = await fetch('/staf/daily-mental-check/micro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    body: JSON.stringify({
+                        checklist: [this.microForm.checklist[1], this.microForm.checklist[2], this.microForm.checklist[3], this.microForm.checklist[4], this.microForm.checklist[5], this.microForm.checklist[6], this.microForm.checklist[7], this.microForm.checklist[8]],
+                        eval: this.microForm.eval,
+                        catatan_membantu: this.microForm.catatan_membantu,
+                        catatan_kendala: this.microForm.catatan_kendala,
+                    }),
+                });
+                if (res.ok) {
+                    this.microSubmitted = true;
+                    this.loadHistory();
+                }
+            } catch (e) { console.error('Failed to submit micro break:', e); }
+            this.loading = false;
         },
 
         resetMicroForm() {
@@ -774,6 +853,21 @@ function dailyMentalCheck() {
                 catatan_kendala: '',
             };
             this.microSubmitted = false;
+        },
+
+        async loadHistory() {
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const res = await fetch('/staf/daily-mental-check/history', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
+                const data = await res.json();
+                this.weekHistory = data.week_history.map(d => ({
+                    label: d.label,
+                    emoji: d.daily_check ? d.daily_check.emoji : '—',
+                    filled: !!d.daily_check,
+                    category: d.daily_check ? (d.daily_check.category === 'baik' ? 'Baik' : d.daily_check.category === 'perlu_perhatian' ? 'Sedang' : 'Buruk') : '',
+                }));
+                this.compliancePercent = data.compliance_percent;
+            } catch (e) { console.error('Failed to load history:', e); }
         },
 
         // Quotes
@@ -829,32 +923,7 @@ function dailyMentalCheck() {
             return { time: '—', label: 'Besok', countdown: '—' };
         },
 
-        get compliancePercent() {
-            return 85;
-        },
-
-        // Week history
-        get weekHistory() {
-            const days = [];
-            const now = new Date();
-            const results = ['😊', '😊', '😐', '😊', '😢', null, null];
-            const labels = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date(now);
-                d.setDate(d.getDate() - i);
-                const dayIdx = d.getDay();
-                const result = results[6 - i];
-                const filled = result !== null;
-                days.push({
-                    label: labels[dayIdx],
-                    emoji: filled ? result : '—',
-                    filled,
-                    category: filled ? (result === '😊' ? 'Baik' : result === '😐' ? 'Sedang' : 'Buruk') : '',
-                });
-            }
-            return days;
-        },
+        // Week history loaded from DB via init()
     }
 }
 </script>
