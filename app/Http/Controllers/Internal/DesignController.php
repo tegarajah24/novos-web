@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DesignController extends Controller
 {
@@ -34,5 +37,64 @@ class DesignController extends Controller
             ->toArray();
 
         return view('internal.design', compact('orders'));
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $data = $request->validate([
+            'status' => 'required|in:siap_cetak',
+            'files'  => 'nullable|array',
+            'files.*' => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
+        ]);
+
+        $user = auth()->user();
+
+        // Simpan file upload
+        $uploadedFiles = [];
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $path = $file->store('design-files/' . $order->order_number, 'public');
+                $uploadedFiles[] = [
+                    'name' => $file->getClientOriginalName(),
+                    'path' => $path,
+                    'size' => $file->getSize(),
+                ];
+            }
+        }
+
+        DB::transaction(function () use ($order, $data, $user, $uploadedFiles) {
+            $order->update(['status' => $data['status']]);
+
+            $notes = 'Design selesai dikerjakan';
+            if (!empty($uploadedFiles)) {
+                $notes .= '. File: ' . implode(', ', array_column($uploadedFiles, 'name'));
+            }
+
+            $order->statusHistories()->create([
+                'status'     => $data['status'],
+                'changed_by' => $user->id,
+                'notes'      => $notes,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        });
+
+        Notification::sendToAllStaff(
+            'design_upload',
+            'Desain Siap Cetak',
+            "Desain untuk <strong>{$order->order_number}</strong> telah selesai dan siap diproduksi.",
+            [
+                'initials' => collect(explode(' ', $user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role' => $user->role->name,
+                'role_initial' => substr($user->role->name, 0, 1),
+                'role_color' => '#6b46c1',
+                'order_number' => $order->order_number,
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Desain berhasil diselesaikan dan diteruskan ke produksi.',
+        ]);
     }
 }

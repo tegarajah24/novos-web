@@ -26,7 +26,10 @@ Route::prefix('staf')
         Route::patch('/pesanan/{order}/assign', [OrderController::class, 'assign'])->name('pesanan.assign');
 
         Route::get('/design', [DesignController::class, 'index'])->name('design');
+        Route::post('/design/update/{order:order_number}', [DesignController::class, 'updateStatus'])->name('design.update');
+
         Route::get('/produksi', [ProductionController::class, 'index'])->name('produksi');
+        Route::post('/produksi/update/{order:order_number}', [ProductionController::class, 'updateStatus'])->name('produksi.update');
 
         Route::get('/kelola-produk', [ProductController::class, 'index'])->name('kelola-produk');
         Route::post('/kelola-produk', [ProductController::class, 'store'])->name('kelola-produk.store');
