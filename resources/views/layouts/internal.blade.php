@@ -94,7 +94,7 @@
                         <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">18</span>
                     </a>
                     {{-- Notifikasi Dropdown --}}
-                    <div x-data="notifDropdown()" class="relative" @click.away="open = false">
+                    <div x-data="notifDropdown()" class="relative" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
                         <button @click="open = !open" class="relative p-2 text-gray-500 hover:text-[#1a237e] transition-colors">
                             <i data-lucide="bell" class="w-5 h-5"></i>
                             <span x-show="unreadCount > 0" x-cloak
