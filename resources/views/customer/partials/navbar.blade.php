@@ -16,7 +16,10 @@
             </svg>
         </button>
         {{-- Center: Logo --}}
-        <a href="{{ route('beranda') }}" class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</a>
+        <a href="{{ route('beranda') }}" class="flex items-center gap-0.5">
+            <img src="{{ asset('images/logo.png') }}" alt="Novos Logo" class="w-11 h-11 object-contain">
+            <span class="text-[#1a237e] text-2xl font-extrabold tracking-tight">NOVOS</span>
+        </a>
 
         {{-- Center: Nav links --}}
         <div class="hidden md:flex items-center gap-8">
