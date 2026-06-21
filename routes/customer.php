@@ -17,10 +17,10 @@ Route::get('/katalog', [ProductController::class, 'index'])->name('katalog');
 
 Route::get('/pesan', function () {
         return view('customer.pemesanan', [
-            'produk'  => request('produk'),
+            'produk'   => request('produk'),
             'kategori' => request('kategori'),
-            'harga'   => request('harga'),
-            'gambar'  => request('gambar'),
+            'harga'    => request('harga'),
+            'gambar'   => request('gambar'),
         ]);
     })->name('pemesanan');
 

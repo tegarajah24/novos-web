@@ -2,14 +2,6 @@
 
 @section('content')
 @auth
-@php
-    $produkData = $produk ? [
-        'produk'  => $produk,
-        'kategori' => $kategori,
-        'harga'   => $harga,
-        'gambar'  => $gambar,
-    ] : null;
-@endphp
 
 <div class="max-w-5xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }})">
     {{-- Header --}}
