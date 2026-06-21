@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Product;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class LaporanController extends Controller
@@ -21,7 +22,10 @@ class LaporanController extends Controller
 
     public function exportPdf(Request $request)
     {
-        return redirect()->route('staf.laporan', $request->query());
+        $data = $this->getReportData($request);
+        $pdf = Pdf::loadView('internal.laporan-pdf', $data);
+        $filename = 'laporan-novos-' . now()->format('Ymd-His') . '.pdf';
+        return $pdf->download($filename);
     }
 
     public function exportCsv(Request $request)

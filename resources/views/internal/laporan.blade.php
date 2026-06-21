@@ -56,13 +56,13 @@
                     </span>
                     Excel
                 </a>
-                <button onclick="window.print()"
-                        class="flex items-center gap-1 px-3 py-1.5 bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 text-xs font-medium rounded-lg transition-colors">
+                <a href="{{ route('staf.laporan.pdf', request()->query()) }}"
+                   class="flex items-center gap-1 px-3 py-1.5 bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 text-xs font-medium rounded-lg transition-colors">
                     <span class="flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
                         <i data-lucide="file-text" class="w-3.5 h-3.5 text-red-600"></i>
                     </span>
                     PDF
-                </button>
+                </a>
             </div>
         </div>
 

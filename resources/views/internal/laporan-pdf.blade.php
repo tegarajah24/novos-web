@@ -67,6 +67,8 @@
                 ['Total Pendapatan', 'Rp ' . number_format($totalPendapatan, 0, ',', '.')],
                 ['Rata-rata Nilai Transaksi', 'Rp ' . number_format($avgTransaksi, 0, ',', '.')],
                 ['Pesanan Terlambat Selesai', number_format($pesananTerlambat)],
+                ['Total Produk Terjual', number_format($totalProdukTerjual) . ' pcs'],
+                ['Rata-rata Waktu Proses', $avgProcessingDays ? number_format($avgProcessingDays, 1) . ' hari' : '-'],
             ];
         @endphp
         @foreach($ringkasan as $index => $row)

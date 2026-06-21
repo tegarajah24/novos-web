@@ -146,7 +146,7 @@
                         <td class="px-6 py-4">{{ $order->created_at->format('j M Y') }}</td>
                         <td class="px-6 py-4"><x-badge type="{{ $order->status }}">{{ $order->status }}</x-badge></td>
                         <td class="px-6 py-4 text-center">
-                            <a href="{{ route('staf.detail-pesanan', $order->id) }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
+                            <a href="{{ route('staf.detail-pesanan', $order->order_number) }}" class="text-gray-400 hover:text-[#1a237e] inline-block">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
                             </a>
                         </td>
