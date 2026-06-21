@@ -1,5 +1,7 @@
 @extends('layouts.customer')
 
+@section('title', 'Chat — Novos')
+
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-8" x-data="chatApp()">
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[calc(100vh-8rem)] flex">
@@ -12,7 +14,7 @@
             <template x-for="chat in chats" :key="chat.id">
                 <button
                     @click="activeChat = chat.id; chat.unread = 0"
-                    :class="activeChat === chat.id ? 'bg-blue-50 border-l-4 border-blue-900' : 'hover:bg-gray-50 border-l-4 border-transparent'"
+                    :class="activeChat === chat.id ? 'bg-blue-50 border-l-4 border-[#1a237e]' : 'hover:bg-gray-50 border-l-4 border-transparent'"
                     class="w-full text-left p-4 transition-colors border-b border-gray-50"
                 >
                     <div class="flex items-start gap-3">
@@ -29,7 +31,7 @@
                             </div>
                             <p class="text-xs text-gray-500 truncate mt-0.5" x-text="chat.lastMessage"></p>
                         </div>
-                        <span x-show="chat.unread > 0" class="shrink-0 bg-blue-900 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center" x-text="chat.unread"></span>
+                        <span x-show="chat.unread > 0" class="shrink-0 bg-[#1a237e] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center" x-text="chat.unread"></span>
                     </div>
                 </button>
             </template>
@@ -66,7 +68,7 @@
                     <template x-for="(msg, i) in currentChat.messages" :key="i">
                         <div class="flex" :class="msg.from === 'customer' ? 'justify-end' : 'justify-start'">
                             <div
-                                :class="msg.from === 'customer' ? 'bg-blue-900 text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
+                                :class="msg.from === 'customer' ? 'bg-[#1a237e] text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
                                 class="max-w-[70%] px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5"
                             >
                                 {{-- File attachment --}}
@@ -85,10 +87,10 @@
                                         {{-- Other file --}}
                                         <template x-if="!msg.is_image && !msg.is_video">
                                             <a :href="msg.file_url" target="_blank"
-                                                :class="msg.from === 'customer' ? 'bg-blue-800 hover:bg-blue-700' : 'bg-gray-100 hover:bg-gray-200'"
+                                                :class="msg.from === 'customer' ? 'bg-[#1a237e] hover:bg-[#283593]' : 'bg-gray-100 hover:bg-gray-200'"
                                                 class="flex items-center gap-3 p-3 rounded-xl transition-colors"
                                             >
-                                                <div :class="msg.from === 'customer' ? 'bg-blue-700' : 'bg-blue-100'" class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
+                                                <div :class="msg.from === 'customer' ? 'bg-[#283593]' : 'bg-blue-100'" class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="msg.from === 'customer' ? 'text-white' : 'text-blue-900'"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                 </div>
                                                 <div class="min-w-0 flex-1">
@@ -144,7 +146,7 @@
                         </div>
                     </template>
                     <div class="flex items-center gap-3">
-                        <label class="cursor-pointer p-2 text-gray-400 hover:text-blue-900 transition-colors rounded-lg hover:bg-gray-100">
+                        <label class="cursor-pointer p-2 text-gray-400 hover:text-[#1a237e] transition-colors rounded-lg hover:bg-gray-100">
                             <input type="file" @change="handleFileSelect" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar" class="hidden">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18.84 5.6l-8.11 8.11a2 2 0 1 1-2.83-2.83l8.49-8.49"/></svg>
                         </label>
@@ -153,12 +155,12 @@
                             x-model="message"
                             @keydown.enter="sendMessage"
                             placeholder="Tulis pesan..."
-                            class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                            class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
                         >
                         <button
                             @click="sendMessage"
                             :disabled="(!message.trim() && !selectedFile) || sending"
-                            :class="(message.trim() || selectedFile) && !sending ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                            :class="(message.trim() || selectedFile) && !sending ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                             class="text-white p-3 rounded-xl transition-colors"
                         >
                             <template x-if="!sending">

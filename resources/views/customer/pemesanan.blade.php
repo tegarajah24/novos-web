@@ -1,5 +1,7 @@
 @extends('layouts.customer')
 
+@section('title', 'Buat Pesanan — Novos')
+
 @section('content')
 @auth
 
@@ -16,7 +18,7 @@
             <div class="flex items-center">
                 <div class="flex flex-col items-center">
                     <div
-                        :class="step >= index + 1 ? 'bg-blue-900 text-white' : 'bg-gray-200 text-gray-500'"
+                        :class="step >= index + 1 ? 'bg-[#1a237e] text-white' : 'bg-gray-200 text-gray-500'"
                         class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300"
                     >
                         <svg x-show="step > index + 1" class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -30,7 +32,7 @@
                 </div>
                 <div
                     x-show="index < steps.length - 1"
-                    :class="step > index + 1 ? 'bg-blue-900' : 'bg-gray-200'"
+                    :class="step > index + 1 ? 'bg-[#1a237e]' : 'bg-gray-200'"
                     class="w-10 sm:w-16 md:w-24 h-0.5 mx-1 sm:mx-2 transition-colors"
                 ></div>
             </div>
@@ -52,11 +54,11 @@
             {{-- Jersey Custom --}}
             <div
                 @click="jenis = 'custom'"
-                :class="jenis === 'custom' ? 'border-blue-900 bg-blue-50 ring-2 ring-blue-900' : 'border-gray-200 hover:border-gray-300'"
+                :class="jenis === 'custom' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
                 class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
                 style="animation-delay:0.1s"
             >
-                <div :class="jenis === 'custom' ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
+                <div :class="jenis === 'custom' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
                 </div>
                 <h3 class="font-bold text-lg mt-4">Jersey Custom</h3>
@@ -66,11 +68,11 @@
             {{-- Produk Katalog --}}
             <div
                 @click="jenis = 'katalog'"
-                :class="jenis === 'katalog' ? 'border-blue-900 bg-blue-50 ring-2 ring-blue-900' : 'border-gray-200 hover:border-gray-300'"
+                :class="jenis === 'katalog' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
                 class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
                 style="animation-delay:0.2s"
             >
-                <div :class="jenis === 'katalog' ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
+                <div :class="jenis === 'katalog' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
                 </div>
                 <h3 class="font-bold text-lg mt-4">Produk Katalog</h3>
@@ -82,7 +84,7 @@
             <button
                 @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else step = 2;"
                 :disabled="!jenis"
-                :class="jenis ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                :class="jenis ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
             >
                 Selanjutnya
@@ -127,7 +129,7 @@
                         type="text"
                         x-model="form.team_name"
                         placeholder="Contoh: FC Harapan Jaya"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
                     >
                 </div>
 
@@ -138,7 +140,7 @@
                         type="text"
                         x-model="form.no_punggung"
                         placeholder="Contoh: 10, 7, 9"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
                     >
                 </div>
 
@@ -149,7 +151,7 @@
                         type="text"
                         x-model="form.detail_sponsor"
                         placeholder="Contoh: Logo sponsor di dada"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
                     >
                 </div>
 
@@ -174,6 +176,7 @@
                     </div>
 
                     {{-- Modal Panduan Ukuran --}}
+                    <template x-teleport="body">
                     <div
                         x-show="showSizeGuide"
                         x-cloak
@@ -183,8 +186,7 @@
                         x-transition:leave="transition ease-in duration-150"
                         x-transition:leave-start="opacity-100"
                         x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                        style="background: rgba(0,0,0,0.45);"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45"
                         @click.self="showSizeGuide = false"
                     >
                         <div
@@ -226,7 +228,7 @@
                                 <div class="overflow-x-auto rounded-xl border border-gray-200">
                                     <table class="w-full text-sm">
                                         <thead>
-                                            <tr class="bg-blue-900 text-white">
+                                            <tr class="bg-[#1a237e] text-white">
                                                 <th class="px-4 py-3 text-left font-semibold">Ukuran</th>
                                                 <th class="px-4 py-3 text-left font-semibold">Lebar Dada (cm)</th>
                                                 <th class="px-4 py-3 text-left font-semibold">Lingkar Dada (cm)</th>
@@ -304,7 +306,7 @@
                             <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
                                 <button
                                     @click="showSizeGuide = false"
-                                    class="px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                    class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
                                 >
                                     Mengerti
                                 </button>
@@ -319,12 +321,13 @@
                                     type="number"
                                     x-model="form.ukuran[size]"
                                     min="0"
-                                    class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow"
+                                    class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
                                 >
                             </div>
                         </template>
                     </div>
                 </div>
+                </template>
             </div>
 
             <div class="grid lg:grid-cols-2 gap-6">
@@ -347,7 +350,7 @@
                     </div>
                     <select
                         x-model="form.kerah"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Jenis Kerah</option>
                         <option value="O-NECK V.1">O-NECK V.1</option>
@@ -370,6 +373,7 @@
                     </select>
 
                     {{-- Modal Detail Kerah --}}
+                    <template x-teleport="body">
                     <div
                         x-show="showCollarGuide"
                         x-cloak
@@ -379,8 +383,7 @@
                         x-transition:leave="transition ease-in duration-150"
                         x-transition:leave-start="opacity-100"
                         x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                        style="background: rgba(0,0,0,0.55);"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
                         @click.self="showCollarGuide = false"
                     >
                         <div
@@ -434,16 +437,15 @@
                             <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
                                 <button
                                     @click="showCollarGuide = false"
-                                    class="px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                    class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
                                 >
                                     Mengerti
                                 </button>
                             </div>
                         </div>
                     </div>
+                    </template>
                 </div>
-
-                {{-- Bahan Jersey --}}
                 <div x-data="{ showBahanGuide: false }">
                     <div class="flex items-center justify-between mb-1.5">
                         <label class="block text-sm font-medium text-gray-700">Bahan Jersey <span class="text-red-500">*</span></label>
@@ -462,7 +464,7 @@
                     </div>
                     <select
                         x-model="form.bahan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Bahan Jersey</option>
                         <option value="BINTIK JARUM GRADE B">BINTIK JARUM GRADE B</option>
@@ -545,7 +547,7 @@
                             <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
                                 <button
                                     @click="showBahanGuide = false"
-                                    class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                    class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
                                 >
                                     Mengerti
                                 </button>
@@ -574,7 +576,7 @@
                     </div>
                     <select
                         x-model="form.jenis_potongan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Jenis Potongan</option>
                         <option value="REGULER">REGULER</option>
@@ -628,7 +630,7 @@
                                 <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan potongan dengan tim kami jika Anda membutuhkan penyesuaian khusus.</p>
                             </div>
                             <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
-                                <button @click="showPotonganGuide = false" class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors">
+                                <button @click="showPotonganGuide = false" class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors">
                                     Mengerti
                                 </button>
                             </div>
@@ -656,7 +658,7 @@
                     </div>
                     <select
                         x-model="form.lengan_jahitan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Model Lengan & Jahitan</option>
                         <option value="REGULER OVERDECK">REGULER OVERDECK</option>
@@ -722,7 +724,7 @@
                             <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
                                 <button
                                     @click="showLenganGuide = false"
-                                    class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                    class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
                                 >
                                     Mengerti
                                 </button>
@@ -740,7 +742,7 @@
                     x-model="form.catatan"
                     rows="4"
                     placeholder="Deskripsi keseluruhan desain Anda..."
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow resize-none"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow resize-none"
                 ></textarea>
             </div>
         </div>
@@ -755,14 +757,14 @@
                     @dragleave.prevent="dragOver = false"
                     @drop.prevent="handleDrop($event)"
                     @click="document.getElementById('logoInput').click()"
-                    :class="dragOver ? 'border-blue-900 bg-blue-50' : 'border-gray-300'"
+                    :class="dragOver ? 'border-[#1a237e] bg-blue-50' : 'border-gray-300'"
                     class="border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer min-h-[180px] flex items-center justify-center"
                 >
                     <template x-if="uploads.length === 0">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-300 mb-3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             <p class="text-gray-500 text-sm font-medium">Drag & drop atau klik untuk upload</p>
-                            <p class="text-gray-400 text-xs mt-1">PNG, JPG, AI (max. 10MB)</p>
+                            <p class="text-gray-400 text-xs mt-1">PNG, JPG, AI (max. 5MB)</p>
                         </div>
                     </template>
                     <template x-if="uploads.length > 0">
@@ -795,7 +797,7 @@
                     @dragleave.prevent="dragOverRef = false"
                     @drop.prevent="handleDropRef($event)"
                     @click="document.getElementById('refInput').click()"
-                    :class="dragOverRef ? 'border-blue-900 bg-blue-50' : 'border-gray-300'"
+                    :class="dragOverRef ? 'border-[#1a237e] bg-blue-50' : 'border-gray-300'"
                     class="border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer min-h-[180px] flex items-center justify-center"
                 >
                     <template x-if="refUploads.length === 0">
@@ -838,7 +840,7 @@
             <button
                 @click="step = 3"
                 :disabled="!validateStep2"
-                :class="validateStep2 ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                :class="validateStep2 ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
             >
                 Selanjutnya
@@ -866,13 +868,13 @@
                     <template x-for="(p, i) in prioritasOptions" :key="i">
                         <div
                             @click="prioritas = p.value"
-                            :class="prioritas === p.value ? 'border-blue-900 bg-blue-50 ring-2 ring-blue-900' : 'border-gray-200 hover:border-gray-300'"
+                            :class="prioritas === p.value ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
                             class="border-2 rounded-xl p-4 cursor-pointer transition-all animate-fade-slide"
                             :style="`animation-delay: ${0.05 + i * 0.07}s`"
                         >
                             <div class="flex items-center justify-between mb-1">
                                 <div class="flex items-center gap-3">
-                                    <div :class="prioritas === p.value ? 'bg-blue-900 border-blue-900' : 'border-gray-300'" class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0">
+                                    <div :class="prioritas === p.value ? 'bg-[#1a237e] border-[#1a237e]' : 'border-gray-300'" class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0">
                                         <div x-show="prioritas === p.value" class="w-2 h-2 bg-white rounded-full"></div>
                                     </div>
                                     <span class="font-semibold text-gray-900" x-text="p.label"></span>
@@ -949,9 +951,10 @@
                         <span class="text-gray-700 font-semibold">Total</span>
                         <span class="text-xl font-bold text-blue-900" x-text="formatRupiah(estimasiTotal)"></span>
                     </div>
+                    </div>
+                    </template>
                 </div>
             </div>
-        </div>
 
         <div class="flex justify-between mt-8">
             <button
@@ -963,7 +966,7 @@
             <button
                 @click="submitOrder"
                 :disabled="!validateStep3 || loading"
-                :class="(validateStep3 && !loading) ? 'bg-blue-900 hover:bg-blue-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                :class="(validateStep3 && !loading) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
             >
                 <span x-show="!loading" class="inline-flex items-center gap-2">
@@ -1069,7 +1072,7 @@
 
             {{-- Buttons --}}
             <div class="flex flex-col sm:flex-row gap-3 justify-center animate-fade-slide" style="animation-delay:0.75s">
-                <a :href="'/tracking?q=' + orderNumber" class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors text-center">
+                <a :href="'/tracking?q=' + orderNumber" class="px-8 py-3 bg-[#1a237e] text-white rounded-lg font-semibold hover:bg-[#283593] transition-colors text-center">
                     Tracking Pesanan
                 </a>
                 <a href="{{ route('beranda') }}" class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-center">
@@ -1116,7 +1119,7 @@ function pemesananForm(catalogProduct = null) {
             jenis_potongan: '',
             lengan_jahitan: '',
 
-            warna_utama: '#1e3a5f',
+            warna_utama: '#1a237e',
             warna_sekunder: '#ffffff',
             catatan: '',
             ukuran: { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL / XXL': 0, '3XL': 0, '4XL': 0, '5XL': 0, '6XL': 0 }
@@ -1296,7 +1299,7 @@ function pemesananForm(catalogProduct = null) {
         <h1 class="text-2xl font-bold text-gray-900 mb-2">Masuk untuk Memesan</h1>
         <p class="text-gray-500 mb-8 max-w-md mx-auto">Silakan login atau daftar akun terlebih dahulu untuk dapat membuat pesanan jersey custom.</p>
         <a href="{{ request()->fullUrlWithQuery(['auth' => 'login']) }}"
-           class="inline-flex items-center gap-2 px-8 py-3 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-800 transition-colors">
+           class="inline-flex items-center gap-2 px-8 py-3 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
             Login / Daftar
         </a>

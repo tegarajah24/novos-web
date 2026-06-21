@@ -36,7 +36,7 @@
                            class="text-xs border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] px-2 py-1.5">
                 </div>
                 <input type="hidden" name="filter" value="custom">
-                <button type="submit" class="px-3 py-1.5 bg-[#1a237e] text-white text-xs rounded-lg hover:bg-blue-900 transition-colors mt-4">
+                <button type="submit" class="px-3 py-1.5 bg-[#1a237e] text-white text-xs rounded-lg hover:bg-[#283593] transition-colors mt-4">
                     Terapkan
                 </button>
             </div>
@@ -239,7 +239,7 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse($pendapatanHarian as $index => $pendapatan)
                     <tr class="hover:bg-blue-50/50 transition-colors">
-                        <td class="px-6 py-3.5 text-gray-600">{{ \Carbon\Carbon::parse($pendapatan->tanggal)->format('d-m-Y') }}</td>
+                        <td class="px-6 py-3.5 text-gray-600">{{ \Carbon\Carbon::parse($pendapatan->tanggal)->format('d M Y') }}</td>
                         <td class="px-6 py-3.5 text-center font-medium text-gray-800">{{ $pendapatan->jumlah }}</td>
                         <td class="px-6 py-3.5 text-right font-bold text-[#1a237e]">Rp {{ number_format($pendapatan->pendapatan, 0, ',', '.') }}</td>
                     </tr>

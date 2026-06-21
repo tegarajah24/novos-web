@@ -3,7 +3,7 @@
 @section('title', 'Kelola Kategori')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-gray-900">Kelola Kategori</h1>
+    <h1 class="text-xl font-bold text-[#1a237e]">Kelola Kategori</h1>
     <p class="text-sm text-gray-500 mt-0.5">Atur kategori produk</p>
 @endsection
 
@@ -12,7 +12,7 @@
     <div class="glass-card rounded-2xl overflow-hidden">
         <div class="p-5 border-b border-gray-100 flex items-center justify-between">
             <h2 class="font-semibold text-gray-900 text-sm">Daftar Kategori</h2>
-            <button @click="openModal()" class="px-4 py-2 bg-[#1a237e] text-white text-xs font-semibold rounded-xl hover:bg-blue-900 transition-colors">
+            <button @click="openModal()" class="px-4 py-2 bg-[#1a237e] text-white text-xs font-semibold rounded-xl hover:bg-[#283593] transition-colors">
                 + Tambah Kategori
             </button>
         </div>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" :disabled="submitting" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                    <button type="submit" :disabled="submitting" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                         <svg x-show="submitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                         <span x-text="submitting ? 'Menyimpan...' : 'Simpan'"></span>
                     </button>

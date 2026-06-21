@@ -1,5 +1,7 @@
 @extends('layouts.customer')
 
+@section('title', 'Katalog — Novos')
+
 @section('content')
 <style>
     @keyframes cardFadeIn {

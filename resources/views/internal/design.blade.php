@@ -173,7 +173,7 @@
                     <div class="lg:col-span-1 space-y-6">
                         
                         {{-- Form Upload & Update --}}
-                        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-lg shadow-blue-900/5 overflow-hidden sticky top-6">
+                        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-lg shadow-[#1a237e]/5 overflow-hidden sticky top-6">
                             <div class="bg-[#1a237e] px-5 py-4">
                                 <h4 class="font-semibold text-white flex items-center gap-2 text-sm">
                                     <i data-lucide="check-square" class="w-4 h-4"></i>
@@ -223,7 +223,7 @@
                                 {{-- Submit Button --}}
                                 <div class="pt-2">
                                     <button @click="submitDesign" :disabled="!updateStatus || uploadedFiles.length === 0" 
-                                            class="w-full py-3 px-4 bg-[#1a237e] hover:bg-blue-900 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
+                                            class="w-full py-3 px-4 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-[#1a237e]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
                                         <i data-lucide="send" class="w-4 h-4"></i>
                                         Simpan & Teruskan
                                     </button>

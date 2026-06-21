@@ -3,7 +3,7 @@
 @section('title', 'Pengaturan')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-gray-900">Pengaturan</h1>
+    <h1 class="text-xl font-bold text-[#1a237e]">Pengaturan</h1>
     <p class="text-sm text-gray-500 mt-0.5">Kelola pengaturan toko</p>
 @endsection
 
@@ -39,7 +39,7 @@
 
             <div class="pt-2">
                 <button type="submit" :disabled="saving"
-                        class="px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-blue-900 transition-colors disabled:opacity-50">
+                        class="px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50">
                     <span x-show="!saving">Simpan Pengaturan</span>
                     <span x-show="saving" x-cloak>Menyimpan...</span>
                 </button>

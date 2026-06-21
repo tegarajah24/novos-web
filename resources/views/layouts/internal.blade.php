@@ -16,6 +16,7 @@
 
     {{-- Scripts --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
     
     <style>
         * { font-family: 'Poppins', sans-serif; }
@@ -173,7 +174,7 @@
                     </button>
                     <div x-show="open" x-cloak x-transition class="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg z-50">
                         <div class="py-1">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profil Saya</a>
+                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profil Saya</a>
                             <a href="{{ route('staf.pengaturan') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Pengaturan</a>
                             <a href="{{ route('beranda') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Beranda</a>
                             <div class="border-t border-gray-100 my-1"></div>
@@ -305,6 +306,7 @@
         }
     </script>
 
+    @stack('scripts')
 </body>
 
 <script>

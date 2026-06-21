@@ -1,5 +1,7 @@
 @extends('layouts.customer')
 
+@section('title', 'Tracking Pesanan — Novos')
+
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-8" x-data="trackingForm()">
     {{-- Header --}}
@@ -17,7 +19,7 @@
         </svg>
         <p class="text-gray-500 font-medium">Belum ada pesanan yang dipilih</p>
         <p class="text-gray-400 text-sm mt-1">Klik tombol "Tracking" pada pesanan Anda di halaman profil</p>
-        <a href="{{ route('profile.edit') }}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-blue-900 text-white text-sm font-semibold rounded-xl hover:bg-blue-800 transition-colors">
+        <a href="{{ route('profile.edit') }}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             Lihat Riwayat Pesanan
         </a>
@@ -73,7 +75,7 @@
                                 </template>
 
                                 {{-- Circle body --}}
-                                <div :class="stage.done ? 'bg-green-500 shadow-lg shadow-green-200' : stage.active ? 'bg-blue-900 ring-4 ring-blue-200 shadow-lg shadow-blue-200 animate-glow' : 'bg-gray-200'"
+                                <div :class="stage.done ? 'bg-green-500 shadow-lg shadow-green-200' : stage.active ? 'bg-[#1a237e] ring-4 ring-[#1a237e]/20 shadow-lg shadow-blue-200 animate-glow' : 'bg-gray-200'"
                                      class="w-[38px] h-[38px] rounded-full flex items-center justify-center transition-all duration-500 relative">
                                     {{-- Checkmark for done --}}
                                     <svg x-show="stage.done" class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -87,7 +89,7 @@
 
                             {{-- Label below --}}
                             <div class="mt-3 max-w-[90px]">
-                                <p :class="stage.active ? 'text-blue-900 font-bold' : stage.done ? 'text-gray-900 font-semibold' : 'text-gray-400'"
+                                <p :class="stage.active ? 'text-[#1a237e] font-bold' : stage.done ? 'text-gray-900 font-semibold' : 'text-gray-400'"
                                    class="text-[11px] md:text-xs leading-tight transition-colors" x-text="stage.label"></p>
                                 <p class="text-[10px] mt-1 font-medium"
                                    :class="stage.done ? 'text-green-600' : stage.active ? 'text-blue-600' : 'text-gray-300'"
@@ -164,7 +166,7 @@
                         {{-- Tombol --}}
                         <div class="mt-6 space-y-3">
                             <button @click="accDesign"
-                                class="relative overflow-hidden w-full px-6 py-3 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-colors flex items-center justify-center gap-2 group/btn">
+                                class="relative overflow-hidden w-full px-6 py-3 bg-[#1a237e] text-white rounded-xl font-semibold hover:bg-[#283593] transition-colors flex items-center justify-center gap-2 group/btn">
                                 <span class="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent"></span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                                 ACC Desain
@@ -180,11 +182,11 @@
                             <div x-show="revisionOpen" x-cloak x-collapse.duration.300 class="space-y-3 pt-1">
                                 <textarea x-model="revisionNote"
                                     placeholder="Jelaskan bagian mana yang perlu direvisi"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow resize-none"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow resize-none"
                                     rows="3"></textarea>
                                 <div class="flex gap-2">
                                     <button @click="sendRevision"
-                                        class="flex-1 px-4 py-2.5 bg-blue-900 text-white text-sm rounded-xl font-semibold hover:bg-blue-800 transition-colors">
+                                        class="flex-1 px-4 py-2.5 bg-[#1a237e] text-white text-sm rounded-xl font-semibold hover:bg-[#283593] transition-colors">
                                         Kirim Revisi
                                     </button>
                                     <button @click="revisionOpen = false; revisionNote = ''"
@@ -336,7 +338,7 @@ function trackingForm() {
                     icon: 'success',
                     title: 'Desain Disetujui!',
                     text: 'Desain telah Anda setujui. Pesanan akan dilanjutkan ke tahap berikutnya.',
-                    confirmButtonColor: '#1e3a5f',
+                    confirmButtonColor: '#1a237e',
                     confirmButtonText: 'OK'
                 });
             } catch (e) {
@@ -367,7 +369,7 @@ function trackingForm() {
                     icon: 'warning',
                     title: 'Catatan kosong',
                     text: 'Silakan tulis catatan revisi terlebih dahulu.',
-                    confirmButtonColor: '#1e3a5f',
+                    confirmButtonColor: '#1a237e',
                     confirmButtonText: 'OK'
                 });
                 return;
@@ -387,7 +389,7 @@ function trackingForm() {
                     icon: 'success',
                     title: 'Revisi Dikirim!',
                     text: 'Catatan revisi Anda telah dikirim ke tim desain.',
-                    confirmButtonColor: '#1e3a5f',
+                    confirmButtonColor: '#1a237e',
                     confirmButtonText: 'OK'
                 }).then(() => {
                     this.revisionOpen = false;

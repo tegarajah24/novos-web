@@ -1,6 +1,6 @@
 @extends('layouts.internal')
 
-@section('title', 'Daily Mental Check — Novos')
+@section('title', 'Daily Mental Check')
 
 @section('topbar-left')
     <span class="font-bold text-gray-900">Daily Mental Check</span>

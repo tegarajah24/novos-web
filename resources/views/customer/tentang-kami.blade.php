@@ -1,5 +1,7 @@
 @extends('layouts.customer')
 
+@section('title', 'Tentang Kami — Novos')
+
 @section('content')
 {{-- Hero --}}
 <section class="relative w-full bg-[#0f2040] overflow-hidden" style="min-height:400px">

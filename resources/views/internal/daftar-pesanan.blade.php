@@ -3,7 +3,7 @@
 @section('title', 'Daftar Pesanan')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-black">Daftar Pesanan</h1>
+    <h1 class="text-xl font-bold text-[#1a237e]">Daftar Pesanan</h1>
 @endsection
 
 @section('internal-content')
@@ -29,7 +29,7 @@ function badge($status) {
 }
 
 function rupiah($n) {
-    return 'Rp' . number_format($n, 0, ',', '.');
+    return 'Rp ' . number_format($n, 0, ',', '.');
 }
 @endphp
 

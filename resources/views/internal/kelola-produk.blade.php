@@ -3,7 +3,7 @@
 @section('title', 'Katalog Produk')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-black">Katalog Produk</h1>
+    <h1 class="text-xl font-bold text-[#1a237e]">Katalog Produk</h1>
 @endsection
 
 @section('internal-content')
@@ -112,28 +112,31 @@
     </div>
 
     <!-- Modal Form -->
-    <div x-show="showModal" x-cloak style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9998;background:rgba(0,0,0,0.5);margin:0;padding:0;">
-        <div @click="showModal = false" style="position:absolute;inset:0;"></div>
-        <div class="relative z-[9999] flex items-center justify-center min-h-screen">
-            <div class="relative bg-white shadow-2xl w-full max-w-[564px] max-h-[665px] flex flex-col overflow-hidden" style="border-radius: 20px;">
-            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between" style="background: #ffffff; border-radius: 20px 20px 0 0;">
-                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+    <template x-teleport="body">
+    <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center" x-cloak>
+        <div x-show="showModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div x-show="showModal" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[564px] max-h-[665px] flex flex-col overflow-hidden mx-4">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <i data-lucide="box" class="w-5 h-5 text-[#1a237e]"></i>
                     <span x-text="formMode === 'create' ? 'Tambah Produk Baru' : 'Edit Produk'"></span>
                 </h3>
+                <button @click="showModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-1.5 transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
-            
-            <div class="p-6 flex-1 overflow-y-auto" style="background: #ffffff;">
+
+            <div class="p-6 flex-1 overflow-y-auto">
                 <form @submit.prevent="saveProduct" class="space-y-4">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Nama Produk <span class="text-red-500">*</span></label>
-                            <input type="text" x-model="formData.name" required class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" placeholder="Contoh: Novos Performance Jersey">
+                            <input type="text" x-model="formData.name" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" placeholder="Contoh: Novos Performance Jersey">
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Kategori <span class="text-red-500">*</span></label>
-                            <select x-model="formData.category_id" required class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                            <select x-model="formData.category_id" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
                                 <option value="" disabled>Pilih Kategori</option>
                                 <template x-for="cat in categories" :key="cat.id">
                                     <option :value="cat.id" x-text="cat.name"></option>
@@ -144,19 +147,19 @@
 
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Harga (Rp) <span class="text-red-500">*</span></label>
-                            <input type="number" x-model="formData.price" required min="0" class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" placeholder="Contoh: 150000">
+                            <input type="number" x-model="formData.price" required min="0" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" placeholder="Contoh: 150000">
                     </div>
 
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Deskripsi Produk</label>
-                            <textarea x-model="formData.description" class="w-full rounded-[10px] border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" rows="3" placeholder="Detail bahan, printing, dsb..." style="resize:none;"></textarea>
+                            <textarea x-model="formData.description" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" rows="3" placeholder="Detail bahan, printing, dsb..." style="resize:none;"></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Depan</label>
                             <div class="flex items-center gap-3">
-                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium cursor-pointer">
+                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-xl hover:bg-[#283593] transition-colors font-medium cursor-pointer">
                                     <i data-lucide="upload" class="w-4 h-4"></i> Pilih File
                                     <input type="file" x-ref="inputDepan" class="hidden" accept="image/*" @change="handleUploadDepan">
                                 </label>
@@ -166,7 +169,7 @@
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Belakang</label>
                             <div class="flex items-center gap-3">
-                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium cursor-pointer">
+                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-xl hover:bg-[#283593] transition-colors font-medium cursor-pointer">
                                     <i data-lucide="upload" class="w-4 h-4"></i> Pilih File
                                     <input type="file" x-ref="inputBelakang" class="hidden" accept="image/*" @change="handleUploadBelakang">
                                 </label>
@@ -176,19 +179,20 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 mt-6">
-                        <button type="button" @click="showModal = false" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm rounded-[10px] hover:bg-gray-50 transition-colors font-medium bg-white">
+                        <button type="button" @click="showModal = false" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm rounded-xl hover:bg-gray-50 transition-colors font-medium bg-white">
                             Batal
                         </button>
-                        <button type="submit" :disabled="submitting" class="px-6 py-2.5 bg-[#1a237e] text-white text-sm rounded-[10px] hover:bg-[#283593] transition-colors font-medium flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="submit" :disabled="submitting" class="px-6 py-2.5 bg-[#1a237e] text-white text-sm rounded-xl hover:bg-[#283593] transition-colors font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <svg x-show="submitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                             <svg x-show="!submitting" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                            <span x-text="submitting ? 'Menyimpan...' : 'Simpan Data'"></span>
+                            <span x-text="submitting ? 'Menyimpan...' : 'Simpan'"></span>
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    </template>
 
 <script>
 function kelolaProdukApp() {

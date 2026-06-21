@@ -1,6 +1,8 @@
 
 @extends('layouts.customer')
 
+@section('title', 'Pembayaran Selesai — Novos')
+
 @section('content')
 <div class="max-w-lg mx-auto px-4 py-16 text-center">
     <div class="flex justify-center mb-6">
@@ -15,7 +17,7 @@
     <p class="text-gray-500 mb-8">Terima kasih, pembayaran Anda sedang diproses. Kami akan mengirimkan notifikasi jika pembayaran telah berhasil.</p>
 
     <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="{{ route('tracking', ['q' => $orderId]) }}" class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors text-center">
+        <a href="{{ route('tracking', ['q' => $orderId]) }}" class="px-8 py-3 bg-[#1a237e] text-white rounded-lg font-semibold hover:bg-[#283593] transition-colors text-center">
             Tracking Pesanan
         </a>
         <a href="{{ route('beranda') }}" class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-center">

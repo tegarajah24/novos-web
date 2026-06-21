@@ -154,12 +154,14 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 File Desain Customer
             </h3>
             <div class="grid grid-cols-3 gap-4">
-                @foreach($order['design_files'] as $f)
+                @forelse($order['design_files'] as $f)
                 <div class="bg-gray-100 rounded-xl aspect-square flex flex-col items-center justify-center gap-2 border border-gray-200 hover:border-[#1a237e]/40 transition-colors cursor-pointer">
                     <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     <span class="text-xs text-gray-500 text-center px-2">{{ $f['name'] }}</span>
                 </div>
-                @endforeach
+                @empty
+                <div class="col-span-3 py-8 text-center text-gray-400 text-sm">Belum ada file desain dari customer.</div>
+                @endforelse
             </div>
         </div>
 
@@ -172,7 +174,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 </h3>
             </div>
             <div class="space-y-3">
-                @foreach($order['history_notes'] as $i => $h)
+                @forelse($order['history_notes'] as $i => $h)
                 <div class="flex gap-3">
                     <div class="mt-1.5 w-2 h-2 rounded-full {{ $noteColors[$i % count($noteColors)] }} shrink-0"></div>
                     <div>
@@ -180,11 +182,11 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                         <p class="text-sm text-gray-700">{{ $h['note'] }}</p>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <p class="text-sm text-gray-400 text-center py-2">Belum ada catatan.</p>
+                @endforelse
             </div>
         </div>
-
-        {{-- Riwayat Status --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
                 <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
@@ -202,17 +204,21 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @foreach($order['status_history'] as $sh)
+                        @forelse($order['status_history'] as $sh)
                         @php
                         $st = match($sh['status']) { 'menunggu_verifikasi'=>'yellow','menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','tahap_produksi'=>'purple','selesai'=>'green',default=>'gray' };
                         $sl = match($sh['status']) { 'menunggu_verifikasi'=>'Menunggu Verifikasi','menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','tahap_produksi'=>'Produksi','selesai'=>'Selesai',default=>$sh['status'] };
                         @endphp
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-3.5 text-gray-700">{{ $sh['date'] }}</td>
                             <td class="px-6 py-3.5"><x-badge type="{{ $st }}">{{ $sl }}</x-badge></td>
                             <td class="px-6 py-3.5 text-gray-700">{{ $sh['note'] }}</td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-8 text-center text-gray-400 text-sm">Belum ada riwayat status.</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -298,7 +304,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
         </div>
 
         {{-- File Hasil Desain (Dari Tim Design) --}}
-        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-sm shadow-blue-900/5 p-5">
+        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-sm shadow-[#1a237e]/5 p-5">
             <h3 class="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Hasil Desain (Siap ACC)
