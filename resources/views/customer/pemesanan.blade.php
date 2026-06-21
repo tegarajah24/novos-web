@@ -954,7 +954,9 @@
                 </div>
             </div>
 
-        <div class="flex justify-between mt-8">
+        </div>
+
+        <div class="flex justify-end gap-4 mt-8">
             <button
                 @click="step = 2"
                 class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
