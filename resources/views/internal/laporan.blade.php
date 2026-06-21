@@ -86,8 +86,8 @@
             <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
                 <tr>
                     <th class="px-6 py-3 w-16 font-semibold text-center">No</th>
-                    <th class="px-6 py-3 font-semibold text-center">Metrik</th>
-                    <th class="px-6 py-3 font-semibold text-center">Nilai</th>
+                    <th class="px-6 py-3 font-semibold text-left">Metrik</th>
+                    <th class="px-6 py-3 font-semibold text-right">Nilai</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -109,8 +109,8 @@
                 @foreach($ringkasan as $index => $row)
                     <tr class="hover:bg-blue-50/50 transition-colors">
                         <td class="px-6 py-3.5 text-gray-400 text-center">{{ $index + 1 }}</td>
-                        <td class="px-6 py-3.5 font-medium text-gray-800 text-center">{{ $row[0] }}</td>
-                        <td class="px-6 py-3.5 text-center font-bold text-[#1a237e]">{{ $row[1] }}</td>
+                        <td class="px-6 py-3.5 font-medium text-gray-800 text-left">{{ $row[0] }}</td>
+                        <td class="px-6 py-3.5 text-right font-bold text-[#1a237e]">{{ $row[1] }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -132,19 +132,19 @@
                 <tr>
                     <th class="px-6 py-3 w-1/3 font-semibold text-left">Keterangan</th>
                     <th class="px-6 py-3 font-semibold text-center">Produk</th>
-                    <th class="px-6 py-3 font-semibold text-center">Jumlah Pesanan</th>
+                    <th class="px-6 py-3 font-semibold text-right">Jumlah Pesanan</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <tr class="hover:bg-blue-50/50 transition-colors">
                     <td class="px-6 py-3.5 text-gray-500">Paling Banyak Dipesan</td>
                     <td class="px-6 py-3.5 font-medium text-gray-800 text-center">{{ $produkTerbanyak->produk ?? '-' }}</td>
-                    <td class="px-6 py-3.5 text-center font-bold text-[#1a237e]">{{ $produkTerbanyak->jumlah_pesanan ?? 0 }}</td>
+                    <td class="px-6 py-3.5 text-right font-bold text-[#1a237e]">{{ $produkTerbanyak->jumlah_pesanan ?? 0 }}</td>
                 </tr>
                 <tr class="hover:bg-blue-50/50 transition-colors">
                     <td class="px-6 py-3.5 text-gray-500">Paling Sedikit Dipesan</td>
                     <td class="px-6 py-3.5 font-medium text-gray-800 text-center">{{ $produkTersedikit->produk ?? '-' }}</td>
-                    <td class="px-6 py-3.5 text-center font-bold text-[#1a237e]">{{ $produkTersedikit->jumlah_pesanan ?? 0 }}</td>
+                    <td class="px-6 py-3.5 text-right font-bold text-[#1a237e]">{{ $produkTersedikit->jumlah_pesanan ?? 0 }}</td>
                 </tr>
             </tbody>
         </table>
