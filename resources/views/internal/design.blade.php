@@ -216,8 +216,7 @@
                                     <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">2. Update Status</label>
                                     <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
                                         <option value="">-- Pilih status selanjutnya --</option>
-                                        <option value="siap_cetak">Selesai Design (Teruskan ke Admin / Produksi)</option>
-                                        <option value="menunggu_acc">Menunggu ACC Customer</option>
+                                        <option value="siap_cetak">Selesai Design (Teruskan ke Produksi)</option>
                                     </select>
                                 </div>
 
@@ -291,18 +290,10 @@ function designApp() {
 
         submitDesign() {
             if(!this.updateStatus) return;
-            if(this.uploadedFiles.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Upload File',
-                    text: 'Silakan upload minimal 1 file hasil design (mockup/pola)'
-                });
-                return;
-            }
 
             Swal.fire({
                 title: 'Konfirmasi',
-                text: "Apakah Anda yakin ingin menyimpan dan meneruskan desain ini?",
+                text: "Apakah Anda yakin ingin menyelesaikan desain dan meneruskannya ke produksi?",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#1a237e',
@@ -311,20 +302,35 @@ function designApp() {
                 cancelButtonText: 'Batal',
                 reverseButtons: true
             }).then((result) => {
-                if (result.isConfirmed) {
-                    // Simulasi API Request
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Hasil desain telah diupload dan status pesanan diperbarui.',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        this.isDetailOpen = false;
-                        // Hapus dari list (simulasi sukses)
-                        this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
-                    });
-                }
+                if (!result.isConfirmed) return;
+
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                const formData = new FormData();
+                formData.append('status', this.updateStatus);
+                this.uploadedFiles.forEach(file => formData.append('files[]', file));
+
+                Swal.fire({ title: 'Mengupload...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+                fetch('{{ route("staf.design.update", "") }}/' + this.selectedOrder.order_id, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        Swal.fire({
+                            icon: 'success', title: 'Berhasil!',
+                            text: res.message, timer: 2000, showConfirmButton: false
+                        }).then(() => {
+                            this.isDetailOpen = false;
+                            this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
+                        });
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
+                });
             })
         }
     }

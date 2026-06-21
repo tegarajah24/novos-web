@@ -414,19 +414,10 @@ function produksiApp() {
             perluRevisi: false
         },
 
-        orders: [
-            ...@json($orders).map(order => {
-                if (order.status === 'siap_cetak') {
-                    order.stage = 'printing';
-                } else if (order.status === 'diproduksi') {
-                    const num = parseInt(order.id) || 0;
-                    order.stage = (num % 2 === 0) ? 'jahit' : 'qc';
-                } else {
-                    order.stage = 'printing';
-                }
-                return order;
-            })
-        ],
+        orders: @json($orders).map(order => ({
+            ...order,
+            stage: order.production_stage || (order.status === 'siap_cetak' ? 'printing' : 'printing')
+        })),
 
         init() {
             this.$watch('activeTab', value => {
@@ -472,10 +463,9 @@ function produksiApp() {
         submitProduksi() {
             if (!this.updateStatus) return;
 
-            const targetStatus = this.updateStatus;
             const currentStage = this.selectedOrder.stage;
-            let nextStage = '';
-            let isSelesai = false;
+            const targetStatus = this.updateStatus;
+            let isSelesai = targetStatus === 'selesai_qc';
             let title = '';
             let text = '';
             let confirmButtonText = '';
@@ -483,13 +473,11 @@ function produksiApp() {
 
             if (currentStage === 'printing') {
                 if (targetStatus === 'proses_printing') {
-                    nextStage = 'printing';
                     title = 'Update Status Printing?';
                     text = 'Status pesanan akan diperbarui menjadi Sedang Proses.';
                     confirmButtonText = 'Ya, Update!';
                     successText = 'Status pesanan berhasil diperbarui.';
-                } else if (targetStatus === 'selesai_printing') {
-                    nextStage = 'jahit';
+                } else {
                     title = 'Selesaikan Printing?';
                     text = 'Proses printing selesai dan pesanan akan dikirim ke divisi Jahit.';
                     confirmButtonText = 'Ya, Kirim!';
@@ -497,13 +485,11 @@ function produksiApp() {
                 }
             } else if (currentStage === 'jahit') {
                 if (targetStatus === 'proses_jahit') {
-                    nextStage = 'jahit';
                     title = 'Update Status Jahit?';
                     text = 'Status pesanan akan diperbarui menjadi Sedang Proses.';
                     confirmButtonText = 'Ya, Update!';
                     successText = 'Status pesanan berhasil diperbarui.';
-                } else if (targetStatus === 'selesai_jahit') {
-                    nextStage = 'qc';
+                } else {
                     title = 'Selesaikan Jahit?';
                     text = 'Proses jahit selesai dan pesanan akan dikirim ke divisi QC.';
                     confirmButtonText = 'Ya, Kirim!';
@@ -511,14 +497,11 @@ function produksiApp() {
                 }
             } else if (currentStage === 'qc') {
                 if (targetStatus === 'proses_qc') {
-                    nextStage = 'qc';
                     title = 'Update Status Quality Control?';
-                    text = 'Status QC akan diperbarui menjadi Sedang Proses. Checklist QC telah dicatat.';
+                    text = 'Status QC akan diperbarui menjadi Sedang Proses.';
                     confirmButtonText = 'Ya, Update!';
                     successText = 'Status Quality Control berhasil diperbarui.';
-                } else if (targetStatus === 'selesai_qc') {
-                    isSelesai = true;
-                    // Validasi: jika ada flag perlu revisi, tampilkan peringatan
+                } else {
                     if (this.qcChecklist.perluRevisi) {
                         Swal.fire({
                             title: 'Ada Item Perlu Revisi!',
@@ -531,7 +514,7 @@ function produksiApp() {
                             cancelButtonText: 'Batal'
                         }).then((res) => {
                             if (!res.isConfirmed) return;
-                            this._doFinishQC();
+                            this._doSubmit(targetStatus, currentStage, successText);
                         });
                         return;
                     }
@@ -554,55 +537,48 @@ function produksiApp() {
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    if (isSelesai) {
-                        this._doFinishQC();
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: successText,
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            this.isDetailOpen = false;
-                            // Update stage dan status pesanan lokal
-                            this.orders = this.orders.map(o => {
-                                if (o.id === this.selectedOrder.id) {
-                                    o.stage = nextStage;
-                                    if (currentStage === 'printing') {
-                                        o.printing_status = targetStatus;
-                                        if (targetStatus === 'selesai_printing') {
-                                            o.status = 'diproduksi';
-                                        }
-                                    } else if (currentStage === 'jahit') {
-                                        o.jahit_status = targetStatus;
-                                        if (targetStatus === 'selesai_jahit') {
-                                            o.status = 'diproduksi';
-                                        }
-                                    } else if (currentStage === 'qc') {
-                                        o.qc_status = targetStatus;
-                                    }
-                                }
-                                return o;
-                            });
-                        });
-                    }
+                    this._doSubmit(targetStatus, currentStage, successText);
                 }
             });
         },
 
-        _doFinishQC() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Quality Control Selesai! 🎉',
-                html: '<p class="text-sm text-gray-600">Pesanan <strong>' + (this.selectedOrder?.order_id || '') + '</strong> dinyatakan <strong class="text-green-600">SELESAI</strong> dan siap diserahkan ke customer.</p>',
-                timer: 3000,
-                showConfirmButton: false,
-                timerProgressBar: true
-            }).then(() => {
-                this.isDetailOpen = false;
-                // Hapus dari antrean QC — produksi selesai
-                this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
+        _doSubmit(targetStatus, currentStage, successText) {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            fetch('{{ route("staf.produksi.update", "") }}/' + this.selectedOrder.order_id, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: targetStatus,
+                    notes: this.productionNote
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success', title: 'Berhasil!',
+                        text: successText || res.message, timer: 2000, showConfirmButton: false
+                    }).then(() => {
+                        this.isDetailOpen = false;
+                        if (targetStatus === 'selesai_qc') {
+                            this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
+                        } else {
+                            this.orders = this.orders.map(o => {
+                                if (o.id === this.selectedOrder.id) {
+                                    o.stage = res.production_stage || currentStage;
+                                    o.status = res.status;
+                                }
+                                return o;
+                            });
+                        }
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
             });
         }
     }
