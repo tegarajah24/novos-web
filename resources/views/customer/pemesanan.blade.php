@@ -565,8 +565,22 @@
                 </div>
 
                 {{-- Jenis Potongan --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Potongan <span class="text-red-500">*</span></label>
+                <div x-data="{ showPotonganGuide: false }">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-sm font-medium text-gray-700">Jenis Potongan <span class="text-red-500">*</span></label>
+                        <button
+                            type="button"
+                            @click="showPotonganGuide = true"
+                            class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 border border-blue-200 bg-blue-50 hover:bg-blue-100 hover:border-blue-400 px-2.5 py-1 rounded-lg transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4"/>
+                                <path d="M12 8h.01"/>
+                            </svg>
+                            Detail Potongan
+                        </button>
+                    </div>
                     <select
                         x-model="form.jenis_potongan"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-shadow bg-white"
@@ -578,6 +592,76 @@
                         <option value="TUNIK">TUNIK</option>
                         <option value="SLIM FIT UNISEX">SLIM FIT UNISEX</option>
                     </select>
+
+                    {{-- Modal Detail Potongan --}}
+                    <div
+                        x-show="showPotonganGuide"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        style="background: rgba(0,0,0,0.55);"
+                        @click.self="showPotonganGuide = false"
+                    >
+                        <div
+                            x-show="showPotonganGuide"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
+                            @click.stop
+                        >
+                            {{-- Modal Header --}}
+                            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <path d="M12 16v-4"/>
+                                            <path d="M12 8h.01"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-gray-900">Jenis Potongan Jersey</h3>
+                                </div>
+                                <button
+                                    @click="showPotonganGuide = false"
+                                    class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+
+                            {{-- Modal Body --}}
+                            <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
+                                <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis-jenis potongan jersey yang tersedia.</p>
+                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-55">
+                                    <img
+                                        src="{{ asset('images/Jenis Potongan.png') }}"
+                                        alt="Jenis Potongan Jersey"
+                                        class="w-full h-auto object-contain"
+                                    >
+                                </div>
+                                <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan potongan dengan tim kami jika Anda membutuhkan penyesuaian khusus.</p>
+                            </div>
+
+                            {{-- Modal Footer --}}
+                            <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
+                                <button
+                                    @click="showPotonganGuide = false"
+                                    class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                                >
+                                    Mengerti
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
