@@ -16,6 +16,8 @@ class Product extends Model
         'min_qty',
         'production_days',
         'is_active',
+        'is_featured',
+        'theme_color',
     ];
 
     protected function casts(): array
@@ -23,6 +25,7 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'is_active' => 'boolean',
+            'is_featured' => 'boolean',
         ];
     }
 

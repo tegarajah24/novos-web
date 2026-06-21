@@ -28,6 +28,10 @@ Route::prefix('staf')
         Route::get('/produksi', [ProductionController::class, 'index'])->name('produksi');
 
         Route::get('/kelola-produk', [ProductController::class, 'index'])->name('kelola-produk');
+        Route::post('/kelola-produk', [ProductController::class, 'store'])->name('kelola-produk.store');
+        Route::post('/kelola-produk/{product}', [ProductController::class, 'update'])->name('kelola-produk.update');
+        Route::delete('/kelola-produk/{product}', [ProductController::class, 'destroy'])->name('kelola-produk.destroy');
+        Route::patch('/kelola-produk/{product}/featured', [ProductController::class, 'toggleFeatured'])->name('kelola-produk.featured');
         Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
         Route::post('/kelola-pengguna', [UserController::class, 'store'])->name('kelola-pengguna.store');
         Route::put('/kelola-pengguna/{user}', [UserController::class, 'update'])->name('kelola-pengguna.update');
