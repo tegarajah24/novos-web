@@ -311,38 +311,7 @@
 function notifDropdown() {
     return {
         open: false,
-        notifications: [
-            {
-                id: 1, read: false, initials: 'CS',
-                color: '#e53e3e',
-                message: 'Customer <strong>Budi Santoso</strong> melakukan <strong>ACC</strong> pesanan <strong class="text-[#1a237e]">NVS-20240620-003</strong>. Siap diteruskan ke tim Design.',
-                time: '5 menit lalu', badge: 'Disetujui', badgeClass: 'bg-green-100 text-green-700'
-            },
-            {
-                id: 2, read: false, initials: 'AD',
-                color: '#1a237e',
-                message: 'Pesanan baru masuk dari <strong>Rizky Pratama</strong> — <strong class="text-[#1a237e]">NVS-20240620-004</strong>. Segera lakukan konfirmasi.',
-                time: '22 menit lalu', badge: 'Pending', badgeClass: 'bg-yellow-100 text-yellow-700'
-            },
-            {
-                id: 3, read: false, initials: 'DS',
-                color: '#6b46c1',
-                message: 'Tim <strong>Design</strong> (Riko) menyelesaikan desain untuk <strong class="text-[#1a237e]">NVS-20240620-001</strong>. Status berubah ke <strong>Siap Cetak</strong>.',
-                time: '1 jam lalu', badge: 'Siap Cetak', badgeClass: 'bg-purple-100 text-purple-700'
-            },
-            {
-                id: 4, read: false, initials: 'PR',
-                color: '#2d7a43',
-                message: 'Tim <strong>Produksi</strong> (Sari) menyelesaikan pesanan <strong class="text-[#1a237e]">NVS-20240619-007</strong>. Status berubah ke <strong>Selesai</strong>.',
-                time: '3 jam lalu', badge: 'Selesai', badgeClass: 'bg-blue-100 text-blue-700'
-            },
-            {
-                id: 5, read: true, initials: 'CS',
-                color: '#d97706',
-                message: 'Customer <strong>Dewi Anggraini</strong> mengirim pesan baru pada pesanan <strong class="text-[#1a237e]">NVS-20240619-005</strong>.',
-                time: '1 hari lalu', badge: 'Pesan', badgeClass: 'bg-gray-100 text-gray-600'
-            },
-        ],
+        notifications: [],
         get unreadCount() {
             return this.notifications.filter(n => !n.read).length;
         },
