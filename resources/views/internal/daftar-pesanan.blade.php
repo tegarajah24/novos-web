@@ -76,9 +76,26 @@ function rupiah($n) {
                         <option>Super Express</option>
                     </select>
                 </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1 font-medium">Tanggal Dari</label>
+                    <input type="date" id="filter-date-from" value="{{ $activeDateFrom ?? '' }}"
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1 font-medium">Tanggal Sampai</label>
+                    <input type="date" id="filter-date-to" value="{{ $activeDateTo ?? '' }}"
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                </div>
                 <div class="flex gap-2 pt-1">
-                    <button @click="open = false" class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">Reset</button>
-                    <button @click="open = false" class="flex-1 px-3 py-2 text-sm bg-[#1a237e] text-white rounded-lg hover:bg-[#1a237e]/90 font-medium">Terapkan</button>
+                    <button @click="window.location.href='{{ route('staf.daftar-pesanan') }}'" class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">Reset</button>
+                    <button @click="
+                        let params = new URLSearchParams();
+                        let s = document.querySelector('#filter-date-from');
+                        let e = document.querySelector('#filter-date-to');
+                        if (s && s.value) params.set('date_from', s.value);
+                        if (e && e.value) params.set('date_to', e.value);
+                        window.location.href='{{ route('staf.daftar-pesanan') }}' + (params.toString() ? '?' + params.toString() : '');
+                    " class="flex-1 px-3 py-2 text-sm bg-[#1a237e] text-white rounded-lg hover:bg-[#1a237e]/90 font-medium">Terapkan</button>
                 </div>
             </div>
         </div>
@@ -112,15 +129,38 @@ function rupiah($n) {
         </div>
     </div>
 
-    @if($activeFilter)
-    <div class="flex items-center gap-3">
+    @if($activeFilter || $activeDateFrom || $activeDateTo)
+    <div class="flex items-center gap-3 flex-wrap">
+        @if($activeFilter)
         <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             <span class="font-medium">{{ ucwords(str_replace('_', ' ', $activeFilter)) }}</span>
-            <a href="{{ route('staf.daftar-pesanan') }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+            <a href="{{ route('staf.daftar-pesanan') }}{{ ($activeDateFrom || $activeDateTo) ? '?'.http_build_query(array_filter(['date_from' => $activeDateFrom, 'date_to' => $activeDateTo])) : '' }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </a>
         </div>
+        @endif
+        @if($activeDateFrom)
+        <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="font-medium">Dari {{ \Carbon\Carbon::parse($activeDateFrom)->format('d M Y') }}</span>
+            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'date_to' => $activeDateTo])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </a>
+        </div>
+        @endif
+        @if($activeDateTo)
+        <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="font-medium">Sampai {{ \Carbon\Carbon::parse($activeDateTo)->format('d M Y') }}</span>
+            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'date_from' => $activeDateFrom])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </a>
+        </div>
+        @endif
+        @if($activeFilter || $activeDateFrom || $activeDateTo)
+        <a href="{{ route('staf.daftar-pesanan') }}" class="text-xs text-gray-400 hover:text-gray-600 underline">Reset semua</a>
+        @endif
     </div>
     @endif
 

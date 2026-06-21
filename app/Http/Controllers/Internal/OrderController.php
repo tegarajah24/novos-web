@@ -40,9 +40,17 @@ class OrderController extends Controller
             $query->whereIn('status', $filteredDbStatuses);
         }
 
+        $activeDateFrom = $request->query('date_from');
+        $activeDateTo = $request->query('date_to');
+
+        if ($activeDateFrom && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateFrom)) {
+            $query->whereDate('created_at', '>=', $activeDateFrom);
+        }
+        if ($activeDateTo && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateTo)) {
+            $query->whereDate('created_at', '<=', $activeDateTo);
+        }
+
         $orders = $query->latest()
-            ->whereIn('status', $dbStatuses)
-            ->latest()
             ->get()
             ->map(function ($order) use ($statusMap) {
                 $produk = $order->designRequest
@@ -79,7 +87,7 @@ class OrderController extends Controller
             })
             ->toArray();
 
-        return view('internal.daftar-pesanan', compact('orders', 'assignees', 'activeFilter'));
+        return view('internal.daftar-pesanan', compact('orders', 'assignees', 'activeFilter', 'activeDateFrom', 'activeDateTo'));
     }
 
     public function show(Order $order)
