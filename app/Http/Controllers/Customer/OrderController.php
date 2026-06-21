@@ -11,6 +11,7 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
 
 class OrderController extends Controller
 {
@@ -92,6 +93,19 @@ class OrderController extends Controller
 
             return $order;
         });
+
+        Notification::sendToAllStaff(
+            'new_order',
+            'Pesanan Baru',
+            "Pesanan baru dari <strong>{$order->user->name}</strong> — <strong>{$order->order_number}</strong>",
+            [
+                'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role' => 'Customer',
+                'role_initial' => 'C',
+                'role_color' => '#e53e3e',
+                'order_number' => $order->order_number,
+            ]
+        );
 
         return response()->json([
             'success'     => true,

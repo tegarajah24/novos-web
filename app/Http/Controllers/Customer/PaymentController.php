@@ -11,6 +11,7 @@ use App\Models\ChatMessage;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
 
 class PaymentController extends Controller
 {
@@ -197,6 +198,19 @@ class PaymentController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                Notification::sendToAllStaff(
+                    'payment_success',
+                    'Pembayaran Dikonfirmasi',
+                    "Pembayaran untuk <strong>{$order->order_number}</strong> telah berhasil dikonfirmasi.",
+                    [
+                        'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                        'role' => 'Customer',
+                        'role_initial' => 'C',
+                        'role_color' => '#16a34a',
+                        'order_number' => $order->order_number,
+                    ]
+                );
             }
 
             return response()->json(['message' => 'OK']);

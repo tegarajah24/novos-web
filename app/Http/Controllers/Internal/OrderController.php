@@ -10,6 +10,7 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
 
 class OrderController extends Controller
 {
@@ -269,6 +270,20 @@ class OrderController extends Controller
                 'message'   => 'Pesanan ' . $order->order_number . ' telah divalidasi. Silakan lakukan pembayaran.',
             ]);
         });
+
+        $currentUser = auth()->user();
+        Notification::sendToAllStaff(
+            'order_validated',
+            'Pesanan Divalidasi',
+            "Pesanan <strong>{$order->order_number}</strong> telah divalidasi oleh <strong>{$currentUser->name}</strong> dan menunggu pembayaran customer.",
+            [
+                'initials' => collect(explode(' ', $currentUser->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role' => $currentUser->role->name,
+                'role_initial' => substr($currentUser->role->name, 0, 1),
+                'role_color' => '#1a237e',
+                'order_number' => $order->order_number,
+            ]
+        );
 
         return response()->json([
             'success' => true,

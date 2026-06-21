@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\ChatMessage;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
@@ -80,6 +81,20 @@ class ChatController extends Controller
         ]);
 
         $message->load('sender');
+
+        $currentUser = auth()->user();
+        $chat->load('order');
+        Notification::sendToAllStaff(
+            'chat',
+            'Pesan Baru',
+            "Pesan baru dari customer <strong>{$currentUser->name}</strong>" . ($chat->order ? " untuk <strong>{$chat->order->order_number}</strong>" : '') . ($data['message'] ? ": {$data['message']}" : ''),
+            [
+                'initials' => collect(explode(' ', $currentUser->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role' => 'Customer',
+                'role_initial' => 'C',
+                'role_color' => '#d53f8c',
+            ]
+        );
 
         return response()->json([
             'message' => [

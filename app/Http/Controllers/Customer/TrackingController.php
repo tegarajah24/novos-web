@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
 use Illuminate\Http\Request;
+use App\Models\Notification;
 
 class TrackingController extends Controller
 {
@@ -55,6 +56,20 @@ class TrackingController extends Controller
             'notes'      => 'Desain disetujui oleh customer',
         ]);
 
+        $currentUser = auth()->user();
+        Notification::sendToAllStaff(
+            'design_acc',
+            'Desain Disetujui',
+            "Customer <strong>{$currentUser->name}</strong> menyetujui desain untuk <strong>{$order->order_number}</strong> — status berubah ke <strong>{$nextStatus}</strong>.",
+            [
+                'initials' => collect(explode(' ', $currentUser->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role' => 'Customer',
+                'role_initial' => 'C',
+                'role_color' => '#6b46c1',
+                'order_number' => $order->order_number,
+            ]
+        );
+
         return response()->json([
             'success' => true,
             'status'  => $nextStatus,
@@ -83,6 +98,20 @@ class TrackingController extends Controller
             'changed_by' => auth()->id(),
             'notes'      => 'Revisi: ' . $request->note,
         ]);
+
+        $currentUser = auth()->user();
+        Notification::sendToAllStaff(
+            'design_revision',
+            'Revisi Desain',
+            "Customer <strong>{$currentUser->name}</strong> meminta revisi untuk <strong>{$order->order_number}</strong>: {$request->note}",
+            [
+                'initials' => collect(explode(' ', $currentUser->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role' => 'Customer',
+                'role_initial' => 'C',
+                'role_color' => '#d97706',
+                'order_number' => $order->order_number,
+            ]
+        );
 
         return response()->json(['success' => true]);
     }

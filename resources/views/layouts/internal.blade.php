@@ -94,7 +94,7 @@
                         <i data-lucide="message-circle" class="w-5 h-5"></i>
                     </a>
                     {{-- Notifikasi Dropdown --}}
-                    <div x-data="notifDropdown()" class="relative" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
+                    <div x-data="notifDropdown()" x-init="init()" class="relative" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
                         <button @click="open = !open" class="relative p-2 text-gray-500 hover:text-[#1a237e] transition-colors">
                             <i data-lucide="bell" class="w-5 h-5"></i>
                             <span x-show="unreadCount > 0" x-cloak
@@ -131,7 +131,6 @@
                                     <div @click="markRead(notif.id)"
                                          :class="notif.read ? 'bg-white' : 'bg-blue-50/50'"
                                          class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
-                                        {{-- Avatar / Dot --}}
                                         <div class="relative shrink-0">
                                             <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold"
                                                  :style="`background: ${notif.color}`"
@@ -141,7 +140,6 @@
                                                   class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full">
                                             </span>
                                         </div>
-                                        {{-- Content --}}
                                         <div class="flex-1 min-w-0">
                                             <p class="text-xs text-gray-800 leading-relaxed" x-html="notif.message"></p>
                                             <div class="flex items-center gap-2 mt-1">
@@ -317,14 +315,46 @@ function notifDropdown() {
             return this.notifications.filter(n => !n.read).length;
         },
         get previewNotifs() {
-            return this.notifications.slice(0, 4);
+            return this.notifications.slice(0, 5);
         },
-        markRead(id) {
+        init() {
+            this.loadNotifications();
+            setInterval(() => this.loadNotifications(), 30000);
+        },
+        async loadNotifications() {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            try {
+                const res = await fetch('{{ route("staf.notifikasi.preview") }}', {
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf }
+                });
+                const data = await res.json();
+                this.notifications = data.notifications;
+            } catch (e) {}
+        },
+        async markRead(id) {
             const n = this.notifications.find(n => n.id === id);
-            if (n) n.read = true;
+            if (!n || n.read) return;
+            n.read = true;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            try {
+                await fetch('{{ url("staf/notifikasi") }}/' + id + '/read', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+                });
+            } catch (e) {}
         },
-        markAllRead() {
-            this.notifications.forEach(n => n.read = true);
+        async markAllRead() {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            try {
+                const res = await fetch('{{ route("staf.notifikasi.read-all") }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.notifications.forEach(n => n.read = true);
+                }
+            } catch (e) {}
         }
     }
 }
