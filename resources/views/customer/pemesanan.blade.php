@@ -934,37 +934,8 @@ function pemesananForm(catalogProduct = null) {
             .then(data => {
                 if (!data.success) throw new Error('Gagal membuat pesanan');
                 this.orderNumber = data.orderNumber;
-                return fetch('{{ url('/payment/snap') }}/' + data.order.id, {
-                    method: 'POST',
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                });
-            })
-            .then(res => {
-                if (!res.ok) {
-                    return res.text().then(text => { throw new Error(text.substring(0, 150)); });
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (!data.snap_token) throw new Error('Gagal mendapatkan token pembayaran');
-
-                window.snap.pay(data.snap_token, {
-                    onSuccess: () => {
-                        window.location.href = '/payment/finish?order_id=' + data.midtrans_order_id;
-                    },
-                    onPending: () => {
-                        this.step = 4;
-                        this.loading = false;
-                    },
-                    onClose: () => {
-                        this.step = 4;
-                        this.loading = false;
-                    },
-                    onError: () => {
-                        Swal.fire({ icon: 'error', title: 'Pembayaran Gagal', text: 'Silakan coba lagi.' });
-                        this.loading = false;
-                    }
-                });
+                this.step = 4;
+                this.loading = false;
             })
             .catch(err => {
                 Swal.fire({ icon: 'error', title: 'Oops...', text: err.message || 'Terjadi kesalahan' });

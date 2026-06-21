@@ -136,8 +136,8 @@
                                 </div>
                                 <div class="flex gap-2 items-center">
                                     <button @click="openDetail(order)" class="px-4 py-2 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors">Lihat Detail Transaksi</button>
-                                    <template x-if="order.status === 'pending'">
-                                        <button @click="payOrder(order.id)" class="px-4 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#283593] transition-colors">Bayar Sekarang</button>
+                                    <template x-if="order.status === 'menunggu_pembayaran'">
+                                        <button @click="payOrder(order.id)" class="px-4 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#283593] transition-colors">Setujui Detail & Bayar Sekarang</button>
                                     </template>
                                     <div class="relative">
                                         <button @click="showMenu = !showMenu" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
@@ -531,7 +531,7 @@ function profileDashboard(orders = [], user = {}) {
             
             return this.orders.filter(order => {
                 if (filter === 'menunggu_pembayaran') {
-                    return order.status === 'pending';
+                    return order.status === 'menunggu_validasi' || order.status === 'menunggu_pembayaran';
                 }
                 if (filter === 'proses') {
                     return ['dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak'].includes(order.status);
@@ -548,8 +548,9 @@ function profileDashboard(orders = [], user = {}) {
 
         getStatusLabel(status) {
             const labels = {
-                'pending': 'Menunggu Pembayaran',
-                'dikonfirmasi': 'Menunggu Konfirmasi',
+                'menunggu_validasi': 'Menunggu Validasi',
+                'menunggu_pembayaran': 'Menunggu Pembayaran',
+                'dikonfirmasi': 'Dikonfirmasi',
                 'disetujui': 'Desain Dikerjakan',
                 'di_design': 'Tahap Desain',
                 'siap_cetak': 'Menunggu ACC Desain',
@@ -562,7 +563,8 @@ function profileDashboard(orders = [], user = {}) {
 
         getStatusBadgeClass(status) {
             const classes = {
-                'pending': 'bg-amber-100 text-amber-800',
+                'menunggu_validasi': 'bg-amber-100 text-amber-800',
+                'menunggu_pembayaran': 'bg-orange-100 text-orange-800',
                 'dikonfirmasi': 'bg-blue-100 text-blue-800',
                 'disetujui': 'bg-indigo-100 text-indigo-800',
                 'di_design': 'bg-purple-100 text-purple-800',
@@ -586,8 +588,21 @@ function profileDashboard(orders = [], user = {}) {
         },
 
         async payOrder(orderId) {
+            const confirm = await Swal.fire({
+                title: 'Setujui Detail Pesanan?',
+                text: 'Dengan melanjutkan, Anda menyetujui detail pesanan dan akan diarahkan ke pembayaran.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#1a237e',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Lanjutkan!',
+                cancelButtonText: 'Batal'
+            });
+
+            if (!confirm.isConfirmed) return;
+
             Swal.fire({
-                title: 'Menghubungkan ke Pembayaran...',
+                title: 'Memproses...',
                 text: 'Harap tunggu sebentar',
                 allowOutsideClick: false,
                 didOpen: () => {
@@ -596,7 +611,7 @@ function profileDashboard(orders = [], user = {}) {
             });
 
             try {
-                const res = await fetch('/payment/snap/' + orderId, {
+                const res = await fetch('/payment/approve/' + orderId, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',

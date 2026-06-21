@@ -14,14 +14,14 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalOrders = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])->count();
-        $totalLastWeek = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+        $totalOrders = Order::whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])->count();
+        $totalLastWeek = Order::whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
             ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
             ->count();
         $totalTrend = $totalOrders - $totalLastWeek;
 
-        $pendingOrders = Order::where('status', 'pending')->count();
-        $pendingLastWeek = Order::where('status', 'pending')
+        $pendingOrders = Order::where('status', 'menunggu_validasi')->count();
+        $pendingLastWeek = Order::where('status', 'menunggu_validasi')
             ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
             ->count();
         $pendingTrend = $pendingOrders - $pendingLastWeek;
@@ -41,7 +41,7 @@ class DashboardController extends Controller
         $completedTrend = $completedToday - $completedYesterday;
 
         $recentOrders = Order::with(['user', 'designRequest'])
-            ->whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+            ->whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
             ->latest()
             ->take(5)
             ->get();
@@ -55,13 +55,13 @@ class DashboardController extends Controller
             $weeklyData[] = Order::whereBetween('created_at', [$weekStart, $weekEnd])->count();
         }
 
-        $pending = Order::where('status', 'pending')->count();
-        $design = Order::whereIn('status', ['dikonfirmasi', 'di_design'])->count();
+        $pending = Order::where('status', 'menunggu_validasi')->count();
+        $design = Order::whereIn('status', ['dikonfirmasi', 'disetujui', 'di_design'])->count();
         $acc = Order::where('status', 'disetujui')->count();
         $produksi = Order::whereIn('status', ['siap_cetak', 'diproduksi'])->count();
         $selesai = Order::where('status', 'selesai')->count();
 
-        $statusLabels = ['Menunggu', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'];
+        $statusLabels = ['Menunggu Validasi', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'];
         $statusData = [$pending, $design, $acc, $produksi, $selesai];
 
         return view('internal.dashboard', compact(
@@ -82,15 +82,15 @@ class DashboardController extends Controller
         $lastMonthStart = now()->subMonth()->startOfMonth();
         $lastMonthEnd = now()->subMonth()->endOfMonth();
 
-        $totalOrders = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])->count();
-        $lastMonthOrders = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+        $totalOrders = Order::whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])->count();
+        $lastMonthOrders = Order::whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
             ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->count();
 
         $totalRevenue = Payment::where('status', 'success')->sum('amount');
         $lastMonthRevenue = Payment::where('status', 'success')
             ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->sum('amount');
 
-        $activeCustomers = Order::whereIn('status', ['pending', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
+        $activeCustomers = Order::whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
             ->distinct('user_id')->count('user_id');
 
         $avgDays = Order::where('status', 'selesai')
@@ -133,7 +133,7 @@ class DashboardController extends Controller
             ],
         ];
 
-        $pendingCount = Order::where('status', 'pending')->count();
+        $pendingCount = Order::where('status', 'menunggu_validasi')->count();
         $designCount = Order::whereIn('status', ['dikonfirmasi', 'di_design'])->count();
         $completedMonth = Order::where('status', 'selesai')
             ->whereMonth('updated_at', now()->month)->count();

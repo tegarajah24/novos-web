@@ -10,43 +10,42 @@ Isi form pesanan:
 - Ukuran & jumlah
 - Catatan tambahan
   ↓
-Pesanan tersimpan → status: PENDING
-  ↓
-Pembayaran via Midtrans (atau bisa diatur setelah konfirmasi?)
+Pesanan tersimpan → status: MENUNGGU_VALIDASI
+  ↓ chat otomatis ke customer: "Pesanan Anda telah dibuat dan menunggu validasi admin."
 
 [ADMIN]
 Notifikasi pesanan baru masuk
   ↓
-Admin cek kelengkapan & kebenaran pesanan
+Admin cek kelengkapan & validasi pesanan
   ↓
-Admin kirim konfirmasi ke customer → status: DIKONFIRMASI
+Admin validasi → status: MENUNGGU_PEMBAYARAN
+  ↓ chat otomatis ke customer: "Pesanan telah divalidasi. Silakan lakukan pembayaran."
 
 [CUSTOMER]
-Customer menerima notifikasi / lihat di dashboard
+Customer buka Profil → lihat tombol "Setujui Detail & Bayar Sekarang"
   ↓
-Customer klik ACC / setujui pesanan → status: DISETUJUI
+Klik tombol → ACC detail pesanan + Midtrans payment popup
+  ↓
+Bayar sukses → status: DIKONFIRMASI
+  ↓ chat otomatis ke admin: "Pembayaran untuk pesanan {number} telah dikonfirmasi."
 
 [ADMIN]
-Admin teruskan ke tim Design → status: DI_DESIGN
+Admin teruskan ke tim Design → status: DISETUJUI / DI_DESIGN
 
 [DESIGN]
 Tim Design menerima detail pesanan & desain
   ↓
-Print detail pesanan
-  ↓
 Design selesai → status: SIAP_CETAK
-  ↓
-Serahkan hasil print ke Produksi
 
 [PRODUKSI]
 Produksi menerima tugas → status: DIPRODUKSI
   ↓
-Kerjakan pesanan
+Kerjakan pesanan (Printing → Jahit → QC)
   ↓
 Selesai → status: SELESAI
 
 [CUSTOMER]
-Customer bisa tracking status pesanan kapanpun
+Customer bisa tracking status pesanan & chat kapan saja
 ```
 
 ## Catatan Penting
@@ -54,5 +53,5 @@ Customer bisa tracking status pesanan kapanpun
 - Setiap perubahan status dicatat di `order_status_histories`
 - Customer bisa chat dengan admin di setiap tahap pesanan
 - Chat terikat ke pesanan (`order_id`), bukan chat umum
-- Pembayaran via Midtrans — timing pembayaran perlu dikonfirmasi dengan client
-  (apakah bayar di awal saat pesan, atau setelah customer ACC?)
+- Pembayaran via Midtrans — dilakukan setelah admin validasi
+- Auto chat notification dikirim ke chat room terkait setiap perubahan status
