@@ -788,7 +788,7 @@ function pemesananForm(catalogProduct = null) {
         jenis: null,
         catalogProduct: catalogProduct,
         form: {
-            team_name: 'FC Garuda',
+            team_name: '',
             kerah: '',
             bahan: '',
 
