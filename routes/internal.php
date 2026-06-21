@@ -11,6 +11,8 @@ use App\Http\Controllers\Internal\UserController;
 use App\Http\Controllers\Internal\ChatController;
 use App\Http\Controllers\Internal\DailyMentalCheckController;
 use App\Http\Controllers\Internal\NotificationController;
+use App\Http\Controllers\Internal\CategoryController;
+use App\Http\Controllers\Internal\SettingController;
 
 Route::prefix('staf')
     ->middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])
@@ -60,4 +62,13 @@ Route::prefix('staf')
         Route::get('/laporan/export/csv', [LaporanController::class, 'exportCsv'])->name('laporan.csv');
         Route::get('/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
         Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
+
+        Route::get('/kategori', [CategoryController::class, 'index'])->name('kategori');
+        Route::get('/kategori/data', [CategoryController::class, 'index'])->name('kategori.data');
+        Route::post('/kategori', [CategoryController::class, 'store'])->name('kategori.store');
+        Route::put('/kategori/{category}', [CategoryController::class, 'update'])->name('kategori.update');
+        Route::delete('/kategori/{category}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
+
+        Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
+        Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
     });
