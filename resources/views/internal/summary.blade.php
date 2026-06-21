@@ -10,9 +10,9 @@
 {{-- ─── KPI BARIS 1 ───────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
 @foreach($kpi1 as $k)
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1">
+<a href="{{ $k['url'] }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1 hover:border-[#1a237e]/30 cursor-pointer group">
     <div class="flex justify-between items-start mb-3">
-        <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
             <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
         </div>
         <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
@@ -22,16 +22,16 @@
     </div>
     <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
     <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
-</div>
+</a>
 @endforeach
 </div>
 
 {{-- ─── KPI BARIS 2 ───────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
 @foreach($kpi2 as $k)
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1">
+<a href="{{ $k['url'] }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1 hover:border-[#1a237e]/30 cursor-pointer group">
     <div class="flex justify-between items-start mb-3">
-        <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
             <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
         </div>
         <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
@@ -41,7 +41,7 @@
     </div>
     <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
     <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
-</div>
+</a>
 @endforeach
 </div>
 
