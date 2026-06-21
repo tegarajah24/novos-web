@@ -949,10 +949,8 @@
                     <hr class="my-4">
                     <div class="flex justify-between items-center">
                         <span class="text-gray-700 font-semibold">Total</span>
-                        <span class="text-xl font-bold text-blue-900" x-text="formatRupiah(estimasiTotal)"></span>
+                        <span class="text-xl font-bold text-[#1a237e]" x-text="formatRupiah(estimasiTotal)"></span>
                     </div>
-                    </div>
-                    </template>
                 </div>
             </div>
 
