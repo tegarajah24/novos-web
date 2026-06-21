@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Novos — Custom Sports Jersey')</title>
+    <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
