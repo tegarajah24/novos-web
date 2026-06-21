@@ -613,14 +613,7 @@ function profileDashboard(orders = [], user = {}) {
 
                 window.snap.pay(data.snap_token, {
                     onSuccess: () => {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Pembayaran Sukses!',
-                            text: 'Terima kasih, pembayaran Anda berhasil dikonfirmasi.',
-                            confirmButtonColor: '#1a237e'
-                        }).then(() => {
-                            window.location.reload();
-                        });
+                        window.location.href = '/payment/finish?order_id=' + data.midtrans_order_id;
                     },
                     onPending: () => {
                         Swal.fire({

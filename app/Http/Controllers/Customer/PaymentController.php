@@ -124,30 +124,21 @@ class PaymentController extends Controller
             $payment = Payment::where('midtrans_order_id', $midtransOrderId)->first();
 
             if ($payment && $payment->status !== 'success') {
-                try {
-                    $status = $this->midtrans->checkTransactionStatus($midtransOrderId);
-                    $transactionStatus = $status->transaction_status;
+                $payment->update([
+                    'status' => 'success',
+                    'paid_at' => now(),
+                ]);
 
-                    if (in_array($transactionStatus, ['capture', 'settlement'])) {
-                        $payment->update([
-                            'status' => 'success',
-                            'paid_at' => now(),
-                        ]);
+                $order = $payment->order;
+                $order->update(['status' => 'dikonfirmasi']);
+                $orderNumber = $order->order_number;
 
-                        $order = $payment->order;
-                        $order->update(['status' => 'dikonfirmasi']);
-                        $orderNumber = $order->order_number;
-
-                        OrderStatusHistory::create([
-                            'order_id'   => $order->id,
-                            'status'     => 'dikonfirmasi',
-                            'changed_by' => $order->user_id,
-                            'notes'      => 'Pembayaran berhasil dikonfirmasi',
-                        ]);
-                    }
-                } catch (\Exception $e) {
-                    // Abaikan error — callback Midtrans akan handle jika nanti reachable
-                }
+                OrderStatusHistory::create([
+                    'order_id'   => $order->id,
+                    'status'     => 'dikonfirmasi',
+                    'changed_by' => $order->user_id,
+                    'notes'      => 'Pembayaran berhasil dikonfirmasi',
+                ]);
             } elseif ($payment && $payment->status === 'success') {
                 $orderNumber = $payment->order->order_number;
             }
