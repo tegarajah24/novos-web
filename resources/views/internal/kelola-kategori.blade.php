@@ -107,7 +107,7 @@ function kategoriApp() {
             if (!this.name.trim()) return;
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             const url = this.editId
-                ? '{{ route("staf.kategori.update", "") }}/' + this.editId
+                ? '/staf/kategori/' + this.editId
                 : '{{ route("staf.kategori.store") }}';
             const method = this.editId ? 'PUT' : 'POST';
 
@@ -142,7 +142,7 @@ function kategoriApp() {
                 if (!result.isConfirmed) return;
                 const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                 try {
-                    const res = await fetch('{{ route("staf.kategori.destroy", "") }}/' + cat.id, {
+                    const res = await fetch('/staf/kategori/' + cat.id, {
                         method: 'DELETE',
                         headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
                     });
