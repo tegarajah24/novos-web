@@ -55,5 +55,14 @@ class UserSeeder extends Seeder
                 'role_id' => Role::where('name', 'Produksi')->first()->id,
             ]
         );
+
+        User::firstOrCreate(
+            ['email' => 'testing@novos.com'],
+            [
+                'name' => 'Testing Customer',
+                'password' => bcrypt('password'),
+                'role_id' => Role::where('name', 'Customer')->first()->id,
+            ]
+        );
     }
 }
