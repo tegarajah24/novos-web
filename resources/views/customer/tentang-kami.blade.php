@@ -123,30 +123,29 @@
         <div class="mx-auto w-20 h-0.5 bg-gray-900 mb-8"></div>
 
         <div x-ref="timScroll" @scroll="updateScroll()" class="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 no-scrollbar scroll-smooth snap-x snap-mandatory">
-            @foreach([
-                ['Ahmad Rizki', 'Founder & CEO', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80'],
-                ['Sarah Putri', 'Head of Design', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80'],
-                ['Dimas Pratama', 'Head of Production', 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80'],
-                ['Rina Fitriani', 'Customer Service', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80'],
-                ['Budi Santoso', 'Lead Designer', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80'],
-                ['Sari Dewi', 'Marketing Manager', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80'],
-                ['Adi Nugroho', 'Production Staff', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80'],
-                ['Dian Permata', 'Quality Control', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80'],
-                ['Fajar Hidayat', 'Logistics', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80'],
-                ['Maya Anggraini', 'Admin', 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&q=80'],
-            ] as $t)
+            @forelse($tim as $t)
             <div class="snap-start shrink-0 w-[calc(50%-12px)] md:w-[270px] group" data-aos="fade-up" data-aos-once="true" data-aos-delay="{{ ($loop->index % 5) * 100 }}">
-                <div class="relative w-full overflow-hidden rounded-lg" style="aspect-ratio:3/4">
-                    <img src="{{ $t[2] }}"
-                         alt="{{ $t[0] }}"
+                <div class="relative w-full overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center" style="aspect-ratio:3/4">
+                    @if($t->avatar)
+                    <img src="{{ asset('storage/' . $t->avatar) }}"
+                         alt="{{ $t->fullname ?? $t->name }}"
                          class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105">
+                    @else
+                    <div class="w-full h-full flex items-center justify-center bg-[#1a237e] text-white text-4xl font-bold">
+                        {{ strtoupper(substr($t->fullname ?? $t->name, 0, 2)) }}
+                    </div>
+                    @endif
                 </div>
                 <div class="mt-3 text-center">
-                    <h3 class="text-gray-900 text-sm font-bold">{{ $t[0] }}</h3>
-                    <p class="text-gray-500 text-xs mt-0.5">{{ $t[1] }}</p>
+                    <h3 class="text-gray-900 text-sm font-bold">{{ $t->fullname ?? $t->name }}</h3>
+                    <p class="text-gray-500 text-xs mt-0.5">{{ $t->role->name }}</p>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="w-full text-center py-10 text-gray-500">
+                Belum ada anggota tim.
+            </div>
+            @endforelse
         </div>
     </div>
 </section>

@@ -152,6 +152,19 @@
                         </select>
                     </div>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Foto Profil</label>
+                    <div class="flex items-center gap-4">
+                        <div id="tambahAvatarPreview" class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs overflow-hidden shrink-0 border border-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <label class="px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
+                            Pilih Foto
+                            <input type="file" name="avatar" accept="image/*" class="hidden" onchange="previewAvatar(this, 'tambahAvatarPreview')">
+                        </label>
+                        <span class="text-xs text-gray-400">Maks. 2MB (PNG, JPG, WEBP)</span>
+                    </div>
+                </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal(event, 'modalTambah')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
                     <button type="submit" id="btnTambah" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#283593] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
@@ -212,6 +225,19 @@
                         </select>
                     </div>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Foto Profil</label>
+                    <div class="flex items-center gap-4">
+                        <div id="editAvatarPreview" class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs overflow-hidden shrink-0 border border-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <label class="px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
+                            Pilih Foto
+                            <input type="file" name="avatar" accept="image/*" class="hidden" onchange="previewAvatar(this, 'editAvatarPreview')">
+                        </label>
+                        <span class="text-xs text-gray-400">Maks. 2MB (PNG, JPG, WEBP)</span>
+                    </div>
+                </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal(event, 'modalEdit')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
                     <button type="submit" id="btnEdit" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#283593] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
@@ -233,7 +259,7 @@
                 </button>
             </div>
             <div class="p-6 text-center">
-                <div class="w-20 h-20 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4" id="detailAvatar">AD</div>
+                <div class="w-20 h-20 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 overflow-hidden" id="detailAvatar">AD</div>
                 <h4 class="text-xl font-bold text-gray-900" id="detailNama">Admin Dedi</h4>
                 <p class="text-gray-500 text-sm mt-0.5" id="detailUsername">@admindedi</p>
             </div>
@@ -295,10 +321,13 @@
                     'Super Admin': 'red', 'Manager': 'purple', 'Admin': 'blue', 'Design': 'orange', 'Produksi': 'green'
                 }[u.role] || 'gray';
                 const initials = u.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+                const avatarHtml = u.avatar
+                    ? `<img src="/storage/${u.avatar}" alt="${u.name}" class="w-9 h-9 rounded-full object-cover shrink-0">`
+                    : `<div class="w-9 h-9 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0">${initials}</div>`;
                 return `<tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0">${initials}</div>
+                            ${avatarHtml}
                             <span class="font-medium text-gray-900">${u.name}</span>
                         </div>
                     </td>
@@ -402,7 +431,13 @@
             const user = __users.find(u => u.id === id);
             if (!user) return;
             const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-            document.getElementById('detailAvatar').textContent = initials;
+            const avatarEl = document.getElementById('detailAvatar');
+            if (user.avatar) {
+                avatarEl.innerHTML = `<img src="/storage/${user.avatar}" alt="${user.name}" class="w-full h-full object-cover">`;
+            } else {
+                avatarEl.innerHTML = initials;
+                avatarEl.className = 'w-20 h-20 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 overflow-hidden';
+            }
             document.getElementById('detailNama').textContent = user.name;
             document.getElementById('detailEmail').textContent = user.email;
             document.getElementById('detailUsername').textContent = '@' + user.username;
@@ -410,6 +445,19 @@
             document.getElementById('detailStatus').innerHTML = `<x-badge type="green">${user.status}</x-badge>`;
             document.getElementById('detailTanggal').textContent = user.created_at;
             openModal('modalDetail');
+        }
+
+        function previewAvatar(input, previewId) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const el = document.getElementById(previewId);
+                if (file.type.startsWith('image/')) {
+                    el.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         function openEdit(id) {
@@ -423,6 +471,14 @@
             const roleSelect = document.getElementById('editRole');
             for (let opt of roleSelect.options) {
                 if (opt.value === user.role) { opt.selected = true; break; }
+            }
+            const avatarPreview = document.getElementById('editAvatarPreview');
+            if (user.avatar) {
+                avatarPreview.innerHTML = `<img src="/storage/${user.avatar}" class="w-full h-full object-cover">`;
+            } else {
+                const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+                avatarPreview.innerHTML = initials;
+                avatarPreview.className = 'w-14 h-14 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0 border border-gray-200';
             }
             openModal('modalEdit');
         }

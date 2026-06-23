@@ -12,7 +12,11 @@ use App\Http\Controllers\Customer\AddressController;
 
 // Public routes
 Route::get('/tentang-kami', function () {
-    return view('customer.tentang-kami');
+    $tim = App\Models\User::with('role')
+        ->whereHas('role', fn($q) => $q->whereIn('name', ['Super Admin', 'Manager', 'Admin', 'Design', 'Produksi']))
+        ->orderBy('created_at')
+        ->get();
+    return view('customer.tentang-kami', compact('tim'));
 })->name('tentang');
 
 Route::get('/katalog', [ProductController::class, 'index'])->name('katalog');

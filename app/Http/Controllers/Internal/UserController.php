@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -25,6 +26,7 @@ class UserController extends Controller
                     'username'   => explode('@', $user->email)[0],
                     'phone'      => $user->phone ?? '-',
                     'role'       => $user->role->name,
+                    'avatar'     => $user->avatar,
                     'status'     => 'Aktif',
                     'created_at' => $user->created_at->format('d M Y'),
                 ];
@@ -42,16 +44,20 @@ class UserController extends Controller
             'email'    => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'role'     => 'required|string|in:Super Admin,Manager,Admin,Design,Produksi',
+            'avatar'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
         $role = Role::where('name', $data['role'])->firstOrFail();
 
-        $user = DB::transaction(function () use ($data, $role) {
+        $avatarPath = $request->hasFile('avatar') ? $request->file('avatar')->store('avatars', 'public') : null;
+
+        $user = DB::transaction(function () use ($data, $role, $avatarPath) {
             return User::create([
                 'name'     => $data['name'],
                 'email'    => $data['email'],
                 'password' => Hash::make($data['password']),
                 'role_id'  => $role->id,
+                'avatar'   => $avatarPath,
             ]);
         });
 
@@ -65,6 +71,7 @@ class UserController extends Controller
                 'username'   => explode('@', $user->email)[0],
                 'phone'      => $user->phone ?? '-',
                 'role'       => $role->name,
+                'avatar'     => $user->avatar,
                 'status'     => 'Aktif',
                 'created_at' => $user->created_at->format('d M Y'),
             ],
@@ -78,15 +85,25 @@ class UserController extends Controller
             'email'    => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:6|confirmed',
             'role'     => 'required|string|in:Super Admin,Manager,Admin,Design,Produksi',
+            'avatar'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
         $role = Role::where('name', $data['role'])->firstOrFail();
 
-        DB::transaction(function () use ($data, $role, $user) {
+        $avatarPath = $user->avatar;
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        DB::transaction(function () use ($data, $role, $user, $avatarPath) {
             $user->update([
                 'name'    => $data['name'],
                 'email'   => $data['email'],
                 'role_id' => $role->id,
+                'avatar'  => $avatarPath,
             ]);
 
             if ($data['password']) {
@@ -104,6 +121,7 @@ class UserController extends Controller
                 'username'   => explode('@', $user->email)[0],
                 'phone'      => $user->phone ?? '-',
                 'role'       => $role->name,
+                'avatar'     => $user->fresh()->avatar,
                 'status'     => 'Aktif',
                 'created_at' => $user->created_at->format('d M Y'),
             ],
