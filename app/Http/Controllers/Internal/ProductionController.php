@@ -63,8 +63,9 @@ class ProductionController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $data = $request->validate([
-            'action'  => 'required|in:proses_printing,selesai_printing,proses_jahit,selesai_jahit,proses_qc,selesai_qc,revisi_qc',
-            'notes'   => 'nullable|string|max:2000',
+            'action'       => 'required|in:proses_printing,selesai_printing,proses_jahit,selesai_jahit,proses_qc,selesai_qc,revisi_qc',
+            'notes'        => 'nullable|string|max:2000',
+            'target_stage' => 'nullable|required_if:action,revisi_qc|in:jahit,printing',
         ]);
 
         $user = auth()->user();
@@ -77,7 +78,7 @@ class ProductionController extends Controller
             'selesai_jahit'    => ['stage' => 'qc',       'order_status' => 'diproduksi'],
             'proses_qc'        => ['stage' => 'qc',       'order_status' => 'diproduksi'],
             'selesai_qc'       => ['stage' => null,       'order_status' => 'selesai'],
-            'revisi_qc'        => ['stage' => 'jahit',    'order_status' => 'diproduksi'],
+            'revisi_qc'        => ['stage' => null,       'order_status' => 'diproduksi'], // stage from target_stage
         ];
 
         $mapping = $statusMap[$data['action']];
@@ -86,11 +87,15 @@ class ProductionController extends Controller
 
         DB::transaction(function () use ($order, $newOrderStatus, $newStage, $data, $user) {
             $updateData = ['status' => $newOrderStatus];
-            if ($newStage) {
+
+            if ($data['action'] === 'revisi_qc') {
+                $updateData['production_stage'] = $data['target_stage'] ?? 'jahit';
+            } elseif ($newStage) {
                 $updateData['production_stage'] = $newStage;
             } else {
                 $updateData['production_stage'] = null;
             }
+
             $order->update($updateData);
 
             $order->statusHistories()->create([
@@ -138,6 +143,7 @@ class ProductionController extends Controller
                 : 'Status produksi berhasil diperbarui.',
             'production_stage' => $newStage,
             'status' => $newOrderStatus,
+            'target_stage' => $data['action'] === 'revisi_qc' ? ($data['target_stage'] ?? 'jahit') : null,
         ]);
     }
 }

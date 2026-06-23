@@ -396,7 +396,7 @@
                                 {{-- Tombol Submit --}}
                                 <div class="pt-2">
                                     <button @click="submitProduksi"
-                                        :disabled="!updateStatus"
+                                        :disabled="!canSubmit()"
                                         class="w-full py-3 px-4 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-[#1a237e]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
                                         <i data-lucide="send" class="w-4 h-4"></i>
                                         <span x-text="'Update'"></span>
@@ -482,6 +482,7 @@ function produksiApp() {
                 this.updateStatus = 'proses_qc';
             }
             this.productionNote = '';
+            this.targetStage = 'jahit';
             // Reset checklist QC setiap buka modal
             this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, perluRevisi: false };
             this.isDetailOpen = true;
@@ -591,10 +592,11 @@ function produksiApp() {
                         });
                         return;
                     }
-                    title = 'Kirim Revisi ke Jahit?';
-                    text = 'Pesanan akan dikembalikan ke bagian Jahit untuk pengerjaan ulang sesuai catatan QC.';
+                    const targetLabel = this.targetStage === 'printing' ? 'Printing' : 'Jahit';
+                    title = `Kirim Revisi ke ${targetLabel}?`;
+                    text = `Pesanan akan dikembalikan ke bagian ${targetLabel} untuk pengerjaan ulang sesuai catatan QC.`;
                     confirmButtonText = 'Ya, Kirim Revisi!';
-                    successText = 'Pesanan dikembalikan ke bagian Jahit untuk revisi.';
+                    successText = `Pesanan dikembalikan ke bagian ${targetLabel} untuk revisi.`;
                 }
             }
 
@@ -625,7 +627,8 @@ function produksiApp() {
                 headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: targetStatus,
-                    notes: this.productionNote
+                    notes: this.productionNote,
+                    target_stage: targetStatus === 'revisi_qc' ? this.targetStage : undefined
                 })
             })
             .then(r => r.json())
@@ -641,7 +644,7 @@ function produksiApp() {
                         } else {
                             this.orders = this.orders.map(o => {
                                 if (o.id === this.selectedOrder.id) {
-                                    o.stage = res.production_stage || currentStage;
+                                    o.stage = targetStatus === 'revisi_qc' ? (res.target_stage || 'jahit') : (res.production_stage || currentStage);
                                     o.status = res.status;
                                 }
                                 return o;
