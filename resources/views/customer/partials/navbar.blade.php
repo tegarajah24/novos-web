@@ -270,6 +270,11 @@
                             <form x-show="tab === 'login'" x-cloak method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="space-y-4">
+                                    @if($errors->any())
+                                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 font-medium">
+                                        Username atau password salah.
+                                    </div>
+                                    @endif
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
                                         <input type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="username"
@@ -489,6 +494,9 @@
                         history.replaceState(null, '', url);
                     }
                 }
+                @if($errors->any())
+                this.openSidebar('login');
+                @endif
                 @endguest
             },
 
