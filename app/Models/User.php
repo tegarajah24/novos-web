@@ -27,6 +27,11 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(CustomerAddress::class);
+    }
+
     public function chats(): HasMany
     {
         return $this->hasMany(Chat::class, 'customer_id');

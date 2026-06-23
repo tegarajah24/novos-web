@@ -5,7 +5,7 @@
 @section('content')
 @auth
 
-<div class="max-w-5xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }})">
+<div class="max-w-5xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
@@ -101,8 +101,18 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 translate-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">Detail & Upload</h2>
-        <p class="text-sm text-gray-500 mt-1">Lengkapi informasi pesanan dan upload file desain Anda</p>
+        <h2 class="text-lg font-semibold text-gray-900" x-text="subStep === 1 ? 'Detail & Upload' : 'Alamat Pengiriman'"></h2>
+        <p class="text-sm text-gray-500 mt-1" x-text="subStep === 1 ? 'Lengkapi informasi pesanan dan upload file desain Anda' : 'Lengkapi alamat pengiriman untuk pesanan Anda'"></p>
+
+        <div class="grid grid-cols-1 grid-rows-1 mt-6">
+            {{-- Sub-Step 1: Detail & Upload Form --}}
+            <div x-show="subStep === 1" class="col-start-1 row-start-1"
+                 x-transition:enter="transition ease-out duration-500 transform"
+                 x-transition:enter-start="-translate-x-12 opacity-0"
+                 x-transition:enter-end="translate-x-0 opacity-100"
+                 x-transition:leave="transition ease-in duration-300 transform"
+                 x-transition:leave-start="translate-x-0 opacity-100"
+                 x-transition:leave-end="-translate-x-12 opacity-0">
 
         {{-- Selected product from catalog --}}
         <template x-if="catalogProduct">
@@ -922,7 +932,7 @@
                 Kembali
             </button>
             <button
-                @click="step = 3"
+                @click="nextFromStep2()"
                 :disabled="!validateStep2"
                 :class="validateStep2 ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
@@ -930,6 +940,385 @@
                 Selanjutnya
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
+        </div>
+            </div>
+
+            {{-- Sub-Step 2: Alamat Form / Select --}}
+            <div x-show="subStep === 2" x-cloak class="col-start-1 row-start-1"
+                 x-transition:enter="transition ease-out duration-500 transform"
+                 x-transition:enter-start="translate-x-12 opacity-0"
+                 x-transition:enter-end="translate-x-0 opacity-100"
+                 x-transition:leave="transition ease-in duration-300 transform"
+                 x-transition:leave-start="translate-x-0 opacity-100"
+                 x-transition:leave-end="translate-x-12 opacity-0">
+                 
+                {{-- Mode 1: Detail Kontak & Alamat --}}
+                <div x-show="addressMode === 'select'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Detail Kontak & Alamat</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Pastikan data kontak dan alamat pengiriman Anda sudah benar sebelum melanjutkan.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-5">
+                        {{-- Box 1: Detail Kontak --}}
+                        <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-[#1a237e]/30 hover:shadow-md transition-all duration-200">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1a237e] flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </div>
+                                <h4 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Detail Kontak</h4>
+                            </div>
+                            <div class="text-sm text-gray-600 space-y-2.5 grow">
+                                <p class="font-bold text-gray-900 text-base" x-text="contactInfo.name || '{{ auth()->user()->name }}'"></p>
+                                <p class="flex items-start gap-2">
+                                    <svg class="text-gray-400 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                    <span x-text="contactInfo.email || '{{ auth()->user()->email }}'"></span>
+                                </p>
+                                <p class="flex items-start gap-2">
+                                    <svg class="text-gray-400 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+                                    <span x-text="(contactInfo.phone || '{{ auth()->user()->phone ?? '-' }}')"></span>
+                                </p>
+                            </div>
+                            <div class="pt-2 border-t border-gray-100">
+                                <button
+                                    type="button"
+                                    @click="openContactModal()"
+                                    class="flex items-center gap-1.5 text-xs font-bold text-[#1a237e] hover:text-[#283593] group transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    Ubah Kontak
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Box 2: Alamat Pengiriman --}}
+                        <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-[#1a237e]/30 hover:shadow-md transition-all duration-200">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1a237e] flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                </div>
+                                <h4 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Alamat Pengiriman</h4>
+                            </div>
+                            <div class="text-sm text-gray-600 space-y-1.5 grow">
+                                <template x-if="selectedAddress">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <p class="font-bold text-gray-900 text-base" x-text="selectedAddress.first_name + (selectedAddress.last_name ? ' ' + selectedAddress.last_name : '')"></p>
+                                            <span
+                                                :class="selectedAddress.address_type === 'rumah' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'"
+                                                class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider"
+                                                x-text="selectedAddress.address_type"
+                                            ></span>
+                                        </div>
+                                        <p x-text="selectedAddress.detail_address"></p>
+                                        <p x-text="selectedAddress.district + ', ' + selectedAddress.city"></p>
+                                        <p x-text="selectedAddress.province + ' ' + selectedAddress.postal_code"></p>
+                                    </div>
+                                </template>
+                                <template x-if="!selectedAddress">
+                                    <p class="text-gray-400 italic">Belum ada alamat pengiriman.</p>
+                                </template>
+                            </div>
+                            <div class="pt-2 border-t border-gray-100 flex items-center gap-4">
+                                <button
+                                    type="button"
+                                    @click="openAddressModal()"
+                                    class="flex items-center gap-1.5 text-xs font-bold text-[#1a237e] hover:text-[#283593] group transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    Ubah Alamat
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="addressMode = 'list'"
+                                    class="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-700 group transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                                    Pilih Alamat Lain
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button
+                            @click="backFromSubStep2()"
+                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                        >
+                            Kembali
+                        </button>
+                        <button
+                            @click="useSelectedAddress()"
+                            :disabled="!selectedAddressId"
+                            :class="selectedAddressId ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                            class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                        >
+                            Lanjutkan ke Pembayaran
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Mode 2: Pilih Alamat yang Sudah Ada (Card List) --}}
+                <div x-show="addressMode === 'list'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900">Pilih Alamat Lain</h3>
+                            <p class="text-xs text-gray-500">Pilih salah satu alamat yang sudah tersimpan di bawah ini.</p>
+                        </div>
+                        <button
+                            type="button"
+                            @click="addNewAddressMode()"
+                            class="px-4 py-2 border border-[#1a237e] text-[#1a237e] hover:bg-blue-50 rounded-lg font-semibold text-sm transition-all flex items-center gap-1.5"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                            Tambah Alamat Baru
+                        </button>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <template x-for="addr in addresses" :key="addr.id">
+                            <div
+                                @click="selectedAddressId = addr.id; addressMode = 'select';"
+                                :class="selectedAddressId === addr.id ? 'border-2 border-[#1a237e] bg-blue-50/50' : 'border border-gray-200 hover:border-gray-300'"
+                                class="bg-white rounded-xl p-5 cursor-pointer transition-all relative overflow-hidden select-none"
+                            >
+                                <!-- Badge Selected -->
+                                <div x-show="selectedAddressId === addr.id" class="absolute top-0 right-0 bg-[#1a237e] text-white px-3 py-1 text-xs font-semibold rounded-bl-lg flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                    Terpilih
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <div class="p-2 bg-blue-100/80 rounded-lg text-[#1a237e] h-10 w-10 shrink-0 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <p class="font-bold text-gray-900 truncate" x-text="addr.first_name + (addr.last_name ? ' ' + addr.last_name : '')"></p>
+                                            <span
+                                                :class="addr.address_type === 'rumah' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'"
+                                                class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider"
+                                                x-text="addr.address_type"
+                                            ></span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-2 leading-relaxed" x-text="addr.detail_address"></p>
+                                        <p class="text-xs text-gray-500 mt-1" x-text="addr.district + ', ' + addr.city + ', ' + addr.province + ' ' + addr.postal_code"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button
+                            @click="addressMode = 'select'"
+                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                        >
+                            Batal
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Mode 3: Form Input Alamat Baru --}}
+                <div x-show="addressMode === 'create'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            {{-- Nama Depan --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Depan <span class="text-red-500">*</span></label>
+                                <input
+                                    type="text"
+                                    x-model="addressForm.first_name"
+                                    placeholder="Nama Depan"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                                >
+                            </div>
+
+                            {{-- Nama Belakang --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Belakang</label>
+                                <input
+                                    type="text"
+                                    x-model="addressForm.last_name"
+                                    placeholder="Nama Belakang"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-6">
+                            {{-- Provinsi --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Provinsi <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <select
+                                        x-model="selectedProvinceId"
+                                        @change="const prov = provinces.find(p => p.id === selectedProvinceId); addressForm.province = prov ? prov.name : ''; fetchRegencies();"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none"
+                                        :disabled="addressLoading.provinces"
+                                    >
+                                        <option value="">Pilih Provinsi</option>
+                                        <template x-for="prov in provinces" :key="prov.id">
+                                            <option :value="prov.id" x-text="prov.name"></option>
+                                        </template>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                        <template x-if="addressLoading.provinces">
+                                            <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                            </svg>
+                                        </template>
+                                        <template x-if="!addressLoading.provinces">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Kabupaten / Kota --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Kabupaten / Kota <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <select
+                                        x-model="selectedRegencyId"
+                                        @change="const reg = regencies.find(r => r.id === selectedRegencyId); addressForm.city = reg ? reg.name : ''; fetchDistricts();"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none"
+                                        :disabled="!selectedProvinceId || addressLoading.regencies"
+                                    >
+                                        <option value="">Pilih Kabupaten/Kota</option>
+                                        <template x-for="reg in regencies" :key="reg.id">
+                                            <option :value="reg.id" x-text="reg.name"></option>
+                                        </template>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                        <template x-if="addressLoading.regencies">
+                                            <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                            </svg>
+                                        </template>
+                                        <template x-if="!addressLoading.regencies">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Kecamatan --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Kecamatan <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <select
+                                        x-model="selectedDistrictId"
+                                        @change="const dist = districts.find(d => d.id === selectedDistrictId); addressForm.district = dist ? dist.name : '';"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none"
+                                        :disabled="!selectedRegencyId || addressLoading.districts"
+                                    >
+                                        <option value="">Pilih Kecamatan</option>
+                                        <template x-for="dist in districts" :key="dist.id">
+                                            <option :value="dist.id" x-text="dist.name"></option>
+                                        </template>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                        <template x-if="addressLoading.districts">
+                                            <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                            </svg>
+                                        </template>
+                                        <template x-if="!addressLoading.districts">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-6">
+                            {{-- Detail Alamat --}}
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Alamat <span class="text-red-500">*</span></label>
+                                <textarea
+                                    x-model="addressForm.detail_address"
+                                    rows="2"
+                                    placeholder="Nama jalan, Gedung, No. Rumah, RT/RW, dll."
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow resize-none"
+                                ></textarea>
+                            </div>
+
+                            {{-- Kode Pos --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Kode Pos <span class="text-red-500">*</span></label>
+                                <input
+                                    type="text"
+                                    x-model="addressForm.postal_code"
+                                    placeholder="Contoh: 12345"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                                >
+                            </div>
+                        </div>
+
+                        {{-- Tandai Sebagai --}}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tandai Sebagai</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 hover:bg-gray-100 transition-colors select-none">
+                                    <input
+                                        type="radio"
+                                        name="address_type"
+                                        value="rumah"
+                                        x-model="addressForm.address_type"
+                                        class="radio radio-primary"
+                                    >
+                                    <span class="text-sm font-semibold text-gray-800">Rumah</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 hover:bg-gray-100 transition-colors select-none">
+                                    <input
+                                        type="radio"
+                                        name="address_type"
+                                        value="kantor"
+                                        x-model="addressForm.address_type"
+                                        class="radio radio-primary"
+                                    >
+                                    <span class="text-sm font-semibold text-gray-800">Kantor</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button
+                            @click="addresses.length > 0 ? addressMode = 'list' : subStep = 1"
+                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                        >
+                            Kembali
+                        </button>
+                        <button
+                            @click="saveAddress()"
+                            :disabled="!validateAddress || addressLoading.submit"
+                            :class="(validateAddress && !addressLoading.submit) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                            class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                        >
+                            <span x-show="!addressLoading.submit" class="inline-flex items-center gap-2">
+                                Simpan Alamat Baru
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                            <span x-show="addressLoading.submit" class="inline-flex items-center gap-2">
+                                <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                </svg>
+                                Menyimpan...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+
+
+            </div>
         </div>
     </div>
 
@@ -1188,13 +1577,60 @@
 
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 <script>
-function pemesananForm(catalogProduct = null) {
+function pemesananForm(catalogProduct = null, userAddresses = []) {
     return {
         step: 1,
         steps: ['Pilih Jenis', 'Detail & Upload', 'Prioritas & Bayar', 'Konfirmasi'],
         jenis: null,
         catalogProduct: catalogProduct,
-            form: {
+        subStep: 1,
+        addresses: userAddresses,
+        addressMode: 'select',
+        selectedAddressId: null,
+        provinces: [],
+        regencies: [],
+        districts: [],
+        selectedProvinceId: '',
+        selectedRegencyId: '',
+        selectedDistrictId: '',
+        // Modal state
+        showContactModal: false,
+        showAddressModal: false,
+        contactSaving: false,
+        addressEditSaving: false,
+        modalSelectedProvinceId: '',
+        modalSelectedRegencyId: '',
+        modalSelectedDistrictId: '',
+        modalRegencies: [],
+        modalDistricts: [],
+        contactInfo: {
+            name: '{{ auth()->user()->name }}',
+            fullname: '{{ auth()->user()->fullname ?? '' }}',
+            email: '{{ auth()->user()->email }}',
+            phone: '{{ auth()->user()->phone ?? '' }}'
+        },
+        contactForm: { name: '', fullname: '', email: '', phone: '' },
+        editAddressForm: {
+            first_name: '', last_name: '', province: '', city: '',
+            district: '', detail_address: '', postal_code: '', address_type: 'rumah'
+        },
+        addressLoading: {
+            provinces: false,
+            regencies: false,
+            districts: false,
+            submit: false
+        },
+        addressForm: {
+            first_name: '',
+            last_name: '',
+            province: '',
+            city: '',
+            district: '',
+            detail_address: '',
+            postal_code: '',
+            address_type: 'rumah'
+        },
+        form: {
             team_name: '',
             no_punggung: '',
             detail_sponsor: '',
@@ -1211,21 +1647,11 @@ function pemesananForm(catalogProduct = null) {
         prioritas: 'normal',
         pembayaran: 'midtrans',
         uploads: [],
+        refUploads: [],
         orderNumber: null,
         dragOver: false,
         dragOverRef: false,
         loading: false,
-
-        init() {
-            if (this.catalogProduct) {
-                this.jenis = 'katalog';
-                if (this.catalogProduct.harga) {
-                    this.basePricePerPcs = parseInt(this.catalogProduct.harga);
-                }
-                this.step = 2;
-            }
-        },
-        refUploads: [],
         prioritasOptions: [
             { value: 'normal', label: 'Normal', desc: '7\u201314 hari kerja', harga: 'Gratis' },
             { value: 'express', label: 'Express', desc: '3\u20136 hari kerja', harga: '+Rp50.000' },
@@ -1233,9 +1659,68 @@ function pemesananForm(catalogProduct = null) {
         ],
         basePricePerPcs: 85000,
 
+        init() {
+            const savedState = localStorage.getItem('checkout_state');
+            if (savedState) {
+                try {
+                    const state = JSON.parse(savedState);
+                    this.jenis = state.jenis;
+                    this.step = state.step;
+                    this.subStep = state.subStep;
+                    this.form = state.form;
+                    this.prioritas = state.prioritas;
+                    this.pembayaran = state.pembayaran;
+                    this.selectedAddressId = state.selectedAddressId;
+                    
+                    localStorage.removeItem('checkout_state');
+                } catch (e) {
+                    console.error('Gagal memuat state checkout', e);
+                }
+            } else {
+                if (this.catalogProduct) {
+                    this.jenis = 'katalog';
+                    if (this.catalogProduct.harga) {
+                        this.basePricePerPcs = parseInt(this.catalogProduct.harga);
+                    }
+                    this.step = 2;
+                }
+            }
+
+            if (this.addresses && this.addresses.length > 0) {
+                this.addressMode = 'select';
+                if (!this.selectedAddressId) {
+                    const primary = this.addresses.find(a => a.is_primary) || this.addresses[0];
+                    this.selectedAddressId = primary.id;
+                }
+            } else {
+                this.addressMode = 'create';
+            }
+        },
+
+        saveCheckoutState() {
+            const state = {
+                jenis: this.jenis,
+                step: this.step,
+                subStep: this.subStep,
+                form: this.form,
+                prioritas: this.prioritas,
+                pembayaran: this.pembayaran,
+                selectedAddressId: this.selectedAddressId
+            };
+            localStorage.setItem('checkout_state', JSON.stringify(state));
+            sessionStorage.setItem('from_checkout', 'true');
+        },
+
+
+
         get totalQty() {
             let sizes = this.form.ukuran;
             return Object.values(sizes).reduce((a, b) => a + (parseInt(b) || 0), 0);
+        },
+
+        get selectedAddress() {
+            if (!this.addresses) return null;
+            return this.addresses.find(a => a.id === this.selectedAddressId) || null;
         },
 
         get prioritasText() {
@@ -1263,6 +1748,164 @@ function pemesananForm(catalogProduct = null) {
 
         get validateStep3() {
             return this.pembayaran !== null;
+        },
+
+        nextFromStep2() {
+            this.subStep = 2;
+            if (this.addresses && this.addresses.length > 0) {
+                this.addressMode = 'select';
+                if (!this.selectedAddressId) {
+                    const primary = this.addresses.find(a => a.is_primary) || this.addresses[0];
+                    this.selectedAddressId = primary.id;
+                }
+            } else {
+                this.addressMode = 'create';
+                this.fetchProvinces();
+            }
+        },
+
+        backFromSubStep2() {
+            this.subStep = 1;
+        },
+
+        addNewAddressMode() {
+            this.addressMode = 'create';
+            this.addressForm = {
+                first_name: '',
+                last_name: '',
+                province: '',
+                city: '',
+                district: '',
+                detail_address: '',
+                postal_code: '',
+                address_type: 'rumah'
+            };
+            this.selectedProvinceId = '';
+            this.selectedRegencyId = '';
+            this.selectedDistrictId = '';
+            this.fetchProvinces();
+        },
+
+        useSelectedAddress() {
+            this.step = 3;
+        },
+
+        openContactModal() {
+            this.saveCheckoutState();
+            window.location.href = '/profile?tab=pengaturan';
+        },
+
+        openAddressModal() {
+            this.saveCheckoutState();
+            window.location.href = '/profile?tab=alamat';
+        },
+
+        fetchProvinces() {
+            if (this.provinces.length > 0) return;
+            this.addressLoading.provinces = true;
+            fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+                .then(res => res.json())
+                .then(data => {
+                    this.provinces = data;
+                    this.addressLoading.provinces = false;
+                })
+                .catch(err => {
+                    console.error('Gagal mengambil data provinsi', err);
+                    this.addressLoading.provinces = false;
+                });
+        },
+
+        fetchRegencies() {
+            if (!this.selectedProvinceId) return;
+            this.addressLoading.regencies = true;
+            this.regencies = [];
+            this.districts = [];
+            this.addressForm.city = '';
+            this.addressForm.district = '';
+            this.selectedRegencyId = '';
+            this.selectedDistrictId = '';
+            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${this.selectedProvinceId}.json`)
+                .then(res => res.json())
+                .then(data => {
+                    this.regencies = data;
+                    this.addressLoading.regencies = false;
+                })
+                .catch(err => {
+                    console.error('Gagal mengambil data kabupaten/kota', err);
+                    this.addressLoading.regencies = false;
+                });
+        },
+
+        fetchDistricts() {
+            if (!this.selectedRegencyId) return;
+            this.addressLoading.districts = true;
+            this.districts = [];
+            this.addressForm.district = '';
+            this.selectedDistrictId = '';
+            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${this.selectedRegencyId}.json`)
+                .then(res => res.json())
+                .then(data => {
+                    this.districts = data;
+                    this.addressLoading.districts = false;
+                })
+                .catch(err => {
+                    console.error('Gagal mengambil data kecamatan', err);
+                    this.addressLoading.districts = false;
+                });
+        },
+
+        get validateAddress() {
+            return this.addressForm.first_name.trim() !== '' &&
+                   this.addressForm.province !== '' &&
+                   this.addressForm.city !== '' &&
+                   this.addressForm.district !== '' &&
+                   this.addressForm.detail_address.trim() !== '' &&
+                   this.addressForm.postal_code.trim() !== '';
+        },
+
+        saveAddress() {
+            if (this.addressLoading.submit) return;
+            this.addressLoading.submit = true;
+
+            fetch('{{ route('address.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(this.addressForm)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (!this.addresses) {
+                        this.addresses = [];
+                    }
+                    this.addresses.push(data.address);
+                    this.selectedAddressId = data.address.id;
+                    this.addressMode = 'select';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Alamat Disimpan',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    this.step = 3;
+                } else {
+                    throw new Error(data.message || 'Gagal menyimpan alamat');
+                }
+                this.addressLoading.submit = false;
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: err.message || 'Terjadi kesalahan'
+                });
+                this.addressLoading.submit = false;
+            });
         },
 
         formatRupiah(amount) {
@@ -1334,6 +1977,9 @@ function pemesananForm(catalogProduct = null) {
             formData.append('pembayaran', this.pembayaran);
             formData.append('warna_utama', this.form.warna_utama);
             formData.append('warna_sekunder', this.form.warna_sekunder);
+            if (this.selectedAddressId) {
+                formData.append('address_id', this.selectedAddressId);
+            }
 
             // Logo tim + Referensi Desain → semua masuk design_files[]
             if (this.uploads.length > 0) {

@@ -17,7 +17,7 @@
 @endpush
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser)">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser, window.profileAddresses)">
     {{-- Alerts --}}
     @if (session('status') === 'profile-updated')
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
@@ -34,6 +34,20 @@
         <p class="text-sm font-medium text-emerald-800">Password berhasil diubah!</p>
     </div>
     @endif
+
+    {{-- Header Profil + Tombol Close --}}
+    <div class="glass-card bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100 flex items-center justify-between">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900">Profil Saya</h1>
+            <p class="text-xs text-gray-500 mt-0.5">Kelola informasi pribadi, alamat pengiriman, dan riwayat pesanan Anda.</p>
+        </div>
+        <div>
+            <button @click="closeProfile()" class="flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 hover:text-gray-900 transition-all duration-200 shadow-sm cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                Tutup Profil
+            </button>
+        </div>
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
         {{-- ==================== SIDEBAR (LEFT) ==================== --}}
@@ -361,34 +375,226 @@
 
             {{-- 3. TAB: ALAMAT PENGIRIMAN --}}
             <div x-show="activeTab === 'alamat'" x-cloak class="space-y-6">
-                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-900 text-lg mb-1">Alamat Pengiriman</h3>
-                    <p class="text-sm text-gray-500 mb-6">Alamat default pengiriman pesanan konveksi Anda.</p>
 
-                    <form method="POST" action="{{ route('profile.update') }}" @submit.prevent="if ($event.target.checkValidity()) $event.target.submit()">
-                        @csrf
-                        @method('patch')
-
-                        {{-- Hidden inputs to preserve biodata --}}
-                        <input type="hidden" name="name" value="{{ $user->name }}">
-                        <input type="hidden" name="email" value="{{ $user->email }}">
-                        <input type="hidden" name="phone" value="{{ $user->phone }}">
-                        <input type="hidden" name="fullname" value="{{ $user->fullname }}">
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat Lengkap Pengiriman <span class="text-red-500">*</span></label>
-                            <textarea name="address" rows="5" required placeholder="Tuliskan alamat lengkap beserta kecamatan, kota, dan kode pos..."
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm resize-none">{{ old('address', $user->address) }}</textarea>
-                        </div>
-
-                        <div class="flex justify-end pt-3">
-                            <button type="submit"
-                                class="px-6 py-3 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center gap-2 shadow-sm">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                                Simpan Alamat
+                {{-- MODE LIST: Tampilkan alamat tersimpan --}}
+                <div x-show="alamatMode === 'list'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                    <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-1">
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">Alamat Pengiriman</h3>
+                                <p class="text-sm text-gray-500">Kelola alamat pengiriman pesanan Anda.</p>
+                            </div>
+                            <button @click="openNewAddressForm()"
+                                class="px-4 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#283593] transition-colors flex items-center gap-1.5 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                Tambah Baru
                             </button>
                         </div>
-                    </form>
+                    </div>
+
+                    {{-- Daftar Alamat --}}
+                    <div class="grid md:grid-cols-2 gap-4 mt-4">
+                        <template x-for="(addr, index) in addresses" :key="addr.id">
+                            <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:border-[#1a237e]/30 hover:shadow-md transition-all duration-200 relative group">
+                                <div class="flex items-start gap-3">
+                                    <div class="p-2.5 bg-blue-50 rounded-xl text-[#1a237e] shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <p class="font-bold text-gray-900 text-sm" x-text="addr.first_name + (addr.last_name ? ' ' + addr.last_name : '')"></p>
+                                            <span :class="addr.address_type === 'rumah' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'"
+                                                class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider" x-text="addr.address_type"></span>
+                                            <span x-show="addr.is_primary"
+                                                class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[#1a237e]/10 text-[#1a237e] uppercase tracking-wider">Utama</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-1.5 leading-relaxed" x-text="addr.detail_address"></p>
+                                        <p class="text-xs text-gray-500 mt-0.5" x-text="addr.district + ', ' + addr.city + ', ' + addr.province + ' ' + addr.postal_code"></p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-gray-100 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button @click="editAddress(addr)"
+                                        class="flex items-center gap-1 text-xs font-semibold text-[#1a237e] hover:text-[#283593] transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        Edit
+                                    </button>
+                                    <button @click="deleteAddress(addr, index)"
+                                        class="flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                        Hapus
+                                    </button>
+                                    <button x-show="!addr.is_primary" @click="setPrimaryAddress(addr)"
+                                        class="flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        Jadikan Utama
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- Empty State --}}
+                        <div x-show="addresses.length === 0" x-cloak class="md:col-span-2">
+                            <div class="bg-white border border-gray-200 rounded-2xl p-10 text-center flex flex-col items-center">
+                                <div class="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                </div>
+                                <h4 class="font-bold text-gray-800 text-sm mb-1">Belum Ada Alamat Tersimpan</h4>
+                                <p class="text-xs text-gray-400 mb-4">Tambahkan alamat pengiriman baru untuk pesanan Anda.</p>
+                                <button @click="openNewAddressForm()"
+                                    class="px-5 py-2.5 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#283593] transition-colors flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                    Tambah Alamat Baru
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- MODE FORM: Tambah / Edit Alamat --}}
+                <div x-show="alamatMode === 'form'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                    <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg" x-text="editingAddressId ? 'Edit Alamat' : 'Tambah Alamat Baru'"></h3>
+                                <p class="text-sm text-gray-500">Lengkapi detail alamat pengiriman Anda.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            {{-- Nama Depan & Nama Belakang --}}
+                            <div class="grid md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Depan <span class="text-red-500">*</span></label>
+                                    <input type="text" x-model="addressForm.first_name" placeholder="Nama Depan"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Belakang</label>
+                                    <input type="text" x-model="addressForm.last_name" placeholder="Nama Belakang"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
+                                </div>
+                            </div>
+
+                            {{-- Provinsi, Kabupaten/Kota, Kecamatan --}}
+                            <div class="grid md:grid-cols-3 gap-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Provinsi <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <select x-model="selectedProvinceId"
+                                            @change="const prov = provinces.find(p => p.id === selectedProvinceId); addressForm.province = prov ? prov.name : ''; fetchRegencies();"
+                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none text-sm"
+                                            :disabled="addressLoading.provinces">
+                                            <option value="">Pilih Provinsi</option>
+                                            <template x-for="prov in provinces" :key="prov.id">
+                                                <option :value="prov.id" x-text="prov.name"></option>
+                                            </template>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                            <template x-if="addressLoading.provinces">
+                                                <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                            </template>
+                                            <template x-if="!addressLoading.provinces">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Kabupaten / Kota <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <select x-model="selectedRegencyId"
+                                            @change="const reg = regencies.find(r => r.id === selectedRegencyId); addressForm.city = reg ? reg.name : ''; fetchDistricts();"
+                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none text-sm"
+                                            :disabled="!selectedProvinceId || addressLoading.regencies">
+                                            <option value="">Pilih Kabupaten/Kota</option>
+                                            <template x-for="reg in regencies" :key="reg.id">
+                                                <option :value="reg.id" x-text="reg.name"></option>
+                                            </template>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                            <template x-if="addressLoading.regencies">
+                                                <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                            </template>
+                                            <template x-if="!addressLoading.regencies">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Kecamatan <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <select x-model="selectedDistrictId"
+                                            @change="const dist = districts.find(d => d.id === selectedDistrictId); addressForm.district = dist ? dist.name : '';"
+                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none text-sm"
+                                            :disabled="!selectedRegencyId || addressLoading.districts">
+                                            <option value="">Pilih Kecamatan</option>
+                                            <template x-for="dist in districts" :key="dist.id">
+                                                <option :value="dist.id" x-text="dist.name"></option>
+                                            </template>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                            <template x-if="addressLoading.districts">
+                                                <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                            </template>
+                                            <template x-if="!addressLoading.districts">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Detail Alamat & Kode Pos --}}
+                            <div class="grid md:grid-cols-3 gap-5">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Alamat <span class="text-red-500">*</span></label>
+                                    <textarea x-model="addressForm.detail_address" rows="2" placeholder="Nama jalan, Gedung, No. Rumah, RT/RW, dll."
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm resize-none"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Kode Pos <span class="text-red-500">*</span></label>
+                                    <input type="text" x-model="addressForm.postal_code" placeholder="Contoh: 12345"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow text-sm">
+                                </div>
+                            </div>
+
+                            {{-- Tandai Sebagai --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tandai Sebagai</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 hover:bg-gray-100 transition-colors select-none">
+                                        <input type="radio" name="address_type" value="rumah" x-model="addressForm.address_type" class="radio radio-primary">
+                                        <span class="text-sm font-semibold text-gray-800">Rumah</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 hover:bg-gray-100 transition-colors select-none">
+                                        <input type="radio" name="address_type" value="kantor" x-model="addressForm.address_type" class="radio radio-primary">
+                                        <span class="text-sm font-semibold text-gray-800">Kantor</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between pt-6 border-t border-gray-100 mt-6">
+                            <button @click="cancelAddressForm()"
+                                class="px-6 py-2.5 border-2 border-gray-300 text-gray-600 rounded-lg text-xs font-bold hover:border-gray-400 hover:text-gray-800 transition-colors">
+                                Batal
+                            </button>
+                            <button @click="saveAddress()"
+                                :disabled="!validateAddress || addressLoading.submit"
+                                :class="(validateAddress && !addressLoading.submit) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                                class="px-6 py-2.5 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-2 shadow-sm">
+                                <span x-show="!addressLoading.submit" class="inline-flex items-center gap-2">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                    <span x-text="editingAddressId ? 'Simpan Perubahan' : 'Simpan Alamat'"></span>
+                                </span>
+                                <span x-show="addressLoading.submit" class="inline-flex items-center gap-2">
+                                    <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                    Menyimpan...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -478,8 +684,9 @@
 <script>
 window.profileOrders = @json($orders);
 window.profileUser = @json($user);
+window.profileAddresses = @json($addresses);
 
-function profileDashboard(orders = [], user = {}) {
+function profileDashboard(orders = [], user = {}, initialAddresses = []) {
     return {
         activeTab: (new URLSearchParams(window.location.search)).get('tab') || 'pengaturan',
         orderFilter: 'menunggu_pembayaran',
@@ -489,8 +696,322 @@ function profileDashboard(orders = [], user = {}) {
         currentPage: 1,
         perPage: 5,
 
+        // Address management
+        addresses: initialAddresses,
+        alamatMode: 'list',
+        editingAddressId: null,
+        addressForm: {
+            first_name: '',
+            last_name: '',
+            province: '',
+            city: '',
+            district: '',
+            detail_address: '',
+            postal_code: '',
+            address_type: 'rumah',
+        },
+        provinces: [],
+        regencies: [],
+        districts: [],
+        selectedProvinceId: '',
+        selectedRegencyId: '',
+        selectedDistrictId: '',
+        addressLoading: {
+            provinces: false,
+            regencies: false,
+            districts: false,
+            submit: false,
+        },
+
+        get validateAddress() {
+            return this.addressForm.first_name &&
+                this.addressForm.province &&
+                this.addressForm.city &&
+                this.addressForm.district &&
+                this.addressForm.detail_address &&
+                this.addressForm.postal_code;
+        },
+
         init() {
             this.$watch('orderFilter', () => this.currentPage = 1);
+        },
+
+        // ─── Address Methods ───
+
+        getAddressFormData() {
+            return {
+                first_name: this.addressForm.first_name,
+                last_name: this.addressForm.last_name,
+                province: this.addressForm.province,
+                city: this.addressForm.city,
+                district: this.addressForm.district,
+                detail_address: this.addressForm.detail_address,
+                postal_code: this.addressForm.postal_code,
+                address_type: this.addressForm.address_type,
+            };
+        },
+
+        resetAddressForm() {
+            this.addressForm = {
+                first_name: '',
+                last_name: '',
+                province: '',
+                city: '',
+                district: '',
+                detail_address: '',
+                postal_code: '',
+                address_type: 'rumah',
+            };
+            this.selectedProvinceId = '';
+            this.selectedRegencyId = '';
+            this.selectedDistrictId = '';
+            this.regencies = [];
+            this.districts = [];
+        },
+
+        openNewAddressForm() {
+            this.editingAddressId = null;
+            this.resetAddressForm();
+            this.alamatMode = 'form';
+            this.$nextTick(() => this.fetchProvinces());
+        },
+
+        cancelAddressForm() {
+            this.alamatMode = 'list';
+            this.editingAddressId = null;
+            this.resetAddressForm();
+        },
+
+        editAddress(address) {
+            this.editingAddressId = address.id;
+            this.addressForm = {
+                first_name: address.first_name,
+                last_name: address.last_name || '',
+                province: address.province,
+                city: address.city,
+                district: address.district,
+                detail_address: address.detail_address,
+                postal_code: address.postal_code,
+                address_type: address.address_type,
+            };
+            this.alamatMode = 'form';
+            this.$nextTick(() => {
+                this.fetchProvinces().then(() => {
+                    const prov = this.provinces.find(p => p.name === address.province);
+                    if (prov) {
+                        this.selectedProvinceId = prov.id;
+                        this.fetchRegencies().then(() => {
+                            const reg = this.regencies.find(r => r.name === address.city);
+                            if (reg) {
+                                this.selectedRegencyId = reg.id;
+                                this.fetchDistricts().then(() => {
+                                    const dist = this.districts.find(d => d.name === address.district);
+                                    if (dist) this.selectedDistrictId = dist.id;
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        },
+
+        async saveAddress() {
+            if (!this.validateAddress) return;
+            this.addressLoading.submit = true;
+            const payload = this.getAddressFormData();
+            const isEdit = !!this.editingAddressId;
+
+            try {
+                const url = isEdit ? '/address/' + this.editingAddressId : '/address';
+                const method = isEdit ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Gagal menyimpan alamat');
+
+                if (isEdit) {
+                    const idx = this.addresses.findIndex(a => a.id === this.editingAddressId);
+                    if (idx !== -1) this.addresses[idx] = data.address;
+                } else {
+                    this.addresses.unshift(data.address);
+                }
+
+                this.alamatMode = 'list';
+                this.editingAddressId = null;
+                this.resetAddressForm();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: err.message,
+                });
+            } finally {
+                this.addressLoading.submit = false;
+            }
+        },
+
+        async deleteAddress(address, index) {
+            const result = await Swal.fire({
+                title: 'Hapus Alamat?',
+                text: 'Alamat "' + address.first_name + ' - ' + address.detail_address.substring(0, 30) + (address.detail_address.length > 30 ? '...' : '') + '" akan dihapus.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+            });
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch('/address/' + address.id, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Gagal menghapus alamat');
+                this.addresses.splice(index, 1);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: err.message,
+                });
+            }
+        },
+
+        async setPrimaryAddress(address) {
+            try {
+                const res = await fetch('/address/' + address.id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        first_name: address.first_name,
+                        last_name: address.last_name || '',
+                        province: address.province,
+                        city: address.city,
+                        district: address.district,
+                        detail_address: address.detail_address,
+                        postal_code: address.postal_code,
+                        address_type: address.address_type,
+                        is_primary: true,
+                    }),
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Gagal mengubah alamat utama');
+
+                this.addresses = this.addresses.map(a => ({
+                    ...a,
+                    is_primary: a.id === address.id,
+                }));
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Alamat utama berhasil diperbarui.',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: err.message,
+                });
+            }
+        },
+
+        // ─── Cascade Address Fetch ───
+
+        async fetchProvinces() {
+            if (this.provinces.length > 0) return;
+            this.addressLoading.provinces = true;
+            try {
+                const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+                this.provinces = await res.json();
+            } catch (e) {
+                console.error('Gagal memuat provinsi', e);
+            } finally {
+                this.addressLoading.provinces = false;
+            }
+        },
+
+        async fetchRegencies() {
+            if (!this.selectedProvinceId) return;
+            this.addressLoading.regencies = true;
+            this.regencies = [];
+            this.districts = [];
+            this.selectedRegencyId = '';
+            this.selectedDistrictId = '';
+            this.addressForm.city = '';
+            this.addressForm.district = '';
+            try {
+                const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/regencies/' + this.selectedProvinceId + '.json');
+                this.regencies = await res.json();
+            } catch (e) {
+                console.error('Gagal memuat kabupaten/kota', e);
+            } finally {
+                this.addressLoading.regencies = false;
+            }
+        },
+
+        async fetchDistricts() {
+            if (!this.selectedRegencyId) return;
+            this.addressLoading.districts = true;
+            this.districts = [];
+            this.selectedDistrictId = '';
+            this.addressForm.district = '';
+            try {
+                const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/districts/' + this.selectedRegencyId + '.json');
+                this.districts = await res.json();
+            } catch (e) {
+                console.error('Gagal memuat kecamatan', e);
+            } finally {
+                this.addressLoading.districts = false;
+            }
+        },
+
+        closeProfile() {
+            const fromCheckout = sessionStorage.getItem('from_checkout');
+            if (fromCheckout === 'true') {
+                sessionStorage.removeItem('from_checkout');
+                window.location.href = '{{ route('pemesanan') }}';
+            } else {
+                if (document.referrer && document.referrer !== window.location.href) {
+                    window.location.href = document.referrer;
+                } else {
+                    window.location.href = '/';
+                }
+            }
         },
 
         setActiveTab(tab) {

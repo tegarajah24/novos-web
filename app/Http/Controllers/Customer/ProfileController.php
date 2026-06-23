@@ -42,6 +42,7 @@ class ProfileController extends Controller
         return view('customer.profile', [
             'user' => $user,
             'orders' => $orders,
+            'addresses' => $addresses,
         ]);
     }
 
