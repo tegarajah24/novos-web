@@ -551,7 +551,7 @@
 
             async markRead(notificationId) {
                 try {
-                    await fetch('{{ route("notifikasi.read", "") }}' + notificationId, {
+                    await fetch('/notifikasi/' + notificationId + '/read', {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
