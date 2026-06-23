@@ -356,6 +356,34 @@
                                     </div>
                                 </div>
 
+                                {{-- Target Stage Revisi (hanya untuk revisi QC) --}}
+                                <div x-show="selectedOrder?.stage === 'qc' && updateStatus === 'revisi_qc'" x-cloak>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i data-lucide="corner-down-right" class="w-3.5 h-3.5 text-amber-600"></i>
+                                        2b. Kirim Revisi ke Bagian
+                                    </label>
+                                    <div class="flex gap-3">
+                                        <label class="flex-1 flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
+                                            :class="targetStage === 'printing' ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-200 hover:bg-blue-50/50 hover:border-blue-200'">
+                                            <input type="radio" value="printing" x-model="targetStage"
+                                                class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                            <div>
+                                                <p class="text-xs font-semibold" :class="targetStage === 'printing' ? 'text-blue-700' : 'text-gray-700'">Printing</p>
+                                                <p class="text-[11px] text-gray-400">Cetak ulang desain/sablon</p>
+                                            </div>
+                                        </label>
+                                        <label class="flex-1 flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
+                                            :class="targetStage === 'jahit' ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-200 hover:bg-amber-50/50 hover:border-amber-200'">
+                                            <input type="radio" value="jahit" x-model="targetStage"
+                                                class="w-4 h-4 text-amber-600 focus:ring-amber-500 cursor-pointer">
+                                            <div>
+                                                <p class="text-xs font-semibold" :class="targetStage === 'jahit' ? 'text-amber-700' : 'text-gray-700'">Jahit (Sewing)</p>
+                                                <p class="text-[11px] text-gray-400">Perbaikan jahitan</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
                                 {{-- Catatan Opsional --}}
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
@@ -377,10 +405,10 @@
 
                                 <div class="pt-2 border-t border-gray-100">
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'printing'">
-                                        Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk memperbarui progres, atau <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke divisi Jahit.
+                                        Pilih <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke divisi Jahit.
                                     </p>
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'jahit'">
-                                        Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk memperbarui progres jahit, atau <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke Quality Control (QC).
+                                        Pilih <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke Quality Control (QC).
                                     </p>
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'qc'">
                                         Pilih <strong class="text-gray-600">Sedang Proses</strong> untuk mencatat progres QC, atau <strong class="text-gray-600">Selesai</strong> untuk memfinalisasi dan menyelesaikan pesanan ini.
@@ -407,6 +435,7 @@ function produksiApp() {
         updateStatus: '',
         productionNote: '',
         activeTab: 'printing',
+        targetStage: 'jahit',
         qcChecklist: {
             jahitan: false,
             cacat: false,
@@ -444,9 +473,9 @@ function produksiApp() {
         openDetail(order) {
             this.selectedOrder = order;
             if (order.stage === 'printing') {
-                this.updateStatus = order.printing_status || 'proses_printing';
+                this.updateStatus = 'selesai_printing';
             } else if (order.stage === 'jahit') {
-                this.updateStatus = order.jahit_status || 'proses_jahit';
+                this.updateStatus = 'selesai_jahit';
             } else if (order.stage === 'qc') {
                 this.updateStatus = '';
             } else {
@@ -461,8 +490,17 @@ function produksiApp() {
             }, 50);
         },
 
+        canSubmit() {
+            if (!this.updateStatus) return false;
+            if (this.selectedOrder?.stage === 'qc') {
+                if (this.updateStatus === 'selesai_qc') return this.qcProgress() === 4 && !this.qcChecklist.perluRevisi;
+                if (this.updateStatus === 'revisi_qc') return this.qcChecklist.perluRevisi && !!this.targetStage;
+            }
+            return true;
+        },
+
         submitProduksi() {
-            if (!this.updateStatus) return;
+            if (!this.canSubmit()) return;
 
             const currentStage = this.selectedOrder.stage;
             const targetStatus = this.updateStatus;
