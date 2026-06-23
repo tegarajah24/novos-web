@@ -167,43 +167,33 @@
 
 ---
 
-## 🧠 Stress Test
+## 🧠 Mental Health & Well-being
 
-### `stress_tests`
+### `daily_mental_checks`
 | Kolom | Tipe | Keterangan |
 |-------|------|------------|
 | id | bigIncrements | |
-| title | string | judul kuesioner |
-| description | text, nullable | |
-| is_active | boolean, default true | |
+| user_id | foreignId | relasi ke users (pegawai) |
+| check_date | date | tanggal check-in |
+| answers | json | jawaban kuesioner (5 pertanyaan) |
+| total_score | integer | total skor |
+| category | string | baik, perlu_perhatian, perlu_pendampingan |
+| need_help | boolean, default false | |
+| help_note | text, nullable | catatan jika butuh bantuan |
 | timestamps | | |
 
-### `stress_test_questions`
+### `micro_breaks`
 | Kolom | Tipe | Keterangan |
 |-------|------|------------|
 | id | bigIncrements | |
-| stress_test_id | foreignId | relasi ke stress_tests |
-| question | text | isi pertanyaan |
-| order | integer | urutan pertanyaan |
-| timestamps | | |
-
-### `stress_results`
-| Kolom | Tipe | Keterangan |
-|-------|------|------------|
-| id | bigIncrements | |
-| stress_test_id | foreignId | relasi ke stress_tests |
-| user_id | foreignId | pegawai yang mengisi |
-| score | integer | total skor |
-| result | enum | normal, ringan, sedang, berat |
-| timestamps | | |
-
-### `stress_result_answers`
-| Kolom | Tipe | Keterangan |
-|-------|------|------------|
-| id | bigIncrements | |
-| stress_result_id | foreignId | relasi ke stress_results |
-| question_id | foreignId | relasi ke stress_test_questions |
-| answer | integer | skor per jawaban |
+| user_id | foreignId | relasi ke users (pegawai) |
+| check_date | date | tanggal aktivitas |
+| checklist | json | 8 item checklist aktivitas |
+| score | integer | skor total |
+| level | string | rendah, sedang, tinggi |
+| eval | json | 3 pertanyaan evaluasi diri |
+| catatan_membantu | text, nullable | |
+| catatan_kendala | text, nullable | |
 | timestamps | | |
 
 ---
@@ -220,7 +210,6 @@ orders → order_status_histories (hasMany)
 orders → production_tasks (hasOne)
 orders → chats (hasOne)
 chats → chat_messages (hasMany)
-stress_tests → stress_test_questions (hasMany)
-stress_tests → stress_results (hasMany)
-stress_results → stress_result_answers (hasMany)
+daily_mental_checks → users (belongsTo)
+micro_breaks → users (belongsTo)
 ```

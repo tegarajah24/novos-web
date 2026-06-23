@@ -9,26 +9,24 @@
 
 - Hanya melayani **custom order** (bukan produk katalog siap pakai)
 - Pembayaran menggunakan **Midtrans**
-- Ada fitur **stress test** khusus pegawai internal
+- Ada fitur **Daily Mental Check & Micro Break** untuk menjaga kesehatan mental staf pengrajin jersi
 - Form desain berisi: identitas, logo, warna, motif, bahan, bentuk kerah
-- Untuk saat ini **1 pesanan = 1 ukuran** (belum multi-ukuran)
 
-## Yang Belum Dikonfirmasi Client (Perlu Ditanyakan)
+## Yang Telah Diputuskan
 
-- [ ] Pembayaran dilakukan **kapan**? Saat pesan pertama, atau setelah customer ACC pesanan?
-- [ ] Apakah ada fitur **notifikasi email** ke customer saat status berubah?
-- [ ] Apakah customer bisa **batalkan pesanan sendiri**, atau hanya admin?
-- [ ] Format **nomor pesanan** — bebas atau ada aturan tertentu?
-- [ ] Apakah ada **harga tetap** per jersey atau dihitung manual per pesanan?
-- [ ] Apakah **multi ukuran** dalam satu pesanan akan dibutuhkan di masa depan?
+- [x] Pembayaran dilakukan **setelah** customer ACC pesanan (bukan saat pesan pertama)
+- [x] Notifikasi via **in-app notification**, bukan email
+- [x] Pembatalan pesanan hanya oleh **Admin / Super Admin**, bukan oleh customer
+- [x] Format nomor pesanan: **NVS-YYYYMMDD-XXX** (contoh: NVS-20240601-001)
+- [x] Harga diinput **manual oleh Admin** per pesanan (base price Rp 85.000/pcs)
+- [x] Multi ukuran dalam satu pesanan **sudah didukung** (S, M, L, XL, XXL, XXXL)
 
 ## Catatan Teknis
 
 - Stack: Laravel + Blade + Tailwind + DaisyUI
 - Auth: Laravel Breeze
 - Payment: Midtrans
-- Upload: Intervention Image (untuk resize logo/desain)
-- Admin panel: Filament (dipasang setelah DB & fitur dasar siap)
+- Pengolahan gambar menggunakan fungsi native bawaan Laravel Storage, dan Dashboard Admin/Staf dibangun kustom menggunakan Blade + Alpine.js (tanpa Filament/Livewire)
 - Database: MySQL via Laragon (lokal), migrasi ke server saat deploy
 
 ## Prioritas Pengembangan
