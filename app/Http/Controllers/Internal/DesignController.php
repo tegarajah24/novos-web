@@ -79,9 +79,8 @@ class DesignController extends Controller
             $order->update(['status' => $data['status']]);
 
             if (!empty($uploadedFiles) && $order->designRequest) {
-                $existing = $order->designRequest->design_files ?? [];
                 $order->designRequest->update([
-                    'design_files' => array_merge($existing, $uploadedFiles),
+                    'design_files' => $uploadedFiles,
                 ]);
             }
 
