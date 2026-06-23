@@ -35,15 +35,3 @@
         });
     </script>
 @endif
-
-@if($errors->any())
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal',
-                html: '{!! implode('<br>', $errors->all()) !!}',
-            });
-        });
-    </script>
-@endif
