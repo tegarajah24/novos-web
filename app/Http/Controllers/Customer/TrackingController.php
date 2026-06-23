@@ -15,7 +15,7 @@ class TrackingController extends Controller
         $orderData = null;
 
         if ($request->q) {
-            $order = Order::with(['designRequest', 'orderItem'])
+            $order = Order::with(['designRequest', 'orderItems'])
                 ->where('order_number', $request->q)
                 ->where('user_id', auth()->id())
                 ->first();

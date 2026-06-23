@@ -33,7 +33,7 @@ class OrderController extends Controller
         $filterStatus = $request->query('status');
         $activeFilter = in_array($filterStatus, array_values($statusMap)) ? $filterStatus : null;
 
-        $query = Order::with(['user', 'orderItem', 'designRequest', 'assignee'])
+        $query = Order::with(['user', 'orderItems', 'designRequest', 'assignee'])
             ->whereIn('status', $dbStatuses);
 
         if ($activeFilter) {
@@ -66,7 +66,7 @@ class OrderController extends Controller
                     'order_id' => $order->order_number,
                     'customer' => $order->user->name ?? 'Unknown',
                     'produk'   => $produk,
-                    'qty'      => $order->orderItem?->qty ?? 0,
+                    'qty'      => $order->orderItems->sum('qty'),
                     'total'    => (float) ($order->total_price ?? 0),
                     'assignee_id' => $assigneeId,
                     'assignee' => $assigneeName,
@@ -97,7 +97,7 @@ class OrderController extends Controller
 
         $order->load([
             'user',
-            'orderItem',
+            'orderItems',
             'designRequest',
             'payment',
             'statusHistories.changedBy',
@@ -134,8 +134,8 @@ class OrderController extends Controller
 
         // Sizes
         $sizes = [];
-        if ($order->orderItem) {
-            $sizes[$order->orderItem->size] = $order->orderItem->qty;
+        foreach ($order->orderItems as $item) {
+            $sizes[$item->size] = $item->qty;
         }
 
         // Design files
@@ -246,7 +246,7 @@ class OrderController extends Controller
             'history_notes' => $historyNotes,
             'status_history' => $statusHistory,
             'payment'       => [
-                'subtotal'        => (float) ($order->orderItem?->subtotal ?? 0),
+                'subtotal'        => (float) ($order->orderItems->sum('subtotal')),
                 'biaya_prioritas' => 0,
                 'total'           => (float) ($order->payment?->amount ?? $order->total_price ?? 0),
                 'method'          => $order->payment?->payment_method ?? '-',
@@ -337,21 +337,29 @@ class OrderController extends Controller
             'menunggu_validasi' => [
                 'menunggu_pembayaran' => ['Admin', 'Manager', 'Super Admin'],
             ],
+            'menunggu_pembayaran' => [
+                'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
+            ],
             'dikonfirmasi' => [
                 'disetujui'  => ['Admin', 'Manager', 'Super Admin'],
                 'di_design'  => ['Admin', 'Manager', 'Super Admin'],
+                'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'disetujui' => [
-                'di_design' => ['Admin', 'Manager', 'Super Admin'],
+                'di_design'  => ['Admin', 'Manager', 'Super Admin'],
+                'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'di_design' => [
                 'siap_cetak' => ['Design', 'Admin', 'Manager', 'Super Admin'],
+                'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'siap_cetak' => [
                 'diproduksi' => ['Admin', 'Design', 'Manager', 'Super Admin'],
+                'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'diproduksi' => [
-                'selesai' => ['Produksi', 'Admin', 'Manager', 'Super Admin'],
+                'selesai'    => ['Produksi', 'Admin', 'Manager', 'Super Admin'],
+                'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
         ];
 

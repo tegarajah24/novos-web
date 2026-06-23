@@ -12,7 +12,7 @@ class ProductionController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['user', 'designRequest', 'orderItem'])
+        $orders = Order::with(['user', 'designRequest', 'orderItems'])
             ->whereIn('status', ['siap_cetak', 'diproduksi'])
             ->latest()
             ->get()
@@ -20,8 +20,8 @@ class ProductionController extends Controller
                 $dr = $order->designRequest;
 
                 $sizes = [];
-                if ($order->orderItem) {
-                    $sizes[$order->orderItem->size] = $order->orderItem->qty;
+                foreach ($order->orderItems as $item) {
+                    $sizes[$item->size] = $item->qty;
                 }
 
                 $stage = $order->production_stage ?? 'printing';
@@ -45,7 +45,7 @@ class ProductionController extends Controller
                     'collar'            => $dr?->collar_style ?? '-',
                     'pattern'           => $dr?->motif ?? '-',
                     'notes'             => nl2br(e($dr?->additional_notes ?? $order->notes ?? 'Tidak ada catatan')),
-                    'total_qty'         => $order->orderItem?->qty ?? 0,
+                    'total_qty'         => $order->orderItems->sum('qty'),
                     'sizes'             => $sizes,
                     'reference_files'   => array_merge(
                         $dr?->logo ? [asset('storage/' . $dr->logo)] : [],

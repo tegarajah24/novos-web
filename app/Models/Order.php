@@ -44,9 +44,9 @@ class Order extends Model
         return $this->belongsTo(User::class, 'assignee_id');
     }
 
-    public function orderItem(): HasOne
+    public function orderItems(): HasMany
     {
-        return $this->hasOne(OrderItem::class);
+        return $this->hasMany(OrderItem::class);
     }
 
     public function designRequest(): HasOne
