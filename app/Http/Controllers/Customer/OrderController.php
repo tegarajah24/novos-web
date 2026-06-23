@@ -36,9 +36,16 @@ class OrderController extends Controller
             'logo'           => 'nullable|file|mimes:jpg,jpeg,png,ai,eps,psd|max:5120',
             'design_files'   => 'nullable|array',
             'design_files.*' => 'file|mimes:jpg,jpeg,png,pdf,ai,eps,psd,zip,rar|max:20480',
+            'address_id'     => 'nullable|exists:customer_addresses,id,user_id,' . auth()->id(),
         ]);
 
         $order = DB::transaction(function () use ($data, $request) {
+            $addressId = $data['address_id'] ?? null;
+            if ($addressId) {
+                \App\Models\CustomerAddress::where('user_id', auth()->id())->update(['is_primary' => false]);
+                \App\Models\CustomerAddress::where('id', $addressId)->where('user_id', auth()->id())->update(['is_primary' => true]);
+            }
+
             $orderNumber = 'NVS-' . now()->format('Ymd') . '-' . str_pad(mt_rand(1, 999), 3, '0', STR_PAD_LEFT);
 
             $totalQty = $data['total_qty'] ?? 0;

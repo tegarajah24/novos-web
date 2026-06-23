@@ -8,6 +8,7 @@ use App\Http\Controllers\Customer\TrackingController;
 use App\Http\Controllers\Customer\ChatController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\NotificationController;
+use App\Http\Controllers\Customer\AddressController;
 
 // Public routes
 Route::get('/tentang-kami', function () {
@@ -23,8 +24,9 @@ Route::get('/pesan', function () {
         $gambar = request('gambar');
 
         $produkData = $produk ? compact('produk', 'kategori', 'harga', 'gambar') : null;
+        $addresses = auth()->check() ? auth()->user()->addresses : collect([]);
 
-        return view('customer.pemesanan', compact('produkData'));
+        return view('customer.pemesanan', compact('produkData', 'addresses'));
     })->name('pemesanan');
 
 // Public routes (Midtrans callback)
@@ -51,6 +53,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/address', [AddressController::class, 'store'])->name('address.store');
+    Route::put('/address/{address}', [AddressController::class, 'update'])->name('address.update');
+    Route::delete('/address/{address}', [AddressController::class, 'destroy'])->name('address.destroy');
+    Route::patch('/profile/contact', [AddressController::class, 'updateProfile'])->name('profile.update.contact');
 
     Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifikasi');
     Route::post('/notifikasi/{notification}/read', [NotificationController::class, 'markRead'])->name('notifikasi.read');

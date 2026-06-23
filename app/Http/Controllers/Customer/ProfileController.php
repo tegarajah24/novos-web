@@ -20,10 +20,12 @@ class ProfileController extends Controller
             ->with(['designRequest', 'payment', 'orderItem'])
             ->latest()
             ->get();
+        $addresses = $user->addresses()->latest()->get();
 
         return view('customer.profile', [
             'user' => $user,
             'orders' => $orders,
+            'addresses' => $addresses,
         ]);
     }
 
