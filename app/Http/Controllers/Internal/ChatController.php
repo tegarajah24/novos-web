@@ -58,6 +58,23 @@ class ChatController extends Controller
         return view('internal.chat', compact('chats'));
     }
 
+    public function unreadCount()
+    {
+        $user = auth()->user();
+        $chatIds = Chat::where(function ($q) use ($user) {
+                $q->where('admin_id', $user->id)
+                  ->orWhereNull('admin_id');
+            })
+            ->pluck('id');
+
+        $count = ChatMessage::whereIn('chat_id', $chatIds)
+            ->where('sender_id', '!=', $user->id)
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json(['count' => $count]);
+    }
+
     public function markRead(Chat $chat)
     {
         $user = auth()->user();
