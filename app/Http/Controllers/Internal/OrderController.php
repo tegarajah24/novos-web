@@ -141,22 +141,38 @@ class OrderController extends Controller
         // Design files
         $designFiles = [];
         if ($order->designRequest) {
-            if ($order->designRequest->logo) {
-                $designFiles[] = [
-                    'name' => basename($order->designRequest->logo),
-                    'url' => asset('storage/' . $order->designRequest->logo),
-                    'type' => 'logo',
-                ];
-            }
+            $logoPath = $order->designRequest->logo;
+
             if ($order->designRequest->design_files) {
-                foreach ($order->designRequest->design_files as $file) {
+                foreach ($order->designRequest->design_files as $i => $file) {
+                    $isFirstAndMatchesLogo = ($i === 0 && $logoPath && isset($file['path']) && $file['path'] === $logoPath);
                     $designFiles[] = [
                         'name' => $file['name'],
                         'url' => asset('storage/' . $file['path']),
-                        'type' => 'design',
+                        'type' => $isFirstAndMatchesLogo ? 'logo' : 'design',
                         'size' => $file['size'] ?? null,
                         'mime' => $file['type'] ?? null,
                     ];
+                }
+            }
+
+            // For existing orders where logo is NOT in design_files
+            if ($logoPath) {
+                $alreadyInDesignFiles = false;
+                if ($order->designRequest->design_files) {
+                    foreach ($order->designRequest->design_files as $f) {
+                        if (isset($f['path']) && $f['path'] === $logoPath) {
+                            $alreadyInDesignFiles = true;
+                            break;
+                        }
+                    }
+                }
+                if (!$alreadyInDesignFiles) {
+                    array_unshift($designFiles, [
+                        'name' => basename($logoPath),
+                        'url' => asset('storage/' . $logoPath),
+                        'type' => 'logo',
+                    ]);
                 }
             }
         }

@@ -244,22 +244,11 @@
                                     <p class="text-sm text-gray-700" x-text="selectedOrder.notes"></p>
                                 </div>
                             </template>
-                            <template x-if="selectedOrder?.design_request?.logo || selectedOrder?.design_request?.design_files?.length">
+                            <template x-if="selectedOrder?.design_request?.all_design_files?.length">
                                 <div class="pt-3 border-t border-gray-100">
                                     <p class="text-xs text-gray-500 font-medium mb-3">File Desain</p>
                                     <div class="grid grid-cols-2 gap-3">
-                                        <template x-if="selectedOrder?.design_request?.logo">
-                                            <a :href="'/storage/' + selectedOrder.design_request.logo" target="_blank"
-                                               class="group relative aspect-square rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
-                                                <img :src="'/storage/' + selectedOrder.design_request.logo"
-                                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                <span class="absolute top-2 left-2 px-1.5 py-0.5 bg-white/80 backdrop-blur-sm text-[10px] font-semibold text-gray-600 rounded truncate max-w-[100px]">Logo Tim</span>
-                                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                                    <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/></svg>
-                                                </div>
-                                            </a>
-                                        </template>
-                                        <template x-for="(file, idx) in selectedOrder.design_request.design_files" :key="idx">
+                                        <template x-for="(file, idx) in selectedOrder.design_request.all_design_files" :key="idx">
                                             <a :href="'/storage/' + file.path" target="_blank"
                                                class="group relative aspect-square rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
                                                 <img :src="'/storage/' + file.path" :alt="file.name"
