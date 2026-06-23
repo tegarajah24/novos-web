@@ -58,6 +58,16 @@ class ChatController extends Controller
         return view('internal.chat', compact('chats'));
     }
 
+    public function markRead(Chat $chat)
+    {
+        $user = auth()->user();
+        ChatMessage::where('chat_id', $chat->id)
+            ->where('sender_id', '!=', $user->id)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+        return response()->json(['success' => true]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

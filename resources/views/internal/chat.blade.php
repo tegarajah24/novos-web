@@ -20,7 +20,7 @@
             <div class="flex-1 overflow-y-auto">
                 <template x-for="chat in chats" :key="chat.id">
                     <button
-                        @click="activeChat = chat.id; chat.unread = 0"
+                        @click="activeChat = chat.id; chat.unread = 0; markRead(chat.id)"
                         :class="activeChat === chat.id ? 'bg-blue-50 border-l-4 border-[#1a237e]' : 'hover:bg-gray-50 border-l-4 border-transparent'"
                         class="w-full text-left p-4 transition-colors border-b border-gray-50"
                     >
@@ -319,6 +319,16 @@ function internalChatApp() {
             } finally {
                 this.sending = false;
             }
+        },
+
+        async markRead(chatId) {
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                await fetch('{{ url("staf/chat") }}/' + chatId + '/read', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+                });
+            } catch (e) {}
         },
 
         scrollToBottom() {
