@@ -1326,7 +1326,9 @@ function pemesananForm(catalogProduct = null) {
             formData.append('jenis_potongan', this.form.jenis_potongan);
             formData.append('lengan_jahitan', this.form.lengan_jahitan);
             formData.append('catatan', this.form.catatan);
-            formData.append('ukuran', JSON.stringify(this.form.ukuran));
+            for (const [size, qty] of Object.entries(this.form.ukuran)) {
+                formData.append(`ukuran[${size}]`, qty);
+            }
             formData.append('total_qty', this.totalQty || this.form.jumlah);
             formData.append('prioritas', this.prioritas);
             formData.append('pembayaran', this.pembayaran);
