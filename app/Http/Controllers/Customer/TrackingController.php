@@ -21,10 +21,19 @@ class TrackingController extends Controller
                 ->first();
 
             if ($order) {
+                $designFiles = [];
+                if ($order->designRequest && $order->designRequest->design_files) {
+                    $designFiles = collect($order->designRequest->design_files)->map(fn($f) => [
+                        'name' => $f['name'],
+                        'url'  => asset('storage/' . $f['path']),
+                    ])->values()->toArray();
+                }
+
                 $orderData = [
-                    'id'     => $order->order_number,
-                    'date'   => $order->created_at->format('j F Y'),
-                    'status' => $order->status,
+                    'id'           => $order->order_number,
+                    'date'         => $order->created_at->format('j F Y'),
+                    'status'       => $order->status,
+                    'design_files' => $designFiles,
                 ];
             }
         }
