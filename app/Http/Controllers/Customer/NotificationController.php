@@ -17,6 +17,24 @@ class NotificationController extends Controller
         return view('customer.notifikasi', compact('notifications'));
     }
 
+    public function recentJson()
+    {
+        $notifications = Notification::where('user_id', auth()->id())
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(fn($n) => [
+                'id'         => $n->id,
+                'title'      => $n->title,
+                'message'    => $n->message,
+                'is_read'    => $n->is_read,
+                'created_at' => $n->created_at->toISOString(),
+                'data'       => $n->data,
+            ]);
+
+        return response()->json($notifications);
+    }
+
     public function markRead(Notification $notification)
     {
         if ($notification->user_id !== auth()->id()) {

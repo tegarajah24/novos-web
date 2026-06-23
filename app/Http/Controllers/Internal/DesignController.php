@@ -12,12 +12,15 @@ class DesignController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['user', 'designRequest'])
+        $orders = Order::with(['user', 'designRequest', 'statusHistories' => function ($q) {
+                $q->where('notes', 'like', 'Revisi:%')->latest()->take(1);
+            }])
             ->whereIn('status', ['disetujui', 'di_design'])
             ->latest()
             ->get()
             ->map(function ($order) {
                 $dr = $order->designRequest;
+                $revision = $order->statusHistories->first();
                 $priority = 'Normal';
                 if ($order->admin_notes && preg_match('/Prioritas: (Express|Super Express)/', $order->admin_notes, $matches)) {
                     $priority = $matches[1];
@@ -30,11 +33,17 @@ class DesignController extends Controller
                     'team_name'         => $dr?->team_name ?? 'Jersey Custom',
                     'deadline'          => $order->created_at->addDays(7)->format('d M Y'),
                     'priority'          => $priority,
+                    'revision_note'     => $revision?->notes
+                        ? str_replace('Revisi: ', '', $revision->notes)
+                        : null,
                     'material'          => $dr?->material ?? '-',
                     'collar'            => $dr?->collar_style ?? '-',
                     'pattern'           => $dr?->motif ?? '-',
                     'notes'             => nl2br(e($dr?->additional_notes ?? $order->notes ?? 'Tidak ada catatan')),
-                    'reference_files'   => $dr?->logo ? [asset('storage/' . $dr->logo)] : [],
+                    'reference_files'   => array_merge(
+                        $dr?->logo ? [asset('storage/' . $dr->logo)] : [],
+                        collect($dr?->design_files ?? [])->map(fn($f) => asset('storage/' . $f['path']))->values()->toArray(),
+                    ),
                 ];
             })
             ->values()
@@ -68,6 +77,13 @@ class DesignController extends Controller
 
         DB::transaction(function () use ($order, $data, $user, $uploadedFiles) {
             $order->update(['status' => $data['status']]);
+
+            if (!empty($uploadedFiles) && $order->designRequest) {
+                $existing = $order->designRequest->design_files ?? [];
+                $order->designRequest->update([
+                    'design_files' => array_merge($existing, $uploadedFiles),
+                ]);
+            }
 
             $notes = 'Design selesai dikerjakan';
             if (!empty($uploadedFiles)) {

@@ -17,9 +17,27 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $orders = Order::where('user_id', $user->id)
-            ->with(['designRequest', 'payment', 'orderItem'])
+            ->with(['designRequest', 'payment', 'orderItems'])
             ->latest()
-            ->get();
+            ->get()
+            ->each(function ($order) {
+                if ($order->designRequest) {
+                    $allFiles = [];
+                    if ($order->designRequest->logo) {
+                        $allFiles[] = [
+                            'name' => 'Logo Tim',
+                            'path' => $order->designRequest->logo,
+                            'is_logo' => true,
+                        ];
+                    }
+                    if ($order->designRequest->design_files) {
+                        foreach ($order->designRequest->design_files as $f) {
+                            $allFiles[] = $f;
+                        }
+                    }
+                    $order->designRequest->all_design_files = $allFiles;
+                }
+            });
 
         return view('customer.profile', [
             'user' => $user,

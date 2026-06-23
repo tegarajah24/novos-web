@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat', [ChatController::class, 'index'])->name('chat');
     Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
 
+    Route::post('/chat/{chat}/read', [ChatController::class, 'markRead'])->name('chat.read');
     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -57,5 +58,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifikasi/{notification}/read', [NotificationController::class, 'markRead'])->name('notifikasi.read');
     Route::post('/notifikasi/read-all', [NotificationController::class, 'markAllRead'])->name('notifikasi.read-all');
     Route::get('/notifikasi/unread-count', [NotificationController::class, 'countUnread'])->name('notifikasi.unread-count');
+    Route::get('/notifikasi/recent', [NotificationController::class, 'recentJson'])->name('notifikasi.recent');
 
 });

@@ -107,37 +107,31 @@
                 <div class="grid md:grid-cols-[70%_30%]">
                     {{-- Kiri: Gambar Mockup --}}
                     <div class="p-6 md:p-8 border-b md:border-b-0 md:border-r border-gray-100">
-                        <div class="grid sm:grid-cols-2 gap-4 h-full">
-                            {{-- Tampak Depan --}}
-                             <div class="relative group cursor-zoom-in rounded-xl overflow-hidden bg-gray-50 border border-gray-200 min-h-[260px]"
-                                  @click="openLightbox('{{ asset('images/jersey-depan.png') }}')">
-                                 <img src="{{ asset('images/jersey-depan.png') }}"
-                                      alt="Tampak Depan"
-                                     class="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                        <svg class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <template x-if="order.design_files && order.design_files.length > 0">
+                            <div class="grid sm:grid-cols-2 gap-4 h-full">
+                                <template x-for="(file, idx) in order.design_files" :key="idx">
+                                    <div class="relative group cursor-zoom-in rounded-xl overflow-hidden bg-gray-50 border border-gray-200 min-h-[260px]"
+                                         @click="openLightbox(file.url)">
+                                        <img :src="file.url" :alt="file.name"
+                                             class="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105">
+                                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                                <svg class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                            </div>
+                                        </div>
+                                        <span class="absolute top-3 left-3 px-2 py-0.5 bg-white/80 backdrop-blur-sm text-[10px] font-semibold text-gray-600 rounded-md">Mockup Design</span>
+                                        <span class="absolute top-3 right-3 px-2 py-0.5 bg-black/40 backdrop-blur-sm text-[10px] font-semibold text-white rounded-md truncate max-w-[120px]" x-text="file.name"></span>
                                     </div>
-                                </div>
-                                <span class="absolute top-3 left-3 px-2 py-0.5 bg-white/80 backdrop-blur-sm text-[10px] font-semibold text-gray-600 rounded-md">2D Mockup</span>
-                                <span class="absolute top-3 right-3 px-2 py-0.5 bg-black/40 backdrop-blur-sm text-[10px] font-semibold text-white rounded-md">Depan</span>
+                                </template>
                             </div>
-
-                            {{-- Tampak Belakang --}}
-                             <div class="relative group cursor-zoom-in rounded-xl overflow-hidden bg-gray-50 border border-gray-200 min-h-[260px]"
-                                  @click="openLightbox('{{ asset('images/jersey-belakang.png') }}')">
-                                 <img src="{{ asset('images/jersey-belakang.png') }}"
-                                      alt="Tampak Belakang"
-                                     class="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                        <svg class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                                    </div>
-                                </div>
-                                <span class="absolute top-3 left-3 px-2 py-0.5 bg-white/80 backdrop-blur-sm text-[10px] font-semibold text-gray-600 rounded-md">Resolusi Tinggi</span>
-                                <span class="absolute top-3 right-3 px-2 py-0.5 bg-black/40 backdrop-blur-sm text-[10px] font-semibold text-white rounded-md">Belakang</span>
+                        </template>
+                        <template x-if="!order.design_files || order.design_files.length === 0">
+                            <div class="h-full min-h-[260px] flex flex-col items-center justify-center text-gray-400 p-8">
+                                <svg class="w-12 h-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
+                                <p class="text-sm font-medium">Belum ada file desain</p>
+                                <p class="text-xs mt-1">Tim design akan mengunggah mockup di sini</p>
                             </div>
-                        </div>
+                        </template>
                     </div>
 
                     {{-- Kanan: Panel Informasi & Tombol --}}

@@ -140,6 +140,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <div x-show="selectedOrder?.revision_note" class="mt-5 pt-4 border-t border-gray-100">
+                                <span class="text-orange-600 block mb-2 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
+                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Revisi Terakhir dari Customer
+                                </span>
+                                <div class="text-gray-700 bg-orange-50 p-4 rounded-xl border border-orange-200/60 leading-relaxed text-sm" x-text="selectedOrder?.revision_note"></div>
+                            </div>
                             <div class="mt-5 pt-4 border-t border-gray-100">
                                 <span class="text-gray-500 block mb-2 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Catatan Customer / Admin
@@ -155,14 +161,15 @@
                                 File & Logo Referensi
                             </h4>
                             <div class="grid grid-cols-4 gap-4">
-                                <template x-for="img in selectedOrder?.reference_files" :key="img">
-                                    <div class="aspect-square rounded-xl border border-gray-200 overflow-hidden bg-gray-100 relative group cursor-pointer hover:border-[#1a237e] hover:shadow-md transition-all">
+                                 <template x-for="img in selectedOrder?.reference_files" :key="img">
+                                    <a :href="img" target="_blank"
+                                       class="aspect-square rounded-xl border border-gray-200 overflow-hidden bg-gray-100 relative group cursor-pointer hover:border-[#1a237e] hover:shadow-md transition-all block">
                                         <img :src="img" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-[#1a237e]/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity gap-2">
                                             <i data-lucide="download" class="w-6 h-6 text-white"></i>
                                             <span class="text-white text-xs font-medium">Download</span>
                                         </div>
-                                    </div>
+                                    </a>
                                 </template>
                             </div>
                         </div>
@@ -309,28 +316,63 @@ function designApp() {
                 formData.append('status', this.updateStatus);
                 this.uploadedFiles.forEach(file => formData.append('files[]', file));
 
-                Swal.fire({ title: 'Mengupload...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-                fetch('/staf/design/update/' + this.selectedOrder.order_id, {
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
-                    body: formData
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.success) {
-                        Swal.fire({
-                            icon: 'success', title: 'Berhasil!',
-                            text: res.message, timer: 2000, showConfirmButton: false
-                        }).then(() => {
-                            this.isDetailOpen = false;
-                            this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
-                        });
-                    }
-                })
-                .catch(() => {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
+                let progress = 0;
+                Swal.fire({
+                    title: 'Mengupload...',
+                    html: `<div class="w-full bg-gray-200 rounded-full h-2.5 mt-3"><div class="bg-[#1a237e] h-2.5 rounded-full transition-all duration-300" style="width: 0%" id="upload-progress"></div></div><p class="text-xs text-gray-400 mt-2" id="upload-status">0%</p>`,
+                    allowOutsideClick: false,
+                    showConfirmButton: false
                 });
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/staf/design/update/' + this.selectedOrder.order_id);
+
+                xhr.setRequestHeader('X-CSRF-TOKEN', csrf);
+                xhr.setRequestHeader('Accept', 'application/json');
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        progress = Math.round((e.loaded / e.total) * 100);
+                        const bar = document.getElementById('upload-progress');
+                        const status = document.getElementById('upload-status');
+                        if (bar) bar.style.width = progress + '%';
+                        if (status) status.textContent = progress + '%';
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const res = JSON.parse(xhr.responseText);
+                            if (res.success) {
+                                Swal.fire({
+                                    icon: 'success', title: 'Berhasil!',
+                                    text: res.message, timer: 2000, showConfirmButton: false
+                                }).then(() => {
+                                    this.isDetailOpen = false;
+                                    this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
+                                });
+                            } else {
+                                Swal.fire({ icon: 'error', title: 'Gagal', text: res.message || 'Terjadi kesalahan.' });
+                            }
+                        } catch (e) {
+                            Swal.fire({ icon: 'error', title: 'Gagal', text: 'Response tidak valid.' });
+                        }
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Server error (' + xhr.status + ').' });
+                    }
+                };
+
+                xhr.onerror = () => {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi terputus. Coba lagi.' });
+                };
+
+                xhr.ontimeout = () => {
+                    Swal.fire({ icon: 'error', title: 'Timeout', text: 'Upload terlalu lama. Coba file yang lebih kecil.' });
+                };
+
+                xhr.timeout = 120000;
+                xhr.send(formData);
             })
         }
     }

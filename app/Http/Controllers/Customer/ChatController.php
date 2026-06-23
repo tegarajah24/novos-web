@@ -53,6 +53,18 @@ class ChatController extends Controller
         return response()->json(['count' => $count]);
     }
 
+    public function markRead(Chat $chat)
+    {
+        if ($chat->customer_id !== auth()->id()) {
+            abort(403);
+        }
+        ChatMessage::where('chat_id', $chat->id)
+            ->where('sender_id', '!=', auth()->id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+        return response()->json(['success' => true]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

@@ -110,7 +110,7 @@ class NotificationController extends Controller
             'roleInitial' => $data['role_initial'] ?? 'S',
             'roleColor' => $data['role_color'] ?? '#6b7280',
             'order_number' => $data['order_number'] ?? null,
-            'order_url' => $data['order_number']
+            'order_url' => ($data['order_number'] ?? null)
                 ? route('staf.detail-pesanan', $data['order_number'])
                 : null,
         ];

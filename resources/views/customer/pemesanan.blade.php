@@ -1335,12 +1335,13 @@ function pemesananForm(catalogProduct = null) {
             formData.append('warna_utama', this.form.warna_utama);
             formData.append('warna_sekunder', this.form.warna_sekunder);
 
-            // Logo tim (single file)
+            // Logo tim + Referensi Desain → semua masuk design_files[]
             if (this.uploads.length > 0) {
+                this.uploads.forEach(u => {
+                    formData.append('design_files[]', u.file);
+                });
                 formData.append('logo', this.uploads[0].file);
             }
-
-            // Design files (multiple files from Referensi Desain)
             if (this.refUploads.length > 0) {
                 this.refUploads.forEach(ref => {
                     formData.append('design_files[]', ref.file);

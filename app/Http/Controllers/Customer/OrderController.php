@@ -94,10 +94,7 @@ class OrderController extends Controller
                 }
             }
 
-            $logoPath = null;
-            if ($request->hasFile('logo')) {
-                $logoPath = $request->file('logo')->store('design-files/' . $orderNumber, 'public');
-            }
+            $logoPath = !empty($designFiles) ? $designFiles[0]['path'] : null;
 
             DesignRequest::create([
                 'order_id'         => $order->id,

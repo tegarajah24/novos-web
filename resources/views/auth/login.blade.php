@@ -2,6 +2,12 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    @if($errors->any())
+    <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-sm text-red-600 font-medium">Username atau password salah.</p>
+    </div>
+    @endif
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 

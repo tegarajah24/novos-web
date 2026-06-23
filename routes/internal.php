@@ -46,6 +46,8 @@ Route::prefix('staf')
         Route::delete('/kelola-pengguna/{user}', [UserController::class, 'destroy'])->name('kelola-pengguna.destroy');
 
         Route::get('/chat', [ChatController::class, 'index'])->name('chat');
+        Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
+        Route::post('/chat/{chat}/read', [ChatController::class, 'markRead'])->name('chat.read');
         Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
         Route::get('/daily-mental-check', [DailyMentalCheckController::class, 'index'])->name('daily-mental-check');
         Route::get('/daily-mental-check/today', [DailyMentalCheckController::class, 'getToday'])->name('daily-mental-check.today');

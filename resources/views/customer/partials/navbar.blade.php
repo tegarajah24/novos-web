@@ -82,7 +82,7 @@
 
                 {{-- Notification icon --}}
                 <div class="relative" x-data="notificationDropdown()" @click.away="notifOpen = false">
-                    <button @click="notifOpen = !notifOpen; fetchUnreadCount()" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
+                    <button @click="notifOpen = !notifOpen; fetchUnreadCount(); if(notifOpen) fetchNotifications()" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -270,6 +270,11 @@
                             <form x-show="tab === 'login'" x-cloak method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="space-y-4">
+                                    @if($errors->any())
+                                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 font-medium">
+                                        Username atau password salah.
+                                    </div>
+                                    @endif
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
                                         <input type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="username"
@@ -489,6 +494,9 @@
                         history.replaceState(null, '', url);
                     }
                 }
+                @if($errors->any())
+                this.openSidebar('login');
+                @endif
                 @endguest
             },
 
@@ -561,13 +569,12 @@
             },
 
             async fetchNotifications() {
-                if (this.notifications.length > 0) return;
                 try {
-                    const res = await fetch('{{ route("notifikasi") }}', {
+                    const res = await fetch('{{ route("notifikasi.recent") }}', {
                         headers: { 'Accept': 'application/json' }
                     });
-                    const html = await res.text();
-                    // Parse notifications from HTML - for now we'll just show count
+                    if (!res.ok) return;
+                    this.notifications = await res.json();
                 } catch (e) {}
             },
 
