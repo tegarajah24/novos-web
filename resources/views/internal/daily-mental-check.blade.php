@@ -326,7 +326,7 @@
                 {{-- A. Checklist Pelaksanaan SMART-WORK Micro-Break --}}
                 <div class="glass-card rounded-2xl overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
-                        <h3 class="font-bold text-gray-900">A. Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
+                        <h3 class="font-bold text-gray-900">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
@@ -501,7 +501,7 @@
                 {{-- D. Evaluasi Manfaat --}}
                 <div class="glass-card rounded-2xl overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
-                        <h3 class="font-bold text-gray-900">D. Evaluasi Manfaat Setelah Micro-Break</h3>
+                        <h3 class="font-bold text-gray-900">Evaluasi Manfaat Setelah Micro-Break</h3>
                         <p class="text-xs text-gray-500 mt-1">Bagaimana kondisi Anda setelah melakukan micro-break?</p>
                     </div>
                     <div class="overflow-x-auto">
