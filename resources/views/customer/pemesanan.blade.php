@@ -1635,6 +1635,10 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
                     if (this.catalogProduct.harga) {
                         this.basePricePerPcs = parseInt(this.catalogProduct.harga);
                     }
+                    if (this.catalogProduct.kerah) this.form.kerah = this.catalogProduct.kerah;
+                    if (this.catalogProduct.bahan) this.form.bahan = this.catalogProduct.bahan;
+                    if (this.catalogProduct.jenis_potongan) this.form.jenis_potongan = this.catalogProduct.jenis_potongan;
+                    if (this.catalogProduct.lengan_jahitan) this.form.lengan_jahitan = this.catalogProduct.lengan_jahitan;
                     this.step = 2;
                 }
             }

@@ -157,6 +157,79 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Jenis Kerah</label>
+                            <select x-model="formData.kerah" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                                <option value="">Pilih (opsional)</option>
+                                <option value="O-NECK V.1">O-NECK V.1</option>
+                                <option value="O-NECK V.2">O-NECK V.2</option>
+                                <option value="O-NECK V.3">O-NECK V.3</option>
+                                <option value="O-NECK V.4">O-NECK V.4</option>
+                                <option value="V-NECK V.5">V-NECK V.5</option>
+                                <option value="V-NECK V.1">V-NECK V.1</option>
+                                <option value="V-NECK V.2">V-NECK V.2</option>
+                                <option value="V-NECK V.3">V-NECK V.3</option>
+                                <option value="V-NECK V.4">V-NECK V.4</option>
+                                <option value="V-NECK V.5">V-NECK V.5</option>
+                                <option value="CLASSIC V.1">CLASSIC V.1</option>
+                                <option value="CLASSIC V.2">CLASSIC V.2</option>
+                                <option value="CLASSIC V.3">CLASSIC V.3</option>
+                                <option value="CLASSIC V.4">CLASSIC V.4</option>
+                                <option value="CLASSIC V.5">CLASSIC V.5</option>
+                                <option value="V-NECK V3 TUMPUK">V-NECK V3 TUMPUK</option>
+                                <option value="TIMNAS">TIMNAS</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Bahan Jersey</label>
+                            <select x-model="formData.bahan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                                <option value="">Pilih (opsional)</option>
+                                <option value="BINTIK JARUM GRADE B">BINTIK JARUM GRADE B</option>
+                                <option value="MILANO GRADE B">MILANO GRADE B</option>
+                                <option value="BINTIK JARUM PREMIUM">BINTIK JARUM PREMIUM</option>
+                                <option value="MILANO PREMIUM">MILANO PREMIUM</option>
+                                <option value="RABBIT">RABBIT</option>
+                                <option value="DROPPEDDLE">DROPPEDDLE</option>
+                                <option value="SMASH">SMASH</option>
+                                <option value="WAFFLE">WAFFLE</option>
+                                <option value="EMBOSH">EMBOSH</option>
+                                <option value="MICROCOOL">MICROCOOL</option>
+                                <option value="JAQUARD AERO">JAQUARD AERO</option>
+                                <option value="COTTON 24S">COTTON 24S</option>
+                                <option value="COTTON 30S">COTTON 30S</option>
+                                <option value="LOTTO">LOTTO</option>
+                                <option value="PARASUT">PARASUT</option>
+                                <option value="PUMA">PUMA</option>
+                                <option value="ULTRALIGHT A">ULTRALIGHT A</option>
+                                <option value="ULTRALIGHT B">ULTRALIGHT B</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Jenis Potongan</label>
+                            <select x-model="formData.jenis_potongan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                                <option value="">Pilih (opsional)</option>
+                                <option value="REGULER">REGULER</option>
+                                <option value="SLIMFIT CEWE">SLIMFIT CEWE</option>
+                                <option value="OVERSIZE">OVERSIZE</option>
+                                <option value="TUNIK">TUNIK</option>
+                                <option value="SLIM FIT UNISEX">SLIM FIT UNISEX</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Model Lengan & Jahitan</label>
+                            <select x-model="formData.lengan_jahitan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                                <option value="">Pilih (opsional)</option>
+                                <option value="REGULER OVERDECK">REGULER OVERDECK</option>
+                                <option value="REGULER PAKAI MANSET">REGULER PAKAI MANSET</option>
+                                <option value="RAGLAN A OVERDECK">RAGLAN A OVERDECK</option>
+                                <option value="RAGLAN A PAKAI MANSET">RAGLAN A PAKAI MANSET</option>
+                                <option value="RAGLAN B OVERDECK">RAGLAN B OVERDECK</option>
+                                <option value="RAGLAN B PAKAI MANSET">RAGLAN B PAKAI MANSET</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Depan</label>
                             <div class="flex items-center gap-3">
                                 <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-xl hover:bg-[#283593] transition-colors font-medium cursor-pointer">
@@ -210,16 +283,20 @@ function kelolaProdukApp() {
             category: ''
         },
 
-        formData: {
-            id: null,
-            name: '',
-            category_id: '',
-            price: '',
-            description: '',
-            imageDepanPreview: null,
-            imageBelakangPreview: null,
-            is_featured: false
-        },
+            formData: {
+                id: null,
+                name: '',
+                category_id: '',
+                price: '',
+                description: '',
+                imageDepanPreview: null,
+                imageBelakangPreview: null,
+                is_featured: false,
+                kerah: '',
+                bahan: '',
+                jenis_potongan: '',
+                lengan_jahitan: ''
+            },
 
         initApp() {
             this.renderIcons();
@@ -252,7 +329,11 @@ function kelolaProdukApp() {
                 description: '',
                 imageDepanPreview: null,
                 imageBelakangPreview: null,
-                is_featured: false
+                is_featured: false,
+                kerah: '',
+                bahan: '',
+                jenis_potongan: '',
+                lengan_jahitan: ''
             };
             this.showModal = true;
             this.$nextTick(() => this.renderIcons());
@@ -268,7 +349,11 @@ function kelolaProdukApp() {
                 description: product.description,
                 imageDepanPreview: product.image_depan,
                 imageBelakangPreview: product.image_belakang,
-                is_featured: product.is_featured
+                is_featured: product.is_featured,
+                kerah: product.kerah || '',
+                bahan: product.bahan || '',
+                jenis_potongan: product.jenis_potongan || '',
+                lengan_jahitan: product.lengan_jahitan || ''
             };
             this.showModal = true;
             this.$nextTick(() => this.renderIcons());
@@ -308,6 +393,10 @@ function kelolaProdukApp() {
             fd.append('price', this.formData.price);
             fd.append('description', this.formData.description || '');
             fd.append('is_featured', this.formData.is_featured ? '1' : '0');
+            fd.append('kerah', this.formData.kerah || '');
+            fd.append('bahan', this.formData.bahan || '');
+            fd.append('jenis_potongan', this.formData.jenis_potongan || '');
+            fd.append('lengan_jahitan', this.formData.lengan_jahitan || '');
 
             const fileInput = this.$refs.inputDepan;
             if (fileInput && fileInput.files[0]) {
