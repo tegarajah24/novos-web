@@ -324,7 +324,7 @@
                             </div>
                             <div class="text-center sm:text-left space-y-2">
                                 <h4 class="font-bold text-sm text-gray-900">Foto Profil</h4>
-                                <p class="text-xs text-gray-500">Mendukung PNG, JPG, JPEG atau WEBP (Maksimal 2MB).</p>
+                                <p class="text-xs text-gray-500">Mendukung PNG, JPG atau JPEG (Maksimal 5MB).</p>
                                 <label class="inline-block px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
                                     Pilih Foto
                                     <input type="file" name="avatar" class="hidden" accept="image/*" @change="handleFileChange($event)">

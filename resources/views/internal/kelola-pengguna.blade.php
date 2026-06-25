@@ -162,7 +162,7 @@
                             Pilih Foto
                             <input type="file" name="avatar" accept="image/*" class="hidden" onchange="previewAvatar(this, 'tambahAvatarPreview')">
                         </label>
-                        <span class="text-xs text-gray-400">Maks. 2MB (PNG, JPG, WEBP)</span>
+                        <span class="text-xs text-gray-400">Maks. 5MB (PNG, JPG)</span>
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
@@ -235,7 +235,7 @@
                             Pilih Foto
                             <input type="file" name="avatar" accept="image/*" class="hidden" onchange="previewAvatar(this, 'editAvatarPreview')">
                         </label>
-                        <span class="text-xs text-gray-400">Maks. 2MB (PNG, JPG, WEBP)</span>
+                        <span class="text-xs text-gray-400">Maks. 5MB (PNG, JPG)</span>
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
