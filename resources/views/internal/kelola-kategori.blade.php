@@ -92,7 +92,7 @@ function kategoriApp() {
                 });
                 this.categories = await res.json();
             } catch (e) {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal memuat data kategori.' });
+                Notify.error('Gagal memuat data kategori.');
             }
             this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
         },
@@ -126,12 +126,12 @@ function kategoriApp() {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    Swal.fire({ icon: 'success', title: 'Berhasil', text: data.message, timer: 1500, showConfirmButton: false });
+                    Notify.success(data.message);
                     this.modalOpen = false;
                     this.init();
                 }
             } catch (e) {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
+                Notify.error('Terjadi kesalahan server.');
             } finally {
                 this.submitting = false;
             }
@@ -157,13 +157,13 @@ function kategoriApp() {
                     });
                     const data = await res.json();
                     if (data.success) {
-                        Swal.fire({ icon: 'success', title: 'Berhasil', text: data.message, timer: 1500, showConfirmButton: false });
+                        Notify.success(data.message);
                         this.init();
                     } else {
-                        Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
+                        Notify.error(data.message);
                     }
                 } catch (e) {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
+                    Notify.error('Terjadi kesalahan server.');
                 }
             });
         }

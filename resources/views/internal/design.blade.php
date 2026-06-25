@@ -278,11 +278,7 @@ function designApp() {
                 if(file.size <= 20 * 1024 * 1024) {
                     this.uploadedFiles.push(file);
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'File Terlalu Besar',
-                        text: `Ukuran file ${file.name} melebihi 20MB.`
-                    });
+                    Notify.error(`Ukuran file ${file.name} melebihi 20MB.`, 'File Terlalu Besar');
                 }
             });
             e.target.value = ''; // reset input
@@ -317,12 +313,11 @@ function designApp() {
                 this.uploadedFiles.forEach(file => formData.append('files[]', file));
 
                 let progress = 0;
-                Swal.fire({
-                    title: 'Mengupload...',
-                    html: `<div class="w-full bg-gray-200 rounded-full h-2.5 mt-3"><div class="bg-[#1a237e] h-2.5 rounded-full transition-all duration-300" style="width: 0%" id="upload-progress"></div></div><p class="text-xs text-gray-400 mt-2" id="upload-status">0%</p>`,
-                    allowOutsideClick: false,
-                    showConfirmButton: false
-                });
+                let loadingEl = document.createElement('div');
+                loadingEl.id = 'upload-loading-overlay';
+                loadingEl.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30';
+                loadingEl.innerHTML = '<div class="bg-white rounded-xl px-6 py-5 shadow-xl w-80"><div class="flex items-center gap-3 mb-3"><svg class="animate-spin h-5 w-5 text-[#1a237e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="text-sm font-medium text-gray-700">Mengupload...</span></div><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-[#1a237e] h-2.5 rounded-full transition-all duration-300" style="width: 0%" id="upload-progress"></div></div><p class="text-xs text-gray-400 mt-2 text-center" id="upload-status">0%</p></div>';
+                document.body.appendChild(loadingEl);
 
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', '/staf/design/update/' + this.selectedOrder.order_id);
@@ -341,34 +336,35 @@ function designApp() {
                 };
 
                 xhr.onload = () => {
+                    document.getElementById('upload-loading-overlay')?.remove();
                     if (xhr.status >= 200 && xhr.status < 300) {
                         try {
                             const res = JSON.parse(xhr.responseText);
                             if (res.success) {
-                                Swal.fire({
-                                    icon: 'success', title: 'Berhasil!',
-                                    text: res.message, timer: 2000, showConfirmButton: false
-                                }).then(() => {
+                                Notify.success(res.message);
+                                setTimeout(() => {
                                     this.isDetailOpen = false;
                                     this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
-                                });
+                                }, 1200);
                             } else {
-                                Swal.fire({ icon: 'error', title: 'Gagal', text: res.message || 'Terjadi kesalahan.' });
+                                Notify.error(res.message || 'Terjadi kesalahan.');
                             }
                         } catch (e) {
-                            Swal.fire({ icon: 'error', title: 'Gagal', text: 'Response tidak valid.' });
+                            Notify.error('Response tidak valid.');
                         }
                     } else {
-                        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Server error (' + xhr.status + ').' });
+                        Notify.error('Server error (' + xhr.status + ').');
                     }
                 };
 
                 xhr.onerror = () => {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi terputus. Coba lagi.' });
+                    document.getElementById('upload-loading-overlay')?.remove();
+                    Notify.error('Koneksi terputus. Coba lagi.');
                 };
 
                 xhr.ontimeout = () => {
-                    Swal.fire({ icon: 'error', title: 'Timeout', text: 'Upload terlalu lama. Coba file yang lebih kecil.' });
+                    document.getElementById('upload-loading-overlay')?.remove();
+                    Notify.error('Upload terlalu lama. Coba file yang lebih kecil.', 'Timeout');
                 };
 
                 xhr.timeout = 120000;

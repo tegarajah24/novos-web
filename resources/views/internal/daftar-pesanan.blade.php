@@ -220,20 +220,13 @@ function orderManager() {
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: data.message,
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
+                    Notify.success(data.message);
                 } else {
-                    Swal.fire('Error', data.message || 'Terjadi kesalahan.', 'error');
+                    Notify.error(data.message || 'Terjadi kesalahan.');
                 }
             })
             .catch(err => {
-                Swal.fire('Error', 'Gagal menghubungi server.', 'error');
+                Notify.error('Gagal menghubungi server.');
             });
         }
     }

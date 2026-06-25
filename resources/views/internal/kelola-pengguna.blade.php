@@ -386,7 +386,7 @@
                     btn.disabled = false;
                     btnText.textContent = 'Simpan';
                     if (result) {
-                        await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
+                        Notify.success(result.message);
                         refreshTable();
                     }
                 });
@@ -410,7 +410,7 @@
                     btn.disabled = false;
                     btnText.textContent = 'Simpan';
                     if (result) {
-                        await Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, timer: 1500, showConfirmButton: false });
+                        Notify.success(result.message);
                         refreshTable();
                     }
                 });
@@ -506,13 +506,13 @@
                     } else if (result.message) {
                         msg = result.message;
                     }
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: msg });
+                    Notify.error(msg);
                     return null;
                 }
 
                 return result;
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi terputus' });
+                Notify.error('Koneksi terputus');
                 return null;
             }
         }
@@ -554,14 +554,14 @@
                     const data = await res.json();
 
                     if (!res.ok) {
-                        Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Terjadi kesalahan' });
+                        Notify.error(data.message || 'Terjadi kesalahan');
                         return;
                     }
 
-                    await Swal.fire({ icon: 'success', title: 'Terhapus!', text: data.message, timer: 1500, showConfirmButton: false });
+                    Notify.success(data.message, 'Terhapus!');
                     refreshTable();
                 } catch (err) {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi terputus' });
+                    Notify.error('Koneksi terputus');
                 }
             });
         }

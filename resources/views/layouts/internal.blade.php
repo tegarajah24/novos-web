@@ -16,6 +16,7 @@
 
     {{-- Scripts --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @notifyCss
     @stack('styles')
     
     <style>
@@ -314,6 +315,46 @@
                 }
             }
         }
+    </script>
+
+    @include('notify::components.notify')
+
+    <script>
+    window.Notify = {
+        _icons: {
+            success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0 text-green-500"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+            error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0 text-red-500"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+            warning: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0 text-yellow-500"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+            info: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0 text-blue-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+            close: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+        },
+        _borders: {
+            success: 'border-green-500', error: 'border-red-500',
+            warning: 'border-yellow-500', info: 'border-blue-500'
+        },
+        _show(type, message, title, duration) {
+            let container = document.getElementById('notify-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notify-container';
+                container.className = 'fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none';
+                document.body.appendChild(container);
+            }
+            let el = document.createElement('div');
+            el.className = 'pointer-events-auto notify-item border-l-4 ' + (this._borders[type] || 'border-blue-500') + ' bg-white rounded-lg shadow-lg p-4 transition-all duration-300 translate-x-4 opacity-0 max-w-sm';
+            el.innerHTML = '<div class="flex items-start gap-3">' + (this._icons[type] || this._icons.info) + '<div class="flex-1 min-w-0"><p class="text-sm font-semibold text-gray-900">' + title + '</p><p class="text-sm text-gray-600 mt-1">' + message + '</p></div><button onclick="this.closest(\'.notify-item\').remove()" class="text-gray-400 hover:text-gray-600 shrink-0">' + this._icons.close + '</button></div>';
+            container.appendChild(el);
+            requestAnimationFrame(function() { el.classList.remove('translate-x-4', 'opacity-0'); });
+            setTimeout(function() {
+                el.classList.add('translate-x-4', 'opacity-0');
+                setTimeout(function() { el.remove(); }, 300);
+            }, duration);
+        },
+        success: function(message, title) { this._show('success', message, title || 'Berhasil', 3000); },
+        error: function(message, title) { this._show('error', message, title || 'Gagal', 5000); },
+        warning: function(message, title) { this._show('warning', message, title || 'Peringatan', 4000); },
+        info: function(message, title) { this._show('info', message, title || 'Informasi', 4000); }
+    };
     </script>
 
     @stack('scripts')

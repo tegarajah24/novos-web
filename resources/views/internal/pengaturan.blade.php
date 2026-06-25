@@ -82,13 +82,13 @@ function settingApp() {
                     this.form.company_phone = data.data?.company_phone ?? this.form.company_phone;
                     this.form.company_email = data.data?.company_email ?? this.form.company_email;
                     this.form.company_address = data.data?.company_address ?? this.form.company_address;
-                    Swal.fire({ icon: 'success', title: 'Berhasil', text: data.message, timer: 1500, showConfirmButton: false });
+                    Notify.success(data.message);
                 } else {
                     const msg = data.message || (data.errors ? Object.values(data.errors).flat().join(', ') : 'Gagal menyimpan pengaturan.');
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: msg });
+                    Notify.error(msg);
                 }
             } catch (e) {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
+                Notify.error('Terjadi kesalahan server.');
             } finally {
                 this.saving = false;
             }

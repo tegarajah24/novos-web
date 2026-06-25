@@ -346,31 +346,14 @@ function kelolaProdukApp() {
                         }
                     }
 
-                    window.Swal.fire({
-                        title: 'Berhasil!',
-                        text: data.message,
-                        icon: 'success',
-                        confirmButtonColor: '#1a237e',
-                        timer: 1500
-                    });
-
+                    Notify.success(data.message);
                     this.closeForm();
                     this.renderIcons();
                 } else {
-                    window.Swal.fire({
-                        title: 'Gagal',
-                        text: data.message || 'Terjadi kesalahan',
-                        icon: 'error',
-                        confirmButtonColor: '#dc2626'
-                    });
+                    Notify.error(data.message || 'Terjadi kesalahan');
                 }
             } catch (e) {
-                window.Swal.fire({
-                    title: 'Kesalahan',
-                    text: 'Gagal terhubung ke server.',
-                    icon: 'error',
-                    confirmButtonColor: '#dc2626'
-                });
+                Notify.error('Gagal terhubung ke server.');
             } finally {
                 this.submitting = false;
             }
@@ -404,28 +387,12 @@ function kelolaProdukApp() {
 
                     if (data.success) {
                         this.products = this.products.filter(p => p.id !== id);
-                        window.Swal.fire({
-                            title: 'Terhapus!',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonColor: '#1a237e',
-                            timer: 1500
-                        });
+                        Notify.success(data.message, 'Terhapus!');
                     } else {
-                        window.Swal.fire({
-                            title: 'Gagal',
-                            text: data.message || 'Terjadi kesalahan',
-                            icon: 'error',
-                            confirmButtonColor: '#dc2626'
-                        });
+                        Notify.error(data.message || 'Terjadi kesalahan');
                     }
                 } catch (e) {
-                    window.Swal.fire({
-                        title: 'Kesalahan',
-                        text: 'Gagal terhubung ke server.',
-                        icon: 'error',
-                        confirmButtonColor: '#dc2626'
-                    });
+                    Notify.error('Gagal terhubung ke server.');
                 }
             });
         },
@@ -448,22 +415,11 @@ function kelolaProdukApp() {
                         p.is_featured = p.id === id ? data.is_featured : false;
                     });
 
-                    window.Swal.fire({
-                        title: data.is_featured ? 'Hero Beranda Diperbarui!' : 'Featured Dinonaktifkan',
-                        text: data.message,
-                        icon: 'success',
-                        confirmButtonColor: '#1a237e',
-                        timer: 2000
-                    });
+                    Notify.success(data.message, data.is_featured ? 'Hero Beranda Diperbarui!' : 'Featured Dinonaktifkan');
                 }
             })
             .catch(() => {
-                window.Swal.fire({
-                    title: 'Kesalahan',
-                    text: 'Gagal memperbarui status featured.',
-                    icon: 'error',
-                    confirmButtonColor: '#dc2626'
-                });
+                Notify.error('Gagal memperbarui status featured.');
             });
         },
 

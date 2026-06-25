@@ -222,11 +222,7 @@ function internalChatApp() {
 
             const maxSize = 20 * 1024 * 1024;
             if (file.size > maxSize) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'File terlalu besar',
-                    text: 'Ukuran file maksimal 20 MB',
-                });
+                Notify.error('Ukuran file maksimal 20 MB', 'File terlalu besar');
                 event.target.value = '';
                 return;
             }
@@ -311,10 +307,7 @@ function internalChatApp() {
                 this.$nextTick(() => this.scrollToBottom());
 
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal mengirim',
-                    text: error.message || 'Terjadi kesalahan saat mengirim pesan',
+                Notify.error(error.message || 'Terjadi kesalahan saat mengirim pesan', 'Gagal mengirim');
                 });
             } finally {
                 this.sending = false;
