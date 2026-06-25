@@ -132,6 +132,76 @@
                     </div>
                 </div>
 
+                {{-- Cart icon --}}
+                <div class="relative" x-data="cartDropdown()" @click.away="cartOpen = false">
+                    <button @click="cartOpen = !cartOpen; if(cartOpen) fetchCart()" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
+                        <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        <span x-show="cartCount > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="cartCount"></span>
+                    </button>
+
+                    <div x-show="cartOpen" x-cloak
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-1"
+                         class="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-100 rounded-xl shadow-lg z-[70]">
+                        <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                            <h3 class="font-semibold text-gray-900 text-sm">Keranjang Belanja</h3>
+                            <span class="text-xs text-gray-400" x-text="cartItems.length + ' item'"></span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto">
+                            <template x-if="cartItems.length === 0">
+                                <div class="px-4 py-10 text-center">
+                                    <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                    <p class="text-sm text-gray-400">Keranjang masih kosong</p>
+                                </div>
+                            </template>
+                            <template x-for="item in cartItems" :key="item.id">
+                                <div class="flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
+                                    <div class="w-14 h-14 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
+                                        <img :src="item.product.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
+                                             :alt="item.product.name" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate" x-text="item.product.name"></p>
+                                        <p class="text-xs text-gray-500" x-text="'Ukuran: ' + item.size"></p>
+                                        <p class="text-xs font-semibold text-[#1a237e] mt-0.5" x-text="'Rp ' + parseInt(item.product.price).toLocaleString('id-ID')"></p>
+                                    </div>
+                                    <div class="flex items-center gap-1 shrink-0">
+                                        <button @click="updateQty(item, item.qty - 1)" 
+                                            class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors text-sm"
+                                            :disabled="item.qty <= 1">
+                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+                                        </button>
+                                        <span class="w-8 text-center text-xs font-semibold text-gray-700" x-text="item.qty"></span>
+                                        <button @click="updateQty(item, item.qty + 1)"
+                                            class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors text-sm">
+                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                                        </button>
+                                    </div>
+                                    <button @click="removeItem(item)" class="p-1 text-gray-300 hover:text-red-500 transition-colors shrink-0">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="px-4 py-3 border-t border-gray-100">
+                            <a href="{{ route('profile.edit') }}?tab=keranjang" 
+                               class="w-full py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center gap-2">
+                                Lihat Keranjang Lengkap
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- User dropdown --}}
                 <div class="relative" x-data="{ userOpen: false }"
                      @click.away="userOpen = false">
@@ -172,6 +242,11 @@
                            class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
                             <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                             Chat
+                        </a>
+                        <a href="{{ route('profile.edit') }}?tab=keranjang"
+                           class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">
+                            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                            Keranjang
                         </a>
 
                         {{-- Dashboard (khusus internal) --}}
@@ -542,6 +617,75 @@
                     });
                     const data = await res.json();
                     this.chatUnread = data.count || 0;
+                } catch (e) {}
+            }
+        }
+    }
+
+    function cartDropdown() {
+        return {
+            cartOpen: false,
+            cartItems: [],
+            cartCount: 0,
+
+            init() {
+                this.fetchCount();
+            },
+
+            async fetchCount() {
+                try {
+                    const res = await fetch('{{ route("cart.count") }}', {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+                    this.cartCount = data.count || 0;
+                } catch (e) {}
+            },
+
+            async fetchCart() {
+                try {
+                    const res = await fetch('{{ route("cart.index") }}', {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+                    this.cartItems = data.items || [];
+                    this.cartCount = data.count || 0;
+                } catch (e) {}
+            },
+
+            async updateQty(item, newQty) {
+                if (newQty < 1) return;
+                try {
+                    const res = await fetch('/cart/' + item.id, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ qty: newQty }),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        item.qty = newQty;
+                    }
+                } catch (e) {}
+            },
+
+            async removeItem(item) {
+                try {
+                    const res = await fetch('/cart/' + item.id, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        this.cartItems = this.cartItems.filter(i => i.id !== item.id);
+                        this.cartCount = data.count || 0;
+                    }
                 } catch (e) {}
             }
         }

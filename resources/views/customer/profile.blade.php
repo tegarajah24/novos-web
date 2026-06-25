@@ -17,7 +17,7 @@
 @endpush
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser, window.profileAddresses)">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser, window.profileAddresses, window.profileCart)">
     {{-- Alerts --}}
     @if (session('status') === 'profile-updated')
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
@@ -68,6 +68,13 @@
                         class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all">
                         <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                         Riwayat Pemesanan
+                    </button>
+                    {{-- Tab: Keranjang --}}
+                    <button @click="setActiveTab('keranjang')"
+                        :class="activeTab === 'keranjang' ? 'bg-[#1a237e] text-white' : 'text-gray-700 hover:bg-gray-50'"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all">
+                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Keranjang
                     </button>
                     {{-- Tab: Alamat --}}
                     <button @click="setActiveTab('alamat')"
@@ -287,6 +294,111 @@
                     </div>
                 </div>
             </template>
+
+            {{-- 1B. TAB: KERANJANG --}}
+            <div x-show="activeTab === 'keranjang'" x-cloak class="space-y-6">
+                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-gray-900 text-lg">Keranjang Belanja</h3>
+                            <p class="text-sm text-gray-500">Kelola produk yang akan dipesan.</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-400">Total Dipilih</p>
+                            <p class="text-lg font-bold text-[#1a237e]" x-text="formatRupiah(cartTotalSelected)"></p>
+                        </div>
+                    </div>
+
+                    <template x-if="cartItems.length === 0">
+                        <div class="py-16 text-center">
+                            <svg class="w-16 h-16 mx-auto text-gray-200 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                            </svg>
+                            <h4 class="font-bold text-gray-800 text-sm mb-1">Keranjang Kosong</h4>
+                            <p class="text-xs text-gray-400 mb-4">Belum ada produk di keranjang Anda.</p>
+                            <a href="{{ route('katalog') }}" class="inline-block px-5 py-2.5 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#283593] transition-colors">Jelajahi Katalog</a>
+                        </div>
+                    </template>
+
+                    <template x-if="cartItems.length > 0">
+                        <div class="space-y-0">
+                            <div class="hidden md:grid grid-cols-[40px_60px_1fr_100px_120px_100px] gap-4 px-4 py-3 bg-gray-50 rounded-xl text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                <span></span>
+                                <span></span>
+                                <span>Produk</span>
+                                <span>Ukuran</span>
+                                <span>Harga</span>
+                                <span class="text-center">Jumlah</span>
+                            </div>
+                            <template x-for="(item, index) in cartItems" :key="item.id">
+                                <div class="grid grid-cols-[40px_60px_1fr_100px_120px_100px_40px] md:grid-cols-[40px_60px_1fr_100px_120px_100px_40px] gap-4 items-center px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-100 last:border-0">
+                                    <div>
+                                        <input type="checkbox" :checked="item.is_selected" @change="toggleSelect(item)"
+                                            class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e] cursor-pointer">
+                                    </div>
+                                    <div class="w-14 h-14 rounded-lg bg-gray-100 overflow-hidden">
+                                        <img :src="item.product.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
+                                             :alt="item.product.name" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900 truncate" x-text="item.product.name"></p>
+                                        <p class="text-xs text-gray-400 truncate" x-text="item.product.category?.name || ''"></p>
+                                    </div>
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-700" x-text="item.size"></span>
+                                    </div>
+                                    <div>
+                                        <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.product.price).toLocaleString('id-ID')"></span>
+                                    </div>
+                                    <div class="flex items-center gap-1 justify-center">
+                                        <button @click="updateCartQty(item, item.qty - 1)" 
+                                            class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
+                                            :disabled="item.qty <= 1">
+                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+                                        </button>
+                                        <span class="w-10 text-center text-sm font-semibold text-gray-700" x-text="item.qty"></span>
+                                        <button @click="updateCartQty(item, item.qty + 1)"
+                                            class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
+                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                                        </button>
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button @click="deleteCartItem(item, index)" class="p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div x-show="cartItems.length > 0" class="flex items-center justify-between pt-6 border-t border-gray-100 mt-4">
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" @change="toggleSelectAll($event.target.checked)" 
+                                    class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e] cursor-pointer">
+                                <span class="text-sm text-gray-600">Pilih Semua</span>
+                            </label>
+                            <button @click="deleteSelected()" class="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                Hapus Terpilih
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <p class="text-xs text-gray-400">Total</p>
+                                <p class="text-lg font-bold text-[#1a237e]" x-text="formatRupiah(cartTotalSelected)"></p>
+                            </div>
+                            <a href="{{ route('pemesanan') }}" 
+                               class="px-6 py-2.5 bg-[#1a237e] text-white rounded-lg text-sm font-semibold hover:bg-[#283593] transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                                Pesan Sekarang
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {{-- 2. TAB: PENGATURAN PROFIL --}}
             <div x-show="activeTab === 'pengaturan'" x-cloak class="space-y-6">
@@ -685,8 +797,9 @@
 window.profileOrders = @json($orders);
 window.profileUser = @json($user);
 window.profileAddresses = @json($addresses);
+window.profileCart = @json($cartItems);
 
-function profileDashboard(orders = [], user = {}, initialAddresses = []) {
+function profileDashboard(orders = [], user = {}, initialAddresses = [], initialCart = []) {
     return {
         activeTab: (new URLSearchParams(window.location.search)).get('tab') || 'pengaturan',
         orderFilter: 'menunggu_pembayaran',
@@ -698,6 +811,7 @@ function profileDashboard(orders = [], user = {}, initialAddresses = []) {
 
         // Address management
         addresses: initialAddresses,
+        cartItems: initialCart,
         alamatMode: 'list',
         editingAddressId: null,
         addressForm: {
@@ -721,6 +835,12 @@ function profileDashboard(orders = [], user = {}, initialAddresses = []) {
             regencies: false,
             districts: false,
             submit: false,
+        },
+
+        get cartTotalSelected() {
+            return this.cartItems
+                .filter(item => item.is_selected)
+                .reduce((sum, item) => sum + (item.qty * (item.product?.price || 0)), 0);
         },
 
         get validateAddress() {
@@ -1129,6 +1249,131 @@ function profileDashboard(orders = [], user = {}, initialAddresses = []) {
             if (!dateString) return '-';
             const date = new Date(dateString);
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        },
+
+        // ─── Cart Methods ───
+
+        async toggleSelect(item) {
+            try {
+                const res = await fetch('/cart/' + item.id + '/toggle-select', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                });
+                const data = await res.json();
+                if (data.success) {
+                    item.is_selected = !item.is_selected;
+                }
+            } catch (e) {}
+        },
+
+        async updateCartQty(item, newQty) {
+            if (newQty < 1) return;
+            try {
+                const res = await fetch('/cart/' + item.id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ qty: newQty }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    item.qty = newQty;
+                }
+            } catch (e) {}
+        },
+
+        async deleteCartItem(item, index) {
+            const result = await Swal.fire({
+                title: 'Hapus Produk?',
+                text: 'Produk "' + item.product.name + '" akan dihapus dari keranjang.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+            });
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch('/cart/' + item.id, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.cartItems.splice(index, 1);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                }
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' });
+            }
+        },
+
+        toggleSelectAll(checked) {
+            this.cartItems.forEach(item => {
+                if (item.is_selected !== checked) {
+                    this.toggleSelect(item);
+                }
+            });
+        },
+
+        async deleteSelected() {
+            const selected = this.cartItems.filter(i => i.is_selected);
+            if (!selected.length) {
+                Swal.fire({ icon: 'info', title: 'Tidak ada produk terpilih', text: 'Centang produk yang ingin dihapus.' });
+                return;
+            }
+
+            const result = await Swal.fire({
+                title: 'Hapus Terpilih?',
+                text: selected.length + ' produk akan dihapus dari keranjang.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+            });
+            if (!result.isConfirmed) return;
+
+            for (let i = this.cartItems.length - 1; i >= 0; i--) {
+                if (this.cartItems[i].is_selected) {
+                    try {
+                        await fetch('/cart/' + this.cartItems[i].id, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                        });
+                    } catch (e) {}
+                    this.cartItems.splice(i, 1);
+                }
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Produk terpilih berhasil dihapus.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
         },
 
         async payOrder(orderId) {

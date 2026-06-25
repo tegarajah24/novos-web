@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Order;
 use App\Models\CustomerAddress;
+use App\Models\Cart;
 
 class ProfileController extends Controller
 {
@@ -41,11 +42,16 @@ class ProfileController extends Controller
             });
 
         $addresses = CustomerAddress::where('user_id', $user->id)->latest()->get();
+        $cartItems = Cart::with('product.category')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
         return view('customer.profile', [
             'user' => $user,
             'orders' => $orders,
             'addresses' => $addresses,
+            'cartItems' => $cartItems,
         ]);
     }
 
