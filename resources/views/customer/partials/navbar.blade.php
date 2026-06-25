@@ -47,16 +47,10 @@
                         Semua Produk
                     </a>
                     <div class="border-t border-gray-100 my-1"></div>
-                    <a href="{{ route('katalog', ['kategori' => 'running']) }}"
-                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Running</a>
-                    <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}"
-                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Sepak Bola / Futsal</a>
-                    <a href="{{ route('katalog', ['kategori' => 'tenis']) }}"
-                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Tenis</a>
-                    <a href="{{ route('katalog', ['kategori' => 'basket']) }}"
-                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Basket</a>
-                    <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}"
-                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">Jersey Gym / Training</a>
+                    @foreach($navbarCategories as $cat)
+                    <a href="{{ route('katalog', ['kategori' => \Illuminate\Support\Str::slug($cat->name)]) }}"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors">{{ $cat->name }}</a>
+                    @endforeach
                     </div>
                 </div>
             </div>
@@ -410,11 +404,9 @@
             </button>
             <div x-show="katalogOpen" x-cloak class="mt-2 ml-4 space-y-2">
                 <a href="{{ route('katalog') }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Semua Produk</a>
-                <a href="{{ route('katalog', ['kategori' => 'running']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Running</a>
-                <a href="{{ route('katalog', ['kategori' => 'sepak-bola-futsal']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Sepak Bola / Futsal</a>
-                <a href="{{ route('katalog', ['kategori' => 'tenis']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Tenis</a>
-                <a href="{{ route('katalog', ['kategori' => 'basket']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Basket</a>
-                <a href="{{ route('katalog', ['kategori' => 'gym-training']) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">Jersey Gym / Training</a>
+                @foreach($navbarCategories as $cat)
+                <a href="{{ route('katalog', ['kategori' => \Illuminate\Support\Str::slug($cat->name)]) }}" class="block text-sm text-gray-500 hover:text-[#1a237e]">{{ $cat->name }}</a>
+                @endforeach
             </div>
         </div>
 

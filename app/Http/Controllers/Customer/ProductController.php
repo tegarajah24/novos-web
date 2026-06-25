@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -22,6 +24,11 @@ class ProductController extends Controller
                 'image'    => $p->image ? asset('storage/' . $p->image) : null,
             ]);
 
-        return view('customer.katalog', compact('products'));
+        $categories = Category::orderBy('name')->get()->map(fn($c) => [
+            'slug' => Str::slug($c->name),
+            'name' => $c->name,
+        ]);
+
+        return view('customer.katalog', compact('products', 'categories'));
     }
 }

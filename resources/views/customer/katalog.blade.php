@@ -62,33 +62,26 @@ function katalogData() {
             currentPage: 1,
             perPage: 12,
             products: @json($products),
+            categories: @json($categories),
 
             init() {
                 const params = new URLSearchParams(window.location.search);
                 const slug = params.get('kategori');
                 if (slug) {
-                    const map = {
-                        'running':           ['Running'],
-                        'sepak-bola-futsal':  ['Sepak Bola', 'Futsal'],
-                        'tenis':             ['Tenis'],
-                        'basket':            ['Basket'],
-                        'gym-training':       ['Gym', 'Training'],
-                    };
-                    this.selectedCats = map[slug] || [];
+                    const found = this.categories.find(c => c.slug === slug);
+                    if (found) {
+                        this.selectedCats = [found.name];
+                    }
                 }
             },
 
             get activeLabel() {
                 if (this.selectedCats.length === 0) return 'Semua Produk';
-                const labels = {
-                    'running':          'Jersey Running',
-                    'sepak-bola-futsal': 'Jersey Sepak Bola / Futsal',
-                    'tenis':            'Jersey Tenis',
-                    'basket':           'Jersey Basket',
-                    'gym-training':      'Jersey Gym / Training',
-                };
                 const params = new URLSearchParams(window.location.search);
-                return labels[params.get('kategori')] || 'Semua Produk';
+                const slug = params.get('kategori');
+                if (!slug) return 'Semua Produk';
+                const found = this.categories.find(c => c.slug === slug);
+                return found ? found.name : 'Semua Produk';
             },
 
             get filteredProducts() {
