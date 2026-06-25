@@ -19,7 +19,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center px-6 border-b border-gray-200 overflow-hidden">
-        <a href="{{ route('staf.dashboard') }}" class="flex items-center gap-2">
+        <a href="{{ route('staf.dashboard') }}" class="flex items-center gap-1">
 <div class="w-10 h-10 shrink-0 flex items-center justify-center">
     <img src="{{ asset('images/logo.png') }}" alt="Novos Logo" class="w-10 h-10 object-contain">
 </div>
