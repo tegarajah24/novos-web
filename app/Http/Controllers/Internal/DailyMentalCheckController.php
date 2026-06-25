@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Internal;
 use App\Http\Controllers\Controller;
 use App\Models\DailyMentalCheck;
 use App\Models\MicroBreak;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -157,6 +158,119 @@ class DailyMentalCheckController extends Controller
         return response()->json([
             'week_history' => $weekHistory,
             'compliance_percent' => min($compliancePercent, 100),
+        ]);
+    }
+
+    public function getReport(Request $request)
+    {
+        $today = Carbon::today();
+        $weekAgo = $today->copy()->subDays(6);
+
+        $staff = User::whereHas('role', fn($q) => $q->whereIn('name', ['Super Admin', 'Manager', 'Admin', 'Design', 'Produksi']))
+            ->with('role')
+            ->get();
+
+        $staffIds = $staff->pluck('id');
+
+        $todayChecks = DailyMentalCheck::whereIn('user_id', $staffIds)
+            ->whereDate('check_date', $today)
+            ->get()
+            ->keyBy('user_id');
+
+        $todayMicros = MicroBreak::whereIn('user_id', $staffIds)
+            ->whereDate('check_date', $today)
+            ->get()
+            ->keyBy('user_id');
+
+        $todayStaff = [];
+        $checkedToday = 0;
+        $needAttention = 0;
+
+        foreach ($staff as $s) {
+            $check = $todayChecks->get($s->id);
+            $micro = $todayMicros->get($s->id);
+
+            if ($check) $checkedToday++;
+            if ($check && ($check->category !== 'baik' || $check->need_help)) $needAttention++;
+
+            $todayStaff[] = [
+                'user_id'     => $s->id,
+                'name'        => $s->name,
+                'role'        => $s->role->name,
+                'avatar'      => $s->avatar,
+                'daily_check' => $check ? [
+                    'category'  => $check->category,
+                    'score'     => $check->total_score,
+                    'need_help' => $check->need_help,
+                    'help_note' => $check->help_note,
+                ] : null,
+                'micro_break' => $micro ? [
+                    'score' => $micro->score,
+                    'level' => $micro->level,
+                ] : null,
+            ];
+        }
+
+        $dayLabels = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+        $weekSummary = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = $today->copy()->subDays($i);
+            $dateStr = $date->format('Y-m-d');
+
+            $dayChecks = DailyMentalCheck::whereIn('user_id', $staffIds)
+                ->whereDate('check_date', $date)
+                ->get();
+
+            $dayMicros = MicroBreak::whereIn('user_id', $staffIds)
+                ->whereDate('check_date', $date)
+                ->get();
+
+            $catCounts = $dayChecks->groupBy('category')->map->count();
+
+            $weekSummary[] = [
+                'date'               => $dateStr,
+                'label'              => $dayLabels[$date->dayOfWeek],
+                'total_filled'       => $dayChecks->count(),
+                'avg_score'          => $dayChecks->avg('total_score') ? round($dayChecks->avg('total_score'), 1) : null,
+                'baik'               => $catCounts->get('baik', 0),
+                'perlu_perhatian'    => $catCounts->get('perlu_perhatian', 0),
+                'perlu_pendampingan' => $catCounts->get('perlu_pendampingan', 0),
+                'micro_avg_score'    => $dayMicros->avg('score') ? round($dayMicros->avg('score'), 1) : null,
+            ];
+        }
+
+        $staffStats = $staff->map(function ($s) use ($weekAgo, $today) {
+            $checks = DailyMentalCheck::where('user_id', $s->id)
+                ->whereBetween('check_date', [$weekAgo, $today])
+                ->get();
+
+            $micros = MicroBreak::where('user_id', $s->id)
+                ->whereBetween('check_date', [$weekAgo, $today])
+                ->get();
+
+            return [
+                'user_id'         => $s->id,
+                'name'            => $s->name,
+                'role'            => $s->role->name,
+                'avatar'          => $s->avatar,
+                'total_days'      => $checks->count(),
+                'avg_score'       => $checks->avg('total_score') ? round($checks->avg('total_score'), 1) : null,
+                'worst_category'  => $checks->sortByDesc('total_score')->first()?->category ?? null,
+                'micro_days'      => $micros->count(),
+                'avg_micro_score' => $micros->avg('score') ? round($micros->avg('score'), 1) : null,
+            ];
+        });
+
+        return response()->json([
+            'today_summary' => [
+                'total_staff'    => $staff->count(),
+                'checked'        => $checkedToday,
+                'unchecked'      => $staff->count() - $checkedToday,
+                'need_attention' => $needAttention,
+            ],
+            'staff_today'  => $todayStaff,
+            'week_summary' => $weekSummary,
+            'staff_stats'  => $staffStats,
         ]);
     }
 }

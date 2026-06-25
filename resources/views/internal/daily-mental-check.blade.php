@@ -7,7 +7,7 @@
 @endsection
 
 @section('internal-content')
-<div x-data="dailyMentalCheck()">
+<div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}' })">
     {{-- Tab Navigation --}}
     <div class="flex max-w-lg gap-1 bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-white/70 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
@@ -629,13 +629,194 @@
         </div>
     </div>
 
+    {{-- ========== TAB 4: LAPORAN (Super Admin & Manager only) ========== --}}
+    <div x-show="activeTab === 3" x-cloak x-transition:enter.duration.300 class="space-y-6">
+        {{-- Summary Cards --}}
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" x-show="reportLoaded">
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <p class="text-3xl font-bold text-gray-900" x-text="reportData.today_summary.total_staff"></p>
+                <p class="text-xs text-gray-500 mt-1">Total Staff</p>
+            </div>
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <p class="text-3xl font-bold text-emerald-600" x-text="reportData.today_summary.checked"></p>
+                <p class="text-xs text-gray-500 mt-1">Sudah Check-in Hari Ini</p>
+            </div>
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <p class="text-3xl font-bold text-gray-400" x-text="reportData.today_summary.unchecked"></p>
+                <p class="text-xs text-gray-500 mt-1">Belum Check-in</p>
+            </div>
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <p class="text-3xl font-bold text-red-500" x-text="reportData.today_summary.need_attention"></p>
+                <p class="text-xs text-gray-500 mt-1">Perlu Perhatian</p>
+            </div>
+        </div>
+
+        {{-- Tabel Staff Hari Ini --}}
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="font-bold text-gray-900">Kondisi Staff Hari Ini</h3>
+                <span class="text-xs text-gray-400" x-text="todayDate"></span>
+            </div>
+            <div class="overflow-x-auto" x-show="reportLoaded">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50/80">
+                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Staff</th>
+                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Role</th>
+                            <th class="px-4 py-3 text-center font-semibold text-gray-700">Daily Check</th>
+                            <th class="px-4 py-3 text-center font-semibold text-gray-700">Skor</th>
+                            <th class="px-4 py-3 text-center font-semibold text-gray-700">Butuh Bantuan</th>
+                            <th class="px-4 py-3 text-center font-semibold text-gray-700">Micro-Break</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <template x-for="s in reportData.staff_today" :key="s.user_id">
+                            <tr class="hover:bg-white/40 transition-colors">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2.5">
+                                        <template x-if="s.avatar">
+                                            <img :src="'/storage/' + s.avatar" class="w-7 h-7 rounded-full object-cover shrink-0">
+                                        </template>
+                                        <template x-if="!s.avatar">
+                                            <div class="w-7 h-7 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0" x-text="s.name.charAt(0).toUpperCase()"></div>
+                                        </template>
+                                        <span class="font-medium text-gray-900" x-text="s.name"></span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-gray-500 text-xs" x-text="s.role"></td>
+                                <td class="px-4 py-3 text-center">
+                                    <template x-if="s.daily_check">
+                                        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                                            :class="s.daily_check.category === 'baik' ? 'bg-emerald-100 text-emerald-800' : s.daily_check.category === 'perlu_perhatian' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'"
+                                            x-text="s.daily_check.category === 'baik' ? 'Baik' : s.daily_check.category === 'perlu_perhatian' ? 'Perhatian' : 'Pendampingan'">
+                                        </span>
+                                    </template>
+                                    <template x-if="!s.daily_check">
+                                        <span class="text-gray-300">—</span>
+                                    </template>
+                                </td>
+                                <td class="px-4 py-3 text-center font-semibold" x-text="s.daily_check ? s.daily_check.score : '—'"></td>
+                                <td class="px-4 py-3 text-center">
+                                    <template x-if="s.daily_check?.need_help">
+                                        <span class="text-red-500 text-xs font-semibold" title="Butuh bantuan" x-text="s.daily_check.help_note ? 'Ya' : 'Ya'"></span>
+                                    </template>
+                                    <template x-if="!s.daily_check?.need_help">
+                                        <span class="text-gray-300">—</span>
+                                    </template>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <template x-if="s.micro_break">
+                                        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                                            :class="s.micro_break.level === 'tinggi' ? 'bg-emerald-100 text-emerald-800' : s.micro_break.level === 'sedang' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'"
+                                            x-text="s.micro_break.level">
+                                        </span>
+                                    </template>
+                                    <template x-if="!s.micro_break">
+                                        <span class="text-gray-300">—</span>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div x-show="!reportLoaded" class="text-center py-8 text-gray-400 text-sm">
+                <p>Memuat data laporan...</p>
+            </div>
+        </div>
+
+        {{-- Ringkasan Mingguan --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {{-- Tabel Ringkasan Minggu --}}
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="font-bold text-gray-900">Ringkasan 7 Hari</h3>
+                </div>
+                <div class="overflow-x-auto" x-show="reportLoaded">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50/80">
+                                <th class="px-3 py-2.5 text-left font-semibold text-gray-600">Hari</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Diisi</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Rata-rata</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Baik</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Perhatian</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Pendampingan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <template x-for="(day, i) in reportData.week_summary" :key="i">
+                                <tr class="hover:bg-white/40 transition-colors">
+                                    <td class="px-3 py-2.5 font-medium text-gray-900" x-text="day.label"></td>
+                                    <td class="px-3 py-2.5 text-center text-gray-700" x-text="day.total_filled + '/' + reportData.today_summary.total_staff"></td>
+                                    <td class="px-3 py-2.5 text-center font-semibold" x-text="day.avg_score ?? '—'"></td>
+                                    <td class="px-3 py-2.5 text-center text-emerald-600 font-medium" x-text="day.baik"></td>
+                                    <td class="px-3 py-2.5 text-center text-amber-600 font-medium" x-text="day.perlu_perhatian"></td>
+                                    <td class="px-3 py-2.5 text-center text-red-600 font-medium" x-text="day.perlu_pendampingan"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Statistik per Staff --}}
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="font-bold text-gray-900">Statistik Staff (7 Hari)</h3>
+                </div>
+                <div class="overflow-x-auto max-h-[400px] overflow-y-auto" x-show="reportLoaded">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50/80 sticky top-0">
+                                <th class="px-3 py-2.5 text-left font-semibold text-gray-600">Staff</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Hari</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Rata-rata</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Terburuk</th>
+                                <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Micro</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <template x-for="s in reportData.staff_stats" :key="s.user_id">
+                                <tr class="hover:bg-white/40 transition-colors">
+                                    <td class="px-3 py-2.5">
+                                        <div class="flex items-center gap-2">
+                                            <template x-if="s.avatar">
+                                                <img :src="'/storage/' + s.avatar" class="w-6 h-6 rounded-full object-cover shrink-0">
+                                            </template>
+                                            <template x-if="!s.avatar">
+                                                <div class="w-6 h-6 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0" x-text="s.name.charAt(0).toUpperCase()"></div>
+                                            </template>
+                                            <span class="text-gray-900 font-medium text-xs" x-text="s.name"></span>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2.5 text-center text-gray-700 text-xs" x-text="s.total_days + '/7'"></td>
+                                    <td class="px-3 py-2.5 text-center font-semibold text-xs" x-text="s.avg_score ?? '—'"></td>
+                                    <td class="px-3 py-2.5 text-center">
+                                        <span x-show="s.worst_category" class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold"
+                                            :class="s.worst_category === 'baik' ? 'bg-emerald-100 text-emerald-800' : s.worst_category === 'perlu_perhatian' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'"
+                                            x-text="s.worst_category === 'baik' ? 'Baik' : s.worst_category === 'perlu_perhatian' ? 'Perhatian' : 'Pendampingan'">
+                                        </span>
+                                        <span x-show="!s.worst_category" class="text-gray-300">—</span>
+                                    </td>
+                                    <td class="px-3 py-2.5 text-center text-gray-700 text-xs" x-text="s.micro_days + '/7'"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </div>
 
 <script>
-function dailyMentalCheck() {
+function dailyMentalCheck(config = {}) {
     return {
+        userRole: config.role || '',
         activeTab: 0,
         todayFilled: false,
         submitted: false,
@@ -644,6 +825,14 @@ function dailyMentalCheck() {
 
         weekHistory: [],
         compliancePercent: 0,
+
+        reportData: {
+            today_summary: { total_staff: 0, checked: 0, unchecked: 0, need_attention: 0 },
+            staff_today: [],
+            week_summary: [],
+            staff_stats: [],
+        },
+        reportLoaded: false,
 
         form: {
             answers: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
@@ -685,6 +874,7 @@ function dailyMentalCheck() {
             { label: 'Dashboard', icon: '&#9632;' },
             { label: 'Isi Daily Check', icon: '&#9998;' },
             { label: 'Micro-Break', icon: '&#9776;' },
+            ...(['Super Admin', 'Manager'].includes(config.role) ? [{ label: 'Laporan', icon: '&#9733;' }] : []),
         ],
 
         async init() {
@@ -725,6 +915,10 @@ function dailyMentalCheck() {
                 }));
                 this.compliancePercent = histData.compliance_percent;
             } catch (e) { console.error('Failed to load history:', e); }
+
+            if (['Super Admin', 'Manager'].includes(this.userRole)) {
+                await this.fetchReport();
+            }
         },
 
         get allAnswered() {
@@ -868,6 +1062,16 @@ function dailyMentalCheck() {
                 }));
                 this.compliancePercent = data.compliance_percent;
             } catch (e) { console.error('Failed to load history:', e); }
+        },
+
+        async fetchReport() {
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const res = await fetch('/staf/daily-mental-check/report', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
+                const data = await res.json();
+                this.reportData = data;
+                this.reportLoaded = true;
+            } catch (e) { console.error('Failed to load report:', e); this.reportLoaded = false; }
         },
 
         // Quotes

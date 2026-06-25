@@ -54,6 +54,7 @@ Route::prefix('staf')
         Route::post('/daily-mental-check/daily', [DailyMentalCheckController::class, 'storeDailyCheck'])->name('daily-mental-check.store-daily');
         Route::post('/daily-mental-check/micro', [DailyMentalCheckController::class, 'storeMicroBreak'])->name('daily-mental-check.store-micro');
         Route::get('/daily-mental-check/history', [DailyMentalCheckController::class, 'getHistory'])->name('daily-mental-check.history');
+        Route::get('/daily-mental-check/report', [DailyMentalCheckController::class, 'getReport'])->name('daily-mental-check.report');
         Route::get('/notifikasi', [NotificationController::class, 'viewPage'])->name('notifikasi');
         Route::get('/notifikasi/data', [NotificationController::class, 'index'])->name('notifikasi.data');
         Route::get('/notifikasi/preview', [NotificationController::class, 'preview'])->name('notifikasi.preview');
