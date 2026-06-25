@@ -75,7 +75,7 @@ class CartController extends Controller
     public function storeDesign(Request $request): JsonResponse
     {
         $request->validate([
-            'team_name' => 'required|string',
+            'team_name' => 'nullable|string',
             'design_data' => 'required|array',
         ]);
 
