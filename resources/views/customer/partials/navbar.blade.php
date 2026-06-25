@@ -167,13 +167,29 @@
                             <template x-for="item in cartItems" :key="item.id">
                                 <div class="flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
                                     <div class="w-14 h-14 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
-                                        <img :src="item.product.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
-                                             :alt="item.product.name" class="w-full h-full object-cover">
+                                        <template x-if="item.design_data">
+                                            <div class="w-full h-full bg-gradient-to-br from-[#1a237e] to-blue-400 flex items-center justify-center text-white text-xs font-bold">Custom</div>
+                                        </template>
+                                        <template x-if="!item.design_data">
+                                            <img :src="item.product?.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
+                                                 :alt="item.product?.name" class="w-full h-full object-cover">
+                                        </template>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 truncate" x-text="item.product.name"></p>
-                                        <p class="text-xs text-gray-500" x-text="'Ukuran: ' + item.size"></p>
-                                        <p class="text-xs font-semibold text-[#1a237e] mt-0.5" x-text="'Rp ' + parseInt(item.product.price).toLocaleString('id-ID')"></p>
+                                        <template x-if="item.design_data">
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900 truncate" x-text="'Custom: ' + (item.design_data.team_name || 'Pesanan')"></p>
+                                                <p class="text-xs text-gray-500" x-text="item.design_data.bahan + ' | ' + item.design_data.kerah"></p>
+                                                <p class="text-xs font-semibold text-[#1a237e] mt-0.5" x-text="'Rp ' + parseInt(item.design_data.estimasi_total || 0).toLocaleString('id-ID')"></p>
+                                            </div>
+                                        </template>
+                                        <template x-if="!item.design_data">
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900 truncate" x-text="item.product?.name"></p>
+                                                <p class="text-xs text-gray-500" x-text="'Ukuran: ' + item.size"></p>
+                                                <p class="text-xs font-semibold text-[#1a237e] mt-0.5" x-text="'Rp ' + parseInt(item.product?.price || 0).toLocaleString('id-ID')"></p>
+                                            </div>
+                                        </template>
                                     </div>
                                     <div class="flex items-center gap-1 shrink-0">
                                         <button @click="updateQty(item, item.qty - 1)" 

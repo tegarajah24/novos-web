@@ -931,15 +931,35 @@
             >
                 Kembali
             </button>
-            <button
-                @click="nextFromStep2()"
-                :disabled="!validateStep2"
-                :class="validateStep2 ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
-            >
-                Selanjutnya
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button
+                    @click="addToCart"
+                    :disabled="!validateStep2 || loading"
+                    :class="(validateStep2 && !loading) ? 'border-2 border-[#1a237e] text-[#1a237e] hover:bg-blue-50 cursor-pointer' : 'border-gray-300 text-gray-400 cursor-not-allowed'"
+                    class="px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                    <span x-show="!loading" class="inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Masukkan ke Keranjang
+                    </span>
+                    <span x-show="loading" class="inline-flex items-center gap-2">
+                        <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        Menyimpan...
+                    </span>
+                </button>
+                <button
+                    @click="nextFromStep2()"
+                    :disabled="!validateStep2"
+                    :class="validateStep2 ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                    class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                    Pesan Langsung
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
         </div>
             </div>
 
@@ -1365,53 +1385,77 @@
                 {{-- Ringkasan Pesanan --}}
                 <div class="bg-white border border-gray-200 rounded-xl p-6">
                     <h3 class="text-base font-semibold text-gray-800 mb-4">Ringkasan Pesanan</h3>
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Jenis</span>
-                            <span class="font-medium text-gray-900" x-text="jenis === 'custom' ? 'Custom' : 'Katalog'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Tim</span>
-                            <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">No Punggung</span>
-                            <span class="font-medium text-gray-900" x-text="form.no_punggung || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Sponsor</span>
-                            <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Kerah</span>
-                            <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Bahan</span>
-                            <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Jenis Potongan</span>
-                            <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Lengan & Jahitan</span>
-                            <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Jumlah</span>
-                            <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
-                        </div>
-                        <template x-for="(qty, size) in form.ukuran" :key="size">
-                            <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
-                                <span class="font-medium" x-text="'Ukuran ' + size"></span>
-                                <span x-text="parseInt(qty) + ' pcs'"></span>
+                    
+                    <template x-if="mode === 'single'">
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Jenis</span>
+                                <span class="font-medium text-gray-900" x-text="jenis === 'custom' ? 'Custom' : 'Katalog'"></span>
                             </div>
-                        </template>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Harga dasar</span>
-                            <span class="font-medium text-gray-900" x-text="formatRupiah(hargaDasar)"></span>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Tim</span>
+                                <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">No Punggung</span>
+                                <span class="font-medium text-gray-900" x-text="form.no_punggung || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Sponsor</span>
+                                <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Kerah</span>
+                                <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Bahan</span>
+                                <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Jenis Potongan</span>
+                                <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Lengan & Jahitan</span>
+                                <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Jumlah</span>
+                                <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
+                            </div>
+                            <template x-for="(qty, size) in form.ukuran" :key="size">
+                                <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
+                                    <span class="font-medium" x-text="'Ukuran ' + size"></span>
+                                    <span x-text="parseInt(qty) + ' pcs'"></span>
+                                </div>
+                            </template>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Harga dasar</span>
+                                <span class="font-medium text-gray-900" x-text="formatRupiah(hargaDasar)"></span>
+                            </div>
                         </div>
+                    </template>
+
+                    <template x-if="mode === 'cart_checkout'">
+                        <div class="space-y-4">
+                            <template x-for="(item, idx) in cartItemsToCheckout" :key="idx">
+                                <div class="text-sm border-b border-gray-100 pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
+                                    <div class="font-bold text-gray-800 mb-1" x-text="'Produk ' + (idx + 1) + ': ' + (item.design_data ? item.design_data.team_name : item.product?.name)"></div>
+                                    <div class="flex justify-between text-gray-500 text-xs">
+                                        <span x-text="item.design_data ? (item.design_data.bahan + ' | ' + item.design_data.kerah) : item.size"></span>
+                                        <span class="font-medium text-gray-900" x-text="item.qty + ' pcs'"></span>
+                                    </div>
+                                    <div class="flex justify-between text-gray-500 text-xs mt-1">
+                                        <span>Subtotal</span>
+                                        <span class="font-medium text-[#1a237e]" x-text="formatRupiah(item.design_data ? (item.qty * (item.design_data.base_price_per_pcs || 85000)) : (item.qty * item.product?.price))"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div class="space-y-3 text-sm mt-3 pt-3 border-t border-gray-100">
                         <template x-if="biayaPrioritas > 0">
                             <div class="flex justify-between">
                                 <span class="text-gray-500">Biaya prioritas</span>
@@ -1419,6 +1463,7 @@
                             </div>
                         </template>
                     </div>
+
                     <hr class="my-4">
                     <div class="flex justify-between items-center">
                         <span class="text-gray-700 font-semibold">Total</span>
@@ -1437,7 +1482,7 @@
                 Kembali
             </button>
             <button
-                @click="submitOrder"
+                @click="mode === 'cart_checkout' ? submitCartCheckout() : submitOrder()"
                 :disabled="!validateStep3 || loading"
                 :class="(validateStep3 && !loading) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
@@ -1492,50 +1537,66 @@
 
             {{-- Ringkasan Pesanan --}}
             <div class="bg-white border border-gray-200 rounded-xl p-5 mb-8 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.6s">
-                <div class="space-y-2.5 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Tim</span>
-                        <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">No Punggung</span>
-                        <span class="font-medium text-gray-900" x-text="form.no_punggung || '-'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Sponsor</span>
-                        <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Kerah</span>
-                        <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Bahan</span>
-                        <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Jenis Potongan</span>
-                        <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Lengan & Jahitan</span>
-                        <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Jumlah</span>
-                        <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
-                    </div>
-                    <template x-for="(qty, size) in form.ukuran" :key="size">
-                        <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
-                            <span class="font-medium" x-text="'Ukuran ' + size"></span>
-                            <span x-text="parseInt(qty) + ' pcs'"></span>
+                <template x-if="mode === 'single'">
+                    <div class="space-y-2.5 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Tim</span>
+                            <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
                         </div>
-                    </template>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Prioritas</span>
-                        <span class="font-medium text-gray-900 capitalize" x-text="prioritasText"></span>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">No Punggung</span>
+                            <span class="font-medium text-gray-900" x-text="form.no_punggung || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Sponsor</span>
+                            <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Kerah</span>
+                            <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Bahan</span>
+                            <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Jenis Potongan</span>
+                            <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Lengan & Jahitan</span>
+                            <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Jumlah</span>
+                            <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
+                        </div>
+                        <template x-for="(qty, size) in form.ukuran" :key="size">
+                            <div x-show="parseInt(qty) > 0" class="flex justify-between pl-4 text-xs text-gray-400">
+                                <span class="font-medium" x-text="'Ukuran ' + size"></span>
+                                <span x-text="parseInt(qty) + ' pcs'"></span>
+                            </div>
+                        </template>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Prioritas</span>
+                            <span class="font-medium text-gray-900 capitalize" x-text="prioritasText"></span>
+                        </div>
                     </div>
-                </div>
+                </template>
+
+                <template x-if="mode === 'cart_checkout'">
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Total Produk</span>
+                            <span class="font-medium text-gray-900" x-text="cartItemsToCheckout.length + ' item'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Prioritas</span>
+                            <span class="font-medium text-gray-900 capitalize" x-text="prioritasText"></span>
+                        </div>
+                    </div>
+                </template>
+
                 <hr class="my-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-700 font-semibold">Total</span>
@@ -1580,6 +1641,8 @@
 function pemesananForm(catalogProduct = null, userAddresses = []) {
     return {
         step: 1,
+        mode: 'single',
+        cartItemsToCheckout: [],
         steps: ['Pilih Jenis', 'Detail & Upload', 'Prioritas & Bayar', 'Konfirmasi'],
         jenis: null,
         catalogProduct: catalogProduct,
@@ -1664,13 +1727,20 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             if (savedState) {
                 try {
                     const state = JSON.parse(savedState);
-                    this.jenis = state.jenis;
+                    this.mode = state.mode || 'single';
                     this.step = state.step;
                     this.subStep = state.subStep;
-                    this.form = state.form;
-                    this.prioritas = state.prioritas;
-                    this.pembayaran = state.pembayaran;
-                    this.selectedAddressId = state.selectedAddressId;
+                    this.prioritas = state.prioritas || 'normal';
+                    this.pembayaran = state.pembayaran || 'midtrans';
+                    this.selectedAddressId = state.selectedAddressId || null;
+
+                    if (this.mode === 'cart_checkout') {
+                        this.cartItemsToCheckout = state.cartItems || [];
+                        this.jenis = 'custom'; // For cart it handles both, but step 1 is skipped
+                    } else {
+                        this.jenis = state.jenis;
+                        this.form = state.form || this.form;
+                    }
                     
                     localStorage.removeItem('checkout_state');
                 } catch (e) {
@@ -1699,13 +1769,15 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
 
         saveCheckoutState() {
             const state = {
+                mode: this.mode,
                 jenis: this.jenis,
                 step: this.step,
                 subStep: this.subStep,
                 form: this.form,
                 prioritas: this.prioritas,
                 pembayaran: this.pembayaran,
-                selectedAddressId: this.selectedAddressId
+                selectedAddressId: this.selectedAddressId,
+                cartItems: this.cartItemsToCheckout
             };
             localStorage.setItem('checkout_state', JSON.stringify(state));
             sessionStorage.setItem('from_checkout', 'true');
@@ -1729,6 +1801,14 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
         },
 
         get hargaDasar() {
+            if (this.mode === 'cart_checkout') {
+                return this.cartItemsToCheckout.reduce((sum, item) => {
+                    if (item.design_data) {
+                        return sum + (item.qty * (item.design_data.base_price_per_pcs || 85000));
+                    }
+                    return sum + (item.qty * (item.product?.price || 0));
+                }, 0);
+            }
             return this.totalQty * this.basePricePerPcs;
         },
 
@@ -2017,6 +2097,44 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             });
         },
 
+        submitCartCheckout() {
+            if (this.loading) return;
+            this.loading = true;
+
+            const payload = {
+                cart_item_ids: this.cartItemsToCheckout.map(i => i.id),
+                prioritas: this.prioritas,
+                pembayaran: this.pembayaran,
+                address_id: this.selectedAddressId
+            };
+
+            fetch('{{ route('pesan.store-cart') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if (!res.ok) {
+                    return res.text().then(text => { throw new Error(text.substring(0, 150)); });
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (!data.success) throw new Error('Gagal memproses checkout keranjang');
+                this.orderNumber = data.orderNumber;
+                this.step = 4;
+                this.loading = false;
+            })
+            .catch(err => {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: err.message || 'Terjadi kesalahan' });
+                this.loading = false;
+            });
+        },
+
         copyOrderNumber() {
             navigator.clipboard.writeText(this.orderNumber).then(() => {
                 Swal.fire({
@@ -2027,6 +2145,104 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
                     showConfirmButton: false
                 });
             });
+        },
+
+        addToCart() {
+            if (this.loading) return;
+            this.loading = true;
+
+            const getFirstImage = () => {
+                if (this.uploads.length > 0) return this.uploads[0].name;
+                return null;
+            };
+
+            const payload = {
+                team_name: this.form.team_name,
+                notes: this.form.catatan,
+                image: getFirstImage(),
+                design_data: {
+                    team_name: this.form.team_name,
+                    no_punggung: this.form.no_punggung,
+                    detail_sponsor: this.form.detail_sponsor,
+                    kerah: this.form.kerah,
+                    bahan: this.form.bahan,
+                    jenis_potongan: this.form.jenis_potongan,
+                    lengan_jahitan: this.form.lengan_jahitan,
+                    warna_utama: this.form.warna_utama,
+                    warna_sekunder: this.form.warna_sekunder,
+                    catatan: this.form.catatan,
+                    ukuran: this.form.ukuran,
+                    prioritas: this.prioritas,
+                    base_price_per_pcs: this.basePricePerPcs,
+                    biaya_prioritas: this.biayaPrioritas,
+                    estimasi_total: this.estimasiTotal,
+                    jenis: this.jenis,
+                }
+            };
+
+            fetch('{{ route('cart.store-design') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.loading = false;
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Disimpan ke Keranjang!',
+                        text: 'Pesanan berhasil disimpan ke keranjang. Anda bisa check out nanti.',
+                        showCancelButton: true,
+                        confirmButtonColor: '#1a237e',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Lihat Keranjang',
+                        cancelButtonText: 'Lanjut Belanja',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route('profile.edit') }}?tab=keranjang';
+                        } else {
+                            this.step = 1;
+                            this.resetForm();
+                        }
+                    });
+                } else {
+                    throw new Error(data.message || 'Gagal menyimpan ke keranjang');
+                }
+            })
+            .catch(err => {
+                this.loading = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: err.message || 'Terjadi kesalahan'
+                });
+            });
+        },
+
+        resetForm() {
+            this.jenis = null;
+            this.form = {
+                team_name: '',
+                no_punggung: '',
+                detail_sponsor: '',
+                kerah: '',
+                bahan: '',
+                jenis_potongan: '',
+                lengan_jahitan: '',
+                warna_utama: '#1a237e',
+                warna_sekunder: '#ffffff',
+                catatan: '',
+                ukuran: { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL / XXL': 0, '3XL': 0, '4XL': 0, '5XL': 0, '6XL': 0, 'Anak 100': 0, 'Anak 110': 0, 'Anak 120': 0, 'Anak 130': 0, 'Anak 140': 0, 'Anak 150': 0 }
+            };
+            this.uploads = [];
+            this.refUploads = [];
+            this.prioritas = 'normal';
+            this.selectedAddressId = null;
         }
     }
 }

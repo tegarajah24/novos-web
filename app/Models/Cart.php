@@ -13,6 +13,9 @@ class Cart extends Model
         'size',
         'qty',
         'is_selected',
+        'design_data',
+        'notes',
+        'image',
     ];
 
     protected function casts(): array
@@ -20,6 +23,7 @@ class Cart extends Model
         return [
             'qty' => 'integer',
             'is_selected' => 'boolean',
+            'design_data' => 'array',
         ];
     }
 

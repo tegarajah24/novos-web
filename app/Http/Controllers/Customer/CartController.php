@@ -18,6 +18,12 @@ class CartController extends Controller
             ->get();
 
         $totalSelected = $cartItems->where('is_selected', true)->sum(function ($item) {
+            if ($item->design_data) {
+                $qty = collect($item->design_data['ukuran'] ?? [])->sum(fn($v) => (int) $v);
+                $basePrice = ($item->design_data['base_price_per_pcs'] ?? 85000);
+                $prioritasBiaya = $item->design_data['biaya_prioritas'] ?? 0;
+                return ($qty * $basePrice) + $prioritasBiaya;
+            }
             return $item->qty * ($item->product->price ?? 0);
         });
 
@@ -66,6 +72,37 @@ class CartController extends Controller
         ]);
     }
 
+    public function storeDesign(Request $request): JsonResponse
+    {
+        $request->validate([
+            'team_name' => 'required|string',
+            'design_data' => 'required|array',
+        ]);
+
+        $designData = $request->design_data;
+        $totalQty = collect($designData['ukuran'] ?? [])->sum(fn($v) => (int) $v);
+
+        $cart = Cart::create([
+            'user_id' => auth()->id(),
+            'product_id' => null,
+            'size' => 'Custom',
+            'qty' => $totalQty ?: 1,
+            'is_selected' => true,
+            'design_data' => $designData,
+            'notes' => $request->notes,
+            'image' => $request->image,
+        ]);
+
+        $count = Cart::where('user_id', auth()->id())->sum('qty');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pesanan berhasil disimpan ke keranjang',
+            'cart' => $cart->load('product.category'),
+            'count' => $count,
+        ]);
+    }
+
     public function update(Request $request, Cart $cart): JsonResponse
     {
         if ($cart->user_id !== auth()->id()) {
@@ -82,7 +119,15 @@ class CartController extends Controller
             ->where('user_id', auth()->id())
             ->where('is_selected', true)
             ->get()
-            ->sum(fn($item) => $item->qty * ($item->product->price ?? 0));
+            ->sum(function ($item) {
+                if ($item->design_data) {
+                    $qty = collect($item->design_data['ukuran'] ?? [])->sum(fn($v) => (int) $v);
+                    $basePrice = ($item->design_data['base_price_per_pcs'] ?? 85000);
+                    $prioritasBiaya = $item->design_data['biaya_prioritas'] ?? 0;
+                    return ($qty * $basePrice) + $prioritasBiaya;
+                }
+                return $item->qty * ($item->product->price ?? 0);
+            });
 
         return response()->json([
             'success' => true,
@@ -121,7 +166,15 @@ class CartController extends Controller
             ->where('user_id', auth()->id())
             ->where('is_selected', true)
             ->get()
-            ->sum(fn($item) => $item->qty * ($item->product->price ?? 0));
+            ->sum(function ($item) {
+                if ($item->design_data) {
+                    $qty = collect($item->design_data['ukuran'] ?? [])->sum(fn($v) => (int) $v);
+                    $basePrice = ($item->design_data['base_price_per_pcs'] ?? 85000);
+                    $prioritasBiaya = $item->design_data['biaya_prioritas'] ?? 0;
+                    return ($qty * $basePrice) + $prioritasBiaya;
+                }
+                return $item->qty * ($item->product->price ?? 0);
+            });
 
         return response()->json([
             'success' => true,

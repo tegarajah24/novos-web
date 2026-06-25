@@ -338,18 +338,38 @@
                                             class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e] cursor-pointer">
                                     </div>
                                     <div class="w-14 h-14 rounded-lg bg-gray-100 overflow-hidden">
-                                        <img :src="item.product.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
-                                             :alt="item.product.name" class="w-full h-full object-cover">
+                                        <template x-if="item.design_data">
+                                            <div class="w-full h-full bg-gradient-to-br from-[#1a237e] to-blue-400 flex items-center justify-center text-white text-xs font-bold">Custom</div>
+                                        </template>
+                                        <template x-if="!item.design_data">
+                                            <img :src="item.product?.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
+                                                 :alt="item.product?.name" class="w-full h-full object-cover">
+                                        </template>
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="text-sm font-semibold text-gray-900 truncate" x-text="item.product.name"></p>
-                                        <p class="text-xs text-gray-400 truncate" x-text="item.product.category?.name || ''"></p>
+                                        <template x-if="item.design_data">
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="'Custom: ' + (item.design_data.team_name || 'Pesanan')"></p>
+                                                <p class="text-xs text-gray-400 truncate" x-text="item.design_data.bahan + ' | ' + item.design_data.kerah"></p>
+                                            </div>
+                                        </template>
+                                        <template x-if="!item.design_data">
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="item.product?.name || 'Produk'"></p>
+                                                <p class="text-xs text-gray-400 truncate" x-text="item.product?.category?.name || ''"></p>
+                                            </div>
+                                        </template>
                                     </div>
                                     <div>
                                         <span class="text-sm font-medium text-gray-700" x-text="item.size"></span>
                                     </div>
                                     <div>
-                                        <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.product.price).toLocaleString('id-ID')"></span>
+                                        <template x-if="item.design_data">
+                                            <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.design_data.estimasi_total || 0).toLocaleString('id-ID')"></span>
+                                        </template>
+                                        <template x-if="!item.design_data">
+                                            <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.product?.price || 0).toLocaleString('id-ID')"></span>
+                                        </template>
                                     </div>
                                     <div class="flex items-center gap-1 justify-center">
                                         <button @click="updateCartQty(item, item.qty - 1)" 
@@ -363,7 +383,12 @@
                                             <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
                                         </button>
                                     </div>
-                                    <div class="flex justify-end">
+                                    <div class="flex items-center gap-1">
+                                        <template x-if="item.design_data">
+                                            <button @click="checkoutFromCart(item)" class="p-1.5 text-[#1a237e] hover:text-[#283593] transition-colors rounded-lg hover:bg-blue-50" title="Lanjutkan Pesanan">
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                            </button>
+                                        </template>
                                         <button @click="deleteCartItem(item, index)" class="p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50">
                                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                         </button>
@@ -390,11 +415,11 @@
                                 <p class="text-xs text-gray-400">Total</p>
                                 <p class="text-lg font-bold text-[#1a237e]" x-text="formatRupiah(cartTotalSelected)"></p>
                             </div>
-                            <a href="{{ route('pemesanan') }}" 
+                            <button @click="checkoutFromCartMultiple()" 
                                class="px-6 py-2.5 bg-[#1a237e] text-white rounded-lg text-sm font-semibold hover:bg-[#283593] transition-colors flex items-center gap-2">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                                 Pesan Sekarang
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -840,7 +865,15 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
         get cartTotalSelected() {
             return this.cartItems
                 .filter(item => item.is_selected)
-                .reduce((sum, item) => sum + (item.qty * (item.product?.price || 0)), 0);
+                .reduce((sum, item) => {
+                    if (item.design_data) {
+                        const qty = Object.values(item.design_data.ukuran || {}).reduce((a, b) => a + (parseInt(b) || 0), 0);
+                        const basePrice = item.design_data.base_price_per_pcs || 85000;
+                        const biayaPrioritas = item.design_data.biaya_prioritas || 0;
+                        return sum + (qty * basePrice) + biayaPrioritas;
+                    }
+                    return sum + (item.qty * (item.product?.price || 0));
+                }, 0);
         },
 
         get validateAddress() {
@@ -1374,6 +1407,39 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
                 timer: 1500,
                 showConfirmButton: false,
             });
+        },
+
+        checkoutFromCart(item) {
+            const state = {
+                mode: 'cart_checkout',
+                cartItems: [item],
+                jenis: item.design_data ? (item.design_data.jenis || 'custom') : 'katalog',
+                step: 2,
+                subStep: 2,
+                prioritas: item.design_data ? (item.design_data.prioritas || 'normal') : 'normal',
+                pembayaran: 'midtrans',
+            };
+            localStorage.setItem('checkout_state', JSON.stringify(state));
+            window.location.href = '{{ route('pemesanan') }}';
+        },
+
+        checkoutFromCartMultiple() {
+            const selected = this.cartItems.filter(i => i.is_selected);
+            if (selected.length === 0) {
+                Swal.fire({ icon: 'info', title: 'Pilih Produk', text: 'Pilih setidaknya satu produk untuk dicheckout.' });
+                return;
+            }
+            const state = {
+                mode: 'cart_checkout',
+                cartItems: selected,
+                jenis: 'custom',
+                step: 2,
+                subStep: 2,
+                prioritas: 'normal',
+                pembayaran: 'midtrans',
+            };
+            localStorage.setItem('checkout_state', JSON.stringify(state));
+            window.location.href = '{{ route('pemesanan') }}';
         },
 
         async payOrder(orderId) {
