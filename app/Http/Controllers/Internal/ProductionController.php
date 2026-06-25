@@ -12,7 +12,7 @@ class ProductionController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['user', 'designRequest', 'orderItems'])
+        $orders = Order::with(['user', 'designRequest', 'orderItems', 'statusHistories'])
             ->whereIn('status', ['siap_cetak', 'diproduksi'])
             ->latest()
             ->get()
@@ -31,6 +31,18 @@ class ProductionController extends Controller
                     $priority = $matches[1];
                 }
 
+                // Collect production notes from status histories
+                $prodHistoryNotes = $order->statusHistories
+                    ->whereIn('status', ['siap_cetak', 'diproduksi'])
+                    ->filter(fn($h) => !empty($h->notes) && !str_starts_with($h->notes, 'Status berubah'))
+                    ->map(fn($h) => '[' . $h->created_at->format('d M H:i') . '] ' . $h->notes)
+                    ->values();
+
+                $originalNotes = $dr?->additional_notes ?? $order->notes;
+                $allNotes = $originalNotes
+                    ? collect([$originalNotes])->merge($prodHistoryNotes)->implode("\n\n")
+                    : ($prodHistoryNotes->isNotEmpty() ? $prodHistoryNotes->implode("\n\n") : 'Tidak ada catatan');
+
                 return [
                     'id'                => $order->id,
                     'order_id'          => $order->order_number,
@@ -44,7 +56,7 @@ class ProductionController extends Controller
                     'material'          => $dr?->material ?? '-',
                     'collar'            => $dr?->collar_style ?? '-',
                     'pattern'           => $dr?->motif ?? '-',
-                    'notes'             => nl2br(e($dr?->additional_notes ?? $order->notes ?? 'Tidak ada catatan')),
+                    'notes'             => nl2br(e($allNotes)),
                     'total_qty'         => $order->orderItems->sum('qty'),
                     'sizes'             => $sizes,
                     'reference_files'   => array_merge(

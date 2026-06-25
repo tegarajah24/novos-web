@@ -71,6 +71,7 @@ class DesignController extends Controller
                     'name' => $file->getClientOriginalName(),
                     'path' => $path,
                     'size' => $file->getSize(),
+                    'type' => $file->getMimeType(),
                 ];
             }
         }

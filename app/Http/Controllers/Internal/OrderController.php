@@ -146,12 +146,20 @@ class OrderController extends Controller
             if ($order->designRequest->design_files) {
                 foreach ($order->designRequest->design_files as $i => $file) {
                     $isFirstAndMatchesLogo = ($i === 0 && $logoPath && isset($file['path']) && $file['path'] === $logoPath);
+
+                    $mime = $file['type'] ?? null;
+                    if (!$mime && isset($file['path'])) {
+                        $ext = strtolower(pathinfo($file['path'], PATHINFO_EXTENSION));
+                        $imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico'];
+                        $mime = in_array($ext, $imageExts) ? 'image/' . ($ext === 'jpg' ? 'jpeg' : $ext) : null;
+                    }
+
                     $designFiles[] = [
                         'name' => $file['name'],
                         'url' => asset('storage/' . $file['path']),
                         'type' => $isFirstAndMatchesLogo ? 'logo' : 'design',
                         'size' => $file['size'] ?? null,
-                        'mime' => $file['type'] ?? null,
+                        'mime' => $mime,
                     ];
                 }
             }
@@ -168,10 +176,18 @@ class OrderController extends Controller
                     }
                 }
                 if (!$alreadyInDesignFiles) {
+                    $logoMime = null;
+                    $logoExt = strtolower(pathinfo($logoPath, PATHINFO_EXTENSION));
+                    $imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico'];
+                    if (in_array($logoExt, $imageExts)) {
+                        $logoMime = 'image/' . ($logoExt === 'jpg' ? 'jpeg' : $logoExt);
+                    }
+
                     array_unshift($designFiles, [
                         'name' => basename($logoPath),
                         'url' => asset('storage/' . $logoPath),
                         'type' => 'logo',
+                        'mime' => $logoMime,
                     ]);
                 }
             }
