@@ -7,18 +7,21 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
         $chats = Chat::with(['messages.sender', 'admin'])
-            ->where('customer_id', auth()->id())
+            ->where('customer_id', $user->id)
             ->latest()
             ->get()
             ->map(fn($chat) => [
                 'id'          => $chat->id,
                 'name'        => $chat->admin?->name ?? 'Admin Novos',
+                'sender_avatar_url' => $chat->admin?->avatar ? Storage::url($chat->admin->avatar) : null,
                 'lastMessage' => $chat->messages->last()?->message
                     ?? ($chat->messages->last()?->file_name
                         ? '📎 ' . $chat->messages->last()->file_name
@@ -26,11 +29,11 @@ class ChatController extends Controller
                 'time'   => $chat->messages->last()?->created_at?->format('H:i') ?? '',
                 'unread' => $chat->messages
                     ->where('is_read', false)
-                    ->where('sender_id', '!=', auth()->id())
+                    ->where('sender_id', '!=', $user->id)
                     ->count(),
                 'online'  => false,
                 'messages' => $chat->messages->map(fn($msg) => [
-                    'from'               => $msg->sender_id === auth()->id() ? 'customer' : 'admin',
+                    'from'               => $msg->sender_id === $user->id ? 'customer' : 'admin',
                     'text'               => $msg->message,
                     'time'               => $msg->created_at->format('H:i'),
                     'file_url'           => $msg->file_url,
@@ -38,6 +41,8 @@ class ChatController extends Controller
                     'file_size_formatted' => $msg->file_size_formatted,
                     'is_image'           => $msg->is_image,
                     'is_video'           => $msg->is_video,
+                    'sender_avatar_url' => $msg->sender_avatar_url,
+                    'is_admin'           => $msg->sender_id === $chat->admin_id,
                 ])->values()->toArray(),
             ])->values();
 
@@ -105,15 +110,17 @@ class ChatController extends Controller
             $fileType = $file->getMimeType();
         }
 
-        $message = ChatMessage::create([
-            'chat_id'   => $chat->id,
-            'sender_id' => $user->id,
-            'message'   => $data['message'] ?? null,
-            'file_path' => $filePath,
-            'file_name' => $fileName,
-            'file_size' => $fileSize,
-            'file_type' => $fileType,
-        ]);
+                $message = ChatMessage::create([
+                    'chat_id'   => $chat->id,
+                    'sender_id' => $user->id,
+                    'message'   => $data['message'] ?? null,
+                    'file_path' => $filePath,
+                    'file_name' => $fileName,
+                    'file_size' => $fileSize,
+                    'file_type' => $fileType,
+                ]);
+
+                $sender = $user->id === $chat->admin_id ? $chat->admin : $chat->customer;
 
         $message->load('sender');
 

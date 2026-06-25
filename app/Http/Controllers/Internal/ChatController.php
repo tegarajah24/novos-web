@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
@@ -27,10 +28,18 @@ class ChatController extends Controller
                     ->orderBy('created_at')
                     ->get()
                     ->map(function ($msg) use ($user) {
+                        $isAdmin = $msg->sender_id === $user->id;
                         return [
-                            'from' => $msg->sender_id === $user->id ? 'admin' : 'customer',
-                            'text' => $msg->message,
-                            'time' => $msg->created_at->format('H:i'),
+                            'from'               => $isAdmin ? 'admin' : 'customer',
+                            'text'               => $msg->message,
+                            'time'               => $msg->created_at->format('H:i'),
+                            'file_url'           => $msg->file_url,
+                            'file_name'          => $msg->file_name,
+                            'file_size_formatted' => $msg->file_size_formatted,
+                            'is_image'           => $msg->is_image,
+                            'is_video'           => $msg->is_video,
+                            'sender_avatar_url'  => $msg->sender_avatar_url,
+                            'is_admin'           => $isAdmin,
                         ];
                     })
                     ->toArray();
@@ -46,7 +55,10 @@ class ChatController extends Controller
                     'id'           => $chat->id,
                     'name'         => $chat->customer->name ?? 'Unknown',
                     'time'         => $lastMsg?->created_at->format('H:i') ?? $chat->created_at->format('H:i'),
-                    'lastMessage'  => $lastMsg?->message ?? 'Belum ada pesan',
+                    'lastMessage'  => $lastMsg?->message
+                        ?? ($lastMsg?->file_name
+                            ? '📎 ' . $lastMsg->file_name
+                            : 'Belum ada pesan'),
                     'unread'       => $unread,
                     'online'       => false,
                     'messages'     => $messages,

@@ -37,6 +37,27 @@ class ChatMessage extends Model
         return $this->belongsTo(User::class, 'sender_id');
     }
 
+    public function getSenderAvatarUrlAttribute(): ?string
+    {
+        if (!$this->sender || !$this->sender->avatar) return null;
+
+        return Storage::url($this->sender->avatar);
+    }
+
+    public function getAdminAvatarUrlAttribute(): ?string
+    {
+        if (!$this->chat || !$this->chat->admin || !$this->chat->admin->avatar) return null;
+
+        return Storage::url($this->chat->admin->avatar);
+    }
+
+    public function getCustomerAvatarUrlAttribute(): ?string
+    {
+        if (!$this->chat || !$this->chat->customer || !$this->chat->customer->avatar) return null;
+
+        return Storage::url($this->chat->customer->avatar);
+    }
+
     public function getFileUrlAttribute(): ?string
     {
         if (!$this->file_path) return null;

@@ -19,9 +19,14 @@
                 >
                     <div class="flex items-start gap-3">
                         <div class="relative shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-bold text-sm">
-                                <span x-text="chat.name.charAt(0)"></span>
-                            </div>
+                            <template x-if="chat.sender_avatar_url">
+                                <img :src="chat.sender_avatar_url" class="w-10 h-10 rounded-full object-cover" alt="Avatar">
+                            </template>
+                            <template x-if="!chat.sender_avatar_url">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-bold text-sm">
+                                    <span x-text="chat.name.charAt(0)"></span>
+                                </div>
+                            </template>
                             <span x-show="chat.online" class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -54,8 +59,15 @@
             <div class="flex-1 flex flex-col min-h-0">
                 {{-- Chat Header --}}
                 <div class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-bold text-sm shrink-0">
-                        <span x-text="currentChat.name.charAt(0)"></span>
+                    <div class="w-10 h-10 rounded-full shrink-0">
+                        <template x-if="currentChat.sender_avatar_url">
+                            <img :src="currentChat.sender_avatar_url" class="w-10 h-10 rounded-full object-cover" alt="Avatar">
+                        </template>
+                        <template x-if="!currentChat.sender_avatar_url">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-bold text-sm">
+                                <span x-text="currentChat.name.charAt(0)"></span>
+                            </div>
+                        </template>
                     </div>
                     <div>
                         <p class="font-semibold text-gray-900" x-text="currentChat.name"></p>
