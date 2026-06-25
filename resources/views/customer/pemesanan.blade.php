@@ -168,7 +168,7 @@
                 {{-- Ukuran (Qty per Ukuran) --}}
                 <div x-data="{ showSizeGuide: false }">
                     <div class="flex items-center justify-between mb-2">
-                        <label class="block text-sm font-medium text-gray-700">Ukuran (Qty per Ukuran)</label>
+                        <label class="block text-sm font-medium text-gray-700">Ukuran (Qty per Ukuran) <span class="text-red-500">*</span></label>
                         <button
                             type="button"
                             @click="showSizeGuide = true"
@@ -185,7 +185,7 @@
                         </button>
                     </div>
 
-                    {{-- Modal Panduan Ukuran --}}
+                    {{-- Modal Panduan Ukuran Dinamis --}}
                     <template x-teleport="body">
                     <div
                         x-show="showSizeGuide"
@@ -207,10 +207,9 @@
                             x-transition:leave="transition ease-in duration-150"
                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                             x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
                             @click.stop
                         >
-                            {{-- Modal Header --}}
                             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                                 <div class="flex items-center gap-2">
                                     <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -232,148 +231,14 @@
                                 </button>
                             </div>
 
-                            {{-- Modal Body --}}
-                            <div class="px-6 py-4 overflow-y-auto max-h-[70vh]">
-                                <p class="text-xs text-gray-500 mb-4">Semua ukuran dalam satuan <strong>cm</strong>. Pilih ukuran yang sesuai dengan tubuh Anda.</p>
-                                <div class="overflow-x-auto rounded-xl border border-gray-200">
-                                    <table class="w-full text-sm">
-                                        <thead>
-                                            <tr class="bg-[#1a237e] text-white">
-                                                <th class="px-4 py-3 text-left font-semibold">Ukuran</th>
-                                                <th class="px-4 py-3 text-left font-semibold">Lebar Dada (cm)</th>
-                                                <th class="px-4 py-3 text-left font-semibold">Lingkar Dada (cm)</th>
-                                                <th class="px-4 py-3 text-left font-semibold">Panjang Baju (cm)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-100">
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">XS</td>
-                                                <td class="px-4 py-2.5 text-gray-700">44 – 46</td>
-                                                <td class="px-4 py-2.5 text-gray-700">88 – 92</td>
-                                                <td class="px-4 py-2.5 text-gray-700">64 – 66</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">S</td>
-                                                <td class="px-4 py-2.5 text-gray-700">47 – 49</td>
-                                                <td class="px-4 py-2.5 text-gray-700">94 – 98</td>
-                                                <td class="px-4 py-2.5 text-gray-700">66 – 68</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">M</td>
-                                                <td class="px-4 py-2.5 text-gray-700">50 – 52</td>
-                                                <td class="px-4 py-2.5 text-gray-700">100 – 104</td>
-                                                <td class="px-4 py-2.5 text-gray-700">69 – 71</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">L</td>
-                                                <td class="px-4 py-2.5 text-gray-700">53 – 55</td>
-                                                <td class="px-4 py-2.5 text-gray-700">106 – 110</td>
-                                                <td class="px-4 py-2.5 text-gray-700">72 – 74</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">XL</td>
-                                                <td class="px-4 py-2.5 text-gray-700">56 – 58</td>
-                                                <td class="px-4 py-2.5 text-gray-700">112 – 116</td>
-                                                <td class="px-4 py-2.5 text-gray-700">74 – 76</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">2XL / XXL</td>
-                                                <td class="px-4 py-2.5 text-gray-700">59 – 61</td>
-                                                <td class="px-4 py-2.5 text-gray-700">118 – 122</td>
-                                                <td class="px-4 py-2.5 text-gray-700">76 – 78</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">3XL</td>
-                                                <td class="px-4 py-2.5 text-gray-700">62 – 64</td>
-                                                <td class="px-4 py-2.5 text-gray-700">124 – 128</td>
-                                                <td class="px-4 py-2.5 text-gray-700">78 – 80</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">4XL</td>
-                                                <td class="px-4 py-2.5 text-gray-700">65 – 67</td>
-                                                <td class="px-4 py-2.5 text-gray-700">130 – 134</td>
-                                                <td class="px-4 py-2.5 text-gray-700">80 – 82</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">5XL</td>
-                                                <td class="px-4 py-2.5 text-gray-700">68 – 70</td>
-                                                <td class="px-4 py-2.5 text-gray-700">136 – 140</td>
-                                                <td class="px-4 py-2.5 text-gray-700">82 – 84</td>
-                                            </tr>
-                                            <tr class="hover:bg-blue-50 transition-colors">
-                                                <td class="px-4 py-2.5 font-bold text-blue-900">6XL</td>
-                                                <td class="px-4 py-2.5 text-gray-700">71 – 73</td>
-                                                <td class="px-4 py-2.5 text-gray-700">142 – 146</td>
-                                                <td class="px-4 py-2.5 text-gray-700">84 – 86</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="px-6 py-4 overflow-y-auto max-h-[75vh]">
+                                <p class="text-xs text-gray-500 mb-4">Panduan ukuran untuk potongan <strong class="text-[#1a237e]" x-text="form.jenis_potongan || 'REGULER'"></strong>.</p>
+                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                                    <img :src="activeSizeChart" alt="Panduan Ukuran" class="w-full h-auto object-contain">
                                 </div>
-                                <p class="text-xs text-gray-400 mt-3">* Ukuran dapat sedikit berbeda tergantung bahan yang dipilih. Hubungi kami jika butuh konsultasi ukuran.</p>
-                                {{-- Ukuran Anak Table --}}
-                                <div class="mt-6">
-                                    <p class="text-xs font-semibold text-gray-700 mb-2">Panduan Ukuran Anak (cm)</p>
-                                    <div class="overflow-x-auto rounded-xl border border-gray-200">
-                                        <table class="w-full text-sm">
-                                            <thead>
-                                                <tr class="bg-[#1a237e] text-white">
-                                                    <th class="px-4 py-3 text-left font-semibold">Ukuran</th>
-                                                    <th class="px-4 py-3 text-left font-semibold">Usia (thn)</th>
-                                                    <th class="px-4 py-3 text-left font-semibold">Tinggi Badan (cm)</th>
-                                                    <th class="px-4 py-3 text-left font-semibold">Lingkar Dada (cm)</th>
-                                                    <th class="px-4 py-3 text-left font-semibold">Panjang Baju (cm)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-gray-100">
-                                                <tr class="hover:bg-blue-50 transition-colors">
-                                                    <td class="px-4 py-2.5 font-bold text-blue-900">100 cm</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">3 – 4</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">98 – 104</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">54 – 56</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">40 – 42</td>
-                                                </tr>
-                                                <tr class="hover:bg-blue-50 transition-colors">
-                                                    <td class="px-4 py-2.5 font-bold text-blue-900">110 cm</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">4 – 5</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">106 – 112</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">57 – 59</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">43 – 45</td>
-                                                </tr>
-                                                <tr class="hover:bg-blue-50 transition-colors">
-                                                    <td class="px-4 py-2.5 font-bold text-blue-900">120 cm</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">6 – 7</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">114 – 120</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">60 – 62</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">46 – 48</td>
-                                                </tr>
-                                                <tr class="hover:bg-blue-50 transition-colors">
-                                                    <td class="px-4 py-2.5 font-bold text-blue-900">130 cm</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">8 – 9</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">122 – 128</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">63 – 65</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">49 – 51</td>
-                                                </tr>
-                                                <tr class="hover:bg-blue-50 transition-colors">
-                                                    <td class="px-4 py-2.5 font-bold text-blue-900">140 cm</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">10 – 11</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">130 – 136</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">66 – 68</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">52 – 54</td>
-                                                </tr>
-                                                <tr class="hover:bg-blue-50 transition-colors">
-                                                    <td class="px-4 py-2.5 font-bold text-blue-900">150 cm</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">12 – 13</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">138 – 144</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">69 – 71</td>
-                                                    <td class="px-4 py-2.5 text-gray-700">55 – 57</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <p class="text-xs text-gray-400 mt-3">* Ukuran dapat sedikit berbeda tergantung bahan yang dipilih. Konsultasikan dengan tim kami jika ragu.</p>
                             </div>
 
-                            {{-- Modal Footer --}}
                             <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
                                 <button
                                     @click="showSizeGuide = false"
@@ -385,41 +250,71 @@
                         </div>
                     </div>
                     </template>
-                    <div class="space-y-4">
-                        {{-- Ukuran Dewasa --}}
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">Ukuran Dewasa</label>
-                            <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                                <template x-for="size in ['XS', 'S', 'M', 'L', 'XL', '2XL / XXL', '3XL', '4XL', '5XL', '6XL']" :key="size">
-                                    <div class="text-center">
-                                        <span class="block text-xs font-medium text-gray-500 mb-1" x-text="size"></span>
-                                        <input
-                                            type="number"
-                                            x-model="form.ukuran[size]"
-                                            min="0"
-                                            class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
-                                        >
-                                    </div>
-                                </template>
-                            </div>
+
+                    {{-- Repeater: Select + Qty + Add --}}
+                    <div class="flex items-end gap-3">
+                        <div class="flex-1">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Pilih Ukuran</label>
+                            <select x-model="tmpSize"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white text-sm"
+                            >
+                                <option value="">Pilih Ukuran</option>
+                                <optgroup label="Dewasa">
+                                    <option value="XS">XS</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                    <option value="2XL / XXL">2XL / XXL</option>
+                                    <option value="3XL">3XL</option>
+                                    <option value="4XL">4XL</option>
+                                    <option value="5XL">5XL</option>
+                                    <option value="6XL">6XL</option>
+                                </optgroup>
+                                <optgroup label="Anak (cm)">
+                                    <option value="Anak 100">100 cm</option>
+                                    <option value="Anak 110">110 cm</option>
+                                    <option value="Anak 120">120 cm</option>
+                                    <option value="Anak 130">130 cm</option>
+                                    <option value="Anak 140">140 cm</option>
+                                    <option value="Anak 150">150 cm</option>
+                                </optgroup>
+                            </select>
                         </div>
-                        {{-- Ukuran Anak --}}
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">Ukuran Anak (cm)</label>
-                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                                <template x-for="size in ['100', '110', '120', '130', '140', '150']" :key="size">
-                                    <div class="text-center">
-                                        <span class="block text-xs font-medium text-gray-500 mb-1" x-text="size + ' cm'"></span>
-                                        <input
-                                            type="number"
-                                            x-model="form.ukuran['Anak ' + size]"
-                                            min="0"
-                                            class="w-full px-2 py-2 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
-                                        >
-                                    </div>
-                                </template>
-                            </div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Qty (pcs)</label>
+                            <input
+                                type="number"
+                                x-model.number="tmpQty"
+                                min="1"
+                                class="w-20 px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow text-center text-sm"
+                            >
                         </div>
+                        <button
+                            @click="addSize()"
+                            :disabled="!tmpSize"
+                            :class="tmpSize ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                            class="px-5 py-2.5 text-white rounded-lg font-semibold text-sm transition-colors shrink-0"
+                        >
+                            + Tambah Ukuran
+                        </button>
+                    </div>
+
+                    {{-- Summary Tags --}}
+                    <div x-show="totalQty > 0" class="flex flex-wrap gap-2 mt-3">
+                        <template x-for="(qty, size) in form.ukuran" :key="size">
+                            <template x-if="qty > 0">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-full text-sm font-medium">
+                                    <span x-text="size"></span>
+                                    <span class="text-blue-500">(<span x-text="qty"></span> pcs)</span>
+                                    <button
+                                        @click="removeSize(size)"
+                                        class="w-4 h-4 rounded-full bg-blue-200 hover:bg-red-300 text-blue-700 hover:text-white flex items-center justify-center transition-colors text-xs leading-none"
+                                    >&times;</button>
+                                </span>
+                            </template>
+                        </template>
+                        <span class="text-xs text-gray-400 self-center ml-1" x-text="'Total: ' + totalQty + ' pcs'"></span>
                     </div>
                 </div>
             </div>
@@ -1707,6 +1602,8 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             catatan: '',
             ukuran: { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL / XXL': 0, '3XL': 0, '4XL': 0, '5XL': 0, '6XL': 0, 'Anak 100': 0, 'Anak 110': 0, 'Anak 120': 0, 'Anak 130': 0, 'Anak 140': 0, 'Anak 150': 0 }
         },
+        tmpSize: '',
+        tmpQty: 1,
         prioritas: 'normal',
         pembayaran: 'midtrans',
         uploads: [],
@@ -1721,6 +1618,14 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             { value: 'super_express', label: 'Super Express', desc: '1\u20132 hari kerja', harga: '+Rp150.000' }
         ],
         basePricePerPcs: 85000,
+
+        sizeChartImages: {
+            'REGULER': '/images/unisex-regular.png',
+            'SLIMFIT CEWE': '/images/womens-slimfit.png',
+            'OVERSIZE': '/images/oversize-fit.png',
+            'TUNIK': '/images/tunik-fit.png',
+            'SLIM FIT UNISEX': '/images/unisex-slimfit.png',
+        },
 
         init() {
             const savedState = localStorage.getItem('checkout_state');
@@ -1818,12 +1723,16 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             return 0;
         },
 
+        get activeSizeChart() {
+            return this.sizeChartImages[this.form.jenis_potongan] || this.sizeChartImages['REGULER'];
+        },
+
         get estimasiTotal() {
             return this.hargaDasar + this.biayaPrioritas;
         },
 
         get validateStep2() {
-            return this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '' && this.form.lengan_jahitan !== '';
+            return this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '' && this.form.lengan_jahitan !== '' && this.totalQty >= 1;
         },
 
         get validateStep3() {
@@ -2147,6 +2056,17 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             });
         },
 
+        addSize() {
+            if (!this.tmpSize) return;
+            this.form.ukuran[this.tmpSize] = (this.form.ukuran[this.tmpSize] || 0) + this.tmpQty;
+            this.tmpSize = '';
+            this.tmpQty = 1;
+        },
+
+        removeSize(size) {
+            this.form.ukuran[size] = 0;
+        },
+
         addToCart() {
             if (this.loading) return;
             this.loading = true;
@@ -2241,6 +2161,8 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             };
             this.uploads = [];
             this.refUploads = [];
+            this.tmpSize = '';
+            this.tmpQty = 1;
             this.prioritas = 'normal';
             this.selectedAddressId = null;
         }
