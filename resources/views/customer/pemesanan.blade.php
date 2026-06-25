@@ -283,12 +283,23 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Qty (pcs)</label>
-                            <input
-                                type="number"
-                                x-model.number="tmpQty"
-                                min="1"
-                                class="w-20 px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow text-center text-sm"
-                            >
+                            <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
+                                <button
+                                    @click="tmpQty = Math.max(1, tmpQty - 1)"
+                                    :class="tmpQty <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-100 cursor-pointer'"
+                                    class="w-9 h-[42px] flex items-center justify-center transition-colors text-lg font-semibold shrink-0"
+                                    type="button"
+                                >−</button>
+                                <span
+                                    class="w-10 text-center text-sm font-semibold text-gray-900 select-none"
+                                    x-text="tmpQty"
+                                ></span>
+                                <button
+                                    @click="tmpQty = tmpQty + 1"
+                                    class="w-9 h-[42px] flex items-center justify-center text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors text-lg font-semibold shrink-0"
+                                    type="button"
+                                >+</button>
+                            </div>
                         </div>
                         <button
                             @click="addSize()"
