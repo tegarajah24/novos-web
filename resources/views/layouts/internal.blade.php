@@ -172,9 +172,13 @@
                     </div>
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 focus:outline-none">
-                        <div class="w-8 h-8 bg-[#1a237e] rounded-full flex items-center justify-center">
-                            <span class="text-white font-bold text-xs">{{ collect(explode(' ', auth()->user()->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('') }}</span>
-                        </div>
+                        @if(auth()->user()->avatar)
+                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover shrink-0">
+                        @else
+                            <div class="w-8 h-8 bg-[#1a237e] rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold text-xs">{{ collect(explode(' ', auth()->user()->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('') }}</span>
+                            </div>
+                        @endif
                         <span class="text-gray-700 font-medium text-sm">{{ auth()->user()->role->name ?? auth()->user()->name }}</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
                     </button>
