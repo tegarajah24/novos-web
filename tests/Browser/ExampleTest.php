@@ -2,20 +2,26 @@
 
 namespace Tests\Browser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
 class ExampleTest extends DuskTestCase
 {
-    /**
-     * A basic browser test example.
-     */
-    public function test_basic_example(): void
+    public function test_homepage_accessible(): void
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                ->assertSee('Laravel');
+                ->assertSee('Novos');
+        });
+    }
+
+    public function test_assets_loaded(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/');
+            $html = $browser->driver->getPageSource();
+            $this->assertStringContainsString('tailwind', $html, 'Tailwind CSS harus ada');
+            echo "\n[✓] ASSETS: Tailwind CSS terload\n";
         });
     }
 }
