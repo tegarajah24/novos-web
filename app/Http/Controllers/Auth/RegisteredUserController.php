@@ -12,20 +12,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        if (auth()->check() && auth()->user()->role->name !== 'Customer') {
-            abort(403);
-        }
-
-        return view('auth.register');
+        return redirect('/?auth=register');
     }
 
     /**
