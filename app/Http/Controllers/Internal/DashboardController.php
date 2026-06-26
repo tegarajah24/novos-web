@@ -20,6 +20,11 @@ class DashboardController extends Controller
             ->count();
         $totalTrend = $totalOrders - $totalLastWeek;
 
+        $userRole = auth()->user()->role->name;
+        $isSAOManager = in_array($userRole, ['Super Admin', 'Manager']);
+        $isDesign     = $userRole === 'Design';
+        $isProduction = $userRole === 'Produksi';
+
         $pendingOrders = Order::where('status', 'menunggu_validasi')->count();
         $pendingLastWeek = Order::where('status', 'menunggu_validasi')
             ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
@@ -64,6 +69,29 @@ class DashboardController extends Controller
         $statusLabels = ['Menunggu Validasi', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'];
         $statusData = [$pending, $design, $acc, $produksi, $selesai];
 
+        // Revenue hanya untuk Super Admin & Manager
+        if ($isSAOManager) {
+            $totalRevenue = Payment::where('status', 'success')->sum('amount');
+            $lastMonthRevenue = Payment::where('status', 'success')
+                ->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])
+                ->sum('amount');
+            $revenueTrend = $totalRevenue > 0 && $lastMonthRevenue > 0
+                ? round(($totalRevenue - $lastMonthRevenue) / $lastMonthRevenue * 100)
+                : 0;
+        } else {
+            $totalRevenue = 0;
+            $revenueTrend = 0;
+        }
+
+        // Data khusus Design
+        $designWaiting     = Order::where('status', 'dikonfirmasi')->count();
+        $designInProgress  = Order::where('status', 'di_design')->count();
+        $designWaitingAcc  = Order::where('status', 'disetujui')->count();
+
+        // Data khusus Produksi
+        $printQueue  = Order::where('status', 'siap_cetak')->count();
+        $sewingQueue = Order::where('status', 'diproduksi')->count();
+
         return view('internal.dashboard', compact(
             'totalOrders', 'totalTrend',
             'pendingOrders', 'pendingTrend',
@@ -72,6 +100,10 @@ class DashboardController extends Controller
             'recentOrders',
             'weeklyLabels', 'weeklyData',
             'statusLabels', 'statusData',
+            'isSAOManager', 'isDesign', 'isProduction',
+            'totalRevenue', 'revenueTrend',
+            'designWaiting', 'designInProgress', 'designWaitingAcc',
+            'printQueue', 'sewingQueue',
         ));
     }
 
