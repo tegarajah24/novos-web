@@ -103,7 +103,7 @@ class OrderController extends Controller
                     $designFiles[] = [
                         'name' => $file->getClientOriginalName(),
                         'path' => $path,
-                        'size' => $isImage ? Storage::disk('public')->size($path) : $file->getSize(),
+                        'size' => $file->getSize(),
                         'type' => $file->getMimeType(),
                     ];
                 }

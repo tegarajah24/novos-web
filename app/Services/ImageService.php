@@ -30,7 +30,12 @@ class ImageService
         imagejpeg($image, $tempPath, $quality);
         imagedestroy($image);
 
-        $storedPath = Storage::disk($disk)->putFileAs($directory, new \Illuminate\Http\UploadedFile($tempPath, $storedName), $storedName);
+        // Create temp file with proper permissions
+        $file = fopen($tempPath, 'r');
+        $fileContent = fread($file);
+        fclose($file);
+
+        $storedPath = Storage::disk($disk)->put($directory . '/' . $storedName, $fileContent);
 
         @unlink($tempPath);
 
