@@ -45,8 +45,25 @@
                         x-text="statusLabel"
                     ></span>
                 </div>
+                <template x-if="!shared && order.id">
+                    <button @click="copyShareLink"
+                        class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all text-gray-600 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        Bagikan
+                    </button>
+                </template>
             </div>
         </div>
+
+        {{-- Shared banner --}}
+        <template x-if="shared">
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <p class="text-sm text-blue-700">
+                    🔗 Tracking dibagikan oleh <strong x-text="order.team_name || 'Customer'"></strong>
+                </p>
+            </div>
+        </template>
 
         {{-- Stepper Horizontal --}}
         <div class="bg-white rounded-xl border border-gray-200 p-6 md:p-8 mb-6">
@@ -101,8 +118,8 @@
             </div>
         </div>
 
-        {{-- ACC Desain Section (Hero Grid) --}}
-        <div x-show="showAcc" x-cloak x-transition:enter.duration.300>
+        {{-- ACC Desain Section (Hero Grid) — hidden on shared mode --}}
+        <div x-show="showAcc && !shared" x-cloak x-transition:enter.duration.300>
             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div class="grid md:grid-cols-[70%_30%]">
                     {{-- Kiri: Gambar Mockup --}}
@@ -111,9 +128,21 @@
                             <div class="grid sm:grid-cols-2 gap-4 h-full">
                                 <template x-for="(file, idx) in order.design_files" :key="idx">
                                     <div class="relative group cursor-zoom-in rounded-xl overflow-hidden bg-gray-50 border border-gray-200 min-h-[260px]"
-                                         @click="openLightbox(file.url)">
+                                         @click="openLightbox(file.url)"
+                                         :class="{ 'pointer-events-none': false }"
+                                         :oncontextmenu="shared ? 'return false' : ''">
                                         <img :src="file.url" :alt="file.name"
-                                             class="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105">
+                                             class="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                                             draggable="false">
+                                        {{-- Watermark untuk shared mode --}}
+                                        <template x-if="shared">
+                                            <div class="absolute inset-0 pointer-events-none select-none flex items-center justify-center overflow-hidden">
+                                                <span class="text-white/25 font-black whitespace-nowrap"
+                                                      style="font-size: 3.5rem; transform: rotate(-30deg); text-shadow: 0 2px 10px rgba(0,0,0,0.7);">
+                                                    NOVOS APPAREL - PREVIEW
+                                                </span>
+                                            </div>
+                                        </template>
                                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                                             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center">
                                                 <svg class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -237,6 +266,8 @@ function trackingForm() {
         lightboxImage: '',
         revisionOpen: false,
         revisionNote: '',
+        shared: @json($shared ?? false),
+        shareUrl: @json($shareUrl ?? null),
         order: @json($orderData ?? null) || { id: '', date: '', status: 'pending' },
 
         get statusLabel() {
@@ -391,6 +422,48 @@ function trackingForm() {
                 });
             } catch (e) {
                 Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' });
+            }
+        },
+
+        async copyShareLink() {
+            let url = this.shareUrl;
+
+            if (!url) {
+                try {
+                    const res = await fetch('/tracking/' + this.order.id + '/share-token', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+                    if (!data.url) {
+                        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal membuat link sharing' });
+                        return;
+                    }
+                    url = data.url;
+                    this.shareUrl = url;
+                } catch (e) {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' });
+                    return;
+                }
+            }
+
+            try {
+                await navigator.clipboard.writeText(url);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Link Disalin!',
+                    text: 'Link tracking berhasil disalin. Bagikan ke grup WhatsApp tim Anda!',
+                    confirmButtonColor: '#1a237e',
+                    confirmButtonText: 'OK'
+                });
+            } catch (e) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Gagal Menyalin',
+                    text: 'Salin manual: ' + url,
+                    confirmButtonColor: '#1a237e',
+                    confirmButtonText: 'OK'
+                });
             }
         }
     }

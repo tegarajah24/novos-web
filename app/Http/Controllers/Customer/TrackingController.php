@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\Notification;
 
 class TrackingController extends Controller
@@ -34,11 +35,58 @@ class TrackingController extends Controller
                     'date'         => $order->created_at->format('j F Y'),
                     'status'       => $order->status,
                     'design_files' => $designFiles,
+                    'team_name'    => $order->designRequest?->team_name,
                 ];
+
+                $shareUrl = $order->share_token
+                    ? route('tracking.shared', $order->share_token)
+                    : null;
             }
         }
 
-        return view('customer.tracking', compact('orderData'));
+        return view('customer.tracking', compact('orderData', 'shareUrl'));
+    }
+
+    public function generateToken($orderNumber)
+    {
+        $order = Order::where('order_number', $orderNumber)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if (!$order->share_token) {
+            $order->update(['share_token' => Str::random(32)]);
+        }
+
+        return response()->json([
+            'url' => route('tracking.shared', $order->share_token),
+        ]);
+    }
+
+    public function shared($token)
+    {
+        $order = Order::with(['designRequest', 'orderItems'])
+            ->where('share_token', $token)
+            ->firstOrFail();
+
+        $designFiles = [];
+        if ($order->designRequest && $order->designRequest->design_files) {
+            $designFiles = collect($order->designRequest->design_files)->map(fn($f) => [
+                'name' => $f['name'],
+                'url'  => asset('storage/' . $f['path']),
+            ])->values()->toArray();
+        }
+
+        $orderData = [
+            'id'           => $order->order_number,
+            'date'         => $order->created_at->format('j F Y'),
+            'status'       => $order->status,
+            'design_files' => $designFiles,
+            'team_name'    => $order->designRequest?->team_name,
+        ];
+
+        $shared = true;
+
+        return view('customer.tracking', compact('orderData', 'shared'));
     }
 
     public function accDesign($id)

@@ -13,6 +13,7 @@ class Order extends Model
         'user_id',
         'order_number',
         'status',
+        'share_token',
         'production_stage',
         'notes',
         'admin_notes',

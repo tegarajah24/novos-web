@@ -37,6 +37,9 @@ Route::get('/pesan', function () {
 // Public routes (Midtrans callback)
 Route::post('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
 
+// Public route (shared tracking)
+Route::get('/tracking/shared/{token}', [TrackingController::class, 'shared'])->name('tracking.shared');
+
 // Authenticated routes
 Route::middleware('auth')->group(function () {
 
@@ -53,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking');
     Route::post('/tracking/{id}/acc', [TrackingController::class, 'accDesign'])->name('tracking.acc');
     Route::post('/tracking/{id}/revision', [TrackingController::class, 'revision'])->name('tracking.revision');
+    Route::post('/tracking/{id}/share-token', [TrackingController::class, 'generateToken'])->name('tracking.share-token');
 
     Route::get('/chat', [ChatController::class, 'index'])->name('chat');
     Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
