@@ -32,7 +32,7 @@ function statusBadgeType($status) {
 }
 @endphp
     <!-- Stats Row -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 {{ $isSAOManager ? 'lg:grid-cols-5' : 'lg:grid-cols-4' }} gap-6 mb-8">
 
         @if($isDesign)
 
