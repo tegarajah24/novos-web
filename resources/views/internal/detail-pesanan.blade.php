@@ -386,26 +386,13 @@ function updateStatusSection() {
                 const data = await res.json();
 
                 if (data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Status Diperbarui!',
-                        text: data.message,
-                        confirmButtonColor: '#1a237e'
-                    });
-                    location.reload();
+                    Notify.success(data.message, 'Status Diperbarui!');
+                    setTimeout(() => location.reload(), 1200);
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: data.message || 'Terjadi kesalahan.'
-                    });
+                    Notify.error(data.message || 'Terjadi kesalahan.');
                 }
             } catch (e) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Kesalahan',
-                    text: 'Terjadi kesalahan sistem.'
-                });
+                Notify.error('Terjadi kesalahan sistem.');
             } finally {
                 this.updating = false;
             }
@@ -443,26 +430,13 @@ async function validasiPesanan(orderId) {
         const data = await res.json();
 
         if (data.success) {
-            await Swal.fire({
-                icon: 'success',
-                title: 'Pesanan Divalidasi!',
-                text: 'Customer sekarang dapat melanjutkan ke pembayaran.',
-                confirmButtonColor: '#1a237e'
-            });
-            location.reload();
+            Notify.success('Customer sekarang dapat melanjutkan ke pembayaran.', 'Pesanan Divalidasi!');
+            setTimeout(() => location.reload(), 1200);
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal',
-                text: data.message || 'Terjadi kesalahan.'
-            });
+            Notify.error(data.message || 'Terjadi kesalahan.');
         }
     } catch (e) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Kesalahan',
-            text: 'Terjadi kesalahan sistem.'
-        });
+        Notify.error('Terjadi kesalahan sistem.');
     }
 }
 </script>

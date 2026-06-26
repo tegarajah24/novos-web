@@ -538,23 +538,11 @@ function produksiApp() {
             } else if (currentStage === 'qc') {
                 if (targetStatus === 'selesai_qc') {
                     if (!this.qcChecklist.jahitan || !this.qcChecklist.cacat || !this.qcChecklist.ukuran || !this.qcChecklist.desain) {
-                        Swal.fire({
-                            title: 'Checklist Belum Lengkap',
-                            text: 'Semua item checklist (Kualitas Jahitan, Bebas Cacat, Ukuran & Kuantitas, Desain & Sablon) wajib dicentang untuk menyelesaikan QC.',
-                            icon: 'warning',
-                            confirmButtonColor: '#1a237e',
-                            confirmButtonText: 'Mengerti'
-                        });
+                        Notify.warning('Semua item checklist (Kualitas Jahitan, Bebas Cacat, Ukuran & Kuantitas, Desain & Sablon) wajib dicentang untuk menyelesaikan QC.', 'Checklist Belum Lengkap');
                         return;
                     }
                     if (this.qcChecklist.perluRevisi) {
-                        Swal.fire({
-                            title: 'Tidak Bisa Selesaikan',
-                            text: 'Checklist "Perlu Revisi" tidak boleh dicentang jika ingin menyelesaikan QC. Hapus centang atau pilih tindakan Revisi.',
-                            icon: 'warning',
-                            confirmButtonColor: '#1a237e',
-                            confirmButtonText: 'Mengerti'
-                        });
+                        Notify.warning('Checklist "Perlu Revisi" tidak boleh dicentang jika ingin menyelesaikan QC. Hapus centang atau pilih tindakan Revisi.', 'Tidak Bisa Selesaikan');
                         return;
                     }
                     title = 'QC Selesai – Finalisasi Pesanan?';
@@ -563,33 +551,15 @@ function produksiApp() {
                     successText = 'Quality Control selesai. Pesanan dinyatakan selesai diproduksi.';
                 } else if (targetStatus === 'revisi_qc') {
                     if (this.qcChecklist.jahitan || this.qcChecklist.cacat || this.qcChecklist.ukuran || this.qcChecklist.desain) {
-                        Swal.fire({
-                            title: 'Checklist Tidak Sesuai',
-                            text: 'Untuk revisi, hanya checklist "Perlu Revisi / Pengerjaan Ulang" yang boleh dicentang. Checklist lainnya harus dikosongkan.',
-                            icon: 'warning',
-                            confirmButtonColor: '#1a237e',
-                            confirmButtonText: 'Mengerti'
-                        });
+                        Notify.warning('Untuk revisi, hanya checklist "Perlu Revisi / Pengerjaan Ulang" yang boleh dicentang. Checklist lainnya harus dikosongkan.', 'Checklist Tidak Sesuai');
                         return;
                     }
                     if (!this.qcChecklist.perluRevisi) {
-                        Swal.fire({
-                            title: 'Centang Perlu Revisi',
-                            text: 'Centang checklist "Perlu Revisi / Pengerjaan Ulang" untuk mengirim pesanan kembali ke bagian Jahit.',
-                            icon: 'warning',
-                            confirmButtonColor: '#1a237e',
-                            confirmButtonText: 'Mengerti'
-                        });
+                        Notify.warning('Centang checklist "Perlu Revisi / Pengerjaan Ulang" untuk mengirim pesanan kembali ke bagian Jahit.', 'Centang Perlu Revisi');
                         return;
                     }
                     if (!this.productionNote.trim()) {
-                        Swal.fire({
-                            title: 'Catatan Revisi Wajib Diisi',
-                            text: 'Harap isi catatan QC dengan detail bagian yang perlu diperbaiki sebelum mengirim revisi.',
-                            icon: 'warning',
-                            confirmButtonColor: '#1a237e',
-                            confirmButtonText: 'Mengerti'
-                        });
+                        Notify.warning('Harap isi catatan QC dengan detail bagian yang perlu diperbaiki sebelum mengirim revisi.', 'Catatan Revisi Wajib Diisi');
                         return;
                     }
                     const targetLabel = this.targetStage === 'printing' ? 'Printing' : 'Jahit';
@@ -620,7 +590,11 @@ function produksiApp() {
         _doSubmit(targetStatus, currentStage, successText) {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            let loadingEl = document.createElement('div');
+            loadingEl.id = 'notify-loading';
+            loadingEl.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30';
+            loadingEl.innerHTML = '<div class="bg-white rounded-xl px-6 py-4 shadow-xl flex items-center gap-3"><svg class="animate-spin h-5 w-5 text-[#1a237e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="text-sm font-medium text-gray-700">Menyimpan...</span></div>';
+            document.body.appendChild(loadingEl);
 
             fetch('/staf/produksi/update/' + this.selectedOrder.order_id, {
                 method: 'POST',
@@ -633,11 +607,10 @@ function produksiApp() {
             })
             .then(r => r.json())
             .then(res => {
+                document.getElementById('notify-loading')?.remove();
                 if (res.success) {
-                    Swal.fire({
-                        icon: 'success', title: 'Berhasil!',
-                        text: successText || res.message, timer: 2000, showConfirmButton: false
-                    }).then(() => {
+                    Notify.success(successText || res.message, 'Berhasil!');
+                    setTimeout(() => {
                         this.isDetailOpen = false;
                         if (targetStatus === 'selesai_qc') {
                             this.orders = this.orders.filter(o => o.id !== this.selectedOrder.id);
@@ -650,11 +623,12 @@ function produksiApp() {
                                 return o;
                             });
                         }
-                    });
+                    }, 1200);
                 }
             })
             .catch(() => {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan server.' });
+                document.getElementById('notify-loading')?.remove();
+                Notify.error('Terjadi kesalahan server.');
             });
         }
     }

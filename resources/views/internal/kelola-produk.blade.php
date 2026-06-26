@@ -18,11 +18,11 @@
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
                     </span>
-                    <input type="text" x-model="filters.search" placeholder="Cari nama jersey..." class="input input-sm input-bordered w-full pl-9 rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20">
+                    <input type="text" x-model="filters.search" @input.debounce="$nextTick(() => renderIcons())" placeholder="Cari nama jersey..." class="input input-sm input-bordered w-full pl-9 rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20">
                 </div>
 
                 <!-- Filter Kategori -->
-                <select x-model="filters.category" class="select select-sm select-bordered rounded-lg border-gray-300 text-sm font-medium">
+                <select x-model="filters.category" @change="$nextTick(() => renderIcons())" class="select select-sm select-bordered rounded-lg border-gray-300 text-sm font-medium">
                     <option value="">Semua Kategori</option>
                     <template x-for="cat in categories" :key="cat.id">
                         <option :value="cat.id" x-text="cat.name"></option>
@@ -90,12 +90,12 @@
                                 <div x-show="prod.is_featured" class="text-[10px] font-bold text-[#1a237e] mt-1">AKTIF</div>
                             </td>
                             <td class="text-center">
-                                <div class="flex items-center justify-center gap-2">
-                                    <button @click="openEditForm(prod)" class="btn btn-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 border-0 rounded-md flex items-center gap-1">
-                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button @click="openEditForm(prod)" title="Edit Produk" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
                                     </button>
-                                    <button @click="confirmDelete(prod.id)" class="btn btn-xs bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 border-0 rounded-md flex items-center gap-1">
-                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                                    <button @click="confirmDelete(prod.id)" title="Hapus Produk" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 </div>
                             </td>
@@ -435,31 +435,14 @@ function kelolaProdukApp() {
                         }
                     }
 
-                    window.Swal.fire({
-                        title: 'Berhasil!',
-                        text: data.message,
-                        icon: 'success',
-                        confirmButtonColor: '#1a237e',
-                        timer: 1500
-                    });
-
+                    Notify.success(data.message);
                     this.closeForm();
                     this.renderIcons();
                 } else {
-                    window.Swal.fire({
-                        title: 'Gagal',
-                        text: data.message || 'Terjadi kesalahan',
-                        icon: 'error',
-                        confirmButtonColor: '#dc2626'
-                    });
+                    Notify.error(data.message || 'Terjadi kesalahan');
                 }
             } catch (e) {
-                window.Swal.fire({
-                    title: 'Kesalahan',
-                    text: 'Gagal terhubung ke server.',
-                    icon: 'error',
-                    confirmButtonColor: '#dc2626'
-                });
+                Notify.error('Gagal terhubung ke server.');
             } finally {
                 this.submitting = false;
             }
@@ -493,28 +476,12 @@ function kelolaProdukApp() {
 
                     if (data.success) {
                         this.products = this.products.filter(p => p.id !== id);
-                        window.Swal.fire({
-                            title: 'Terhapus!',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonColor: '#1a237e',
-                            timer: 1500
-                        });
+                        Notify.success(data.message, 'Terhapus!');
                     } else {
-                        window.Swal.fire({
-                            title: 'Gagal',
-                            text: data.message || 'Terjadi kesalahan',
-                            icon: 'error',
-                            confirmButtonColor: '#dc2626'
-                        });
+                        Notify.error(data.message || 'Terjadi kesalahan');
                     }
                 } catch (e) {
-                    window.Swal.fire({
-                        title: 'Kesalahan',
-                        text: 'Gagal terhubung ke server.',
-                        icon: 'error',
-                        confirmButtonColor: '#dc2626'
-                    });
+                    Notify.error('Gagal terhubung ke server.');
                 }
             });
         },
@@ -537,22 +504,11 @@ function kelolaProdukApp() {
                         p.is_featured = p.id === id ? data.is_featured : false;
                     });
 
-                    window.Swal.fire({
-                        title: data.is_featured ? 'Hero Beranda Diperbarui!' : 'Featured Dinonaktifkan',
-                        text: data.message,
-                        icon: 'success',
-                        confirmButtonColor: '#1a237e',
-                        timer: 2000
-                    });
+                    Notify.success(data.message, data.is_featured ? 'Hero Beranda Diperbarui!' : 'Featured Dinonaktifkan');
                 }
             })
             .catch(() => {
-                window.Swal.fire({
-                    title: 'Kesalahan',
-                    text: 'Gagal memperbarui status featured.',
-                    icon: 'error',
-                    confirmButtonColor: '#dc2626'
-                });
+                Notify.error('Gagal memperbarui status featured.');
             });
         },
 

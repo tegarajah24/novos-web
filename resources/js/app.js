@@ -4,6 +4,7 @@ import { createIcons, icons } from 'lucide'
 
 window.Alpine = Alpine
 window.Swal = Swal
+window.lucide = { createIcons }
 
 Alpine.start()
 
