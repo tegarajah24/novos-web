@@ -115,12 +115,12 @@
                                         <img :src="file.url" :alt="file.name"
                                              class="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105">
                                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
-                                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center">
                                                 <svg class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                                             </div>
                                         </div>
-                                        <span class="absolute top-3 left-3 px-2 py-0.5 bg-white/80 backdrop-blur-sm text-[10px] font-semibold text-gray-600 rounded-md">Mockup Design</span>
-                                        <span class="absolute top-3 right-3 px-2 py-0.5 bg-black/40 backdrop-blur-sm text-[10px] font-semibold text-white rounded-md truncate max-w-[120px]" x-text="file.name"></span>
+                                        <span class="absolute top-3 left-3 px-2 py-0.5 bg-white/90 text-[10px] font-semibold text-gray-600 rounded-md">Mockup Design</span>
+                                        <span class="absolute top-3 right-3 px-2 py-0.5 bg-black/50 text-[10px] font-semibold text-white rounded-md truncate max-w-[120px]" x-text="file.name"></span>
                                     </div>
                                 </template>
                             </div>

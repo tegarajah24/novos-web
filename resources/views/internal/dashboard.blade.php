@@ -126,14 +126,14 @@ function statusBadgeType($status) {
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Line Chart -->
-        <div class="glass-card glass-card-hover rounded-xl p-6">
+        <div class="bg-white shadow-sm rounded-xl p-6">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Pesanan Per Minggu</h3>
             <div class="h-64">
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
         <!-- Donut Chart -->
-        <div class="glass-card glass-card-hover rounded-xl p-6">
+        <div class="bg-white shadow-sm rounded-xl p-6">
             <h3 class="font-bold text-gray-900 mb-6 text-lg">Status Pesanan Saat Ini</h3>
             <div class="h-64 flex justify-center">
                 <canvas id="donutChart"></canvas>
@@ -142,8 +142,8 @@ function statusBadgeType($status) {
     </div>
 
     <!-- Table Row -->
-    <div class="glass-card glass-card-hover rounded-xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/30 flex justify-between items-center bg-white/25">
+    <div class="bg-white shadow-sm rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
             <h3 class="font-bold text-gray-900 text-lg">Pesanan Terbaru</h3>
             <a href="{{ route('staf.daftar-pesanan') }}" class="text-sm font-semibold text-[#1a237e] hover:underline flex items-center gap-1">
                 Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>

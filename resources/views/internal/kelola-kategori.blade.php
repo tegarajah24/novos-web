@@ -9,7 +9,7 @@
 
 @section('internal-content')
 <div x-data="kategoriApp()" x-init="init()">
-    <div class="glass-card rounded-2xl overflow-hidden">
+    <div class="bg-white shadow-sm rounded-2xl overflow-hidden">
         <div class="p-5 border-b border-gray-100 flex items-center justify-between">
             <h2 class="font-semibold text-gray-900 text-sm">Daftar Kategori</h2>
             <button @click="openModal()" class="px-4 py-2 bg-[#1a237e] text-white text-xs font-semibold rounded-xl hover:bg-[#283593] transition-colors">
@@ -52,7 +52,7 @@
     {{-- Modal --}}
     <template x-teleport="body">
     <div x-show="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center" x-cloak>
-        <div x-show="modalOpen" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div x-show="modalOpen" x-transition.opacity class="fixed inset-0 bg-black/40"></div>
         <div x-show="modalOpen" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
             <h3 class="text-lg font-bold text-gray-900 mb-4" x-text="editId ? 'Edit Kategori' : 'Tambah Kategori'"></h3>
             <form @submit.prevent="simpan">

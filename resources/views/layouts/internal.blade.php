@@ -27,8 +27,7 @@
             --font-size-base: 15px;
             --radius-base: 12px;
             --font-family-base: 'Poppins';
-            --glass-opacity: 0.72;
-            --glass-blur: 8px;
+
         }
 
         * { font-family: var(--font-family-base), sans-serif; font-size: var(--font-size-base); }
@@ -122,42 +121,9 @@
         }
 
         /* Large Container Capped Rounding */
-        .glass-card,
-        .glass-sidebar,
         .rounded-2xl,
         .rounded-3xl {
             border-radius: min(var(--radius-base), 24px) !important;
-        }
-
-        .glass-sidebar {
-            background: rgba(255, 255, 255, var(--glass-opacity)) !important;
-            backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.45) !important;
-            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
-        }
-
-        .glass-card,
-        .bg-white.rounded-xl,
-        .bg-white.rounded-2xl,
-        .bg-white.rounded-3xl {
-            background: rgba(255, 255, 255, var(--glass-opacity)) !important;
-            backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.5) !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
-        }
-
-        main table thead tr {
-            background: rgba(255, 255, 255, 0.5) !important;
-        }
-        main tbody tr:hover {
-            background: rgba(255, 255, 255, 0.55) !important;
-        }
-        main .bg-gray-50,
-        main .bg-gray-50\/50 {
-            background: rgba(255, 255, 255, 0.5) !important;
         }
 
         /* ── Layout Density Overrides ── */
@@ -179,17 +145,6 @@
         html[data-density='spacious'] .py-3 { padding-top: 1.1rem !important; padding-bottom: 1.1rem !important; }
         html[data-density='spacious'] .space-y-6 > * + * { margin-top: 2rem !important; }
 
-        /* ── Glassmorphism Off Overrides ── */
-        html[data-glass='off'] .glass-card,
-        html[data-glass='off'] .bg-white.rounded-xl,
-        html[data-glass='off'] .bg-white.rounded-2xl,
-        html[data-glass='off'] .bg-white.rounded-3xl,
-        html[data-glass='off'] .glass-sidebar {
-            background: #ffffff !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            border-color: #e5e7eb !important;
-        }
         
         /* ── Page Transition Effects ── */
         @keyframes transition-fade-in {
@@ -238,52 +193,10 @@
             animation: transition-elastic-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) both;
         }
 
-        html[data-glass='off'] body.theme-dark .glass-card,
-        html[data-glass='off'] body.theme-dark .bg-white,
-        html[data-glass='off'] body.theme-dark .bg-white.rounded-xl,
-        html[data-glass='off'] body.theme-dark .bg-white.rounded-2xl,
-        html[data-glass='off'] body.theme-dark .bg-white.rounded-3xl,
-        html[data-glass='off'] body.theme-dark .glass-sidebar {
-            background: #161c2d !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
-        }
-
         /* ── Dark Mode Theme Styles ── */
         body.theme-dark.internal-body {
             background: linear-gradient(135deg, #0e111a 0%, #121422 50%, #0e121d 100%) !important;
             color: #cbd5e1 !important;
-        }
-        body.theme-dark .glass-card,
-        body.theme-dark .bg-white,
-        body.theme-dark .bg-white\/60,
-        body.theme-dark .bg-white\/70 {
-            background: rgba(22, 28, 45, var(--glass-opacity)) !important;
-            backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
-            color: #cbd5e1 !important;
-        }
-        body.theme-dark .glass-sidebar {
-            background: rgba(13, 17, 28, var(--glass-opacity)) !important;
-            backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(110%) !important;
-            border-right-color: rgba(255, 255, 255, 0.08) !important;
-        }
-        body.theme-dark .glass-sidebar span,
-        body.theme-dark .glass-sidebar a {
-            color: #cbd5e1 !important;
-        }
-        body.theme-dark .glass-sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.08) !important;
-        }
-        body.theme-dark .glass-sidebar a.bg-\[\#1a237e\]\/90 {
-            background-color: var(--color-primary) !important;
-            color: #ffffff !important;
-        }
-        body.theme-dark .glass-sidebar a.bg-\[\#1a237e\]\/90 span {
-            color: #ffffff !important;
         }
         body.theme-dark input,
         body.theme-dark textarea,
@@ -375,9 +288,6 @@
             if (a.density) root.setAttribute('data-density', a.density);
             var fontMap = { poppins: "'Poppins'", inter: "'Inter'", outfit: "'Outfit'" };
             if (a.fontFamily) root.style.setProperty('--font-family-base', fontMap[a.fontFamily] || "'Poppins'");
-            if (a.glassOpacity !== undefined) root.style.setProperty('--glass-opacity', a.glassOpacity);
-            if (a.glassBlur !== undefined) root.style.setProperty('--glass-blur', a.glassBlur + 'px');
-            root.setAttribute('data-glass', a.glassEnabled === false ? 'off' : 'on');
             if (a.transition) root.setAttribute('data-transition', a.transition);
             var dark = a.theme==='dark' || (a.theme==='auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
             if (dark) document.documentElement.classList.add('theme-dark-pending');
@@ -458,7 +368,7 @@
                              x-transition:leave="transition ease-in duration-150"
                              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                              x-transition:leave-end="opacity-0 scale-95 translate-y-1"
-                             class="absolute right-0 w-96 bg-white/95 backdrop-blur-xl border border-white/60 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                             class="absolute right-0 w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden"
                              style="top: 100%;">
 
                             {{-- Header Dropdown --}}
@@ -522,7 +432,7 @@
                         <span class="text-gray-700 font-medium text-sm">{{ auth()->user()->role->name ?? auth()->user()->name }}</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
                     </button>
-                    <div x-show="open" x-cloak x-transition class="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg z-50">
+                    <div x-show="open" x-cloak x-transition class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                         <div class="py-1">
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profil Saya</a>
                             <a href="{{ route('staf.pengaturan') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Pengaturan</a>

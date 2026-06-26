@@ -11,14 +11,14 @@
 <div x-data="settingApp()" x-init="init()" class="max-w-4xl mx-auto">
 
     {{-- Tab Navigation --}}
-    <div class="flex gap-1 mb-6 bg-white/60 backdrop-blur border border-white/50 rounded-2xl p-1.5 w-fit shadow-sm">
+    <div class="flex gap-1 mb-6 bg-white border border-gray-200 rounded-2xl p-1.5 w-fit shadow-sm">
         <button @click="tab='toko'"
-            :class="tab==='toko' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-white/70'"
+            :class="tab==='toko' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
             <i data-lucide="store" class="w-4 h-4"></i> Toko
         </button>
         <button @click="tab='tampilan'"
-            :class="tab==='tampilan' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-white/70'"
+            :class="tab==='tampilan' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
             <i data-lucide="palette" class="w-4 h-4"></i> Tampilan
         </button>
@@ -26,7 +26,7 @@
 
     {{-- ======================== TAB TOKO ======================== --}}
     <div x-show="tab==='toko'" x-transition>
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 bg-[#1a237e]/10 rounded-xl flex items-center justify-center">
                     <i data-lucide="store" class="w-5 h-5 text-[#1a237e]"></i>
@@ -42,23 +42,23 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Toko <span class="text-red-500">*</span></label>
                         <input type="text" x-model="form.company_name" placeholder="Novos Jersey"
-                               class="w-full rounded-xl border-gray-200 bg-white/70 px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                               class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Telepon</label>
                         <input type="text" x-model="form.company_phone" placeholder="0812-3456-7890"
-                               class="w-full rounded-xl border-gray-200 bg-white/70 px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                               class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
                     <input type="email" x-model="form.company_email" placeholder="hello@novosjersey.com"
-                           class="w-full rounded-xl border-gray-200 bg-white/70 px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                           class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat</label>
                     <textarea x-model="form.company_address" rows="3" placeholder="Jl. Contoh No. 1, Kota, Provinsi"
-                              class="w-full rounded-xl border-gray-200 bg-white/70 px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e] resize-none"></textarea>
+                              class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e] resize-none"></textarea>
                 </div>
                 <div class="pt-1">
                     <button type="submit" :disabled="saving"
@@ -76,7 +76,7 @@
     <div x-show="tab==='tampilan'" x-transition x-cloak class="space-y-5">
 
         {{-- Mode Tema --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="sun-moon" class="w-5 h-5 text-indigo-600"></i>
@@ -102,7 +102,7 @@
         </div>
 
         {{-- Color Palette / Scheme --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-pink-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="swatch-book" class="w-5 h-5 text-pink-500"></i>
@@ -133,7 +133,7 @@
         </div>
 
         {{-- Custom Color --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="pipette" class="w-5 h-5 text-orange-500"></i>
@@ -178,7 +178,7 @@
         </div>
 
         {{-- Font Size --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="type" class="w-5 h-5 text-teal-600"></i>
@@ -201,7 +201,7 @@
         </div>
 
         {{-- Button Style --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="square" class="w-5 h-5 text-purple-600"></i>
@@ -229,7 +229,7 @@
         </div>
 
         {{-- Rounded --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="circle-dashed" class="w-5 h-5 text-yellow-600"></i>
@@ -252,7 +252,7 @@
         </div>
 
         {{-- Kepadatan Tata Letak --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="layout-grid" class="w-5 h-5 text-blue-500"></i>
@@ -275,7 +275,7 @@
         </div>
 
         {{-- Pilihan Gaya Font --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="languages" class="w-5 h-5 text-indigo-500"></i>
@@ -298,64 +298,8 @@
             </div>
         </div>
 
-        {{-- Efek Glassmorphism --}}
-        <div class="glass-card rounded-2xl p-7">
-            <div class="flex items-center gap-3 mb-5">
-                <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
-                    <i data-lucide="layers" class="w-5 h-5 text-orange-500"></i>
-                </div>
-                <div>
-                    <h2 class="text-base font-bold text-gray-900">Efek Glassmorphism (Kaca)</h2>
-                    <p class="text-xs text-gray-500">Sesuaikan tingkat transparansi dan keburaman kartu & sidebar</p>
-                </div>
-            </div>
-            <div class="space-y-6">
-                {{-- Toggle Switch --}}
-                <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                    <div>
-                        <label class="text-sm font-bold text-gray-800 block">Aktifkan Efek Kaca (Glassmorphism)</label>
-                        <span class="text-xs text-gray-400">Nonaktifkan untuk menggunakan latar belakang solid klasik</span>
-                    </div>
-                    <button @click="appearance.glassEnabled = !appearance.glassEnabled; applyGlass()"
-                        :class="appearance.glassEnabled
-                            ? 'bg-[#1a237e] border-[#1a237e]'
-                            : 'bg-gray-200 border-gray-300'"
-                        class="relative inline-flex h-7 w-12 items-center rounded-full border-2 transition-all duration-300 cursor-pointer focus:outline-none">
-                        <span :class="appearance.glassEnabled ? 'translate-x-6' : 'translate-x-0.5'"
-                            class="inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-all duration-300"></span>
-                    </button>
-                </div>
-
-                {{-- Slider Opacity --}}
-                <div class="space-y-2" x-show="appearance.glassEnabled" x-transition>
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-semibold text-gray-700">Transparansi Kaca (Opacity)</label>
-                        <span class="text-sm font-mono font-bold text-gray-800" x-text="Math.round(appearance.glassOpacity * 100) + '%'"></span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs text-gray-400">Jernih (Transparan)</span>
-                        <input type="range" min="0.1" max="1.0" step="0.02" x-model="appearance.glassOpacity" @input="applyGlass()" class="range range-xs accent-[#1a237e] flex-1">
-                        <span class="text-xs text-gray-400">Solid (Flat)</span>
-                    </div>
-                </div>
-
-                {{-- Slider Blur --}}
-                <div class="space-y-2" x-show="appearance.glassEnabled" x-transition>
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-semibold text-gray-700">Kelembutan Kaca (Backdrop Blur)</label>
-                        <span class="text-sm font-mono font-bold text-gray-800" x-text="appearance.glassBlur + ' px'"></span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs text-gray-400">Tajam (0px)</span>
-                        <input type="range" min="0" max="24" step="1" x-model="appearance.glassBlur" @input="applyGlass()" class="range range-xs accent-[#1a237e] flex-1">
-                        <span class="text-xs text-gray-400">Frosted (24px)</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         {{-- Efek Transisi --}}
-        <div class="glass-card rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="move" class="w-5 h-5 text-cyan-600"></i>
@@ -403,9 +347,6 @@ function settingApp() {
         rounded: 'xl',
         density: 'comfortable',
         fontFamily: 'poppins',
-        glassOpacity: 0.72,
-        glassBlur: 8,
-        glassEnabled: true,
         transition: 'fade',
     };
 
@@ -577,12 +518,6 @@ function settingApp() {
             document.documentElement.style.setProperty('--font-family-base', fontMap[val] || "'Poppins'");
         },
 
-        applyGlass() {
-            document.documentElement.style.setProperty('--glass-opacity', this.appearance.glassOpacity);
-            document.documentElement.style.setProperty('--glass-blur', this.appearance.glassBlur + 'px');
-            document.documentElement.setAttribute('data-glass', this.appearance.glassEnabled ? 'on' : 'off');
-        },
-
         applyTransition(val) {
             this.appearance.transition = val;
             document.documentElement.setAttribute('data-transition', val);
@@ -596,7 +531,6 @@ function settingApp() {
             this.applyRounded(this.appearance.rounded);
             this.applyDensity(this.appearance.density || 'comfortable');
             this.applyFontFamily(this.appearance.fontFamily || 'poppins');
-            this.applyGlass();
             this.applyTransition(this.appearance.transition || 'fade');
         },
 

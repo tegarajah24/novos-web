@@ -9,10 +9,10 @@
 @section('internal-content')
 <div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}' })">
     {{-- Tab Navigation --}}
-    <div class="flex max-w-2xl gap-1 bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-white/70 mb-8">
+    <div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
             <button @click="activeTab = i"
-                :class="activeTab === i ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'"
+                :class="activeTab === i ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
                 class="flex-1 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
             >
                     <span x-text="tab.label"></span>
@@ -30,10 +30,10 @@
             </div>
 
             {{-- Card: Pesan Motivasi Hari Ini --}}
-            <div class="glass-card rounded-2xl p-6 flex flex-col">
+            <div class="bg-white rounded-2xl shadow-sm p-6 flex flex-col">
                 <div class="flex items-center justify-between mb-3">
                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Pesan Hari Ini</p>
-                    <button @click="refreshQuote" class="p-1.5 text-gray-400 hover:text-[#1a237e] rounded-lg hover:bg-white/60 transition-colors" title="Ganti kutipan">
+                    <button @click="refreshQuote" class="p-1.5 text-gray-400 hover:text-[#1a237e] rounded-lg hover:bg-gray-50 transition-colors" title="Ganti kutipan">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                     </button>
                 </div>
@@ -47,7 +47,7 @@
         {{-- Row 2: Skor Hari Ini + Reminder + Kepatuhan Micro-Break --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {{-- Card: Skor Hari Ini --}}
-            <div class="glass-card rounded-2xl p-6 h-full">
+            <div class="bg-white rounded-2xl shadow-sm p-6 h-full">
                 <template x-if="todayFilled">
                     <div>
                         <div class="flex items-start justify-between mb-4">
@@ -77,7 +77,7 @@
             </div>
 
             {{-- Card: Reminder Berikutnya --}}
-            <div class="glass-card rounded-2xl p-6 h-full">
+            <div class="bg-white rounded-2xl shadow-sm p-6 h-full">
                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">Reminder Berikutnya</p>
                 <div class="text-center py-4">
                     <p class="text-4xl font-bold text-[#1a237e] mb-1" x-text="nextReminder.time"></p>
@@ -94,7 +94,7 @@
             </div>
 
             {{-- Card: Kepatuhan Micro-Break --}}
-            <div class="glass-card rounded-2xl p-6 h-full">
+            <div class="bg-white rounded-2xl shadow-sm p-6 h-full">
                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">Kepatuhan Micro-Break</p>
                 <div class="text-center py-2">
                     <div class="relative w-20 h-20 mx-auto mb-2">
@@ -113,7 +113,7 @@
         </div>
 
         {{-- Row 3: Riwayat 7 Hari --}}
-        <div class="glass-card rounded-2xl p-6">
+        <div class="bg-white rounded-2xl shadow-sm p-6">
                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-4">Riwayat 7 Hari Terakhir</p>
                 <div class="flex items-center gap-3 justify-center flex-wrap">
                     <template x-for="(day, i) in weekHistory" :key="i">
@@ -132,7 +132,7 @@
         {{-- Header --}}
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Bagaimana kondisi Anda hari ini?</h2>
-            <button @click="petunjukOpen = true" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#1a237e] bg-white/60 hover:bg-white rounded-lg border border-gray-200 transition-colors">
+            <button @click="petunjukOpen = true" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#1a237e] bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 Petunjuk Pengisian
             </button>
@@ -141,7 +141,7 @@
         {{-- Sudah diisi hari ini --}}
         <template x-if="submitted">
             <div class="space-y-6">
-                <div class="glass-card rounded-2xl p-6 text-center">
+                <div class="bg-white rounded-2xl shadow-sm p-6 text-center">
                     <span class="text-5xl block mb-3" x-text="dailyResult.emoji"></span>
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Check-in Hari Ini Selesai</h3>
                     <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
@@ -152,9 +152,9 @@
 
                 {{-- Catatan bantuan --}}
                             <template x-if="form.needHelp === 'ya' && form.helpNote">
-                                    <div class="glass-card rounded-2xl p-6">
+                                    <div class="bg-white rounded-2xl shadow-sm p-6">
                                         <h4 class="font-bold text-gray-900 text-sm mb-2">Catatan Anda</h4>
-                                        <p class="text-sm text-gray-600 italic bg-white/60 rounded-xl p-4 border border-gray-100" x-text="form.helpNote"></p>
+                                        <p class="text-sm text-gray-600 italic bg-white rounded-xl p-4 border border-gray-100" x-text="form.helpNote"></p>
                                     </div>
                                 </template>
 
@@ -165,7 +165,7 @@
                         <template x-if="!submitted">
                             <div class="space-y-6">
                                 {{-- Tabel Pertanyaan --}}
-                                <div class="glass-card rounded-2xl overflow-hidden">
+                                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                                     <div class="overflow-x-auto">
                                         <table class="w-full text-sm">
                                             <thead>
@@ -179,7 +179,7 @@
                                             </thead>
                                             <tbody class="divide-y divide-gray-100">
                                                 <template x-for="(q, i) in questions" :key="q.id">
-                                                    <tr class="hover:bg-white/40 transition-colors">
+                                                    <tr class="hover:bg-gray-50 transition-colors">
                                                         <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
                                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                                         <template x-for="val in [1, 2, 3]" :key="val">
@@ -201,7 +201,7 @@
                                 </div>
 
                                 {{-- Butuh bantuan --}}
-                                <div class="glass-card rounded-2xl p-6">
+                                <div class="bg-white rounded-2xl shadow-sm p-6">
                                     <p class="font-semibold text-gray-900 text-sm mb-4">Apakah Anda membutuhkan bantuan atau dukungan hari ini?</p>
                                     <div class="flex gap-6 mb-4">
                                         <label class="flex items-center gap-2.5 cursor-pointer">
@@ -243,7 +243,7 @@
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             @click="petunjukOpen = false"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
             <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" @click.stop>
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-gray-900">Petunjuk Pengisian</h3>
@@ -286,7 +286,7 @@
         {{-- Header --}}
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Checklist SMART-WORK Micro-Break</h2>
-            <button @click="microPetunjukOpen = true" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#1a237e] bg-white/60 hover:bg-white rounded-lg border border-gray-200 transition-colors">
+            <button @click="microPetunjukOpen = true" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#1a237e] bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 Petunjuk Pengisian
             </button>
@@ -295,7 +295,7 @@
         {{-- Sudah diisi --}}
         <template x-if="microSubmitted">
             <div class="space-y-6">
-                <div class="glass-card rounded-2xl p-6 text-center">
+                <div class="bg-white rounded-2xl shadow-sm p-6 text-center">
                     <span class="text-5xl block mb-3" x-text="microScore >= 7 ? '🎉' : microScore >= 4 ? '👍' : '💪'"></span>
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Micro-Break Hari Ini Selesai</h3>
                     <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
@@ -305,15 +305,15 @@
 
 
                 {{-- Catatan Pekerja --}}
-                <div class="glass-card rounded-2xl p-6" x-show="microForm.catatan_membantu || microForm.catatan_kendala">
+                <div class="bg-white rounded-2xl shadow-sm p-6" x-show="microForm.catatan_membantu || microForm.catatan_kendala">
                     <h4 class="font-bold text-gray-900 text-sm mb-4">Catatan Pekerja</h4>
                     <div class="space-y-3" x-show="microForm.catatan_membantu">
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Apa yang paling membantu?</p>
-                        <p class="text-sm text-gray-600 italic bg-white/60 rounded-xl p-4 border border-gray-100" x-text="microForm.catatan_membantu"></p>
+                        <p class="text-sm text-gray-600 italic bg-white rounded-xl p-4 border border-gray-100" x-text="microForm.catatan_membantu"></p>
                     </div>
                     <div class="space-y-3" x-show="microForm.catatan_kendala">
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Kendala yang dialami</p>
-                        <p class="text-sm text-gray-600 italic bg-white/60 rounded-xl p-4 border border-gray-100" x-text="microForm.catatan_kendala"></p>
+                        <p class="text-sm text-gray-600 italic bg-white rounded-xl p-4 border border-gray-100" x-text="microForm.catatan_kendala"></p>
                     </div>
                 </div>
 
@@ -324,7 +324,7 @@
         <template x-if="!microSubmitted">
             <div class="space-y-6">
                 {{-- A. Checklist Pelaksanaan SMART-WORK Micro-Break --}}
-                <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
                         <h3 class="font-bold text-gray-900">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
                     </div>
@@ -346,7 +346,7 @@
                                     </td>
                                 </tr>
                                 <template x-for="q in microChecklist.filter(c => c.stage === 'STOP')" :key="q.id">
-                                    <tr class="hover:bg-white/40 transition-colors">
+                                    <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
@@ -377,7 +377,7 @@
                                     </td>
                                 </tr>
                                 <template x-for="q in microChecklist.filter(c => c.stage === 'TAKE A BREATH')" :key="q.id">
-                                    <tr class="hover:bg-white/40 transition-colors">
+                                    <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
@@ -408,7 +408,7 @@
                                     </td>
                                 </tr>
                                 <template x-for="q in microChecklist.filter(c => c.stage === 'OBSERVE')" :key="q.id">
-                                    <tr class="hover:bg-white/40 transition-colors">
+                                    <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
@@ -439,7 +439,7 @@
                                     </td>
                                 </tr>
                                 <template x-for="q in microChecklist.filter(c => c.stage === 'PROCEED')" :key="q.id">
-                                    <tr class="hover:bg-white/40 transition-colors">
+                                    <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
@@ -470,7 +470,7 @@
                                     </td>
                                 </tr>
                                 <template x-for="q in microChecklist.filter(c => c.stage === 'AKTIVITAS PENDUKUNG')" :key="q.id">
-                                    <tr class="hover:bg-white/40 transition-colors">
+                                    <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-4 py-3 text-gray-400 font-medium" x-text="q.id"></td>
                                         <td class="px-4 py-3 text-gray-700" x-text="q.text"></td>
                                         <td class="px-4 py-3 text-center">
@@ -499,7 +499,7 @@
                 </div>
 
                 {{-- D. Evaluasi Manfaat --}}
-                <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
                         <h3 class="font-bold text-gray-900">Evaluasi Manfaat Setelah Micro-Break</h3>
                         <p class="text-xs text-gray-500 mt-1">Bagaimana kondisi Anda setelah melakukan micro-break?</p>
@@ -515,7 +515,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                <tr class="hover:bg-white/40 transition-colors">
+                                <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-4 py-3 text-gray-700">Tingkat stres saya</td>
                                     <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
                                         <td class="px-4 py-3 text-center">
@@ -529,7 +529,7 @@
                                         </td>
                                     </template>
                                 </tr>
-                                <tr class="hover:bg-white/40 transition-colors">
+                                <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-4 py-3 text-gray-700">Tingkat fokus saya</td>
                                     <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
                                         <td class="px-4 py-3 text-center">
@@ -543,7 +543,7 @@
                                         </td>
                                     </template>
                                 </tr>
-                                <tr class="hover:bg-white/40 transition-colors">
+                                <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-4 py-3 text-gray-700">Tingkat kenyamanan bekerja saya</td>
                                     <template x-for="val in ['lebih_baik', 'sama', 'lebih_buruk']" :key="val">
                                         <td class="px-4 py-3 text-center">
@@ -563,7 +563,7 @@
                 </div>
 
                 {{-- Catatan Pekerja --}}
-                <div class="glass-card rounded-2xl p-6">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
                     <h3 class="font-bold text-gray-900 text-sm mb-4">Catatan Pekerja</h3>
                     <div class="space-y-4">
                         <div>
@@ -601,7 +601,7 @@
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             @click="microPetunjukOpen = false"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
             <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" @click.stop>
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-gray-900">Petunjuk Pengisian</h3>
@@ -633,26 +633,26 @@
     <div x-show="activeTab === 3" x-cloak x-transition:enter.duration.300 class="space-y-6">
         {{-- Summary Cards --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" x-show="reportLoaded">
-            <div class="glass-card rounded-2xl p-5 text-center">
+            <div class="bg-white rounded-2xl shadow-sm p-5 text-center">
                 <p class="text-3xl font-bold text-gray-900" x-text="reportData.today_summary.total_staff"></p>
                 <p class="text-xs text-gray-500 mt-1">Total Staff</p>
             </div>
-            <div class="glass-card rounded-2xl p-5 text-center">
+            <div class="bg-white rounded-2xl shadow-sm p-5 text-center">
                 <p class="text-3xl font-bold text-emerald-600" x-text="reportData.today_summary.checked"></p>
                 <p class="text-xs text-gray-500 mt-1">Sudah Check-in Hari Ini</p>
             </div>
-            <div class="glass-card rounded-2xl p-5 text-center">
+            <div class="bg-white rounded-2xl shadow-sm p-5 text-center">
                 <p class="text-3xl font-bold text-gray-400" x-text="reportData.today_summary.unchecked"></p>
                 <p class="text-xs text-gray-500 mt-1">Belum Check-in</p>
             </div>
-            <div class="glass-card rounded-2xl p-5 text-center">
+            <div class="bg-white rounded-2xl shadow-sm p-5 text-center">
                 <p class="text-3xl font-bold text-red-500" x-text="reportData.today_summary.need_attention"></p>
                 <p class="text-xs text-gray-500 mt-1">Perlu Perhatian</p>
             </div>
         </div>
 
         {{-- Tabel Staff Hari Ini --}}
-        <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <h3 class="font-bold text-gray-900">Kondisi Staff Hari Ini</h3>
                 <span class="text-xs text-gray-400" x-text="todayDate"></span>
@@ -671,7 +671,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         <template x-for="s in reportData.staff_today" :key="s.user_id">
-                            <tr class="hover:bg-white/40 transition-colors">
+                            <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2.5">
                                         <template x-if="s.avatar">
@@ -728,7 +728,7 @@
         {{-- Ringkasan Mingguan --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {{-- Tabel Ringkasan Minggu --}}
-            <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="font-bold text-gray-900">Ringkasan 7 Hari</h3>
                 </div>
@@ -746,7 +746,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             <template x-for="(day, i) in reportData.week_summary" :key="i">
-                                <tr class="hover:bg-white/40 transition-colors">
+                                <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-3 py-2.5 font-medium text-gray-900" x-text="day.label"></td>
                                     <td class="px-3 py-2.5 text-center text-gray-700" x-text="day.total_filled + '/' + reportData.today_summary.total_staff"></td>
                                     <td class="px-3 py-2.5 text-center font-semibold" x-text="day.avg_score ?? '—'"></td>
@@ -761,7 +761,7 @@
             </div>
 
             {{-- Statistik per Staff --}}
-            <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="font-bold text-gray-900">Statistik Staff (7 Hari)</h3>
                 </div>
@@ -778,7 +778,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             <template x-for="s in reportData.staff_stats" :key="s.user_id">
-                                <tr class="hover:bg-white/40 transition-colors">
+                                <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-3 py-2.5">
                                         <div class="flex items-center gap-2">
                                             <template x-if="s.avatar">

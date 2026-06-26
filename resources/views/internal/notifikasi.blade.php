@@ -10,7 +10,7 @@
 <div x-data="notifPage()" x-init="init()" class="flex flex-col gap-4">
 
     {{-- Header Card --}}
-    <div class="glass-card rounded-2xl px-6 py-4 flex items-center justify-between">
+    <div class="bg-white shadow-sm rounded-2xl px-6 py-4 flex items-center justify-between">
         <div>
             <p class="text-sm text-gray-500">
                 Anda memiliki <strong x-text="unreadCount" class="text-red-500"></strong> notifikasi yang belum dibaca.
@@ -24,7 +24,7 @@
     </div>
 
     {{-- Main Panel --}}
-    <div class="glass-card rounded-2xl overflow-hidden">
+    <div class="bg-white shadow-sm rounded-2xl overflow-hidden">
 
         {{-- Tab Navigation --}}
         <div class="flex items-center justify-between px-6 pt-4 pb-0 border-b border-gray-100">
@@ -50,7 +50,7 @@
             <template x-for="notif in filteredNotifications" :key="notif.id">
                 <div @click="markRead(notif.id)"
                      :class="notif.read ? '' : 'bg-blue-50/40'"
-                     class="px-6 py-4 hover:bg-white/60 transition-colors cursor-pointer group">
+                     class="px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer group">
                     <div class="flex items-start gap-4">
 
                         {{-- Avatar --}}
@@ -105,7 +105,7 @@
         </div>
 
         {{-- Footer --}}
-        <div class="px-6 py-3 border-t border-gray-100 bg-white/40 flex items-center justify-between">
+        <div class="px-6 py-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
             <p class="text-xs text-gray-400">
                 Menampilkan <strong x-text="filteredNotifications.length"></strong> notifikasi
             </p>

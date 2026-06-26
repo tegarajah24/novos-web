@@ -4,11 +4,7 @@
 
 @push('styles')
 <style>
-    .glass-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(229, 231, 235, 0.5);
-    }
+
     .profile-avatar-glow {
         box-shadow: 0 0 20px rgba(26, 35, 126, 0.15);
     }
@@ -36,7 +32,7 @@
     @endif
 
     {{-- Header Profil + Tombol Close --}}
-    <div class="glass-card bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100 flex items-center justify-between">
+    <div class="bg-white rounded-2xl shadow-sm p-5 mb-6 shadow-sm border border-gray-100 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-gray-900">Profil Saya</h1>
             <p class="text-xs text-gray-500 mt-0.5">Kelola informasi pribadi, alamat pengiriman, dan riwayat pesanan Anda.</p>
@@ -53,7 +49,7 @@
         {{-- ==================== SIDEBAR (LEFT) ==================== --}}
         <div class="space-y-6">
             {{-- Navigation Menu --}}
-            <div class="glass-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div class="bg-white rounded-2xl shadow-sm p-4 shadow-sm border border-gray-100">
                 <nav class="space-y-1">
                     {{-- Tab: Pengaturan --}}
                     <button @click="setActiveTab('pengaturan')"
@@ -133,7 +129,7 @@
                 {{-- Order List --}}
                 <div class="space-y-4">
                     <template x-for="order in displayedOrders()" :key="order.id">
-                        <div x-data="{ showMenu: false }" :class="showMenu ? 'relative z-10' : ''" class="glass-card bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <div x-data="{ showMenu: false }" :class="showMenu ? 'relative z-10' : ''" class="bg-white rounded-2xl shadow-sm p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between gap-4">
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">No. Pesanan</p>
@@ -180,7 +176,7 @@
 
                     {{-- Empty State --}}
                     <div x-show="getFilteredOrders().length === 0" x-cloak
-                         class="glass-card bg-white rounded-2xl py-16 px-6 text-center shadow-sm border border-gray-100 flex flex-col items-center">
+                         class="bg-white rounded-2xl shadow-sm py-16 px-6 text-center shadow-sm border border-gray-100 flex flex-col items-center">
                         <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-3xl mb-4">📭</div>
                         <h4 class="font-bold text-gray-800 text-base mb-1">Belum Ada Pesanan</h4>
                         <p class="text-sm text-gray-400 max-w-sm mx-auto">Tidak menemukan transaksi pada kategori status ini.</p>
@@ -274,7 +270,7 @@
                                                class="group relative aspect-square rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
                                                 <img :src="'/storage/' + file.path" :alt="file.name"
                                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                <span class="absolute top-2 left-2 px-1.5 py-0.5 bg-white/80 backdrop-blur-sm text-[10px] font-semibold text-gray-600 rounded truncate max-w-[100px]" x-text="file.name"></span>
+                                                <span class="absolute top-2 left-2 px-1.5 py-0.5 bg-white text-[10px] font-semibold text-gray-600 rounded truncate max-w-[100px]" x-text="file.name"></span>
                                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
                                                     <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/></svg>
                                                 </div>
@@ -297,7 +293,7 @@
 
             {{-- 1B. TAB: KERANJANG --}}
             <div x-show="activeTab === 'keranjang'" x-cloak class="space-y-6">
-                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="bg-white rounded-2xl shadow-sm p-6 shadow-sm border border-gray-100">
                     <div class="flex items-center justify-between mb-4">
                         <div>
                             <h3 class="font-bold text-gray-900 text-lg">Keranjang Belanja</h3>
@@ -427,7 +423,7 @@
 
             {{-- 2. TAB: PENGATURAN PROFIL --}}
             <div x-show="activeTab === 'pengaturan'" x-cloak class="space-y-6">
-                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="bg-white rounded-2xl shadow-sm p-6 shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-900 text-lg mb-1">Pengaturan Profil</h3>
                     <p class="text-sm text-gray-500 mb-6">Kelola biodata diri, kontak utama, dan foto profil Anda.</p>
 
@@ -515,7 +511,7 @@
 
                 {{-- MODE LIST: Tampilkan alamat tersimpan --}}
                 <div x-show="alamatMode === 'list'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                    <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 shadow-sm border border-gray-100">
                         <div class="flex items-center justify-between mb-1">
                             <div>
                                 <h3 class="font-bold text-gray-900 text-lg">Alamat Pengiriman</h3>
@@ -589,7 +585,7 @@
 
                 {{-- MODE FORM: Tambah / Edit Alamat --}}
                 <div x-show="alamatMode === 'form'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                    <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 shadow-sm border border-gray-100">
                         <div class="flex items-center justify-between mb-6">
                             <div>
                                 <h3 class="font-bold text-gray-900 text-lg" x-text="editingAddressId ? 'Edit Alamat' : 'Tambah Alamat Baru'"></h3>
@@ -737,7 +733,7 @@
 
             {{-- 4. TAB: KEAMANAN --}}
             <div x-show="activeTab === 'keamanan'" x-cloak class="space-y-6">
-                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="bg-white rounded-2xl shadow-sm p-6 shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-900 text-lg mb-1">Ganti Password</h3>
                     <p class="text-sm text-gray-500 mb-6">Menjaga keamanan akun Anda. Pastikan password baru Anda menggunakan minimal 8 karakter.</p>
 
@@ -779,7 +775,7 @@
 
             {{-- 5. TAB: PUSAT BANTUAN --}}
             <div x-show="activeTab === 'bantuan'" x-cloak class="space-y-6">
-                <div class="glass-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="bg-white rounded-2xl shadow-sm p-6 shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-900 text-lg mb-1">Pusat Bantuan Novos</h3>
                     <p class="text-sm text-gray-500 mb-6">Mengalami kendala pemesanan, revisi desain, atau pembayaran? Customer service kami siap membantu Anda.</p>
 
