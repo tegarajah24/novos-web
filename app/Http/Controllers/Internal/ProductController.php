@@ -32,6 +32,10 @@ class ProductController extends Controller
                     'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
                     'image_belakang' => null,
                     'is_featured'    => $product->is_featured ?? false,
+                    'kerah'          => $product->kerah,
+                    'bahan'          => $product->bahan,
+                    'jenis_potongan' => $product->jenis_potongan,
+                    'lengan_jahitan' => $product->lengan_jahitan,
                 ];
             })
             ->values()
@@ -43,11 +47,15 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'        => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price'       => 'required|numeric|min:0',
-            'description' => 'nullable|string|max:5000',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'name'            => 'required|string|max:255',
+            'category_id'     => 'required|exists:categories,id',
+            'price'           => 'required|numeric|min:0',
+            'description'     => 'nullable|string|max:5000',
+            'image'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'kerah'           => 'nullable|string|max:100',
+            'bahan'           => 'nullable|string|max:100',
+            'jenis_potongan'  => 'nullable|string|max:100',
+            'lengan_jahitan'  => 'nullable|string|max:100',
         ]);
 
         if ($request->hasFile('image')) {
@@ -70,6 +78,10 @@ class ProductController extends Controller
                 'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
                 'image_belakang' => null,
                 'is_featured'    => $product->is_featured ?? false,
+                'kerah'          => $product->kerah,
+                'bahan'          => $product->bahan,
+                'jenis_potongan' => $product->jenis_potongan,
+                'lengan_jahitan' => $product->lengan_jahitan,
             ],
         ]);
     }
@@ -77,11 +89,15 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $data = $request->validate([
-            'name'        => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price'       => 'required|numeric|min:0',
-            'description' => 'nullable|string|max:5000',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'name'            => 'required|string|max:255',
+            'category_id'     => 'required|exists:categories,id',
+            'price'           => 'required|numeric|min:0',
+            'description'     => 'nullable|string|max:5000',
+            'image'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'kerah'           => 'nullable|string|max:100',
+            'bahan'           => 'nullable|string|max:100',
+            'jenis_potongan'  => 'nullable|string|max:100',
+            'lengan_jahitan'  => 'nullable|string|max:100',
         ]);
 
         if ($request->hasFile('image')) {
@@ -107,6 +123,10 @@ class ProductController extends Controller
                 'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
                 'image_belakang' => null,
                 'is_featured'    => $product->is_featured ?? false,
+                'kerah'          => $product->kerah,
+                'bahan'          => $product->bahan,
+                'jenis_potongan' => $product->jenis_potongan,
+                'lengan_jahitan' => $product->lengan_jahitan,
             ],
         ]);
     }

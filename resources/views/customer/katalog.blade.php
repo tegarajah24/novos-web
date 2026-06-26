@@ -172,7 +172,7 @@ function katalogData() {
             {{-- Product Grid --}}
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 <template x-for="(product, index) in pagedProducts" :key="`${product.id}-${currentPage}`">
-                    <div @click="window.location.href = '{{ route('pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '')" :style="`animation-delay: ${index * 0.06}s`" class="group cursor-pointer bg-gray-50 animate-card">
+                    <div @click="window.location.href = '{{ route('pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '') + '&kerah=' + encodeURIComponent(product.kerah ?? '') + '&bahan=' + encodeURIComponent(product.bahan ?? '') + '&jenis_potongan=' + encodeURIComponent(product.jenis_potongan ?? '') + '&lengan_jahitan=' + encodeURIComponent(product.lengan_jahitan ?? '')" :style="`animation-delay: ${index * 0.06}s`" class="group cursor-pointer bg-gray-50 animate-card">
                         {{-- Image --}}
                         <div class="p-2">
                             <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">

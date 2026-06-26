@@ -16,12 +16,16 @@ class ProductController extends Controller
             ->latest()
             ->get()
             ->map(fn($p) => [
-                'id'       => $p->id,
-                'name'     => $p->name,
-                'category' => $p->category?->name ?? 'Katalog',
-                'price'    => $p->price ? (int) $p->price : null,
-                'badge'    => null,
-                'image'    => $p->image ? asset('storage/' . $p->image) : null,
+                'id'             => $p->id,
+                'name'           => $p->name,
+                'category'       => $p->category?->name ?? 'Katalog',
+                'price'          => $p->price ? (int) $p->price : null,
+                'badge'          => null,
+                'image'          => $p->image ? asset('storage/' . $p->image) : null,
+                'kerah'          => $p->kerah,
+                'bahan'          => $p->bahan,
+                'jenis_potongan' => $p->jenis_potongan,
+                'lengan_jahitan' => $p->lengan_jahitan,
             ]);
 
         $categories = Category::orderBy('name')->get()->map(fn($c) => [

@@ -18,6 +18,10 @@ class Product extends Model
         'is_active',
         'is_featured',
         'theme_color',
+        'kerah',
+        'bahan',
+        'jenis_potongan',
+        'lengan_jahitan',
     ];
 
     protected function casts(): array

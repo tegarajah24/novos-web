@@ -18,8 +18,8 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'team_name'      => 'required|string|max:255',
-            'no_punggung'    => 'nullable|string|max:100',
+            'team_name'      => 'nullable|string|max:255',
+            'no_punggung'    => 'nullable|integer',
             'detail_sponsor' => 'nullable|string|max:255',
             'kerah'          => 'required|string|max:100',
             'bahan'          => 'required|string|max:100',

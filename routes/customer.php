@@ -27,8 +27,12 @@ Route::get('/pesan', function () {
         $kategori = request('kategori');
         $harga = request('harga');
         $gambar = request('gambar');
+        $kerah = request('kerah');
+        $bahan = request('bahan');
+        $jenis_potongan = request('jenis_potongan');
+        $lengan_jahitan = request('lengan_jahitan');
 
-        $produkData = $produk ? compact('produk', 'kategori', 'harga', 'gambar') : null;
+        $produkData = $produk ? compact('produk', 'kategori', 'harga', 'gambar', 'kerah', 'bahan', 'jenis_potongan', 'lengan_jahitan') : null;
         $addresses = auth()->check() ? auth()->user()->addresses : collect([]);
 
         return view('customer.pemesanan', compact('produkData', 'addresses'));
