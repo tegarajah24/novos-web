@@ -316,7 +316,14 @@
                         <label class="text-sm font-bold text-gray-800 block">Aktifkan Efek Kaca (Glassmorphism)</label>
                         <span class="text-xs text-gray-400">Nonaktifkan untuk menggunakan latar belakang solid klasik</span>
                     </div>
-                    <input type="checkbox" x-model="appearance.glassEnabled" @change="applyGlass()" class="toggle toggle-primary toggle-sm">
+                    <button @click="appearance.glassEnabled = !appearance.glassEnabled; applyGlass()"
+                        :class="appearance.glassEnabled
+                            ? 'bg-[#1a237e] border-[#1a237e]'
+                            : 'bg-gray-200 border-gray-300'"
+                        class="relative inline-flex h-7 w-12 items-center rounded-full border-2 transition-all duration-300 cursor-pointer focus:outline-none">
+                        <span :class="appearance.glassEnabled ? 'translate-x-6' : 'translate-x-0.5'"
+                            class="inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-all duration-300"></span>
+                    </button>
                 </div>
 
                 {{-- Slider Opacity --}}
