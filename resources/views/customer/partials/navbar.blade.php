@@ -345,8 +345,8 @@
 
                         {{-- Tab switcher --}}
                         <div class="flex border-b border-gray-100 px-6">
-                            <button @click="tab = 'login'" :class="tab === 'login' ? 'text-[#1a237e] border-b-2 border-[#1a237e] font-semibold' : 'text-gray-500 hover:text-gray-700'" class="py-3 px-4 text-sm transition-colors">Masuk</button>
-                            <button @click="tab = 'register'" :class="tab === 'register' ? 'text-[#1a237e] border-b-2 border-[#1a237e] font-semibold' : 'text-gray-500 hover:text-gray-700'" class="py-3 px-4 text-sm transition-colors">Daftar</button>
+                            <button type="button" @click="tab = 'login'" :class="tab === 'login' ? 'text-[#1a237e] border-b-2 border-[#1a237e] font-semibold' : 'text-gray-500 hover:text-gray-700'" class="py-3 px-4 text-sm transition-colors">Masuk</button>
+                            <button type="button" @click="tab = 'register'" :class="tab === 'register' ? 'text-[#1a237e] border-b-2 border-[#1a237e] font-semibold' : 'text-gray-500 hover:text-gray-700'" class="py-3 px-4 text-sm transition-colors">Daftar</button>
                         </div>
 
                         {{-- Form --}}

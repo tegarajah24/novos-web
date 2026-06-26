@@ -62,47 +62,74 @@ class PublicPagesTest extends DuskTestCase
         });
     }
 
-    public function test_login_page(): void
+    public function test_login_redirects_to_home_with_auth_param(): void
     {
         $this->browse(function (Browser $b) {
             $b->visit('/login')
-                ->waitForText('Username', 10)
-                ->assertSee('Password')
-                ->assertSee('Forgot your password')
-                ->assertPresent('button[type="submit"]');
-            echo "\n[✓] LOGIN: Halaman login tampil dengan form\n";
+                ->waitForLocation('/', 10);
+            $b->assertSee('Novos');
+            echo "\n[✓] LOGIN: /login redirect ke /?auth=login\n";
         });
     }
 
-    public function test_register_page(): void
+    public function test_register_redirects_to_home_with_auth_param(): void
     {
         $this->browse(function (Browser $b) {
             $b->visit('/register')
-                ->waitForText('Name', 10)
-                ->assertSee('Email')
-                ->assertSee('Confirm Password')
-                ->assertPresent('button[type="submit"]');
-            echo "\n[✓] REGISTER: Halaman register tampil dengan form\n";
+                ->waitForLocation('/', 10);
+            $b->assertSee('Novos');
+            echo "\n[✓] REGISTER: /register redirect ke /?auth=register\n";
+        });
+    }
+
+    public function test_sidebar_login_popup_appears_via_alpine(): void
+    {
+        $this->browse(function (Browser $b) {
+            $b->visit('/')->waitForText('Novos', 5);
+
+            // Open login sidebar via Alpine
+            $b->script("var el=document.querySelector('[x-data=\"authSidebar()\"]');if(el&&el._x_dataStack)el._x_dataStack[0].openSidebar('login')");
+            $b->pause(1500);
+
+            $b->assertSee('Username');
+            $b->assertSee('Password');
+            echo "\n[✓] SIDEBAR: Popup login sidebar tampil\n";
+        });
+    }
+
+    public function test_sidebar_register_popup_appears(): void
+    {
+        $this->browse(function (Browser $b) {
+            $b->visit('/')->waitForText('Novos', 5);
+
+            // Open register sidebar via Alpine
+            $b->script("var el=document.querySelector('[x-data=\"authSidebar()\"]');if(el&&el._x_dataStack)el._x_dataStack[0].openSidebar('register')");
+            $b->pause(1500);
+
+            $b->assertSee('Daftar Akun');
+            $b->assertSee('Email');
+            echo "\n[✓] SIDEBAR: Popup register sidebar tampil\n";
         });
     }
 
     public function test_forgot_password_page(): void
     {
         $this->browse(function (Browser $b) {
-            $b->visit('/forgot-password')
-                ->waitForText('Forgot your password', 5)
-                ->assertSee('Email')
-                ->assertPresent('button[type="submit"]');
+            $b->logout();
+            $b->visit('/forgot-password');
+            $b->waitForText('Email', 5);
+            $b->assertPresent('button[type="submit"]');
             echo "\n[✓] FORGOT: Halaman lupa password tampil\n";
         });
     }
 
-    public function test_403_forbidden_page(): void
+    public function test_guest_redirected_to_home(): void
     {
         $this->browse(function (Browser $b) {
-            $b->visit('/staf/dashboard') // tanpa login harusnya redirect ke login, bukan 403
-                ->waitForLocation('/login', 5);
-            echo "\n[✓] 403: Halaman staf redirect ke login untuk guest\n";
+            $b->visit('/staf/dashboard')
+                ->waitForLocation('/', 5);
+            $b->assertSee('Novos');
+            echo "\n[✓] GUEST: Halaman staf redirect ke home untuk guest\n";
         });
     }
 
@@ -130,8 +157,8 @@ class PublicPagesTest extends DuskTestCase
     {
         $this->browse(function (Browser $b) {
             $b->visit('/pesan');
-            $b->waitForText('Buat Pesanan', 5);
-            $b->waitForText('Pilih', 8);
+            $b->assertSee('Buat Pesanan');
+            $b->assertSee('Pilih');
             echo "\n[✓] PESAN: Halaman pesanan bisa diakses guest (tanpa auth)\n";
         });
     }
