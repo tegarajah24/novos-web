@@ -160,7 +160,7 @@ function notifPage() {
 
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             try {
-                await fetch('{{ url("staf/notifikasi") }}/' + id + '/read', {
+                await fetch('{{ route("staf.notifikasi.read", ":id") }}'.replace(':id', id), {
                     method: 'POST',
                     headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
                 });

@@ -878,7 +878,7 @@ function dailyMentalCheck(config = {}) {
         ],
 
         async init() {
-            const csrf = document.querySelector('meta[name="csrf-token"]').content;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
             const headers = { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf };
 
             try {
@@ -987,7 +987,7 @@ function dailyMentalCheck(config = {}) {
             if (!this.allAnswered || this.loading) return;
             this.loading = true;
             try {
-                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                 const res = await fetch('/staf/daily-mental-check/daily', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
@@ -1020,7 +1020,7 @@ function dailyMentalCheck(config = {}) {
             if (!this.allChecklistAnswered || !this.allEvalAnswered || this.loading) return;
             this.loading = true;
             try {
-                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                 const res = await fetch('/staf/daily-mental-check/micro', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
@@ -1051,7 +1051,7 @@ function dailyMentalCheck(config = {}) {
 
         async loadHistory() {
             try {
-                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                 const res = await fetch('/staf/daily-mental-check/history', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
                 const data = await res.json();
                 this.weekHistory = data.week_history.map(d => ({
@@ -1066,7 +1066,7 @@ function dailyMentalCheck(config = {}) {
 
         async fetchReport() {
             try {
-                const csrf = document.querySelector('meta[name="csrf-token"]').content;
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                 const res = await fetch('/staf/daily-mental-check/report', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
                 const data = await res.json();
                 this.reportData = data;

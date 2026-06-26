@@ -403,6 +403,11 @@ function kelolaProdukApp() {
                 fd.append('image', fileInput.files[0]);
             }
 
+            const fileInputBelakang = this.$refs.inputBelakang;
+            if (fileInputBelakang && fileInputBelakang.files[0]) {
+                fd.append('image_belakang', fileInputBelakang.files[0]);
+            }
+
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
             let url = '{{ route("staf.kelola-produk.store") }}';

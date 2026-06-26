@@ -308,7 +308,6 @@ function internalChatApp() {
 
             } catch (error) {
                 Notify.error(error.message || 'Terjadi kesalahan saat mengirim pesan', 'Gagal mengirim');
-                });
             } finally {
                 this.sending = false;
             }
