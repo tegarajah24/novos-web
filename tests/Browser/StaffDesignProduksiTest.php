@@ -5,10 +5,18 @@ namespace Tests\Browser;
 use App\Models\Order;
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class StaffDesignProduksiTest extends DuskTestCase
 {
+    use WithTestUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->ensureRolesAndUsersExist();
+    }
     public function test_design_updates_order_to_siap_cetak(): void
     {
         $design = User::where('email', 'design@novos.com')->firstOrFail();

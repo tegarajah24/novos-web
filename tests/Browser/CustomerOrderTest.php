@@ -5,10 +5,18 @@ namespace Tests\Browser;
 use App\Models\Order;
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class CustomerOrderTest extends DuskTestCase
 {
+    use WithTestUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->ensureRolesAndUsersExist();
+    }
     private string $orderNumber = '';
 
     public function test_customer_create_custom_order(): void

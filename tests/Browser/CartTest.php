@@ -7,15 +7,19 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class CartTest extends DuskTestCase
 {
+    use WithTestUsers;
+
     private Product $product;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->ensureRolesAndUsersExist();
 
         $category = Category::firstOrCreate(['name' => 'Test Dusk']);
         $this->product = Product::firstOrCreate(

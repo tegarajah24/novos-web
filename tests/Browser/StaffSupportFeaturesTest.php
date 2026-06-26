@@ -4,10 +4,18 @@ namespace Tests\Browser;
 
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class StaffSupportFeaturesTest extends DuskTestCase
 {
+    use WithTestUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->ensureRolesAndUsersExist();
+    }
     public function test_staff_chat_page_loads(): void
     {
         $admin = User::where('email', 'admin@novos.com')->firstOrFail();

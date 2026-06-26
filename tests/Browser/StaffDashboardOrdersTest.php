@@ -5,10 +5,18 @@ namespace Tests\Browser;
 use App\Models\Order;
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class StaffDashboardOrdersTest extends DuskTestCase
 {
+    use WithTestUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->ensureRolesAndUsersExist();
+    }
     public function test_admin_dashboard_loads(): void
     {
         $admin = User::where('email', 'admin@novos.com')->firstOrFail();

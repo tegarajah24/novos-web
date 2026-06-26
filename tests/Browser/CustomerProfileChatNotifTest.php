@@ -4,10 +4,18 @@ namespace Tests\Browser;
 
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class CustomerProfileChatNotifTest extends DuskTestCase
 {
+    use WithTestUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->ensureRolesAndUsersExist();
+    }
     public function test_profile_page_loads(): void
     {
         $customer = User::where('email', 'customer@novos.com')->firstOrFail();

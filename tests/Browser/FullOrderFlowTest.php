@@ -5,10 +5,18 @@ namespace Tests\Browser;
 use App\Models\Order;
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class FullOrderFlowTest extends DuskTestCase
 {
+    use WithTestUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->ensureRolesAndUsersExist();
+    }
     private string $orderNumber = '';
 
     public function test_full_order_flow_with_four_browsers(): void

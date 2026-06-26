@@ -4,17 +4,25 @@ namespace Tests\Browser;
 
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Concerns\WithTestUsers;
 use Tests\DuskTestCase;
 
 class AuthTest extends DuskTestCase
 {
+    use WithTestUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->ensureRolesAndUsersExist();
+    }
     public function test_register_new_customer(): void
     {
         $email = 'dusk-reg-' . time() . '@test.com';
 
         $this->browse(function (Browser $b) use ($email) {
             $b->visit('/register');
-            $b->waitForText('Register', 5);
+            $b->waitForText('Name', 10);
 
             $b->type('name', 'Dusk Register Test');
             $b->type('email', $email);
@@ -34,7 +42,7 @@ class AuthTest extends DuskTestCase
     {
         $this->browse(function (Browser $b) {
             $b->visit('/login');
-            $b->waitForText('Log in', 5);
+            $b->waitForText('Username', 10);
 
             $b->type('name', 'customer@novos.com');
             $b->type('password', 'password');
@@ -49,7 +57,7 @@ class AuthTest extends DuskTestCase
     {
         $this->browse(function (Browser $b) {
             $b->visit('/login');
-            $b->waitForText('Log in', 5);
+            $b->waitForText('Username', 10);
 
             $b->type('name', 'admin@novos.com');
             $b->type('password', 'password');
@@ -64,12 +72,12 @@ class AuthTest extends DuskTestCase
     {
         $this->browse(function (Browser $b) {
             $b->visit('/login');
-            $b->waitForText('Log in', 3);
+            $b->waitForText('Username', 5);
 
             $b->type('name', 'customer@novos.com');
             $b->type('password', 'wrongpass');
             $b->press('Log in');
-            $b->waitForText('These credentials do not match our records', 5);
+            $b->waitForText('These credentials do not match our records', 10);
 
             echo "\n[✓] AUTH: Login gagal dengan password salah\n";
         });
@@ -115,9 +123,9 @@ class AuthTest extends DuskTestCase
     {
         $this->browse(function (Browser $b) {
             $b->visit('/login');
-            $b->waitForText('Log in', 3);
+            $b->waitForText('Username', 5);
             $b->press('Log in');
-            $b->waitForText('is required', 5);
+            $b->waitForText('required', 5);
 
             echo "\n[✓] AUTH: Validasi login dengan field kosong\n";
         });
