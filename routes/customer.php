@@ -11,6 +11,7 @@ use App\Http\Controllers\Customer\NotificationController;
 use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Api\SummaryController;
 
 // Public routes
 Route::get('/tentang-kami', [HomeController::class, 'tentang'])->name('tentang');
@@ -38,6 +39,8 @@ Route::post('/payment/callback', [PaymentController::class, 'callback'])->name('
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
+
+    Route::get('/api/user-summary', [SummaryController::class, 'index'])->name('api.user-summary');
 
     Route::post('/pesan', [OrderController::class, 'store'])->name('pesan.store');
     Route::post('/pesan/cart', [OrderController::class, 'storeCart'])->name('pesan.store-cart');

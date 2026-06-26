@@ -617,7 +617,7 @@ function staffChatBadge() {
         unreadCount: 0,
         init() {
             this.fetchUnread();
-            setInterval(() => this.fetchUnread(), 30000);
+            setInterval(() => this.fetchUnread(), 60000);
         },
         async fetchUnread() {
             try {
@@ -643,7 +643,7 @@ function notifDropdown() {
         },
         init() {
             this.loadNotifications();
-            setInterval(() => this.loadNotifications(), 30000);
+            setInterval(() => this.loadNotifications(), 60000);
         },
         async loadNotifications() {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');

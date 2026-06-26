@@ -11,7 +11,10 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Notification;
+use App\Models\User;
+use App\Services\ImageService;
 
 class OrderController extends Controller
 {
@@ -90,12 +93,17 @@ class OrderController extends Controller
 
             $designFiles = [];
             if ($request->hasFile('design_files')) {
+                $imageService = app(ImageService::class);
                 foreach ($request->file('design_files') as $file) {
-                    $path = $file->store('design-files/' . $orderNumber, 'public');
+                    $extension = strtolower($file->getClientOriginalExtension());
+                    $isImage = in_array($extension, ['jpg', 'jpeg', 'png']);
+                    $path = $isImage
+                        ? $imageService->compressAndStore($file, 'design-files/' . $orderNumber)
+                        : $file->store('design-files/' . $orderNumber, 'public');
                     $designFiles[] = [
                         'name' => $file->getClientOriginalName(),
                         'path' => $path,
-                        'size' => $file->getSize(),
+                        'size' => $isImage ? Storage::disk('public')->size($path) : $file->getSize(),
                         'type' => $file->getMimeType(),
                     ];
                 }

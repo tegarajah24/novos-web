@@ -205,9 +205,32 @@ function chatApp() {
         selectedFilePreview: null,
         selectedFileIsImage: false,
         chats: @json($chats),
+        _pollTimer: null,
 
         get currentChat() {
             return this.chats.find(c => c.id === this.activeChat);
+        },
+
+        init() {
+            this._pollTimer = setInterval(() => {
+                if (!document.hidden && this.activeChat) this.pollMessages();
+            }, 5000);
+        },
+
+        destroy() {
+            clearInterval(this._pollTimer);
+        },
+
+        async pollMessages() {
+            try {
+                const res = await fetch('/chat/unread-count', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.count > 0) {
+                    window.location.reload();
+                }
+            } catch (e) {}
         },
 
         get selectedFileSizeFormatted() {

@@ -65,23 +65,23 @@
                 {{-- Wrap with password sidebar state --}}
                 <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-3">
                 {{-- Chat icon --}}
-                <div class="relative" x-data="chatBadge()">
+                <div class="relative">
                     <a href="{{ route('chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors block relative" title="Chat">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                         </svg>
-                        <span x-show="chatUnread > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="chatUnread"></span>
+                        <span x-show="$store.summary.chatUnread > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="$store.summary.chatUnread"></span>
                     </a>
                 </div>
 
                 {{-- Notification icon --}}
                 <div class="relative" x-data="notificationDropdown()" @click.away="notifOpen = false">
-                    <button @click="notifOpen = !notifOpen; fetchUnreadCount(); if(notifOpen) fetchNotifications()" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
+                    <button @click="notifOpen = !notifOpen; if(notifOpen) fetchNotifications()" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                         </svg>
-                        <span x-show="unreadCount > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="unreadCount"></span>
+                        <span x-show="$store.summary.notifUnread > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="$store.summary.notifUnread"></span>
                     </button>
 
                     <div x-show="notifOpen" x-cloak
@@ -133,7 +133,7 @@
                             <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                         </svg>
-                        <span x-show="cartCount > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="cartCount"></span>
+                        <span x-show="$store.summary.cartCount > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="$store.summary.cartCount"></span>
                     </button>
 
                     <div x-show="cartOpen" x-cloak
@@ -556,6 +556,30 @@
 </style>
 
 <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('summary', {
+            chatUnread: 0,
+            notifUnread: 0,
+            cartCount: 0,
+            _timer: null,
+            async fetch() {
+                try {
+                    const res = await fetch('{{ route("api.user-summary") }}', {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+                    this.chatUnread = data.chat?.unread ?? 0;
+                    this.notifUnread = data.notifikasi?.unread ?? 0;
+                    this.cartCount = data.cart?.count ?? 0;
+                } catch (e) {}
+            }
+        });
+        Alpine.nextTick(() => {
+            Alpine.store('summary').fetch();
+            Alpine.store('summary')._timer = setInterval(() => Alpine.store('summary').fetch(), 60000);
+        });
+    });
+
     function authSidebar() {
         return {
             sidebarOpen: false,
@@ -609,46 +633,10 @@
         }
     }
 
-    function chatBadge() {
-        return {
-            chatUnread: 0,
-
-            init() {
-                this.fetchUnread();
-                setInterval(() => this.fetchUnread(), 30000);
-            },
-
-            async fetchUnread() {
-                try {
-                    const res = await fetch('{{ route("chat.unread-count") }}', {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    const data = await res.json();
-                    this.chatUnread = data.count || 0;
-                } catch (e) {}
-            }
-        }
-    }
-
     function cartDropdown() {
         return {
             cartOpen: false,
             cartItems: [],
-            cartCount: 0,
-
-            init() {
-                this.fetchCount();
-            },
-
-            async fetchCount() {
-                try {
-                    const res = await fetch('{{ route("cart.count") }}', {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    const data = await res.json();
-                    this.cartCount = data.count || 0;
-                } catch (e) {}
-            },
 
             async fetchCart() {
                 try {
@@ -657,7 +645,6 @@
                     });
                     const data = await res.json();
                     this.cartItems = data.items || [];
-                    this.cartCount = data.count || 0;
                 } catch (e) {}
             },
 
@@ -692,7 +679,6 @@
                     const data = await res.json();
                     if (data.success) {
                         this.cartItems = this.cartItems.filter(i => i.id !== item.id);
-                        this.cartCount = data.count || 0;
                     }
                 } catch (e) {}
             }
@@ -702,23 +688,7 @@
     function notificationDropdown() {
         return {
             notifOpen: false,
-            unreadCount: 0,
             notifications: [],
-
-            init() {
-                this.fetchUnreadCount();
-                setInterval(() => this.fetchUnreadCount(), 30000);
-            },
-
-            async fetchUnreadCount() {
-                try {
-                    const res = await fetch('{{ route("notifikasi.unread-count") }}', {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    const data = await res.json();
-                    this.unreadCount = data.count || 0;
-                } catch (e) {}
-            },
 
             async fetchNotifications() {
                 try {
@@ -739,7 +709,6 @@
                             'Accept': 'application/json',
                         }
                     });
-                    this.fetchUnreadCount();
                 } catch (e) {}
             },
 
@@ -752,7 +721,6 @@
                             'Accept': 'application/json',
                         }
                     });
-                    this.unreadCount = 0;
                     this.notifOpen = false;
                 } catch (e) {}
             },
