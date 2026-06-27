@@ -812,6 +812,7 @@
                 </div>
             </div>
         </div>
+    </div>
     {{-- ========== MODAL: KELOLA POSTER (Super Admin only) ========== --}}
     <div x-show="managePosterOpen && userRole === 'Super Admin'" x-cloak
         x-transition:enter="transition ease-out duration-200"
