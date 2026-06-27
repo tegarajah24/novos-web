@@ -11,35 +11,18 @@
 <div x-data="produksiApp()" x-init="init()">
 
 
-    {{-- Tabs Navigation Component (Pill Tabs style) --}}
-    <div class="flex flex-wrap gap-2.5 mb-6">
-        <button @click="activeTab = 'printing'"
-            :class="activeTab === 'printing' ? 'bg-[#1a237e] text-white shadow-sm border-[#1a237e]' : 'bg-white text-gray-600 hover:text-[#1a237e] hover:bg-gray-50 border-gray-200'"
-            class="px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 flex items-center gap-2 border shadow-sm">
-            <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>Printing</span>
-            <span :class="activeTab === 'printing' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500 border border-gray-200'"
-                class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all duration-200"
-                x-text="orders.filter(o => o.stage === 'printing').length"></span>
-        </button>
-        <button @click="activeTab = 'jahit'"
-            :class="activeTab === 'jahit' ? 'bg-[#1a237e] text-white shadow-sm border-[#1a237e]' : 'bg-white text-gray-600 hover:text-[#1a237e] hover:bg-gray-50 border-gray-200'"
-            class="px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 flex items-center gap-2 border shadow-sm">
-            <i data-lucide="scissors" class="w-4 h-4"></i>
-            <span>Jahit (Sewing)</span>
-            <span :class="activeTab === 'jahit' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500 border border-gray-200'"
-                class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all duration-200"
-                x-text="orders.filter(o => o.stage === 'jahit').length"></span>
-        </button>
-        <button @click="activeTab = 'qc'"
-            :class="activeTab === 'qc' ? 'bg-[#1a237e] text-white shadow-sm border-[#1a237e]' : 'bg-white text-gray-600 hover:text-[#1a237e] hover:bg-gray-50 border-gray-200'"
-            class="px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 flex items-center gap-2 border shadow-sm">
-            <i data-lucide="shield-check" class="w-4 h-4"></i>
-            <span>Quality Control (QC)</span>
-            <span :class="activeTab === 'qc' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500 border border-gray-200'"
-                class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all duration-200"
-                x-text="orders.filter(o => o.stage === 'qc').length"></span>
-        </button>
+    {{-- Tabs Navigation --}}
+    <div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+        <template x-for="tab in tabs" :key="tab.key">
+            <button @click="activeTab = tab.key"
+                :class="activeTab === tab.key ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+                class="flex-1 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2">
+                <span x-text="tab.label"></span>
+                <span :class="activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'"
+                    class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all"
+                    x-text="orders.filter(o => o.stage === tab.key).length"></span>
+            </button>
+        </template>
     </div>
 
     {{-- Tabel Antrean Produksi berdasarkan Active Tab --}}
@@ -435,6 +418,11 @@ function produksiApp() {
         updateStatus: '',
         productionNote: '',
         activeTab: 'printing',
+        tabs: [
+            { key: 'printing', label: 'Printing' },
+            { key: 'jahit', label: 'Jahit (Sewing)' },
+            { key: 'qc', label: 'Quality Control (QC)' },
+        ],
         targetStage: 'jahit',
         qcChecklist: {
             jahitan: false,
