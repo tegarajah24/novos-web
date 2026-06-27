@@ -66,8 +66,10 @@
         </div>
 
         <p class="text-[11px] text-gray-400 mt-2">
-            <i data-lucide="calendar-range" class="w-3 h-3 inline-block mr-1"></i>
-            Periode: <strong class="text-gray-600">{{ ($startDate ?? \Carbon\Carbon::today())->format('d M Y') }}</strong> — <strong class="text-gray-600">{{ ($endDate ?? \Carbon\Carbon::now())->format('d M Y') }}</strong>
+            <span class="inline-flex items-center gap-1">
+                <i data-lucide="calendar-range" class="w-3 h-3"></i>
+                Periode:
+            </span> <strong class="text-gray-600">{{ ($startDate ?? \Carbon\Carbon::today())->format('d M Y') }}</strong> — <strong class="text-gray-600">{{ ($endDate ?? \Carbon\Carbon::now())->format('d M Y') }}</strong>
         </p>
     </form>
 </div>
