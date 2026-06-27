@@ -1,9 +1,9 @@
 @extends('layouts.internal')
 
-@section('title', 'Katalog Produk')
+@section('title', 'Kelola Produk')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-[#1a237e]">Katalog Produk</h1>
+    <h1 class="text-xl font-bold text-[#1a237e]">Kelola Produk</h1>
 @endsection
 
 @section('internal-content')
@@ -14,15 +14,15 @@
         <div class="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
             <div class="flex flex-wrap items-center gap-3 flex-1">
                 <!-- Search -->
-                <div class="relative w-full md:max-w-xs">
+                <div class="relative w-full max-w-[240px]">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
                     </span>
-                    <input type="text" x-model="filters.search" @input.debounce="$nextTick(() => renderIcons())" placeholder="Cari nama jersey..." class="input input-sm input-bordered w-full pl-9 rounded-lg border-gray-300 focus:border-[#1a237e] focus:ring-[#1a237e]/20">
+                    <input type="text" x-model="filters.search" @input.debounce="$nextTick(() => renderIcons())" placeholder="Cari nama jersey..." class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
                 </div>
 
                 <!-- Filter Kategori -->
-                <select x-model="filters.category" @change="$nextTick(() => renderIcons())" class="select select-sm select-bordered rounded-lg border-gray-300 text-sm font-medium">
+                <select x-model="filters.category" @change="$nextTick(() => renderIcons())" class="w-full max-w-[180px] px-3 py-2.5 rounded-xl border border-gray-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-700">
                     <option value="">Semua Kategori</option>
                     <template x-for="cat in categories" :key="cat.id">
                         <option :value="cat.id" x-text="cat.name"></option>

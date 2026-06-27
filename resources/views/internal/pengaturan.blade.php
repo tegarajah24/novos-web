@@ -96,7 +96,7 @@
                     <button @click="applyTheme(m.value)"
                         :class="appearance.theme===m.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5' : 'hover:bg-gray-50'"
                         class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-transparent transition-all">
-                        <div class="w-12 h-8 rounded-lg overflow-hidden border border-gray-200 shadow-sm" :class="m.preview"></div>
+                        <div class="w-12 h-8 rounded-lg overflow-hidden border border-gray-200 shadow-sm" :class="m.preview + ' theme-preview-box'"></div>
                         <span class="text-xs font-semibold text-gray-700" x-text="m.label"></span>
                         <div x-show="appearance.theme===m.value" class="w-4 h-4 bg-[#1a237e] rounded-full flex items-center justify-center">
                             <i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>
@@ -708,8 +708,47 @@ function settingApp() {
             if (saved) {
                 try { this.appearance = { ...DEFAULT_APPEARANCE, ...JSON.parse(saved) }; } catch(e) {}
             }
+            
+            // Adjust defaults for dark mode if using defaults
+            let isDark = this.appearance.theme === 'dark' || (this.appearance.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                if (this.appearance.scheme === 'Novos' || this.appearance.primary === '#1a237e') {
+                    this.appearance.scheme = 'Ocean';
+                    this.appearance.primary = '#0277bd';
+                    this.appearance.secondary = '#0288d1';
+                }
+            } else {
+                if (this.appearance.scheme === 'Ocean' || this.appearance.primary === '#0277bd') {
+                    this.appearance.scheme = 'Novos';
+                    this.appearance.primary = '#1a237e';
+                    this.appearance.secondary = '#3949ab';
+                }
+            }
+
             this.applyAll();
             this.$nextTick(() => lucide.createIcons());
+            const mq = window.matchMedia('(prefers-color-scheme: dark)');
+            mq.addEventListener('change', () => {
+                if (this.appearance.theme === 'auto') {
+                    this._applyTheme('auto');
+                    let isDarkNow = mq.matches;
+                    if (isDarkNow) {
+                        if (this.appearance.scheme === 'Novos' || this.appearance.primary === '#1a237e') {
+                            this.appearance.scheme = 'Ocean';
+                            this.appearance.primary = '#0277bd';
+                            this.appearance.secondary = '#0288d1';
+                            this._applyColors('#0277bd', '#0288d1');
+                        }
+                    } else {
+                        if (this.appearance.scheme === 'Ocean' || this.appearance.primary === '#0277bd') {
+                            this.appearance.scheme = 'Novos';
+                            this.appearance.primary = '#1a237e';
+                            this.appearance.secondary = '#3949ab';
+                            this._applyColors('#1a237e', '#3949ab');
+                        }
+                    }
+                }
+            });
         },
 
         async saveToko() {
@@ -731,6 +770,24 @@ function settingApp() {
         applyTheme(val) {
             this.appearance.theme = val;
             this._applyTheme(val);
+            
+            // Auto update default colors if they are on default scheme
+            let isDark = val === 'dark' || (val === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                if (this.appearance.scheme === 'Novos' || this.appearance.primary === '#1a237e') {
+                    this.appearance.scheme = 'Ocean';
+                    this.appearance.primary = '#0277bd';
+                    this.appearance.secondary = '#0288d1';
+                    this._applyColors('#0277bd', '#0288d1');
+                }
+            } else {
+                if (this.appearance.scheme === 'Ocean' || this.appearance.primary === '#0277bd') {
+                    this.appearance.scheme = 'Novos';
+                    this.appearance.primary = '#1a237e';
+                    this.appearance.secondary = '#3949ab';
+                    this._applyColors('#1a237e', '#3949ab');
+                }
+            }
         },
 
         _applyTheme(val) {

@@ -3,8 +3,7 @@
 @section('title', 'Tugas Design')
 
 @section('topbar-left')
-    <h1 class="text-xl font-bold text-[#1a237e]">Tugas Design</h1>
-    <p class="text-sm text-gray-500 mt-0.5">Daftar antrean desain yang perlu dikerjakan</p>
+    <h1 class="text-xl font-bold text-[#1a237e]">Design</h1>
 @endsection
 
 @section('internal-content')
