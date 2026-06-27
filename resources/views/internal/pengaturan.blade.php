@@ -18,9 +18,14 @@
             <i data-lucide="store" class="w-4 h-4"></i> Toko
         </button>
         <button @click="tab='tampilan'"
-            :class="tab==='tampilan' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-white/70'"
+            :class="tab==='tampilan' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover-bg-white/70'"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
             <i data-lucide="palette" class="w-4 h-4"></i> Tampilan
+        </button>
+        <button @click="tab='panduan'"
+            :class="tab==='panduan' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-white/70'"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+            <i data-lucide="book-open" class="w-4 h-4"></i> Panduan
         </button>
     </div>
 
@@ -389,6 +394,99 @@
             </button>
         </div>
     </div>
+
+    {{-- ======================== TAB PANDUAN ======================== --}}
+    <div x-show="tab==='panduan'" x-transition x-cloak class="space-y-5">
+
+        {{-- Header --}}
+        <div class="glass-card rounded-2xl p-7 bg-gradient-to-br from-[#1a237e]/5 to-blue-50">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-[#1a237e] rounded-2xl flex items-center justify-center shadow-lg shadow-[#1a237e]/20">
+                    <i data-lucide="book-open" class="w-7 h-7 text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Panduan Pengguna</h2>
+                    <p class="text-sm text-gray-500">Pelajari semua fitur dan cara penggunaan panel internal Novos</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Daftar Isi --}}
+        <div class="glass-card rounded-2xl p-7">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                    <i data-lucide="list" class="w-5 h-5 text-green-600"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-gray-900">Daftar Isi</h2>
+                    <p class="text-xs text-gray-500">Navigasi cepat ke bagian panduan yang diinginkan</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                <template x-for="(item, index) in panduanMenu" :key="index">
+                    <a @click.prevent="scrollTo('panduan-'+item.id)" href="#panduan-"+item.id
+                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+                            :style="'background:'+item.color">
+                            <span x-text="index+1"></span>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-gray-800 group-hover:text-[#1a237e]" x-text="item.label"></p>
+                            <p class="text-xs text-gray-400 truncate" x-text="item.desc"></p>
+                        </div>
+                    </a>
+                </template>
+            </div>
+        </div>
+
+        {{-- Konten Panduan --}}
+        <template x-for="(item, index) in panduanMenu" :key="index">
+            <div :id="'panduan-'+item.id" class="glass-card rounded-2xl p-7 scroll-mt-24">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md"
+                        :style="'background:'+item.color">
+                        <i :data-lucide="item.icon" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 class="text-base font-bold text-gray-900" x-text="item.label"></h3>
+                            <span class="text-[10px] font-semibold px-2 py-1 rounded-full shrink-0 text-white"
+                                :style="'background:'+item.color" x-text="item.badge"></span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5" x-text="item.desc"></p>
+                    </div>
+                </div>
+                <div class="mt-5 space-y-4">
+                    <template x-for="(section, si) in item.sections" :key="si">
+                        <div class="p-4 rounded-xl bg-gray-50/70 border border-gray-100">
+                            <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                                    :style="'background:'+item.color" x-text="si+1"></span>
+                                <span x-text="section.title"></span>
+                            </h4>
+                            <div class="mt-2 text-sm text-gray-600 leading-relaxed space-y-2" x-html="section.body"></div>
+                        </div>
+                    </template>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <button @click="scrollTo('panduan-'+panduanMenu[Math.max(0,index-1)].id)" x-show="index>0"
+                        class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Sebelumnya
+                    </button>
+                    <button @click="scrollTo('panduan-'+panduanMenu[Math.min(panduanMenu.length-1,index+1)].id)" x-show="index<panduanMenu.length-1"
+                        class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1 ml-auto">
+                        Selanjutnya <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        {{-- Footer Panduan --}}
+        <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-[#1a237e]/5 to-blue-50 text-center">
+            <i data-lucide="heart" class="w-8 h-8 text-red-400 mx-auto mb-2"></i>
+            <p class="text-sm text-gray-600">Terima kasih telah menggunakan Novos Web. <br> Tim Novos selalu siap membantu jika Anda mengalami kendala.</p>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -479,6 +577,185 @@ function settingApp() {
             { value: 'flip',        label: 'Flip',       preview: '<svg class="w-6 h-6 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' },
             { value: 'elastic',     label: 'Elastic',    preview: '<svg class="w-6 h-6 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>' },
         ],
+
+        panduanMenu: [
+            {
+                id: 'dashboard',
+                label: 'Dashboard',
+                desc: 'Halaman utama ringkasan aktivitas',
+                icon: 'layout-dashboard',
+                color: '#1a237e',
+                badge: 'Utama',
+                sections: [
+                    { title: 'Sekilas Dashboard', body: 'Dashboard adalah halaman pertama yang Anda lihat setelah login. Menampilkan ringkasan statistik penting seperti jumlah pesanan baru, total pendapatan hari ini, pesanan dalam proses, dan grafik tren. Cocok untuk memantau kondisi bisnis secara cepat.' },
+                    { title: 'Kartu Statistik', body: 'Di bagian atas terdapat 4 kartu utama: <strong>Pesanan Baru</strong> (jumlah pesanan hari ini), <strong>Pendapatan</strong> (total pemasukan), <strong>Dalam Proses</strong> (yang sedang dikerjakan), dan <strong>Total Pelanggan</strong>. Setiap kartu memiliki ikon dan warna berbeda.' },
+                    { title: 'Grafik & Tabel', body: 'Dashboard juga menampilkan grafik tren pesanan 7 hari terakhir dan tabel pesanan terbaru. Klik tombol <strong>"Lihat Detail"</strong> pada pesanan untuk membuka halaman detail pesanan.' },
+                ]
+            },
+            {
+                id: 'summary',
+                label: 'Summary',
+                desc: 'Rekap data & analisis mendalam',
+                icon: 'pie-chart',
+                color: '#0288d1',
+                badge: 'Analisis',
+                sections: [
+                    { title: 'Fungsi Summary', body: 'Summary menyajikan rekap data yang lebih mendalam dibanding Dashboard. Anda bisa melihat distribusi status pesanan dalam bentuk diagram lingkaran (pie chart), performa tim per role, serta tren pendapatan bulanan.' },
+                    { title: 'Filter Data', body: 'Gunakan dropdown filter periode (hari ini, minggu ini, bulan ini, kustom) untuk mempersempit data. Summary otomatis memperbarui grafik dan tabel sesuai filter yang dipilih.' },
+                    { title: 'Ekspor Data', body: 'Klik tombol <strong>Ekspor</strong> untuk mengunduh data summary dalam format CSV atau Excel. Berguna untuk pelaporan manajemen.' },
+                ]
+            },
+            {
+                id: 'daftar-pesanan',
+                label: 'Daftar Pesanan',
+                desc: 'Kelola semua pesanan pelanggan',
+                icon: 'shopping-bag',
+                color: '#e65100',
+                badge: 'Utama',
+                sections: [
+                    { title: 'Melihat Daftar Pesanan', body: 'Halaman ini menampilkan semua pesanan dari pelanggan. Setiap baris menampilkan nomor pesanan, nama pelanggan, status, total harga, dan tanggal. Gunakan kolom pencarian untuk mencari berdasarkan nomor pesanan atau nama.' },
+                    { title: 'Filter Status', body: 'Gunakan tab filter di atas tabel untuk menyaring pesanan berdasarkan status: <strong>Semua</strong>, <strong>Menunggu Validasi</strong>, <strong>Proses Design</strong>, <strong>Produksi</strong>, <strong>Selesai</strong>, atau <strong>Dibatalkan</strong>.' },
+                    { title: 'Detail & Aksi', body: 'Klik nomor pesanan untuk membuka halaman detail. Di halaman detail Anda bisa: melihat data pemesan, chat dengan pelanggan, memperbarui status, dan validasi pesanan. Tombol aksi cepat juga tersedia langsung dari tabel.' },
+                    { title: 'Validasi Pesanan', body: 'Pesanan baru berstatus <strong>Menunggu Validasi</strong>. Admin harus melakukan validasi dengan mengecek data pemesan, memastikan desain bisa dikerjakan, lalu klik <strong>Validasi Pesanan</strong>. Sistem akan mengirim notifikasi ke pelanggan.' },
+                    { title: 'Assign Petugas', body: 'Setelah divalidasi, Anda bisa menugaskan (assign) pesanan ke tim Design atau Produksi. Gunakan dropdown <strong>Assign ke</strong> di halaman detail untuk memilih petugas.' },
+                ]
+            },
+            {
+                id: 'chat',
+                label: 'Chat',
+                desc: 'Komunikasi dengan pelanggan',
+                icon: 'message-circle',
+                color: '#7b1fa2',
+                badge: 'Komunikasi',
+                sections: [
+                    { title: 'Fitur Chat', body: 'Halaman Chat memungkinkan Anda berkomunikasi langsung dengan pelanggan terkait pesanan. Chat bersifat per-pesanan, sehingga riwayat percakapan tersimpan rapi.' },
+                    { title: 'Mengirim Pesan', body: 'Klik percakapan dari daftar di sidebar kiri, ketik pesan di kolom bawah, lalu tekan Enter atau klik ikon kirim. Pelanggan akan menerima notifikasi jika Anda mengirim pesan baru.' },
+                    { title: 'Status Dibaca', body: 'Pesan yang sudah dibaca oleh pelanggan akan ditandai dengan centang biru. Anda juga bisa melihat kapan terakhir pelanggan online.' },
+                ]
+            },
+            {
+                id: 'design',
+                label: 'Design',
+                desc: 'Manajemen proses desain jersey',
+                icon: 'pen-tool',
+                color: '#2e7d32',
+                badge: 'Produksi',
+                sections: [
+                    { title: 'Tugas Design', body: 'Halaman Design menampilkan semua pesanan yang sudah divalidasi dan menunggu proses design. Setiap card menampilkan informasi pesanan, catatan desain dari pelanggan, dan file referensi.' },
+                    { title: 'Upload Desain', body: 'Setelah mendesain, upload hasil desain dengan mengklik tombol <strong>Upload Desain</strong>. Pilih file gambar (format PNG/JPG maks 5MB). Pelanggan akan mendapat notifikasi untuk review.' },
+                    { title: 'Update Status', body: 'Gunakan tombol status untuk memperbarui progress: <strong>Menunggu Desain</strong> → <strong>Desain Selesai</strong> → <strong>Revisi</strong> (jika pelanggan minta revisi) → <strong>ACC</strong> (jika sudah disetujui).' },
+                ]
+            },
+            {
+                id: 'produksi',
+                label: 'Produksi',
+                desc: 'Manajemen proses produksi',
+                icon: 'scissors',
+                color: '#bf360c',
+                badge: 'Produksi',
+                sections: [
+                    { title: 'Daftar Produksi', body: 'Halaman ini berisi semua pesanan yang sudah ACC desain dan siap diproduksi. Ditampilkan dalam bentuk card dengan informasi: nomor pesanan, jenis jersey, ukuran, dan tenggat waktu.' },
+                    { title: 'Update Progress', body: 'Tim produksi dapat memperbarui status: <strong>Belum Dikerjakan</strong> → <strong>Dalam Produksi</strong> → <strong>Siap Kirim</strong> → <strong>Selesai</strong>. Setiap perubahan status akan mencatat waktu dan pencetusnya.' },
+                    { title: 'Catatan Produksi', body: 'Anda bisa menambahkan catatan produksi seperti bahan yang digunakan, kendala teknis, atau catatan khusus. Catatan ini ikut dalam riwayat pesanan.' },
+                ]
+            },
+            {
+                id: 'daily-mental-check',
+                label: 'Daily Mental Check',
+                desc: 'Cek kesehatan mental harian tim',
+                icon: 'heart',
+                color: '#e91e63',
+                badge: 'Karyawan',
+                sections: [
+                    { title: 'Apa Itu Daily Mental Check?', body: 'Fitur ini adalah bentuk perhatian Novos terhadap kesehatan mental tim. Setiap hari, Anda akan mengisi cek singkat tentang kondisi mood, energi, dan tingkat stres. Data bersifat rahasia dan hanya dilihat oleh Anda dan Super Admin.' },
+                    { title: 'Cara Mengisi', body: 'Pilih emoji yang mewakili perasaan Anda, lalu isi tingkat energi (skala 1-10) dan tingkat stres (skala 1-10). Tambahkan catatan jika perlu, lalu klik <strong>Simpan</strong>. Hanya perlu 1 menit!' },
+                    { title: 'Riwayat & Laporan', body: 'Anda bisa melihat riwayat cek harian Anda sendiri. Super Admin dapat melihat laporan agregat tim untuk memantau kesejahteraan karyawan secara umum.' },
+                ]
+            },
+            {
+                id: 'laporan',
+                label: 'Laporan',
+                desc: 'Cetak & ekspor laporan bisnis',
+                icon: 'file-text',
+                color: '#37474f',
+                badge: 'Analisis',
+                sections: [
+                    { title: 'Jenis Laporan', body: 'Halaman Laporan menyediakan beberapa jenis laporan: <strong>Laporan Pesanan</strong> (rekap semua pesanan per periode), <strong>Laporan Keuangan</strong> (pendapatan, biaya, laba), dan <strong>Laporan Produksi</strong> (produktivitas tim).' },
+                    { title: 'Filter & Preview', body: 'Pilih rentang tanggal dan jenis laporan, lalu klik <strong>Tampilkan</strong> untuk melihat preview. Data akan muncul dalam bentuk tabel yang bisa diurutkan.' },
+                    { title: 'Ekspor Laporan', body: 'Setelah preview, Anda bisa mengekspor laporan ke dalam format: <strong>CSV</strong> (buka di Excel), <strong>Excel</strong> (.xlsx), atau <strong>PDF</strong> (cetak/arsip). Klik tombol format yang diinginkan di bagian atas.' },
+                ]
+            },
+            {
+                id: 'kelola-produk',
+                label: 'Kelola Produk',
+                desc: 'Atur katalog produk jersey',
+                icon: 'package',
+                color: '#00695c',
+                badge: 'Master Data',
+                sections: [
+                    { title: 'Daftar Produk', body: 'Halaman ini menampilkan semua produk jersey yang dijual di katalog publik. Setiap produk memiliki foto, nama, kategori, harga, dan status featured (unggulan).' },
+                    { title: 'Tambah Produk Baru', body: 'Klik tombol <strong>Tambah Produk</strong> di bagian atas. Isi nama produk, pilih kategori, upload foto (maks 2MB, format JPG/PNG/WebP), dan masukkan harga. Klik <strong>Simpan</strong> untuk menerbitkan produk.' },
+                    { title: 'Edit & Hapus', body: 'Klik ikon pensil untuk mengedit produk, atau ikon tong sampah untuk menghapus. Produk yang dihapus tidak bisa dikembalikan. Gunakan toggle <strong>Featured</strong> untuk menampilkan produk di halaman utama katalog.' },
+                ]
+            },
+            {
+                id: 'kategori',
+                label: 'Kategori',
+                desc: 'Kelola kategori produk',
+                icon: 'folder-tree',
+                color: '#f57c00',
+                badge: 'Master Data',
+                sections: [
+                    { title: 'Manajemen Kategori', body: 'Kategori digunakan untuk mengelompokkan produk (misal: Jersey Sepak Bola, Jersey Basket, Custom Design). Halaman ini menampilkan daftar semua kategori dalam bentuk tabel.' },
+                    { title: 'Tambah Kategori', body: 'Klik <strong>Tambah Kategori</strong>, masukkan nama kategori dan deskripsi singkat. Kategori akan langsung muncul di katalog publik dan bisa dipilih saat menambah produk.' },
+                    { title: 'Edit & Hapus', body: 'Kategori bisa diedit atau dihapus. Perhatian: menghapus kategori akan membuat produk di dalamnya menjadi tidak berkategori. Sebaiknya pindahkan produk ke kategori lain terlebih dahulu.' },
+                ]
+            },
+            {
+                id: 'kelola-pengguna',
+                label: 'Kelola Pengguna',
+                desc: 'Manajemen akun staf internal',
+                icon: 'users',
+                color: '#4a148c',
+                badge: 'Admin',
+                sections: [
+                    { title: 'Daftar Pengguna', body: 'Halaman ini menampilkan semua akun staf internal. Setiap baris menampilkan nama, email, role, dan status aktif. Hanya Super Admin dan Manager yang bisa mengakses halaman ini.' },
+                    { title: 'Tambah Pengguna Baru', body: 'Klik <strong>Tambah Pengguna</strong>. Isi nama, email, password, dan pilih role (Super Admin, Manager, Admin, Design, atau Produksi). Password akan digunakan untuk login pertama.' },
+                    { title: 'Edit Role & Hapus', body: 'Klik ikon pensil untuk mengubah data atau role pengguna. Klik ikon tong sampah untuk menonaktifkan akun. Sebaiknya jangan menghapus akun yang masih memiliki data transaksi.' },
+                ]
+            },
+            {
+                id: 'notifikasi',
+                label: 'Notifikasi',
+                desc: 'Pusat notifikasi & pemberitahuan',
+                icon: 'bell',
+                color: '#1565c0',
+                badge: 'Sistem',
+                sections: [
+                    { title: 'Cara Kerja Notifikasi', body: 'Notifikasi muncul ketika ada kejadian penting: pesanan baru, perubahan status, pesan baru dari pelanggan, atau pengingat tugas. Nomor badge merah di ikon bell menunjukkan jumlah notifikasi belum dibaca.' },
+                    { title: 'Dropdown Notifikasi', body: 'Klik ikon bell di pojok kanan atas untuk melihat 5 notifikasi terbaru. Klik <strong>Lihat Semua</strong> untuk membuka halaman notifikasi lengkap. Klik notifikasi untuk menandainya sebagai sudah dibaca.' },
+                    { title: 'Tandai Dibaca', body: 'Di halaman Notifikasi, Anda bisa menandai semua sebagai sudah dibaca dengan sekali klik. Notifikasi yang sudah dibaca akan tampil lebih pudar.' },
+                ]
+            },
+            {
+                id: 'pengaturan',
+                label: 'Pengaturan',
+                desc: 'Konfigurasi toko & tampilan',
+                icon: 'settings',
+                color: '#607d8b',
+                badge: 'Sistem',
+                sections: [
+                    { title: 'Tab Toko', body: 'Berisi informasi dasar toko seperti nama, telepon, email, dan alamat. Data ini muncul di invoice dan halaman publik. Klik <strong>Simpan Perubahan</strong> setelah mengedit.' },
+                    { title: 'Tab Tampilan', body: 'Kustomisasi tampilan panel internal: tema (terang/gelap/otomatis), color palette, ukuran font, gaya tombol, sudut komponen, kepadatan tata letak, font family, efek glassmorphism, dan efek transisi halaman. Semua tersimpan otomatis di browser Anda.' },
+                    { title: 'Tab Panduan', body: 'Anda sedang membacanya! Panduan ini berisi penjelasan lengkap semua fitur. Gunakan tombol <strong>Mulai Tutorial</strong> untuk panduan interaktif.' },
+                ]
+            },
+        ],
+
+        scrollTo(id) {
+            var el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
 
         init() {
             this.form.company_name    = @json($settings['company_name'] ?? '');

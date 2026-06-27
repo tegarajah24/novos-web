@@ -698,6 +698,105 @@
     };
     </script>
 
+    {{-- Tutorial Overlay --}}
+    <div x-data="pageTutorial()" x-init="init()">
+        <template x-teleport="body">
+            <div x-show="active" x-cloak class="fixed inset-0 z-[99999]">
+                <div class="absolute inset-0 bg-black/60" @click="skip()"></div>
+                <div class="relative z-10 h-full flex items-center justify-center">
+                    <template x-if="currentStep">
+                        <div class="max-w-lg w-full mx-4">
+                            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                                <div class="px-6 pt-6 pb-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0"
+                                            :style="'background:'+currentStep.color">
+                                            <i :data-lucide="currentStep.icon" class="w-5 h-5"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-sm font-bold text-gray-900" x-text="currentStep.label"></h3>
+                                            <p class="text-xs text-gray-400" x-text="'Langkah ' + (stepIndex + 1) + ' dari ' + steps.length"></p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 leading-relaxed" x-text="currentStep.tip"></p>
+                                </div>
+                                <div class="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-100">
+                                    <button @click="skip()"
+                                        class="text-xs font-semibold text-gray-500 hover:text-gray-700">
+                                        Lewati Tutorial
+                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button @click="prev()" x-show="stepIndex > 0"
+                                            class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-white rounded-xl transition-colors">
+                                            Sebelumnya
+                                        </button>
+                                        <button @click="next()"
+                                            class="px-5 py-2 text-xs font-bold text-white rounded-xl transition-all active:scale-95 shadow-md"
+                                            :style="'background:'+currentStep.color">
+                                            <span x-text="stepIndex === steps.length - 1 ? 'Selesai' : 'Selanjutnya'"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script>
+    function pageTutorial() {
+        return {
+            active: false,
+            stepIndex: 0,
+            steps: [
+                { target: 'a[href*="dashboard"]', label: 'Dashboard', icon: 'layout-dashboard', color: '#1a237e', tip: 'Dashboard adalah halaman utama yang menampilkan ringkasan statistik bisnis seperti jumlah pesanan baru, pendapatan hari ini, dan grafik tren. Cocok untuk memantau kondisi toko secara cepat.' },
+                { target: 'a[href*="summary"]', label: 'Summary', icon: 'pie-chart', color: '#0288d1', tip: 'Summary menyajikan analisis data lebih mendalam dengan diagram lingkaran, tren pendapatan, dan performa tim. Gunakan filter periode untuk melihat data spesifik.' },
+                { target: 'a[href*="daftar-pesanan"]', label: 'Daftar Pesanan', icon: 'shopping-bag', color: '#e65100', tip: 'Kelola semua pesanan pelanggan di sini. Anda bisa melihat daftar, mencari, memfilter berdasarkan status, dan mengklik nomor pesanan untuk melihat detail lengkap.' },
+                { target: 'a[href*="design"]', label: 'Design', icon: 'pen-tool', color: '#2e7d32', tip: 'Halaman untuk tim Design: upload hasil desain jersey, update status pengerjaan, dan berkomunikasi dengan tim terkait revisi desain.' },
+                { target: 'a[href*="produksi"]', label: 'Produksi', icon: 'scissors', color: '#bf360c', tip: 'Halaman untuk tim Produksi: kelola proses produksi jersey, update progress, dan tambahkan catatan produksi.' },
+                { target: 'a[href*="daily-mental-check"]', label: 'Daily Mental Check', icon: 'heart', color: '#e91e63', tip: 'Isi cek kesehatan mental harian di sini. Pilih mood, energi, dan tingkat stres Anda. Data bersifat rahasia.' },
+                { target: 'a[href*="laporan"]', label: 'Laporan', icon: 'file-text', color: '#37474f', tip: 'Buat dan ekspor laporan bisnis dalam format CSV, Excel, atau PDF. Filter berdasarkan periode dan jenis laporan.' },
+                { target: 'a[href*="kelola-produk"]', label: 'Kelola Produk', icon: 'package', color: '#00695c', tip: 'Atur katalog produk jersey: tambah produk baru, edit harga, upload foto, atur status featured.' },
+                { target: 'a[href*="kategori"]', label: 'Kategori', icon: 'folder-tree', color: '#f57c00', tip: 'Kelola kategori produk untuk mengelompokkan jenis jersey. Kategori akan tampil di katalog publik.' },
+                { target: 'a[href*="kelola-pengguna"]', label: 'Kelola Pengguna', icon: 'users', color: '#4a148c', tip: 'Manajemen akun staf internal: tambah pengguna baru, atur role, edit atau nonaktifkan akun. Hanya untuk Super Admin & Manager.' },
+                { target: 'a[href*="pengaturan"]', label: 'Pengaturan', icon: 'settings', color: '#607d8b', tip: 'Konfigurasi toko (nama, alamat, kontak) dan tampilan panel (tema, warna, font, glassmorphism, transisi). Lihat panduan lengkap di tab Panduan.' },
+            ],
+            get currentStep() {
+                return this.steps[this.stepIndex] || null;
+            },
+            init() {
+                var params = new URLSearchParams(window.location.search);
+                if (params.get('tutorial') === '1') {
+                    this.active = true;
+                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                }
+            },
+            next() {
+                if (this.stepIndex < this.steps.length - 1) {
+                    this.stepIndex++;
+                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                } else {
+                    this.skip();
+                }
+            },
+            prev() {
+                if (this.stepIndex > 0) {
+                    this.stepIndex--;
+                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                }
+            },
+            skip() {
+                this.active = false;
+                this.stepIndex = 0;
+                var url = new URL(window.location);
+                url.searchParams.delete('tutorial');
+                window.history.replaceState({}, '', url);
+            }
+        };
+    }
+    </script>
     @stack('scripts')
 </body>
 
