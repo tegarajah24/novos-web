@@ -492,7 +492,6 @@
             var s = localStorage.getItem('novos_appearance');
             var a = s ? JSON.parse(s) : {};
             var root = document.documentElement;
-<<<<<<< HEAD
             if (a.primary) {
                 root.style.setProperty('--color-primary', a.primary);
                 var hex = a.primary.replace('#', '');
@@ -516,11 +515,6 @@
             var fontMap = { poppins: "'Poppins'", inter: "'Inter'", outfit: "'Outfit'" };
             if (a.fontFamily) root.style.setProperty('--font-family-base', fontMap[a.fontFamily] || "'Poppins'");
             var dark = a.theme==='dark' || (a.theme==='auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-=======
-            
-            var theme = a.theme || 'light';
-            var dark = theme==='dark' || (theme==='auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
->>>>>>> 7a518956d0be98dfbbcd3383051d8a633bef4a52
             if (dark) document.documentElement.classList.add('theme-dark-pending');
             
             // Set defaults or saved colors

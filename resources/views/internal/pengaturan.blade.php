@@ -485,17 +485,6 @@ function settingApp() {
             { value: 'outfit', label: 'Outfit', family: 'Outfit' },
         ],
 
-<<<<<<< HEAD
-=======
-        transitionEffects: [
-            { value: 'fade',        label: 'Fade',       preview: '<div class="w-8 h-8 rounded-lg bg-[#1a237e]/20 animate-pulse"></div>' },
-            { value: 'slide-up',    label: 'Slide Up',   preview: '<svg class="w-6 h-6 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>' },
-            { value: 'slide-down',  label: 'Slide Down', preview: '<svg class="w-6 h-6 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>' },
-            { value: 'zoom-in',     label: 'Zoom In',    preview: '<svg class="w-6 h-6 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>' },
-            { value: 'flip',        label: 'Flip',       preview: '<svg class="w-6 h-6 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' },
-            { value: 'elastic',     label: 'Elastic',    preview: '<svg class="w-6 h-6 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>' },
-        ],
-
         panduanMenu: [
             {
                 id: 'dashboard',
@@ -675,7 +664,6 @@ function settingApp() {
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
 
->>>>>>> 7a518956d0be98dfbbcd3383051d8a633bef4a52
         init() {
             this.form.company_name    = @json($settings['company_name'] ?? '');
             this.form.company_phone   = @json($settings['company_phone'] ?? '');
