@@ -256,6 +256,82 @@
         body.theme-dark .border-gray-300 {
             border-color: rgba(255, 255, 255, 0.08) !important;
         }
+        body.theme-dark .divide-gray-50 > * + * {
+            border-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        /* ── Preserve theme preview boxes in dark mode ── */
+        body.theme-dark .theme-preview-box.bg-white {
+            background-color: #ffffff !important;
+        }
+        body.theme-dark .theme-preview-box.bg-gray-900 {
+            background-color: #111827 !important;
+        }
+
+        /* ── Card & Container Dark Mode ── */
+        body.theme-dark .bg-white {
+            background-color: #1a1d2e !important;
+        }
+        body.theme-dark .bg-white\/60,
+        body.theme-dark .bg-white\/70,
+        body.theme-dark .bg-white\/80 {
+            background-color: rgba(26, 29, 46, 0.9) !important;
+        }
+
+        /* ── Sidebar Dark Mode ── */
+        body.theme-dark aside a:not([class*="bg-\[#1a237e\]"]):hover {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+            color: #cbd5e1 !important;
+        }
+
+        /* ── Hover State Dark Mode ── */
+        body.theme-dark .hover\:bg-gray-50:hover,
+        body.theme-dark .hover\:bg-gray-100:hover {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        /* ── Colored Background Mappings ── */
+        body.theme-dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.12) !important; }
+        body.theme-dark .bg-purple-50 { background-color: rgba(168, 85, 247, 0.12) !important; }
+        body.theme-dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.12) !important; }
+        body.theme-dark .bg-orange-50 { background-color: rgba(249, 115, 22, 0.12) !important; }
+        body.theme-dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.12) !important; }
+        body.theme-dark .bg-yellow-50 { background-color: rgba(234, 179, 8, 0.12) !important; }
+        body.theme-dark .bg-pink-50 { background-color: rgba(236, 72, 153, 0.12) !important; }
+        body.theme-dark .bg-teal-50 { background-color: rgba(20, 184, 166, 0.12) !important; }
+        body.theme-dark .bg-indigo-50 { background-color: rgba(99, 102, 241, 0.12) !important; }
+        body.theme-dark .bg-cyan-50 { background-color: rgba(6, 182, 212, 0.12) !important; }
+
+        /* ── Notification Specific Dark Mode ── */
+        body.theme-dark .bg-blue-50\/50 {
+            background-color: rgba(59, 130, 246, 0.08) !important;
+        }
+        body.theme-dark .bg-gray-50\/50 {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        /* ── Shadow Dark Mode ── */
+        body.theme-dark .shadow-sm,
+        body.theme-dark .shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        }
+        body.theme-dark .shadow-md {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.35) !important;
+        }
+        body.theme-dark .shadow-lg {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4) !important;
+        }
+        body.theme-dark .shadow-xl {
+            box-shadow: 0 12px 25px rgba(0,0,0,0.45) !important;
+        }
+        body.theme-dark .shadow-2xl {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+        }
+
+        /* ── Dark mode flash prevention ── */
+        html.theme-dark-pending body.internal-body {
+            background: linear-gradient(135deg, #0e111a 0%, #121422 50%, #0e121d 100%) !important;
+        }
     </style>
 
     {{-- Apply saved appearance BEFORE first paint to avoid flash --}}

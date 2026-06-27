@@ -91,7 +91,7 @@
                     <button @click="applyTheme(m.value)"
                         :class="appearance.theme===m.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5' : 'hover:bg-gray-50'"
                         class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-transparent transition-all">
-                        <div class="w-12 h-8 rounded-lg overflow-hidden border border-gray-200 shadow-sm" :class="m.preview"></div>
+                        <div class="w-12 h-8 rounded-lg overflow-hidden border border-gray-200 shadow-sm" :class="m.preview + ' theme-preview-box'"></div>
                         <span class="text-xs font-semibold text-gray-700" x-text="m.label"></span>
                         <div x-show="appearance.theme===m.value" class="w-4 h-4 bg-[#1a237e] rounded-full flex items-center justify-center">
                             <i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>
@@ -433,6 +433,10 @@ function settingApp() {
             }
             this.applyAll();
             this.$nextTick(() => lucide.createIcons());
+            const mq = window.matchMedia('(prefers-color-scheme: dark)');
+            mq.addEventListener('change', () => {
+                if (this.appearance.theme === 'auto') this._applyTheme('auto');
+            });
         },
 
         async saveToko() {
