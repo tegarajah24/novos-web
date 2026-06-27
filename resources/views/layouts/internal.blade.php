@@ -866,7 +866,7 @@
             if (!container) {
                 container = document.createElement('div');
                 container.id = 'notify-container';
-                container.className = 'fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none';
+                container.className = 'fixed top-20 right-4 z-[9999] flex flex-col gap-3 pointer-events-none';
                 document.body.appendChild(container);
             }
             let el = document.createElement('div');
