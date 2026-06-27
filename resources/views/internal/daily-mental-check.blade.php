@@ -27,13 +27,11 @@
             {{-- Poster Banner --}}
             <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-indigo-200/60 min-h-[160px] relative">
                 <img :src="posterUrl" alt="Poster Kesehatan Mental" class="w-full h-full object-cover">
-                <template x-if="userRole === 'Super Admin'">
-                    <button @click="toggleManagePosters()"
-                        class="absolute top-2 right-2 px-2.5 py-1.5 bg-white/90 hover:bg-white text-[#1a237e] text-xs font-semibold rounded-lg shadow-sm border border-gray-200 transition-all flex items-center gap-1.5">
-                        <i data-lucide="image" class="w-3.5 h-3.5"></i>
-                        Kelola Poster
-                    </button>
-                </template>
+                <button x-show="userRole === 'Super Admin'" @click="toggleManagePosters()"
+                    class="absolute top-2 right-2 z-10 px-2.5 py-1.5 bg-white/90 hover:bg-white text-[#1a237e] text-xs font-semibold rounded-lg shadow-sm border border-gray-200 transition-all inline-flex items-center gap-1.5 cursor-pointer">
+                    <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                    Kelola Poster
+                </button>
             </div>
 
             {{-- Card: Pesan Motivasi Hari Ini --}}
