@@ -569,6 +569,12 @@ function produksiApp() {
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Menyimpan...',
+                        text: 'Mohon tunggu sebentar.',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
                     this._doSubmit(targetStatus, currentStage, successText);
                 }
             });
@@ -576,12 +582,6 @@ function produksiApp() {
 
         _doSubmit(targetStatus, currentStage, successText) {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-            let loadingEl = document.createElement('div');
-            loadingEl.id = 'notify-loading';
-            loadingEl.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/40';
-            loadingEl.innerHTML = '<div class="bg-white rounded-xl px-6 py-4 shadow-xl flex items-center gap-3"><svg class="animate-spin h-5 w-5 text-[#1a237e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="text-sm font-medium text-gray-700">Menyimpan...</span></div>';
-            document.body.appendChild(loadingEl);
 
             fetch('/staf/produksi/update/' + this.selectedOrder.order_id, {
                 method: 'POST',
@@ -594,7 +594,7 @@ function produksiApp() {
             })
             .then(r => r.json())
             .then(res => {
-                document.getElementById('notify-loading')?.remove();
+                Swal.close();
                 if (res.success) {
                     Notify.success(successText || res.message, 'Berhasil!');
                     setTimeout(() => {
@@ -614,7 +614,7 @@ function produksiApp() {
                 }
             })
             .catch(() => {
-                document.getElementById('notify-loading')?.remove();
+                Swal.close();
                 Notify.error('Terjadi kesalahan server.');
             });
         }
