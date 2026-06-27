@@ -1,6 +1,6 @@
 @extends('layouts.internal')
 
-@section('title', 'Katalog Produk')
+@section('title', 'Kelola Produk')
 
 @section('topbar-left')
     <h1 class="text-xl font-bold text-[#1a237e]">Katalog Produk</h1>
