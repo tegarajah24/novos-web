@@ -291,6 +291,42 @@
             border-color: rgba(255, 255, 255, 0.06) !important;
         }
 
+        /* ── Adjust light pastel backgrounds & colors in dark mode ── */
+        body.theme-dark .bg-purple-50 {
+            background-color: rgba(168, 85, 247, 0.15) !important;
+        }
+        body.theme-dark .bg-blue-50 {
+            background-color: rgba(59, 130, 246, 0.15) !important;
+        }
+        body.theme-dark .bg-orange-50 {
+            background-color: rgba(249, 115, 22, 0.15) !important;
+        }
+        body.theme-dark .bg-green-50,
+        body.theme-dark .bg-emerald-50 {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+        }
+        body.theme-dark .bg-red-50 {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+        }
+        body.theme-dark .text-purple-600 {
+            color: #c084fc !important;
+        }
+        body.theme-dark .text-blue-600 {
+            color: #60a5fa !important;
+        }
+        body.theme-dark .text-orange-600 {
+            color: #fb923c !important;
+        }
+        body.theme-dark .text-green-600,
+        body.theme-dark .text-emerald-500,
+        body.theme-dark .text-emerald-600 {
+            color: #34d399 !important;
+        }
+        body.theme-dark .text-red-500,
+        body.theme-dark .text-red-600 {
+            color: #f87171 !important;
+        }
+
         /* ── Preserve theme preview boxes in dark mode ── */
         body.theme-dark .theme-preview-box.bg-white {
             background-color: #ffffff !important;
@@ -357,6 +393,127 @@
         }
         body.theme-dark .shadow-2xl {
             box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+        }
+
+        /* ── Light mode readability: darken overly light text ── */
+        body.internal-body .text-gray-300 {
+            color: #9ca3af !important;
+        }
+
+        /* ── Dark mode: text, icons, badges & borders ── */
+        body.theme-dark .text-red-500,
+        body.theme-dark .text-red-600,
+        body.theme-dark .text-red-700,
+        body.theme-dark .text-red-800,
+        body.theme-dark .text-red-900 {
+            color: #fca5a5 !important;
+        }
+        body.theme-dark .text-blue-500,
+        body.theme-dark .text-blue-600,
+        body.theme-dark .text-blue-700,
+        body.theme-dark .text-blue-900 {
+            color: #93c5fd !important;
+        }
+        body.theme-dark .text-green-400,
+        body.theme-dark .text-green-500,
+        body.theme-dark .text-green-600,
+        body.theme-dark .text-green-700 {
+            color: #86efac !important;
+        }
+        body.theme-dark .text-yellow-500,
+        body.theme-dark .text-yellow-600,
+        body.theme-dark .text-yellow-700 {
+            color: #fde68a !important;
+        }
+        body.theme-dark .text-orange-500,
+        body.theme-dark .text-orange-600,
+        body.theme-dark .text-orange-700 {
+            color: #fdba74 !important;
+        }
+        body.theme-dark .text-amber-600,
+        body.theme-dark .text-amber-700,
+        body.theme-dark .text-amber-800 {
+            color: #fcd34d !important;
+        }
+        body.theme-dark .text-purple-500,
+        body.theme-dark .text-purple-600,
+        body.theme-dark .text-purple-700 {
+            color: #d8b4fe !important;
+        }
+        body.theme-dark .text-pink-500 {
+            color: #f9a8d4 !important;
+        }
+        body.theme-dark .text-teal-600 {
+            color: #5eead4 !important;
+        }
+        body.theme-dark .text-cyan-600 {
+            color: #67e8f9 !important;
+        }
+        body.theme-dark .text-indigo-500,
+        body.theme-dark .text-indigo-600 {
+            color: #a5b4fc !important;
+        }
+        body.theme-dark .text-emerald-500,
+        body.theme-dark .text-emerald-600,
+        body.theme-dark .text-emerald-700,
+        body.theme-dark .text-emerald-800 {
+            color: #6ee7b7 !important;
+        }
+
+        /* ── Dark mode: badge backgrounds ── */
+        body.theme-dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.15) !important; }
+        body.theme-dark .bg-yellow-100 { background-color: rgba(234, 179, 8, 0.15) !important; }
+        body.theme-dark .bg-orange-100 { background-color: rgba(249, 115, 22, 0.15) !important; }
+        body.theme-dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.15) !important; }
+        body.theme-dark .bg-green-100 { background-color: rgba(34, 197, 94, 0.15) !important; }
+        body.theme-dark .bg-purple-100 { background-color: rgba(168, 85, 247, 0.15) !important; }
+        body.theme-dark .bg-amber-100 { background-color: rgba(245, 158, 11, 0.15) !important; }
+        body.theme-dark .bg-emerald-100 { background-color: rgba(16, 185, 129, 0.15) !important; }
+
+        /* ── Dark mode: colored borders ── */
+        body.theme-dark .border-red-100,
+        body.theme-dark .border-red-200 { border-color: rgba(239, 68, 68, 0.3) !important; }
+        body.theme-dark .border-yellow-200 { border-color: rgba(234, 179, 8, 0.3) !important; }
+        body.theme-dark .border-orange-200,
+        body.theme-dark .border-orange-200\/60 { border-color: rgba(249, 115, 22, 0.3) !important; }
+        body.theme-dark .border-blue-100,
+        body.theme-dark .border-blue-200 { border-color: rgba(59, 130, 246, 0.3) !important; }
+        body.theme-dark .border-green-200 { border-color: rgba(34, 197, 94, 0.3) !important; }
+        body.theme-dark .border-purple-100,
+        body.theme-dark .border-purple-200 { border-color: rgba(168, 85, 247, 0.3) !important; }
+        body.theme-dark .border-amber-200,
+        body.theme-dark .border-amber-200\/60 { border-color: rgba(245, 158, 11, 0.3) !important; }
+        body.theme-dark .border-emerald-200 { border-color: rgba(16, 185, 129, 0.3) !important; }
+        body.theme-dark .border-indigo-200\/60 { border-color: rgba(99, 102, 241, 0.3) !important; }
+        body.theme-dark .hover\:border-red-300\/50:hover,
+        body.theme-dark .hover\:border-red-300:hover,
+        body.theme-dark .hover\:border-red-200:hover { border-color: rgba(239, 68, 68, 0.5) !important; }
+        body.theme-dark .hover\:border-blue-300\/50:hover,
+        body.theme-dark .hover\:border-blue-200:hover { border-color: rgba(59, 130, 246, 0.5) !important; }
+        body.theme-dark .hover\:border-green-300\/50:hover,
+        body.theme-dark .hover\:border-green-200:hover { border-color: rgba(34, 197, 94, 0.5) !important; }
+        body.theme-dark .hover\:border-orange-300\/50:hover { border-color: rgba(249, 115, 22, 0.5) !important; }
+        body.theme-dark .hover\:border-purple-300\/50:hover { border-color: rgba(168, 85, 247, 0.5) !important; }
+        body.theme-dark .hover\:border-emerald-200:hover { border-color: rgba(16, 185, 129, 0.5) !important; }
+        body.theme-dark .hover\:border-amber-200:hover { border-color: rgba(245, 158, 11, 0.5) !important; }
+
+        /* ── Dark mode: profile dropdown & notification panel ── */
+        body.theme-dark header .bg-white {
+            background-color: #1a1d2e !important;
+        }
+        body.theme-dark header .border-gray-200 {
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        body.theme-dark header .hover\:bg-gray-50:hover {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+        }
+        body.theme-dark header .text-gray-700 {
+            color: #cbd5e1 !important;
+        }
+
+        /* ── Dark mode: gray-300 override (was darkened in light mode) ── */
+        body.theme-dark .text-gray-300 {
+            color: #94a3b8 !important;
         }
 
         /* ── Dark mode flash prevention ── */
