@@ -464,7 +464,7 @@ function produksiApp() {
             } else if (order.stage === 'jahit') {
                 this.updateStatus = 'selesai_jahit';
             } else if (order.stage === 'qc') {
-                this.updateStatus = '';
+                this.updateStatus = 'selesai_qc';
             } else {
                 this.updateStatus = 'proses_qc';
             }
