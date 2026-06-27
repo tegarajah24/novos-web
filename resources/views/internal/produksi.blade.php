@@ -12,7 +12,7 @@
 
 
     {{-- Tabs Navigation --}}
-    <div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+    <div class="flex max-w-3xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="tab in tabs" :key="tab.key">
             <button @click="activeTab = tab.key"
                 :class="activeTab === tab.key ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
@@ -37,7 +37,6 @@
             <div class="flex gap-2">
                 <span :class="activeTab === 'printing' ? 'bg-blue-100 text-blue-700' : (activeTab === 'jahit' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700')"
                     class="px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1 transition-all duration-300">
-                    <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
                     <span x-text="filteredOrders().length"></span> Antrean
                 </span>
             </div>
