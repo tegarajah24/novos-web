@@ -20,6 +20,13 @@ class LaporanController extends Controller
         return view('internal.laporan', $data);
     }
 
+    public function getData(Request $request)
+    {
+        $data = $this->getReportData($request);
+
+        return response()->json($data);
+    }
+
     public function exportPdf(Request $request)
     {
         $data = $this->getReportData($request);
