@@ -603,7 +603,7 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Topbar -->
-        <header class="py-3 px-8 flex items-center justify-between shrink-0">
+        <header class="py-4 px-8 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
                 <button @click="$dispatch('sidebar-toggle')" class="text-gray-500 hover:text-[#1a237e]">
                     <i data-lucide="menu" class="w-6 h-6"></i>
