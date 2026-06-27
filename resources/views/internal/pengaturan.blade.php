@@ -431,11 +431,46 @@ function settingApp() {
             if (saved) {
                 try { this.appearance = { ...DEFAULT_APPEARANCE, ...JSON.parse(saved) }; } catch(e) {}
             }
+            
+            // Adjust defaults for dark mode if using defaults
+            let isDark = this.appearance.theme === 'dark' || (this.appearance.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                if (this.appearance.scheme === 'Novos' || this.appearance.primary === '#1a237e') {
+                    this.appearance.scheme = 'Ocean';
+                    this.appearance.primary = '#0277bd';
+                    this.appearance.secondary = '#0288d1';
+                }
+            } else {
+                if (this.appearance.scheme === 'Ocean' || this.appearance.primary === '#0277bd') {
+                    this.appearance.scheme = 'Novos';
+                    this.appearance.primary = '#1a237e';
+                    this.appearance.secondary = '#3949ab';
+                }
+            }
+
             this.applyAll();
             this.$nextTick(() => lucide.createIcons());
             const mq = window.matchMedia('(prefers-color-scheme: dark)');
             mq.addEventListener('change', () => {
-                if (this.appearance.theme === 'auto') this._applyTheme('auto');
+                if (this.appearance.theme === 'auto') {
+                    this._applyTheme('auto');
+                    let isDarkNow = mq.matches;
+                    if (isDarkNow) {
+                        if (this.appearance.scheme === 'Novos' || this.appearance.primary === '#1a237e') {
+                            this.appearance.scheme = 'Ocean';
+                            this.appearance.primary = '#0277bd';
+                            this.appearance.secondary = '#0288d1';
+                            this._applyColors('#0277bd', '#0288d1');
+                        }
+                    } else {
+                        if (this.appearance.scheme === 'Ocean' || this.appearance.primary === '#0277bd') {
+                            this.appearance.scheme = 'Novos';
+                            this.appearance.primary = '#1a237e';
+                            this.appearance.secondary = '#3949ab';
+                            this._applyColors('#1a237e', '#3949ab');
+                        }
+                    }
+                }
             });
         },
 
@@ -458,6 +493,24 @@ function settingApp() {
         applyTheme(val) {
             this.appearance.theme = val;
             this._applyTheme(val);
+            
+            // Auto update default colors if they are on default scheme
+            let isDark = val === 'dark' || (val === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                if (this.appearance.scheme === 'Novos' || this.appearance.primary === '#1a237e') {
+                    this.appearance.scheme = 'Ocean';
+                    this.appearance.primary = '#0277bd';
+                    this.appearance.secondary = '#0288d1';
+                    this._applyColors('#0277bd', '#0288d1');
+                }
+            } else {
+                if (this.appearance.scheme === 'Ocean' || this.appearance.primary === '#0277bd') {
+                    this.appearance.scheme = 'Novos';
+                    this.appearance.primary = '#1a237e';
+                    this.appearance.secondary = '#3949ab';
+                    this._applyColors('#1a237e', '#3949ab');
+                }
+            }
         },
 
         _applyTheme(val) {

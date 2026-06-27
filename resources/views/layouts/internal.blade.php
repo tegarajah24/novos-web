@@ -266,7 +266,7 @@
             color: #94a3b8 !important;
         }
         body.theme-dark .text-\[\#1a237e\] {
-            color: #a5b4fc !important;
+            color: var(--color-primary) !important;
         }
         body.theme-dark .bg-gray-25,
         body.theme-dark .bg-gray-50,
@@ -373,9 +373,25 @@
             var a = s ? JSON.parse(s) : {};
             var root = document.documentElement;
             
+            var theme = a.theme || 'light';
+            var dark = theme==='dark' || (theme==='auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (dark) document.documentElement.classList.add('theme-dark-pending');
+            
             // Set defaults or saved colors
-            var primary = a.primary || '#1a237e';
-            var secondary = a.secondary || '#3949ab';
+            var primary = a.primary;
+            var secondary = a.secondary;
+            
+            if (dark) {
+                if (!primary || primary === '#1a237e') {
+                    primary = '#0277bd';
+                }
+                if (!secondary || secondary === '#3949ab') {
+                    secondary = '#0288d1';
+                }
+            } else {
+                if (!primary) primary = '#1a237e';
+                if (!secondary) secondary = '#3949ab';
+            }
             
             root.style.setProperty('--color-primary', primary);
             var hex = primary.replace('#', '');
@@ -411,10 +427,6 @@
             
             var transition = a.transition || 'fade';
             root.setAttribute('data-transition', transition);
-            
-            var theme = a.theme || 'light';
-            var dark = theme==='dark' || (theme==='auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            if (dark) document.documentElement.classList.add('theme-dark-pending');
         } catch(e){}
     })();
     </script>
