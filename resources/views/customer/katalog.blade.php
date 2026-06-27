@@ -53,6 +53,16 @@
     [data-aos-delay="300"].aos-visible { transition-delay: 0.3s; }
     [data-aos-delay="400"].aos-visible { transition-delay: 0.4s; }
     [data-aos-delay="500"].aos-visible { transition-delay: 0.5s; }
+
+    @keyframes badge-pop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.6); }
+        100% { transform: scale(1); }
+    }
+    .animate-badge-pop {
+        animation: badge-pop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
 </style>
 <script>
 function katalogData() {
@@ -63,6 +73,13 @@ function katalogData() {
             perPage: 12,
             products: @json($products),
             categories: @json($categories),
+            flyItem: {
+                active: false,
+                src: '',
+                startX: 0, startY: 0,
+                dx: 0, dy: 0,
+                width: 0, height: 0,
+            },
 
             init() {
                 const params = new URLSearchParams(window.location.search);
@@ -116,7 +133,68 @@ function katalogData() {
             },
             goPage(p) {
                 if (p >= 1 && p <= this.totalPages) this.currentPage = p;
-            }
+            },
+
+            async flyToCart(event, product) {
+                const btn = event.currentTarget;
+                const card = btn.closest('[class*="group"]');
+                const img = card.querySelector('img');
+                const rect = img.getBoundingClientRect();
+                const cartBtn = document.querySelector('.cart-icon-btn');
+                if (!cartBtn) {
+                    this.addToCart(product);
+                    return;
+                }
+                const cartRect = cartBtn.getBoundingClientRect();
+                const dx = cartRect.left + cartRect.width / 2 - rect.left;
+                const dy = cartRect.top + cartRect.height / 2 - rect.top;
+
+                this.flyItem = {
+                    active: true,
+                    src: img.src,
+                    startX: rect.left, startY: rect.top,
+                    dx, dy,
+                    width: rect.width, height: rect.height,
+                };
+
+                await this.$nextTick();
+                this.$nextTick(() => {
+                    const outer = this.$refs.flyOuter;
+                    const inner = this.$refs.flyInner;
+                    if (outer) outer.style.transform = 'translateX(' + dx + 'px)';
+                    if (inner) { inner.style.transform = 'translateY(' + dy + 'px) scale(0.12)'; inner.style.opacity = '0.4'; }
+                });
+
+                setTimeout(() => {
+                    this.flyItem.active = false;
+                    this.addToCart(product);
+                    const badge = document.querySelector('.cart-badge');
+                    if (badge) { badge.classList.add('animate-badge-pop'); setTimeout(() => badge.classList.remove('animate-badge-pop'), 500); }
+                }, 750);
+            },
+
+            async addToCart(product) {
+                try {
+                    const res = await fetch('{{ route("cart.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            product_id: product.id,
+                            size: 'M',
+                            qty: 1,
+                        }),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        const store = Alpine.store('summary');
+                        if (store) { store.cartCount = data.count || store.cartCount; store.fetch(); }
+                    }
+                } catch (e) {}
+            },
     }
 }
 </script>
@@ -172,7 +250,7 @@ function katalogData() {
             {{-- Product Grid --}}
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 <template x-for="(product, index) in pagedProducts" :key="`${product.id}-${currentPage}`">
-                    <div @click="window.location.href = '{{ route('pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '') + '&kerah=' + encodeURIComponent(product.kerah ?? '') + '&bahan=' + encodeURIComponent(product.bahan ?? '') + '&jenis_potongan=' + encodeURIComponent(product.jenis_potongan ?? '') + '&lengan_jahitan=' + encodeURIComponent(product.lengan_jahitan ?? '')" :style="`animation-delay: ${index * 0.06}s`" class="group cursor-pointer bg-gray-50 animate-card">
+                    <div @click="window.location.href = '{{ route('pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '') + '&kerah=' + encodeURIComponent(product.kerah ?? '') + '&bahan=' + encodeURIComponent(product.bahan ?? '') + '&jenis_potongan=' + encodeURIComponent(product.jenis_potongan ?? '') + '&lengan_jahitan=' + encodeURIComponent(product.lengan_jahitan ?? '')" :style="`animation-delay: ${index * 0.06}s`" class="group cursor-pointer bg-gray-50 animate-card flex flex-col">
                         {{-- Image --}}
                         <div class="p-2">
                             <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
@@ -196,14 +274,24 @@ function katalogData() {
                             </div>
                         </div>
                         {{-- Card Body --}}
-                        <div class="p-3 text-center bg-gray-50">
-                            <h3 class="text-sm font-semibold text-[#1a237e] leading-snug" x-text="product.name"></h3>
-                            <template x-if="product.price !== null">
-                                <p class="text-sm font-bold text-[#1a237e] mt-0.5" x-text="formatRupiah(product.price)"></p>
-                            </template>
-                            <template x-if="product.price === null">
-                                <p class="text-xs text-gray-400 mt-0.5">Hubungi CS</p>
-                            </template>
+                        <div class="p-3 text-center bg-gray-50 flex flex-col flex-1 justify-between">
+                            <div>
+                                <h3 class="text-sm font-semibold text-[#1a237e] leading-snug" x-text="product.name"></h3>
+                                <template x-if="product.price !== null">
+                                    <p class="text-sm font-bold text-[#1a237e] mt-0.5" x-text="formatRupiah(product.price)"></p>
+                                </template>
+                                <template x-if="product.price === null">
+                                    <p class="text-xs text-gray-400 mt-0.5">Hubungi CS</p>
+                                </template>
+                            </div>
+                            {{-- Buy button: outline, sharp corners, slides up on hover --}}
+                            <button @click.stop="flyToCart($event, product)"
+                                class="mt-2 w-full py-2 text-xs font-semibold transition-all duration-300
+                                       border border-[#1a237e] text-[#1a237e] bg-transparent
+                                       md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0
+                                       hover:bg-[#1a237e]/5">
+                                + Beli
+                            </button>
                         </div>
                     </div>
                 </template>
@@ -231,7 +319,7 @@ function katalogData() {
 
             {{-- ===== PAGINATION ===== --}}
             <div
-                x-show="filteredProducts.length > 0"
+                x-show="!loading && filteredProducts.length > 0"
                 class="mt-8 flex items-center justify-center gap-1.5"
             >
                 {{-- Prev --}}
@@ -275,6 +363,24 @@ function katalogData() {
     </div>
 </div>
 </div>
+
+{{-- Parabolic Fly Animation --}}
+<template x-teleport="body">
+    <div x-show="flyItem.active" x-cloak
+         x-ref="flyOuter"
+         class="fixed z-[9999] pointer-events-none"
+         :style="`left: ${flyItem.startX}px; top: ${flyItem.startY}px;
+                  width: ${flyItem.width}px; height: ${flyItem.height}px;
+                  transition: transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);`">
+        <div x-ref="flyInner"
+             class="w-full h-full"
+             :style="`transition: transform 0.75s ease-in, opacity 0.75s;`">
+            <img :src="flyItem.src"
+                 class="w-full h-full object-cover rounded-lg shadow-xl"
+                 style="will-change: transform; backface-visibility: hidden;">
+        </div>
+    </div>
+</template>
 
 @push('scripts')
 <script>

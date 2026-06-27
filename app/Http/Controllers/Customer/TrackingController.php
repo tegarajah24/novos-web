@@ -47,6 +47,53 @@ class TrackingController extends Controller
         return view('customer.tracking', compact('orderData', 'shareUrl'));
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->q;
+
+        if (!$query) {
+            return response()->json(['found' => false, 'message' => 'Masukkan nomor pesanan']);
+        }
+
+        $order = Order::with(['designRequest', 'orderItems'])
+            ->where('order_number', $query)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$order) {
+            return response()->json([
+                'found' => false,
+                'message' => 'Pesanan dengan nomor "' . e($query) . '" tidak ditemukan',
+            ]);
+        }
+
+        $designFiles = [];
+        if ($order->designRequest && $order->designRequest->design_files) {
+            $designFiles = collect($order->designRequest->design_files)->map(fn($f) => [
+                'name' => $f['name'],
+                'url'  => asset('storage/' . $f['path']),
+            ])->values()->toArray();
+        }
+
+        $orderData = [
+            'id'           => $order->order_number,
+            'date'         => $order->created_at->format('j F Y'),
+            'status'       => $order->status,
+            'design_files' => $designFiles,
+            'team_name'    => $order->designRequest?->team_name,
+        ];
+
+        $shareUrl = $order->share_token
+            ? route('tracking.shared', $order->share_token)
+            : null;
+
+        return response()->json([
+            'found' => true,
+            'data'  => $orderData,
+            'share_url' => $shareUrl,
+        ]);
+    }
+
     public function generateToken($orderNumber)
     {
         $order = Order::where('order_number', $orderNumber)

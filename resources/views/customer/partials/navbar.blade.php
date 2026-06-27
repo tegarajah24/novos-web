@@ -128,12 +128,12 @@
 
                 {{-- Cart icon --}}
                 <div class="relative" x-data="cartDropdown()" @click.away="cartOpen = false">
-                    <button @click="cartOpen = !cartOpen; if(cartOpen) fetchCart()" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
+                    <button @click="cartOpen = !cartOpen; if(cartOpen) fetchCart()" class="cart-icon-btn p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                         </svg>
-                        <span x-show="$store.summary.cartCount > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="$store.summary.cartCount"></span>
+                        <span x-show="$store.summary.cartCount > 0" class="cart-badge absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" x-text="$store.summary.cartCount"></span>
                     </button>
 
                     <div x-show="cartOpen" x-cloak
@@ -552,6 +552,14 @@
     }
     .animate-fadeOut {
         animation: fadeOut 0.3s ease-out forwards;
+    }
+    @keyframes badge-pop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.6); }
+        100% { transform: scale(1); }
+    }
+    .animate-badge-pop {
+        animation: badge-pop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 </style>
 

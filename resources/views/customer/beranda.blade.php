@@ -16,6 +16,13 @@
     .animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
     .glow-cyan { box-shadow: 0 0 0 3px rgba(0,229,255,0.35), 0 0 16px rgba(0,229,255,0.4); }
 
+    @keyframes shine {
+        0% { transform: translateX(-100%) skewX(-12deg); }
+        15% { transform: translateX(400%) skewX(-12deg); }
+        100% { transform: translateX(400%) skewX(-12deg); }
+    }
+    .animate-shine { animation: shine 5s ease-in-out infinite; }
+
     .product-card-glow {
         transition: box-shadow .3s ease, transform .3s ease;
     }
@@ -110,8 +117,9 @@
             {{-- CTA inline --}}
             <div class="flex flex-wrap items-center gap-3" data-aos="fade-up" data-aos-delay="300">
                 <a href="{{ route('pemesanan') }}"
-                   class="px-3 py-1.5 md:px-8 md:py-3.5 bg-[#00e5ff] text-[#1a237e] text-sm font-bold rounded-[4px] hover:bg-[#00d0ea] transition-all shadow-lg shadow-[#00e5ff]/20">
+                   class="relative overflow-hidden px-3 py-1.5 md:px-8 md:py-3.5 bg-[#00e5ff] text-[#1a237e] text-sm font-bold rounded-[4px] hover:bg-[#00d0ea] transition-all shadow-lg shadow-[#00e5ff]/20">
                     Buat Pesanan Sekarang
+                    <span class="absolute inset-0 w-14 h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full skew-x-12 animate-shine"></span>
                 </a>
             </div>
         </div>

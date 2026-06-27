@@ -7,26 +7,64 @@
     {{-- Header --}}
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900">Tracking Pesanan</h1>
-        <p class="text-gray-500 mt-1" x-show="!order.id">Silakan pilih pesanan dari riwayat pembelian Anda</p>
+        <p class="text-gray-500 mt-1" x-show="state === 'empty'">Cari pesanan Anda berdasarkan nomor pesanan</p>
     </div>
 
-    {{-- No order selected --}}
-    <div x-show="!order.id" x-cloak class="text-center py-16">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-300 mb-4">
+    {{-- STATE 1: EMPTY --}}
+    <div x-show="state === 'empty'" x-cloak x-transition:enter.duration.200 class="text-center py-10">
+        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-300 mb-5">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
             <line x1="3" y1="9" x2="21" y2="9"/>
             <line x1="9" y1="21" x2="9" y2="9"/>
         </svg>
-        <p class="text-gray-500 font-medium">Belum ada pesanan yang dipilih</p>
-        <p class="text-gray-400 text-sm mt-1">Klik tombol "Tracking" pada pesanan Anda di halaman profil</p>
-        <a href="{{ route('profile.edit') }}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            Lihat Riwayat Pesanan
-        </a>
+        <p class="text-gray-500 font-medium mb-1">Cek Status Pesanan</p>
+        <p class="text-gray-400 text-sm mb-6">Masukkan nomor pesanan untuk melihat status terkini</p>
+
+        {{-- Search input --}}
+        <div class="max-w-md mx-auto flex gap-3">
+            <input type="text" x-model="searchQuery" @keydown.enter="fetchOrder()"
+                   placeholder="Contoh: NVS-20240601-001"
+                   class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow">
+            <button @click="fetchOrder()"
+                    class="px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shrink-0 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                Lacak
+            </button>
+        </div>
+
+        <div class="mt-6 border-t border-gray-100 pt-6">
+            <p class="text-xs text-gray-400 mb-3">Atau lihat dari</p>
+            <a href="{{ route('profile.edit') }}" class="inline-flex items-center gap-2 px-5 py-2 border-2 border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:border-gray-300 hover:text-gray-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Riwayat Pesanan
+            </a>
+        </div>
     </div>
 
-    {{-- Result Card --}}
-    <div x-show="order.id" x-cloak x-transition:enter.duration.300>
+    {{-- STATE 2: LOADING (SPINNER) --}}
+    <div x-show="state === 'loading'" x-cloak x-transition:enter.duration.200 class="flex flex-col items-center justify-center py-20">
+        <svg class="animate-spin w-10 h-10 text-[#1a237e] mb-4" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+        <p class="text-gray-500 text-sm">Mencari pesanan...</p>
+    </div>
+
+    {{-- STATE 3: ERROR --}}
+    <div x-show="state === 'error'" x-cloak x-transition:enter.duration.200 class="text-center py-10">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-red-300 mb-4">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <p class="text-gray-600 font-medium mb-1" x-text="errorMessage"></p>
+        <p class="text-gray-400 text-sm mb-6">Periksa kembali nomor pesanan Anda</p>
+        <button @click="state = 'empty'"
+                class="px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors">
+            Coba Lagi
+        </button>
+    </div>
+
+    {{-- STATE 4: RESULT --}}
+    <div x-show="state === 'result'" x-cloak x-transition:enter.duration.300>
         {{-- Header Info --}}
         <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -261,6 +299,9 @@
 <script>
 function trackingForm() {
     return {
+        state: '{{ ($orderData ?? false) ? 'result' : 'empty' }}',
+        searchQuery: '',
+        errorMessage: '',
         animateProgress: false,
         lightboxOpen: false,
         lightboxImage: '',
@@ -269,6 +310,38 @@ function trackingForm() {
         shared: @json($shared ?? false),
         shareUrl: @json($shareUrl ?? null),
         order: @json($orderData ?? null) || { id: '', date: '', status: 'pending' },
+
+        async fetchOrder() {
+            const q = this.searchQuery.trim();
+            if (!q) return;
+
+            this.state = 'loading';
+            this.errorMessage = '';
+
+            try {
+                const res = await fetch('{{ route("tracking.search") }}?q=' + encodeURIComponent(q), {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+
+                if (!data.found) {
+                    this.errorMessage = data.message || 'Pesanan tidak ditemukan';
+                    this.state = 'error';
+                    return;
+                }
+
+                this.order = data.data;
+                this.shareUrl = data.share_url || null;
+                this.state = 'result';
+
+                this.$nextTick(() => {
+                    setTimeout(() => { this.animateProgress = true; }, 200);
+                });
+            } catch (e) {
+                this.errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
+                this.state = 'error';
+            }
+        },
 
         get statusLabel() {
             const labels = {
