@@ -4,16 +4,118 @@ namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
 use App\Models\DailyMentalCheck;
+use App\Models\MentalHealthPoster;
 use App\Models\MicroBreak;
+use App\Models\PosterSetting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class DailyMentalCheckController extends Controller
 {
     public function index()
     {
-        return view('internal.daily-mental-check');
+        $posterUrl = $this->resolvePoster();
+
+        return view('internal.daily-mental-check', compact('posterUrl'));
+    }
+
+    private function resolvePoster(): string
+    {
+        $rotation = PosterSetting::getRotation();
+        $now = Carbon::now();
+
+        $query = MentalHealthPoster::where('is_active', true);
+
+        if ($rotation === 'daily') {
+            $poster = (clone $query)->whereDate('created_at', $now->toDateString())
+                ->latest()
+                ->first();
+        } else {
+            $poster = (clone $query)->whereBetween('created_at', [
+                    $now->startOfWeek()->toDateString(),
+                    $now->copy()->endOfWeek()->toDateString(),
+                ])
+                ->latest()
+                ->first();
+        }
+
+        if (!$poster) {
+            $poster = $query->latest()->first();
+        }
+
+        return $poster?->url ?? asset('images/poster-daily-mental-check.jpg');
+    }
+
+    public function listPosters()
+    {
+        $posters = MentalHealthPoster::with('uploader')
+            ->latest()
+            ->get()
+            ->map(fn ($p) => [
+                'id'          => $p->id,
+                'url'         => $p->url,
+                'is_active'   => $p->is_active,
+                'uploaded_by' => $p->uploader?->name,
+                'created_at'  => $p->created_at->diffForHumans(),
+            ]);
+
+        return response()->json([
+            'posters'  => $posters,
+            'rotation' => PosterSetting::getRotation(),
+        ]);
+    }
+
+    public function uploadPoster(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        ]);
+
+        $path = $request->file('image')->store('posters', 'public');
+
+        $poster = MentalHealthPoster::create([
+            'image_path'  => $path,
+            'is_active'   => true,
+            'uploaded_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'poster'  => [
+                'id'    => $poster->id,
+                'url'   => $poster->url,
+                'created_at' => $poster->created_at->diffForHumans(),
+            ],
+        ]);
+    }
+
+    public function deletePoster($id)
+    {
+        $poster = MentalHealthPoster::findOrFail($id);
+
+        Storage::disk('public')->delete($poster->image_path);
+        $poster->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updateRotation(Request $request)
+    {
+        $request->validate([
+            'rotation' => 'required|in:daily,weekly',
+        ]);
+
+        PosterSetting::setRotation($request->rotation);
+
+        // Re-resolve poster URL after rotation change
+        $posterUrl = $this->resolvePoster();
+
+        return response()->json([
+            'success'   => true,
+            'posterUrl' => $posterUrl,
+        ]);
     }
 
     public function getToday(Request $request)

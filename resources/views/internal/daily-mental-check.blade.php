@@ -7,7 +7,7 @@
 @endsection
 
 @section('internal-content')
-<div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}' })">
+<div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}', posterUrl: '{{ $posterUrl }}' })">
     {{-- Tab Navigation --}}
     <div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
@@ -25,8 +25,15 @@
         {{-- Row 1: Poster + Pesan Motivasi --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {{-- Poster Banner --}}
-            <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-indigo-200/60 min-h-[160px]">
-                <img src="{{ asset('images/poster-daily-mental-check.jpg') }}" alt="Poster Kesehatan Mental" class="w-full h-full object-cover">
+            <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-indigo-200/60 min-h-[160px] relative">
+                <img :src="posterUrl" alt="Poster Kesehatan Mental" class="w-full h-full object-cover">
+                <template x-if="userRole === 'Super Admin'">
+                    <button @click="toggleManagePosters()"
+                        class="absolute top-2 right-2 px-2.5 py-1.5 bg-white/90 hover:bg-white text-[#1a237e] text-xs font-semibold rounded-lg shadow-sm border border-gray-200 transition-all flex items-center gap-1.5">
+                        <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                        Kelola Poster
+                    </button>
+                </template>
             </div>
 
             {{-- Card: Pesan Motivasi Hari Ini --}}
@@ -811,12 +818,101 @@
 
 </div>
 
-</div>
+{{-- ========== MODAL: KELOLA POSTER (Super Admin only) ========== --}}
+<template x-if="userRole === 'Super Admin'">
+    <div x-show="managePosterOpen" x-cloak
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click="managePosterOpen = false"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" @click.stop>
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="font-bold text-gray-900 text-lg">Kelola Poster</h3>
+                <button @click="managePosterOpen = false" class="p-1 text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            {{-- Rotation Setting --}}
+            <div class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <p class="text-sm font-semibold text-gray-800 mb-3">Periode Pergantian Poster</p>
+                <div class="flex gap-3">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" value="daily" x-model="rotationPeriod" class="w-4 h-4 text-[#1a237e] accent-[#1a237e] border-gray-300">
+                        <span class="text-sm text-gray-700">Ganti Setiap Hari</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" value="weekly" x-model="rotationPeriod" class="w-4 h-4 text-[#1a237e] accent-[#1a237e] border-gray-300">
+                        <span class="text-sm text-gray-700">Ganti Setiap Minggu</span>
+                    </label>
+                    <button @click="saveRotation()" :disabled="rotationSaving"
+                        class="ml-auto px-3 py-1.5 bg-[#1a237e] text-white text-xs font-semibold rounded-lg hover:bg-[#283593] transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
+                        <template x-if="rotationSaving">
+                            <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </template>
+                        Simpan
+                    </button>
+                </div>
+            </div>
+
+            {{-- Upload New Poster --}}
+            <div class="mb-6 p-4 bg-blue-50/50 rounded-xl border border-blue-200">
+                <p class="text-sm font-semibold text-gray-800 mb-3">Upload Poster Baru</p>
+                <div class="flex items-center gap-3">
+                    <input type="file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                        @change="uploadFile = $event.target.files[0]"
+                        class="block w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#1a237e] file:text-white hover:file:bg-[#283593] file:cursor-pointer file:transition-colors">
+                    <button @click="handleUpload()" :disabled="!uploadFile || uploading"
+                        class="shrink-0 px-4 py-1.5 bg-[#1a237e] text-white text-xs font-semibold rounded-lg hover:bg-[#283593] transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
+                        <template x-if="uploading">
+                            <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </template>
+                        <template x-if="!uploading">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                        </template>
+                        Upload
+                    </button>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-1.5">Format: JPEG, PNG, GIF, WebP. Maks 5MB.</p>
+            </div>
+
+            {{-- Poster List --}}
+            <div>
+                <p class="text-sm font-semibold text-gray-800 mb-3">Poster Tersimpan</p>
+                <template x-if="posterList.length === 0">
+                    <p class="text-sm text-gray-400 italic text-center py-6">Belum ada poster. Upload poster pertama Anda.</p>
+                </template>
+                <div class="space-y-2.5">
+                    <template x-for="p in posterList" :key="p.id">
+                        <div class="flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl border border-gray-200">
+                            <div class="w-16 h-10 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                                <img :src="p.url" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-medium text-gray-800" x-text="p.created_at"></p>
+                                <p class="text-[11px] text-gray-400" x-text="'Oleh: ' + (p.uploaded_by || '—')"></p>
+                            </div>
+                            <button @click="handleDelete(p.id)"
+                                class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 
 <script>
 function dailyMentalCheck(config = {}) {
     return {
         userRole: config.role || '',
+        posterUrl: config.posterUrl || '{{ asset('images/poster-daily-mental-check.jpg') }}',
         activeTab: 0,
         todayFilled: false,
         submitted: false,
@@ -1072,6 +1168,110 @@ function dailyMentalCheck(config = {}) {
                 this.reportData = data;
                 this.reportLoaded = true;
             } catch (e) { console.error('Failed to load report:', e); this.reportLoaded = false; }
+        },
+
+        // Poster Management
+        managePosterOpen: false,
+        posterList: [],
+        uploadFile: null,
+        uploading: false,
+        rotationPeriod: 'daily',
+        rotationSaving: false,
+
+        async toggleManagePosters() {
+            this.managePosterOpen = !this.managePosterOpen;
+            if (!this.managePosterOpen) return;
+            this.uploadFile = null;
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+                const res = await fetch('/staf/daily-mental-check/posters', {
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                });
+                const data = await res.json();
+                this.posterList = data.posters;
+                this.rotationPeriod = data.rotation;
+                this.$nextTick(() => {
+                    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+                });
+            } catch (e) { console.error('Failed to load posters:', e); }
+        },
+
+        async handleUpload() {
+            if (!this.uploadFile || this.uploading) return;
+            this.uploading = true;
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+                const fd = new FormData();
+                fd.append('image', this.uploadFile);
+                const res = await fetch('/staf/daily-mental-check/posters', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    body: fd,
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this.posterList.unshift(data.poster);
+                    this.posterUrl = data.poster.url;
+                    this.uploadFile = null;
+                    this.$nextTick(() => {
+                        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+                    });
+                }
+            } catch (e) { console.error('Failed to upload poster:', e); }
+            this.uploading = false;
+        },
+
+        async handleDelete(id) {
+            const result = await Swal.fire({
+                title: 'Hapus Poster?',
+                text: 'Poster dan file gambar akan dihapus permanen.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+                const res = await fetch('/staf/daily-mental-check/posters/' + id, {
+                    method: 'DELETE',
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                });
+                if (res.ok) {
+                    this.posterList = this.posterList.filter(p => p.id !== id);
+                    // Refresh poster URL
+                    const rotRes = await fetch('/staf/daily-mental-check/posters', {
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    });
+                    const rotData = await rotRes.json();
+                    if (rotData.posters.length > 0) {
+                        this.posterUrl = rotData.posters[0].url;
+                    } else {
+                        this.posterUrl = '{{ asset('images/poster-daily-mental-check.jpg') }}';
+                    }
+                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Poster berhasil dihapus', timer: 1500, showConfirmButton: false });
+                }
+            } catch (e) { console.error('Failed to delete poster:', e); }
+        },
+
+        async saveRotation() {
+            this.rotationSaving = true;
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+                const res = await fetch('/staf/daily-mental-check/posters/rotation', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    body: JSON.stringify({ rotation: this.rotationPeriod }),
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this.posterUrl = data.posterUrl;
+                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Periode pergantian poster diperbarui', timer: 1500, showConfirmButton: false });
+                }
+            } catch (e) { console.error('Failed to save rotation:', e); }
+            this.rotationSaving = false;
         },
 
         // Quotes

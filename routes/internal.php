@@ -76,3 +76,14 @@ Route::prefix('staf')
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
         Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
     });
+
+// Poster management — Super Admin only
+Route::prefix('staf/daily-mental-check')
+    ->middleware(['auth', 'role:Super Admin'])
+    ->name('staf.daily-mental-check.')
+    ->group(function () {
+        Route::get('/posters', [DailyMentalCheckController::class, 'listPosters'])->name('posters');
+        Route::post('/posters', [DailyMentalCheckController::class, 'uploadPoster'])->name('posters.upload');
+        Route::delete('/posters/{poster}', [DailyMentalCheckController::class, 'deletePoster'])->name('posters.delete');
+        Route::patch('/posters/rotation', [DailyMentalCheckController::class, 'updateRotation'])->name('posters.rotation');
+    });
