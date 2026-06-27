@@ -41,26 +41,57 @@
 
         /* ── Dynamic Brand Color Mappings ── */
         .bg-\[\#1a237e\] { background-color: var(--color-primary) !important; }
-        .bg-\[\#1a237e\]\/90 { background-color: var(--color-primary) !important; }
-        .hover\:bg-\[\#283593\]:hover { background-color: var(--color-secondary) !important; }
-        .text-\[\#1a237e\] { color: var(--color-primary) !important; }
-        .hover\:text-\[\#1a237e\]:hover { color: var(--color-primary) !important; }
-        .border-\[\#1a237e\] { border-color: var(--color-primary) !important; }
-        
         .bg-\[\#1a237e\]\/5 { background-color: rgba(var(--color-primary-rgb), 0.05) !important; }
         .bg-\[\#1a237e\]\/10 { background-color: rgba(var(--color-primary-rgb), 0.1) !important; }
+        .bg-\[\#1a237e\]\/15 { background-color: rgba(var(--color-primary-rgb), 0.15) !important; }
         .bg-\[\#1a237e\]\/20 { background-color: rgba(var(--color-primary-rgb), 0.2) !important; }
+        .bg-\[\#1a237e\]\/30 { background-color: rgba(var(--color-primary-rgb), 0.3) !important; }
         .bg-\[\#1a237e\]\/80 { background-color: rgba(var(--color-primary-rgb), 0.8) !important; }
+        .bg-\[\#1a237e\]\/90 { background-color: rgba(var(--color-primary-rgb), 0.9) !important; }
+        .hover\:bg-\[\#1a237e\]\/90:hover { background-color: rgba(var(--color-primary-rgb), 0.9) !important; }
+        .hover\:bg-\[\#283593\]:hover { background-color: var(--color-secondary) !important; }
+        .hover\:bg-\[\#1a237e\]:hover { background-color: var(--color-primary) !important; }
+        .hover\:bg-\[\#1a237e\]\/5:hover { background-color: rgba(var(--color-primary-rgb), 0.05) !important; }
+        .hover\:bg-\[\#1a237e\]\/10:hover { background-color: rgba(var(--color-primary-rgb), 0.1) !important; }
+        .hover\:bg-\[\#1a237e\]\/20:hover { background-color: rgba(var(--color-primary-rgb), 0.2) !important; }
+
+        .text-\[\#1a237e\] { color: var(--color-primary) !important; }
+        .text-\[\#1a237e\]\/50 { color: rgba(var(--color-primary-rgb), 0.5) !important; }
+        .text-\[\#1a237e\]\/70 { color: rgba(var(--color-primary-rgb), 0.7) !important; }
+        .hover\:text-\[\#1a237e\]:hover { color: var(--color-primary) !important; }
+        .hover\:text-\[\#283593\]:hover { color: rgba(var(--color-primary-rgb), 0.7) !important; }
+        .group:hover .group-hover\:text-\[\#1a237e\] { color: var(--color-primary) !important; }
+
+        .border-\[\#1a237e\] { border-color: var(--color-primary) !important; }
+        .border-\[\#1a237e\]\/15 { border-color: rgba(var(--color-primary-rgb), 0.15) !important; }
         .border-\[\#1a237e\]\/20 { border-color: rgba(var(--color-primary-rgb), 0.2) !important; }
         .border-\[\#1a237e\]\/30 { border-color: rgba(var(--color-primary-rgb), 0.3) !important; }
+        .hover\:border-\[\#1a237e\]:hover { border-color: var(--color-primary) !important; }
+        .hover\:border-\[\#1a237e\]\/30:hover { border-color: rgba(var(--color-primary-rgb), 0.3) !important; }
+        .hover\:border-\[\#1a237e\]\/40:hover { border-color: rgba(var(--color-primary-rgb), 0.4) !important; }
+
+        .ring-\[\#1a237e\] { --tw-ring-color: rgba(var(--color-primary-rgb), 1) !important; }
+        .ring-\[\#1a237e\]\/20 { --tw-ring-color: rgba(var(--color-primary-rgb), 0.2) !important; }
+        .focus\:ring-\[\#1a237e\]:focus,
+        .focus\:ring-\[\#1a237e\/20\]:focus,
+        .focus\:ring-\[\#1a237e\/30\]:focus {
+            --tw-ring-color: rgba(var(--color-primary-rgb), var(--tw-ring-opacity, 1)) !important;
+        }
+        .focus\:border-\[\#1a237e\]:focus,
+        .focus\:border-\[\#1a237e\/50\]:focus {
+            border-color: var(--color-primary) !important;
+        }
+
+        .accent-\[\#1a237e\] { accent-color: var(--color-primary) !important; }
+
         .shadow-\[\#1a237e\]\/5 { --tw-shadow-color: rgba(var(--color-primary-rgb), 0.05) !important; }
         .shadow-\[\#1a237e\]\/20 { --tw-shadow-color: rgba(var(--color-primary-rgb), 0.2) !important; }
+        .shadow-\[\#1a237e\]\/25 { --tw-shadow-color: rgba(var(--color-primary-rgb), 0.25) !important; }
 
-        .focus\:ring-\[\#1a237e\]:focus, .focus\:ring-\[\#1a237e\/30\]:focus {
-            --tw-ring-color: var(--color-primary) !important;
-        }
-        .focus\:border-\[\#1a237e\]:focus {
-            border-color: var(--color-primary) !important;
+        /* ── Sidebar icon safety ── */
+        aside nav a i.text-\[\#1a237e\],
+        aside nav a svg.text-\[\#1a237e\] {
+            color: var(--color-primary) !important;
         }
 
         /* ── Button Styles ── */
@@ -198,7 +229,7 @@
             color: #94a3b8 !important;
         }
         body.theme-dark .text-\[\#1a237e\] {
-            color: #a5b4fc !important;
+            color: var(--color-primary) !important;
         }
         body.theme-dark .bg-gray-25,
         body.theme-dark .bg-gray-50,
@@ -219,6 +250,239 @@
         body.theme-dark .border-gray-300 {
             border-color: rgba(255, 255, 255, 0.08) !important;
         }
+        body.theme-dark .divide-gray-50 > * + * {
+            border-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        /* ── Adjust light pastel backgrounds & colors in dark mode ── */
+        body.theme-dark .bg-purple-50 {
+            background-color: rgba(168, 85, 247, 0.15) !important;
+        }
+        body.theme-dark .bg-blue-50 {
+            background-color: rgba(59, 130, 246, 0.15) !important;
+        }
+        body.theme-dark .bg-orange-50 {
+            background-color: rgba(249, 115, 22, 0.15) !important;
+        }
+        body.theme-dark .bg-green-50,
+        body.theme-dark .bg-emerald-50 {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+        }
+        body.theme-dark .bg-red-50 {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+        }
+        body.theme-dark .text-purple-600 {
+            color: #c084fc !important;
+        }
+        body.theme-dark .text-blue-600 {
+            color: #60a5fa !important;
+        }
+        body.theme-dark .text-orange-600 {
+            color: #fb923c !important;
+        }
+        body.theme-dark .text-green-600,
+        body.theme-dark .text-emerald-500,
+        body.theme-dark .text-emerald-600 {
+            color: #34d399 !important;
+        }
+        body.theme-dark .text-red-500,
+        body.theme-dark .text-red-600 {
+            color: #f87171 !important;
+        }
+
+        /* ── Preserve theme preview boxes in dark mode ── */
+        body.theme-dark .theme-preview-box.bg-white {
+            background-color: #ffffff !important;
+        }
+        body.theme-dark .theme-preview-box.bg-gray-900 {
+            background-color: #111827 !important;
+        }
+
+        /* ── Card & Container Dark Mode ── */
+        body.theme-dark .bg-white {
+            background-color: #1a1d2e !important;
+        }
+        body.theme-dark .bg-white\/60,
+        body.theme-dark .bg-white\/70,
+        body.theme-dark .bg-white\/80 {
+            background-color: rgba(26, 29, 46, 0.9) !important;
+        }
+
+        /* ── Sidebar Dark Mode ── */
+        body.theme-dark aside a:not([class*="bg-\[#1a237e\]"]):hover {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+            color: #cbd5e1 !important;
+        }
+
+        /* ── Hover State Dark Mode ── */
+        body.theme-dark .hover\:bg-gray-50:hover,
+        body.theme-dark .hover\:bg-gray-100:hover {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        /* ── Colored Background Mappings ── */
+        body.theme-dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.12) !important; }
+        body.theme-dark .bg-purple-50 { background-color: rgba(168, 85, 247, 0.12) !important; }
+        body.theme-dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.12) !important; }
+        body.theme-dark .bg-orange-50 { background-color: rgba(249, 115, 22, 0.12) !important; }
+        body.theme-dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.12) !important; }
+        body.theme-dark .bg-yellow-50 { background-color: rgba(234, 179, 8, 0.12) !important; }
+        body.theme-dark .bg-pink-50 { background-color: rgba(236, 72, 153, 0.12) !important; }
+        body.theme-dark .bg-teal-50 { background-color: rgba(20, 184, 166, 0.12) !important; }
+        body.theme-dark .bg-indigo-50 { background-color: rgba(99, 102, 241, 0.12) !important; }
+        body.theme-dark .bg-cyan-50 { background-color: rgba(6, 182, 212, 0.12) !important; }
+
+        /* ── Notification Specific Dark Mode ── */
+        body.theme-dark .bg-blue-50\/50 {
+            background-color: rgba(59, 130, 246, 0.08) !important;
+        }
+        body.theme-dark .bg-gray-50\/50 {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        /* ── Shadow Dark Mode ── */
+        body.theme-dark .shadow-sm,
+        body.theme-dark .shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        }
+        body.theme-dark .shadow-md {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.35) !important;
+        }
+        body.theme-dark .shadow-lg {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4) !important;
+        }
+        body.theme-dark .shadow-xl {
+            box-shadow: 0 12px 25px rgba(0,0,0,0.45) !important;
+        }
+        body.theme-dark .shadow-2xl {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+        }
+
+        /* ── Light mode readability: darken overly light text ── */
+        body.internal-body .text-gray-300 {
+            color: #9ca3af !important;
+        }
+
+        /* ── Dark mode: text, icons, badges & borders ── */
+        body.theme-dark .text-red-500,
+        body.theme-dark .text-red-600,
+        body.theme-dark .text-red-700,
+        body.theme-dark .text-red-800,
+        body.theme-dark .text-red-900 {
+            color: #fca5a5 !important;
+        }
+        body.theme-dark .text-blue-500,
+        body.theme-dark .text-blue-600,
+        body.theme-dark .text-blue-700,
+        body.theme-dark .text-blue-900 {
+            color: #93c5fd !important;
+        }
+        body.theme-dark .text-green-400,
+        body.theme-dark .text-green-500,
+        body.theme-dark .text-green-600,
+        body.theme-dark .text-green-700 {
+            color: #86efac !important;
+        }
+        body.theme-dark .text-yellow-500,
+        body.theme-dark .text-yellow-600,
+        body.theme-dark .text-yellow-700 {
+            color: #fde68a !important;
+        }
+        body.theme-dark .text-orange-500,
+        body.theme-dark .text-orange-600,
+        body.theme-dark .text-orange-700 {
+            color: #fdba74 !important;
+        }
+        body.theme-dark .text-amber-600,
+        body.theme-dark .text-amber-700,
+        body.theme-dark .text-amber-800 {
+            color: #fcd34d !important;
+        }
+        body.theme-dark .text-purple-500,
+        body.theme-dark .text-purple-600,
+        body.theme-dark .text-purple-700 {
+            color: #d8b4fe !important;
+        }
+        body.theme-dark .text-pink-500 {
+            color: #f9a8d4 !important;
+        }
+        body.theme-dark .text-teal-600 {
+            color: #5eead4 !important;
+        }
+        body.theme-dark .text-cyan-600 {
+            color: #67e8f9 !important;
+        }
+        body.theme-dark .text-indigo-500,
+        body.theme-dark .text-indigo-600 {
+            color: #a5b4fc !important;
+        }
+        body.theme-dark .text-emerald-500,
+        body.theme-dark .text-emerald-600,
+        body.theme-dark .text-emerald-700,
+        body.theme-dark .text-emerald-800 {
+            color: #6ee7b7 !important;
+        }
+
+        /* ── Dark mode: badge backgrounds ── */
+        body.theme-dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.15) !important; }
+        body.theme-dark .bg-yellow-100 { background-color: rgba(234, 179, 8, 0.15) !important; }
+        body.theme-dark .bg-orange-100 { background-color: rgba(249, 115, 22, 0.15) !important; }
+        body.theme-dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.15) !important; }
+        body.theme-dark .bg-green-100 { background-color: rgba(34, 197, 94, 0.15) !important; }
+        body.theme-dark .bg-purple-100 { background-color: rgba(168, 85, 247, 0.15) !important; }
+        body.theme-dark .bg-amber-100 { background-color: rgba(245, 158, 11, 0.15) !important; }
+        body.theme-dark .bg-emerald-100 { background-color: rgba(16, 185, 129, 0.15) !important; }
+
+        /* ── Dark mode: colored borders ── */
+        body.theme-dark .border-red-100,
+        body.theme-dark .border-red-200 { border-color: rgba(239, 68, 68, 0.3) !important; }
+        body.theme-dark .border-yellow-200 { border-color: rgba(234, 179, 8, 0.3) !important; }
+        body.theme-dark .border-orange-200,
+        body.theme-dark .border-orange-200\/60 { border-color: rgba(249, 115, 22, 0.3) !important; }
+        body.theme-dark .border-blue-100,
+        body.theme-dark .border-blue-200 { border-color: rgba(59, 130, 246, 0.3) !important; }
+        body.theme-dark .border-green-200 { border-color: rgba(34, 197, 94, 0.3) !important; }
+        body.theme-dark .border-purple-100,
+        body.theme-dark .border-purple-200 { border-color: rgba(168, 85, 247, 0.3) !important; }
+        body.theme-dark .border-amber-200,
+        body.theme-dark .border-amber-200\/60 { border-color: rgba(245, 158, 11, 0.3) !important; }
+        body.theme-dark .border-emerald-200 { border-color: rgba(16, 185, 129, 0.3) !important; }
+        body.theme-dark .border-indigo-200\/60 { border-color: rgba(99, 102, 241, 0.3) !important; }
+        body.theme-dark .hover\:border-red-300\/50:hover,
+        body.theme-dark .hover\:border-red-300:hover,
+        body.theme-dark .hover\:border-red-200:hover { border-color: rgba(239, 68, 68, 0.5) !important; }
+        body.theme-dark .hover\:border-blue-300\/50:hover,
+        body.theme-dark .hover\:border-blue-200:hover { border-color: rgba(59, 130, 246, 0.5) !important; }
+        body.theme-dark .hover\:border-green-300\/50:hover,
+        body.theme-dark .hover\:border-green-200:hover { border-color: rgba(34, 197, 94, 0.5) !important; }
+        body.theme-dark .hover\:border-orange-300\/50:hover { border-color: rgba(249, 115, 22, 0.5) !important; }
+        body.theme-dark .hover\:border-purple-300\/50:hover { border-color: rgba(168, 85, 247, 0.5) !important; }
+        body.theme-dark .hover\:border-emerald-200:hover { border-color: rgba(16, 185, 129, 0.5) !important; }
+        body.theme-dark .hover\:border-amber-200:hover { border-color: rgba(245, 158, 11, 0.5) !important; }
+
+        /* ── Dark mode: profile dropdown & notification panel ── */
+        body.theme-dark header .bg-white {
+            background-color: #1a1d2e !important;
+        }
+        body.theme-dark header .border-gray-200 {
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        body.theme-dark header .hover\:bg-gray-50:hover {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+        }
+        body.theme-dark header .text-gray-700 {
+            color: #cbd5e1 !important;
+        }
+
+        /* ── Dark mode: gray-300 override (was darkened in light mode) ── */
+        body.theme-dark .text-gray-300 {
+            color: #94a3b8 !important;
+        }
+
+        /* ── Dark mode flash prevention ── */
+        html.theme-dark-pending body.internal-body {
+            background: linear-gradient(135deg, #0e111a 0%, #121422 50%, #0e121d 100%) !important;
+        }
     </style>
 
     {{-- Apply saved appearance BEFORE first paint to avoid flash --}}
@@ -226,9 +490,9 @@
     (function(){
         try {
             var s = localStorage.getItem('novos_appearance');
-            if (!s) return;
-            var a = JSON.parse(s);
+            var a = s ? JSON.parse(s) : {};
             var root = document.documentElement;
+<<<<<<< HEAD
             if (a.primary) {
                 root.style.setProperty('--color-primary', a.primary);
                 var hex = a.primary.replace('#', '');
@@ -252,7 +516,63 @@
             var fontMap = { poppins: "'Poppins'", inter: "'Inter'", outfit: "'Outfit'" };
             if (a.fontFamily) root.style.setProperty('--font-family-base', fontMap[a.fontFamily] || "'Poppins'");
             var dark = a.theme==='dark' || (a.theme==='auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+=======
+            
+            var theme = a.theme || 'light';
+            var dark = theme==='dark' || (theme==='auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+>>>>>>> 7a518956d0be98dfbbcd3383051d8a633bef4a52
             if (dark) document.documentElement.classList.add('theme-dark-pending');
+            
+            // Set defaults or saved colors
+            var primary = a.primary;
+            var secondary = a.secondary;
+            
+            if (dark) {
+                if (!primary || primary === '#1a237e') {
+                    primary = '#0277bd';
+                }
+                if (!secondary || secondary === '#3949ab') {
+                    secondary = '#0288d1';
+                }
+            } else {
+                if (!primary) primary = '#1a237e';
+                if (!secondary) secondary = '#3949ab';
+            }
+            
+            root.style.setProperty('--color-primary', primary);
+            var hex = primary.replace('#', '');
+            if (hex.length === 3) {
+                hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+            }
+            var r = parseInt(hex.substring(0,2), 16);
+            var g = parseInt(hex.substring(2,4), 16);
+            var b = parseInt(hex.substring(4,6), 16);
+            if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                root.style.setProperty('--color-primary-rgb', r + ',' + g + ',' + b);
+            }
+            
+            root.style.setProperty('--color-secondary', secondary);
+            
+            var fsMap = {sm:'13px', md:'15px', lg:'17px', xl:'19px'};
+            var fontSize = a.fontSize || 'md';
+            root.style.setProperty('--font-size-base', fsMap[fontSize] || '15px');
+            
+            var rrMap = {none:'0px', sm:'6px', xl:'12px', full:'9999px'};
+            var rounded = a.rounded || 'xl';
+            root.style.setProperty('--radius-base', rrMap[rounded] || '12px');
+            
+            var buttonStyle = a.buttonStyle || 'flat';
+            root.setAttribute('data-btn-style', buttonStyle);
+            
+            var density = a.density || 'comfortable';
+            root.setAttribute('data-density', density);
+            
+            var fontMap = { poppins: "'Poppins'", inter: "'Inter'", outfit: "'Outfit'" };
+            var fontFamily = a.fontFamily || 'poppins';
+            root.style.setProperty('--font-family-base', fontMap[fontFamily] || "'Poppins'");
+            
+            var transition = a.transition || 'fade';
+            root.setAttribute('data-transition', transition);
         } catch(e){}
     })();
     </script>
@@ -568,6 +888,105 @@
     };
     </script>
 
+    {{-- Tutorial Overlay --}}
+    <div x-data="pageTutorial()" x-init="init()">
+        <template x-teleport="body">
+            <div x-show="active" x-cloak class="fixed inset-0 z-[99999]">
+                <div class="absolute inset-0 bg-black/60" @click="skip()"></div>
+                <div class="relative z-10 h-full flex items-center justify-center">
+                    <template x-if="currentStep">
+                        <div class="max-w-lg w-full mx-4">
+                            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                                <div class="px-6 pt-6 pb-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0"
+                                            :style="'background:'+currentStep.color">
+                                            <i :data-lucide="currentStep.icon" class="w-5 h-5"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-sm font-bold text-gray-900" x-text="currentStep.label"></h3>
+                                            <p class="text-xs text-gray-400" x-text="'Langkah ' + (stepIndex + 1) + ' dari ' + steps.length"></p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 leading-relaxed" x-text="currentStep.tip"></p>
+                                </div>
+                                <div class="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-100">
+                                    <button @click="skip()"
+                                        class="text-xs font-semibold text-gray-500 hover:text-gray-700">
+                                        Lewati Tutorial
+                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button @click="prev()" x-show="stepIndex > 0"
+                                            class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-white rounded-xl transition-colors">
+                                            Sebelumnya
+                                        </button>
+                                        <button @click="next()"
+                                            class="px-5 py-2 text-xs font-bold text-white rounded-xl transition-all active:scale-95 shadow-md"
+                                            :style="'background:'+currentStep.color">
+                                            <span x-text="stepIndex === steps.length - 1 ? 'Selesai' : 'Selanjutnya'"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script>
+    function pageTutorial() {
+        return {
+            active: false,
+            stepIndex: 0,
+            steps: [
+                { target: 'a[href*="dashboard"]', label: 'Dashboard', icon: 'layout-dashboard', color: '#1a237e', tip: 'Dashboard adalah halaman utama yang menampilkan ringkasan statistik bisnis seperti jumlah pesanan baru, pendapatan hari ini, dan grafik tren. Cocok untuk memantau kondisi toko secara cepat.' },
+                { target: 'a[href*="summary"]', label: 'Summary', icon: 'pie-chart', color: '#0288d1', tip: 'Summary menyajikan analisis data lebih mendalam dengan diagram lingkaran, tren pendapatan, dan performa tim. Gunakan filter periode untuk melihat data spesifik.' },
+                { target: 'a[href*="daftar-pesanan"]', label: 'Daftar Pesanan', icon: 'shopping-bag', color: '#e65100', tip: 'Kelola semua pesanan pelanggan di sini. Anda bisa melihat daftar, mencari, memfilter berdasarkan status, dan mengklik nomor pesanan untuk melihat detail lengkap.' },
+                { target: 'a[href*="design"]', label: 'Design', icon: 'pen-tool', color: '#2e7d32', tip: 'Halaman untuk tim Design: upload hasil desain jersey, update status pengerjaan, dan berkomunikasi dengan tim terkait revisi desain.' },
+                { target: 'a[href*="produksi"]', label: 'Produksi', icon: 'scissors', color: '#bf360c', tip: 'Halaman untuk tim Produksi: kelola proses produksi jersey, update progress, dan tambahkan catatan produksi.' },
+                { target: 'a[href*="daily-mental-check"]', label: 'Daily Mental Check', icon: 'heart', color: '#e91e63', tip: 'Isi cek kesehatan mental harian di sini. Pilih mood, energi, dan tingkat stres Anda. Data bersifat rahasia.' },
+                { target: 'a[href*="laporan"]', label: 'Laporan', icon: 'file-text', color: '#37474f', tip: 'Buat dan ekspor laporan bisnis dalam format CSV, Excel, atau PDF. Filter berdasarkan periode dan jenis laporan.' },
+                { target: 'a[href*="kelola-produk"]', label: 'Kelola Produk', icon: 'package', color: '#00695c', tip: 'Atur katalog produk jersey: tambah produk baru, edit harga, upload foto, atur status featured.' },
+                { target: 'a[href*="kategori"]', label: 'Kategori', icon: 'folder-tree', color: '#f57c00', tip: 'Kelola kategori produk untuk mengelompokkan jenis jersey. Kategori akan tampil di katalog publik.' },
+                { target: 'a[href*="kelola-pengguna"]', label: 'Kelola Pengguna', icon: 'users', color: '#4a148c', tip: 'Manajemen akun staf internal: tambah pengguna baru, atur role, edit atau nonaktifkan akun. Hanya untuk Super Admin & Manager.' },
+                { target: 'a[href*="pengaturan"]', label: 'Pengaturan', icon: 'settings', color: '#607d8b', tip: 'Konfigurasi toko (nama, alamat, kontak) dan tampilan panel (tema, warna, font, glassmorphism, transisi). Lihat panduan lengkap di tab Panduan.' },
+            ],
+            get currentStep() {
+                return this.steps[this.stepIndex] || null;
+            },
+            init() {
+                var params = new URLSearchParams(window.location.search);
+                if (params.get('tutorial') === '1') {
+                    this.active = true;
+                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                }
+            },
+            next() {
+                if (this.stepIndex < this.steps.length - 1) {
+                    this.stepIndex++;
+                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                } else {
+                    this.skip();
+                }
+            },
+            prev() {
+                if (this.stepIndex > 0) {
+                    this.stepIndex--;
+                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                }
+            },
+            skip() {
+                this.active = false;
+                this.stepIndex = 0;
+                var url = new URL(window.location);
+                url.searchParams.delete('tutorial');
+                window.history.replaceState({}, '', url);
+            }
+        };
+    }
+    </script>
     @stack('scripts')
 </body>
 
@@ -642,5 +1061,16 @@ function notifDropdown() {
         }
     }
 }
+</script>
+
+{{-- Global Lucide init for pages without explicit createIcons() call --}}
+<script>
+document.addEventListener('alpine:init', function () {
+    if (window.Alpine && window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.Alpine.nextTick(function () {
+            window.lucide.createIcons();
+        });
+    }
+});
 </script>
 </html>

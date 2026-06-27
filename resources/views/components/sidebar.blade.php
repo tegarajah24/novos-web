@@ -54,7 +54,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
             <a href="{{ $menu['url'] }}"
                :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
                class="flex items-center py-3 rounded-xl transition-colors {{ $menu['active'] ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
-                <i data-lucide="{{ $menu['icon'] }}" class="w-5 h-5 shrink-0 {{ $menu['active'] ? 'text-white' : 'text-[#1a237e]' }}"></i>
+                <i data-lucide="{{ $menu['icon'] }}" class="w-5 h-5 shrink-0 {{ $menu['active'] ? 'text-white' : 'text-[#1a237e]' }}" {{ $menu['active'] ? '' : 'style="color:var(--color-primary)"' }}></i>
                 <span x-show="sidebarOpen"
                       @if(!$isSidebarOpen) style="display:none" @endif
                       class="font-medium whitespace-nowrap">
