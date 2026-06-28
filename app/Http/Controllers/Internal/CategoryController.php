@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -19,20 +21,26 @@ class CategoryController extends Controller
                 'products_count' => $cat->products_count,
             ]);
 
-        if (request()->wantsJson()) {
-            return response()->json($categories);
-        }
-
         return view('internal.kelola-kategori', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function getData()
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-        ]);
+        $categories = Category::withCount('products')
+            ->orderBy('name')
+            ->get()
+            ->map(fn($cat) => [
+                'id'             => $cat->id,
+                'name'           => $cat->name,
+                'products_count' => $cat->products_count,
+            ]);
 
-        $category = Category::create($data);
+        return response()->json($categories);
+    }
+
+    public function store(StoreCategoryRequest $request)
+    {
+        $category = Category::create($request->validated());
 
         return response()->json([
             'success'  => true,
@@ -41,13 +49,9 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-        ]);
-
-        $category->update($data);
+        $category->update($request->validated());
 
         return response()->json([
             'success'  => true,

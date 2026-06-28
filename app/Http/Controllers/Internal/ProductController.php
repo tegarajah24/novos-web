@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -44,19 +46,9 @@ class ProductController extends Controller
         return view('internal.kelola-produk', compact('categories', 'products'));
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $data = $request->validate([
-            'name'            => 'required|string|max:255',
-            'category_id'     => 'required|exists:categories,id',
-            'price'           => 'required|numeric|min:0',
-            'description'     => 'nullable|string|max:5000',
-            'image'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'kerah'           => 'nullable|string|max:100',
-            'bahan'           => 'nullable|string|max:100',
-            'jenis_potongan'  => 'nullable|string|max:100',
-            'lengan_jahitan'  => 'nullable|string|max:100',
-        ]);
+        $data = $request->validated();
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
@@ -86,19 +78,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $data = $request->validate([
-            'name'            => 'required|string|max:255',
-            'category_id'     => 'required|exists:categories,id',
-            'price'           => 'required|numeric|min:0',
-            'description'     => 'nullable|string|max:5000',
-            'image'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'kerah'           => 'nullable|string|max:100',
-            'bahan'           => 'nullable|string|max:100',
-            'jenis_potongan'  => 'nullable|string|max:100',
-            'lengan_jahitan'  => 'nullable|string|max:100',
-        ]);
+        $data = $request->validated();
 
         if ($request->hasFile('image')) {
             if ($product->image) {

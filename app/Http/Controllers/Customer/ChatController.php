@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCustomerChatRequest;
 use App\Models\Chat;
-use App\Models\ChatMessage;
-use App\Models\Notification;
-use App\Services\ImageService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
@@ -71,13 +68,9 @@ class ChatController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function store(Request $request)
+    public function store(StoreCustomerChatRequest $request)
     {
-        $data = $request->validate([
-            'chat_id' => 'nullable|exists:chats,id',
-            'message' => 'nullable|string|max:2000',
-            'file'    => 'nullable|file|max:20480',
-        ]);
+        $data = $request->validated();
 
         if (!$data['message'] && !$request->hasFile('file')) {
             return response()->json(['message' => 'Pesan atau file harus diisi'], 422);

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UploadPosterRequest;
+use App\Http\Requests\UpdateRotationRequest;
+use App\Http\Requests\StoreDailyCheckRequest;
+use App\Http\Requests\StoreMicroBreakRequest;
 use App\Models\DailyMentalCheck;
 use App\Models\MentalHealthPoster;
 use App\Models\MicroBreak;
@@ -68,12 +72,8 @@ class DailyMentalCheckController extends Controller
         ]);
     }
 
-    public function uploadPoster(Request $request)
+    public function uploadPoster(UploadPosterRequest $request)
     {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ]);
-
         $path = app(ImageService::class)->compressAndStore(
             $request->file('image'), 'posters', quality: 70
         );
@@ -104,12 +104,8 @@ class DailyMentalCheckController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function updateRotation(Request $request)
+    public function updateRotation(UpdateRotationRequest $request)
     {
-        $request->validate([
-            'rotation' => 'required|in:daily,weekly',
-        ]);
-
         PosterSetting::setRotation($request->rotation);
 
         // Re-resolve poster URL after rotation change
@@ -140,14 +136,9 @@ class DailyMentalCheckController extends Controller
         ]);
     }
 
-    public function storeDailyCheck(Request $request)
+    public function storeDailyCheck(StoreDailyCheckRequest $request)
     {
-        $validated = $request->validate([
-            'answers' => 'required|array|size:5',
-            'answers.*' => 'required|integer|in:1,2,3',
-            'need_help' => 'required|in:ya,tidak',
-            'help_note' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
         $user = $request->user();
         $today = Carbon::today();
@@ -177,18 +168,9 @@ class DailyMentalCheckController extends Controller
         return response()->json(['success' => true, 'data' => $record]);
     }
 
-    public function storeMicroBreak(Request $request)
+    public function storeMicroBreak(StoreMicroBreakRequest $request)
     {
-        $validated = $request->validate([
-            'checklist' => 'required|array|size:8',
-            'checklist.*' => 'required|integer|in:0,1',
-            'eval' => 'required|array|size:3',
-            'eval.stres' => 'required|in:lebih_baik,sama,lebih_buruk',
-            'eval.fokus' => 'required|in:lebih_baik,sama,lebih_buruk',
-            'eval.kenyamanan' => 'required|in:lebih_baik,sama,lebih_buruk',
-            'catatan_membantu' => 'nullable|string|max:500',
-            'catatan_kendala' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
         $user = $request->user();
         $today = Carbon::today();

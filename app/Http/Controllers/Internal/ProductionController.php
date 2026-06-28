@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateProductionStatusRequest;
 use App\Models\Notification;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -72,13 +73,9 @@ class ProductionController extends Controller
         return view('internal.produksi', compact('orders'));
     }
 
-    public function updateStatus(Request $request, Order $order)
+    public function updateStatus(UpdateProductionStatusRequest $request, Order $order)
     {
-        $data = $request->validate([
-            'action'       => 'required|in:proses_printing,selesai_printing,proses_jahit,selesai_jahit,proses_qc,selesai_qc,revisi_qc',
-            'notes'        => 'nullable|string|max:2000',
-            'target_stage' => 'nullable|required_if:action,revisi_qc|in:jahit,printing',
-        ]);
+        $data = $request->validated();
 
         $user = auth()->user();
         $oldStatus = $order->status;

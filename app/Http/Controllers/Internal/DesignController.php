@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateDesignStatusRequest;
 use App\Models\Notification;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -52,13 +53,9 @@ class DesignController extends Controller
         return view('internal.design', compact('orders'));
     }
 
-    public function updateStatus(Request $request, Order $order)
+    public function updateStatus(UpdateDesignStatusRequest $request, Order $order)
     {
-        $data = $request->validate([
-            'status' => 'required|in:siap_cetak',
-            'files'  => 'nullable|array',
-            'files.*' => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
-        ]);
+        $data = $request->validated();
 
         $user = auth()->user();
 
@@ -80,8 +77,9 @@ class DesignController extends Controller
             $order->update(['status' => $data['status']]);
 
             if (!empty($uploadedFiles) && $order->designRequest) {
+                $existingFiles = $order->designRequest->design_files ?? [];
                 $order->designRequest->update([
-                    'design_files' => $uploadedFiles,
+                    'design_files' => array_merge($existingFiles, $uploadedFiles),
                 ]);
             }
 

@@ -3,23 +3,16 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAddressRequest;
+use App\Http\Requests\UpdateAddressRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Models\CustomerAddress;
-use Illuminate\Http\Request;
 
 class AddressController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreAddressRequest $request)
     {
-        $data = $request->validate([
-            'first_name'     => 'required|string|max:255',
-            'last_name'      => 'nullable|string|max:255',
-            'province'       => 'required|string|max:255',
-            'city'           => 'required|string|max:255',
-            'district'       => 'required|string|max:255',
-            'detail_address' => 'required|string|max:2000',
-            'postal_code'    => 'required|string|max:10',
-            'address_type'   => 'required|in:rumah,kantor',
-        ]);
+        $data = $request->validated();
 
         $address = CustomerAddress::create([
             'user_id'        => auth()->id(),
@@ -41,23 +34,13 @@ class AddressController extends Controller
         ]);
     }
 
-    public function update(Request $request, CustomerAddress $address)
+    public function update(UpdateAddressRequest $request, CustomerAddress $address)
     {
         if ($address->user_id !== auth()->id()) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        $data = $request->validate([
-            'first_name'     => 'required|string|max:255',
-            'last_name'      => 'nullable|string|max:255',
-            'province'       => 'required|string|max:255',
-            'city'           => 'required|string|max:255',
-            'district'       => 'required|string|max:255',
-            'detail_address' => 'required|string|max:2000',
-            'postal_code'    => 'required|string|max:10',
-            'address_type'   => 'required|in:rumah,kantor',
-            'is_primary'     => 'nullable|boolean',
-        ]);
+        $data = $request->validated();
 
         if (!empty($data['is_primary'])) {
             auth()->user()->addresses()->update(['is_primary' => false]);
@@ -86,16 +69,11 @@ class AddressController extends Controller
         ]);
     }
 
-    public function updateProfile(Request $request)
+    public function updateProfile(UpdateProfileRequest $request)
     {
         $user = auth()->user();
 
-        $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'fullname' => 'nullable|string|max:255',
-            'email'    => 'required|email|unique:users,email,' . $user->id,
-            'phone'    => 'required|string|max:20',
-        ]);
+        $data = $request->validated();
 
         $user->fill($data);
         if ($user->isDirty('email')) {

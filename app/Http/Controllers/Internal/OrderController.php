@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AssignOrderRequest;
+use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
 use App\Models\User;
@@ -344,12 +346,8 @@ class OrderController extends Controller
         ]);
     }
 
-    public function assign(Request $request, Order $order)
+    public function assign(AssignOrderRequest $request, Order $order)
     {
-        $request->validate([
-            'assignee_id' => 'nullable|exists:users,id',
-        ]);
-
         $order->update([
             'assignee_id' => $request->assignee_id,
         ]);
@@ -445,12 +443,9 @@ class OrderController extends Controller
         };
     }
 
-    public function updateStatus(Request $request, Order $order)
+    public function updateStatus(UpdateOrderStatusRequest $request, Order $order)
     {
-        $data = $request->validate([
-            'status' => 'required|string',
-            'notes'  => 'nullable|string|max:2000',
-        ]);
+        $data = $request->validated();
 
         $user = auth()->user();
         $newDbStatus = $this->toDbStatus($data['status']);
@@ -563,15 +558,17 @@ class OrderController extends Controller
         $user = auth()->user();
         $allowed = $this->getAllowedTransitions($order->status, $user->role->name ?? '');
 
+        $uiStatusMap = [
+            'menunggu_validasi' => 'menunggu_verifikasi',
+            'dikonfirmasi'      => 'menunggu_acc',
+            'di_design'         => 'tahap_desain',
+            'siap_cetak'        => 'tahap_produksi',
+        ];
+
         $result = [];
         foreach ($allowed as $dbStatus) {
             $result[] = [
-                'value' => array_search($dbStatus, [
-                    'menunggu_validasi' => 'menunggu_verifikasi',
-                    'dikonfirmasi'      => 'menunggu_acc',
-                    'di_design'         => 'tahap_desain',
-                    'siap_cetak'        => 'tahap_produksi',
-                ]) ?: $dbStatus,
+                'value' => $uiStatusMap[$dbStatus] ?? $dbStatus,
                 'label' => $this->statusLabel($dbStatus),
                 'db'    => $dbStatus,
             ];

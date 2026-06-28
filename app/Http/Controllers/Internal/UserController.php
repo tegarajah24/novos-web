@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -37,15 +39,9 @@ class UserController extends Controller
         return view('internal.kelola-pengguna', compact('users'));
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'role'     => 'required|string|in:Super Admin,Manager,Admin,Design,Produksi',
-            'avatar'   => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
-        ]);
+        $data = $request->validated();
 
         $role = Role::where('name', $data['role'])->firstOrFail();
 
@@ -98,15 +94,9 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:6|confirmed',
-            'role'     => 'required|string|in:Super Admin,Manager,Admin,Design,Produksi',
-            'avatar'   => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
-        ]);
+        $data = $request->validated();
 
         $role = Role::where('name', $data['role'])->firstOrFail();
 

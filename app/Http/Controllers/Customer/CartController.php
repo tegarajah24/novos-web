@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCartRequest;
+use App\Http\Requests\StoreDesignCartRequest;
+use App\Http\Requests\UpdateCartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
@@ -40,14 +42,8 @@ class CartController extends Controller
         return response()->json(['count' => $count]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreCartRequest $request): JsonResponse
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'size' => 'required|string',
-            'qty' => 'required|integer|min:1',
-        ]);
-
         $product = Product::findOrFail($request->product_id);
 
         $cart = Cart::updateOrCreate(
@@ -72,12 +68,8 @@ class CartController extends Controller
         ]);
     }
 
-    public function storeDesign(Request $request): JsonResponse
+    public function storeDesign(StoreDesignCartRequest $request): JsonResponse
     {
-        $request->validate([
-            'team_name' => 'nullable|string',
-            'design_data' => 'required|array',
-        ]);
 
         $designData = $request->design_data;
         $totalQty = collect($designData['ukuran'] ?? [])->sum(fn($v) => (int) $v);
@@ -103,15 +95,11 @@ class CartController extends Controller
         ]);
     }
 
-    public function update(Request $request, Cart $cart): JsonResponse
+    public function update(UpdateCartRequest $request, Cart $cart): JsonResponse
     {
         if ($cart->user_id !== auth()->id()) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
-
-        $request->validate([
-            'qty' => 'required|integer|min:1',
-        ]);
 
         $cart->update(['qty' => $request->qty]);
 
