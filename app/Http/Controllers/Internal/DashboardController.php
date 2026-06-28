@@ -20,10 +20,11 @@ class DashboardController extends Controller
             ->count();
         $totalTrend = $totalOrders - $totalLastWeek;
 
-        $userRole = auth()->user()->role->name;
-        $isSAOManager = in_array($userRole, ['Super Admin', 'Manager']);
-        $isDesign     = $userRole === 'Design';
-        $isProduction = $userRole === 'Produksi';
+        $user = auth()->user();
+        $userRole = $user->role->name;
+        $isSAOManager = $user->isAdmin();
+        $isDesign     = $user->isDesign();
+        $isProduction = $user->isProduction();
 
         $pendingOrders = Order::where('status', 'menunggu_validasi')->count();
         $pendingLastWeek = Order::where('status', 'menunggu_validasi')
@@ -216,7 +217,7 @@ class DashboardController extends Controller
         ];
 
         $employees = User::with('role')
-            ->whereHas('role', fn($q) => $q->whereIn('name', ['Admin', 'Design', 'Produksi', 'Manager']))
+            ->whereHas('role', fn($q) => $q->whereNot('name', 'Customer'))
             ->get()
             ->map(function ($user) {
                 $orderCount = $user->orders()->count();

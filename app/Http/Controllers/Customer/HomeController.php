@@ -34,7 +34,7 @@ class HomeController extends Controller
     public function tentang()
     {
         $tim = User::with('role')
-            ->whereHas('role', fn($q) => $q->whereIn('name', ['Super Admin', 'Manager', 'Admin', 'Design', 'Produksi']))
+            ->whereHas('role', fn($q) => $q->whereIn('name', Role::internalNames()))
             ->orderBy('created_at')
             ->get();
         return view('customer.tentang-kami', compact('tim'));

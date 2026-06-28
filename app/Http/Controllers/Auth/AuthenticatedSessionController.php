@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,16 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $role = auth()->user()->role?->name;
+        $user = auth()->user();
 
-        return match($role) {
-            'Super Admin' => redirect()->intended(route('staf.dashboard')),
-            'Manager'     => redirect()->intended(route('staf.dashboard')),
-            'Admin'       => redirect()->intended(route('staf.dashboard')),
-            'Design'      => redirect()->intended(route('staf.dashboard')),
-            'Produksi'    => redirect()->intended(route('staf.dashboard')),
-            default       => redirect()->intended(route('beranda')),
-        };
+        return $user->isInternal()
+            ? redirect()->intended(route('staf.dashboard'))
+            : redirect()->intended(route('beranda'));
     }
 
     /**

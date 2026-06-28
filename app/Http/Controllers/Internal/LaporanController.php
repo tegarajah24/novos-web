@@ -242,7 +242,7 @@ class LaporanController extends Controller
             ->join('roles', 'users.role_id', '=', 'roles.id')
             ->where('order_status_histories.status', 'selesai')
             ->whereBetween('order_status_histories.created_at', [$startDate, $endDate])
-            ->whereIn('roles.name', ['Admin', 'Manager', 'Super Admin'])
+            ->whereIn('roles.name', Role::adminNames())
             ->select('users.name as admin_name', 'roles.name as role_name', DB::raw('COUNT(*) as jumlah'))
             ->groupBy('users.id', 'users.name', 'roles.name')
             ->orderByDesc('jumlah')

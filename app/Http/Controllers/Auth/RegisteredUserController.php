@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $customerRole = Role::where('name', 'Customer')->first();
+        $customerRole = Role::where('name', Role::customerName())->first();
 
         $user = User::create([
             'name'     => $request->name,

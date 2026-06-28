@@ -127,7 +127,7 @@ class ChatController extends Controller
             "Pesan baru dari customer <strong>{$user->name}</strong>" . ($chat->order ? " untuk <strong>{$chat->order->order_number}</strong>" : '') . ($data['message'] ? ": {$data['message']}" : ''),
             [
                 'initials' => collect(explode(' ', $user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                'role' => 'Customer',
+                'role' => auth()->user()->role->name,
                 'role_initial' => 'C',
                 'role_color' => '#d53f8c',
             ]

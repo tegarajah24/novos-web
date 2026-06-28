@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('role')
-            ->whereHas('role', fn($q) => $q->whereIn('name', ['Super Admin', 'Manager', 'Admin', 'Design', 'Produksi']))
+            ->whereHas('role', fn($q) => $q->whereIn('name', Role::internalNames()))
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($user) {

@@ -12,6 +12,7 @@ use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Notification;
+use App\Models\Role;
 
 class PaymentController extends Controller
 {
@@ -220,7 +221,7 @@ class PaymentController extends Controller
                     "Pembayaran untuk <strong>{$order->order_number}</strong> telah berhasil dikonfirmasi.",
                     [
                         'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                        'role' => 'Customer',
+                        'role' => Role::customerName(),
                         'role_initial' => 'C',
                         'role_color' => '#16a34a',
                         'order_number' => $order->order_number,
@@ -266,7 +267,7 @@ class PaymentController extends Controller
                     "Pembayaran untuk <strong>{$order->order_number}</strong> {$status}.",
                     [
                         'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                        'role' => 'Customer',
+                        'role' => Role::customerName(),
                         'role_initial' => 'C',
                         'role_color' => '#dc2626',
                         'order_number' => $order->order_number,

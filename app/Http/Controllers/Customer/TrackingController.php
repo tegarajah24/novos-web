@@ -167,7 +167,7 @@ class TrackingController extends Controller
             "Customer <strong>{$currentUser->name}</strong> menyetujui desain untuk <strong>{$order->order_number}</strong> — status berubah ke <strong>{$nextStatus}</strong>.",
             [
                 'initials' => collect(explode(' ', $currentUser->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                'role' => 'Customer',
+                'role' => auth()->user()->role->name,
                 'role_initial' => 'C',
                 'role_color' => '#6b46c1',
                 'order_number' => $order->order_number,
@@ -210,7 +210,7 @@ class TrackingController extends Controller
             "Customer <strong>{$currentUser->name}</strong> meminta revisi untuk <strong>{$order->order_number}</strong>: {$request->note}",
             [
                 'initials' => collect(explode(' ', $currentUser->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                'role' => 'Customer',
+                'role' => auth()->user()->role->name,
                 'role_initial' => 'C',
                 'role_color' => '#d97706',
                 'order_number' => $order->order_number,

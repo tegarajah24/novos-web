@@ -127,7 +127,7 @@ class OrderController extends Controller
             "Pesanan baru dari <strong>{$order->user->name}</strong> — <strong>{$order->order_number}</strong>",
             [
                 'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                'role' => 'Customer',
+                'role' => $order->user->role->name,
                 'role_initial' => 'C',
                 'role_color' => '#e53e3e',
                 'order_number' => $order->order_number,
@@ -282,7 +282,7 @@ class OrderController extends Controller
             "Pesanan baru dari <strong>{$order->user->name}</strong> — <strong>{$order->order_number}</strong>",
             [
                 'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                'role' => 'Customer',
+                'role' => auth()->user()->role->name,
                 'role_initial' => 'C',
                 'role_color' => '#e53e3e',
                 'order_number' => $order->order_number,
@@ -303,7 +303,7 @@ class OrderController extends Controller
             'customer_id' => $order->user_id,
         ]);
 
-        $admin = User::whereHas('role', fn($q) => $q->whereIn('name', ['Super Admin', 'Manager', 'Admin']))
+        $admin = User::whereHas('role', fn($q) => $q->whereIn('name', Role::adminNames()))
             ->first();
 
         ChatMessage::create([

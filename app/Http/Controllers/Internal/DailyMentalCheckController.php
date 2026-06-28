@@ -253,7 +253,7 @@ class DailyMentalCheckController extends Controller
         $today = Carbon::today();
         $weekAgo = $today->copy()->subDays(6);
 
-        $staff = User::whereHas('role', fn($q) => $q->whereIn('name', ['Super Admin', 'Manager', 'Admin', 'Design', 'Produksi']))
+        $staff = User::whereHas('role', fn($q) => $q->whereIn('name', Role::internalNames()))
             ->with('role')
             ->get();
 
