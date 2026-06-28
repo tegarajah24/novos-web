@@ -813,23 +813,25 @@
             </div>
         </div>
     </div>
+    <template x-teleport="body">
     {{-- ========== MODAL: KELOLA POSTER (Super Admin only) ========== --}}
     <div x-show="managePosterOpen && userRole === 'Super Admin'" x-cloak
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        @click="managePosterOpen = false"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" @click.stop>
-            <div class="flex items-center justify-between mb-5">
-                <h3 class="font-bold text-gray-900 text-lg">Kelola Poster</h3>
-                <button @click="managePosterOpen = false" class="p-1 text-gray-400 hover:text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
+        class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+
+            <div x-show="managePosterOpen && userRole === 'Super Admin'" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" aria-hidden="true"></div>
+
+            <div x-show="managePosterOpen && userRole === 'Super Admin'" x-transition.scale.origin.bottom class="inline-block w-full max-w-5xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
+
+                {{-- Header Modal --}}
+                <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900">Kelola Poster</h3>
+                    <button @click="managePosterOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
 
             {{-- Rotation Setting --}}
             <div class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
@@ -897,9 +899,11 @@
                         </div>
                     </template>
                 </div>
+                </div>
             </div>
         </div>
     </div>
+    </template>
 </div>
 
 <script>
