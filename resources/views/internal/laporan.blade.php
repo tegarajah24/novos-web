@@ -330,7 +330,7 @@ function laporanApp() {
                     this.updateTimestamp();
                     this.$nextTick(() => {
                         if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                            lucide.createIcons();
+                            lucide.createIcons({ icons: window.lucide.icons });
                         }
                     });
                 });

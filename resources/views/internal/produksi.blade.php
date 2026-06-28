@@ -438,7 +438,7 @@ function produksiApp() {
         init() {
             this.$watch('activeTab', value => {
                 this.$nextTick(() => {
-                    if (window.lucide) window.lucide.createIcons();
+                    if (window.lucide) window.lucide.createIcons({ icons: window.lucide.icons });
                 });
             });
         },
@@ -473,7 +473,7 @@ function produksiApp() {
             this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, perluRevisi: false };
             this.isDetailOpen = true;
             setTimeout(() => {
-                if (window.lucide) window.lucide.createIcons();
+                if (window.lucide) window.lucide.createIcons({ icons: window.lucide.icons });
             }, 50);
         },
 

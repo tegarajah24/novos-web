@@ -520,7 +520,7 @@ function kelolaProdukApp() {
         renderIcons() {
             this.$nextTick(() => {
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                    window.lucide.createIcons();
+                    window.lucide.createIcons({ icons: window.lucide.icons });
                 }
             });
         }

@@ -692,7 +692,7 @@ function settingApp() {
             }
 
             this.applyAll();
-            this.$nextTick(() => lucide.createIcons());
+            this.$nextTick(() => lucide.createIcons({ icons: window.lucide.icons }));
             const mq = window.matchMedia('(prefers-color-scheme: dark)');
             mq.addEventListener('change', () => {
                 if (this.appearance.theme === 'auto') {

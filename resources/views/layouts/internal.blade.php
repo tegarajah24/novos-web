@@ -958,13 +958,13 @@
                 var params = new URLSearchParams(window.location.search);
                 if (params.get('tutorial') === '1') {
                     this.active = true;
-                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                    this.$nextTick(() => { try { lucide.createIcons({ icons: window.lucide.icons }); } catch(e) {} });
                 }
             },
             next() {
                 if (this.stepIndex < this.steps.length - 1) {
                     this.stepIndex++;
-                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                    this.$nextTick(() => { try { lucide.createIcons({ icons: window.lucide.icons }); } catch(e) {} });
                 } else {
                     this.skip();
                 }
@@ -972,7 +972,7 @@
             prev() {
                 if (this.stepIndex > 0) {
                     this.stepIndex--;
-                    this.$nextTick(() => { try { lucide.createIcons(); } catch(e) {} });
+                    this.$nextTick(() => { try { lucide.createIcons({ icons: window.lucide.icons }); } catch(e) {} });
                 }
             },
             skip() {
@@ -1066,7 +1066,7 @@ function notifDropdown() {
 document.addEventListener('alpine:init', function () {
     if (window.Alpine && window.lucide && typeof window.lucide.createIcons === 'function') {
         window.Alpine.nextTick(function () {
-            window.lucide.createIcons();
+            window.lucide.createIcons({ icons: window.lucide.icons });
         });
     }
 });

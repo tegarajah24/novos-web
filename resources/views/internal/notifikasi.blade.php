@@ -146,7 +146,7 @@ function notifPage() {
                 this.unreadCount = data.unread_count;
                 this.updateTabCounts();
                 this.$nextTick(() => {
-                    if (window.lucide) lucide.createIcons();
+                    if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
                 });
             } catch (e) {}
         },

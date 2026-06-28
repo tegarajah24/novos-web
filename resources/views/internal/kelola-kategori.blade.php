@@ -93,7 +93,7 @@ function kategoriApp() {
             } catch (e) {
                 Notify.error('Gagal memuat data kategori.');
             }
-            this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+            this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
         },
 
         openModal(cat) {
@@ -105,7 +105,7 @@ function kategoriApp() {
                 this.name = '';
             }
             this.modalOpen = true;
-            this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+            this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
         },
 
         async simpan() {

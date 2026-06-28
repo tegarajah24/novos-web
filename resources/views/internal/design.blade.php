@@ -265,7 +265,7 @@ function designApp() {
             // Re-initialize Lucide icons when modal opens
             setTimeout(() => { 
                 if(window.lucide) {
-                    window.lucide.createIcons(); 
+                    window.lucide.createIcons({ icons: window.lucide.icons }); 
                 }
             }, 50);
         },
@@ -283,7 +283,7 @@ function designApp() {
             e.target.value = ''; // reset input
             
             // Re-initialize Lucide for newly added file icons
-            setTimeout(() => { if(window.lucide) window.lucide.createIcons(); }, 50);
+            setTimeout(() => { if(window.lucide) window.lucide.createIcons({ icons: window.lucide.icons }); }, 50);
         },
 
         removeFile(index) {
