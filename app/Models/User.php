@@ -22,6 +22,31 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function isInternal(): bool
+    {
+        return $this->role && $this->role->name !== 'Customer';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role && in_array($this->role->name, Role::adminNames());
+    }
+
+    public function isDesign(): bool
+    {
+        return $this->role?->name === 'Design';
+    }
+
+    public function isProduction(): bool
+    {
+        return $this->role?->name === 'Produksi';
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->role?->name === 'Customer';
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
