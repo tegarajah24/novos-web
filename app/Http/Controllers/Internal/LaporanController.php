@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Role;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
