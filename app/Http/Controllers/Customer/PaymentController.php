@@ -289,6 +289,21 @@ class PaymentController extends Controller
             $payment = Payment::where('midtrans_order_id', $midtransOrderId)->first();
 
             if ($payment && $payment->status !== 'success') {
+                // Verifikasi status ke Midtrans
+                try {
+                    $midtransService = app(MidtransService::class);
+                    $transactionStatus = $midtransService->checkTransactionStatus($midtransOrderId);
+                    $midtransStatus = $transactionStatus->transaction_status ?? null;
+
+                    if ($midtransStatus !== 'settlement' && $midtransStatus !== 'capture') {
+                        return redirect()->route('tracking', ['q' => $payment->order->order_number])
+                            ->with('error', 'Pembayaran belum dikonfirmasi oleh sistem.');
+                    }
+                } catch (\Exception $e) {
+                    return redirect()->route('tracking', ['q' => $payment->order->order_number])
+                        ->with('error', 'Gagal memverifikasi pembayaran. Silakan coba lagi.');
+                }
+
                 $payment->update([
                     'status' => 'success',
                     'paid_at' => now(),
