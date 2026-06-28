@@ -46,7 +46,7 @@ class DailyMentalCheckController extends Controller
             $poster = $query->latest()->first();
         }
 
-        return $poster?->url ?? asset('images/poster-daily-mental-check.jpg');
+        return $poster?->url ?? '';
     }
 
     public function listPosters()

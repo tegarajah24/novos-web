@@ -25,6 +25,7 @@
         {{-- Row 1: Poster + Pesan Motivasi --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {{-- Poster Banner --}}
+            <template x-if="posterUrl">
             <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-indigo-200/60 min-h-[160px] relative">
                 <img :src="posterUrl" alt="Poster Kesehatan Mental" loading="lazy" class="w-full h-full object-cover">
                 <button x-show="userRole === 'Super Admin'" @click="toggleManagePosters()"
@@ -33,6 +34,19 @@
                     Kelola Poster
                 </button>
             </div>
+            </template>
+            <template x-if="!posterUrl">
+            <div class="lg:col-span-2 rounded-2xl border border-dashed border-gray-300 min-h-[160px] flex items-center justify-center bg-gray-50/50 relative">
+                <div class="text-center">
+                    <i data-lucide="image" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
+                    <p class="text-sm text-gray-400">Belum ada poster</p>
+                    <button x-show="userRole === 'Super Admin'" @click="toggleManagePosters()"
+                        class="mt-2 px-3 py-1.5 bg-[#1a237e] text-white text-xs font-semibold rounded-lg hover:bg-[#283593] transition-colors inline-flex items-center gap-1.5 cursor-pointer">
+                        Upload Poster
+                    </button>
+                </div>
+            </div>
+            </template>
 
             {{-- Card: Pesan Motivasi Hari Ini --}}
             <div class="bg-white rounded-2xl shadow-sm p-6 flex flex-col">
@@ -910,7 +924,7 @@
 function dailyMentalCheck(config = {}) {
     return {
         userRole: config.role || '',
-        posterUrl: config.posterUrl || '{{ asset('images/poster-daily-mental-check.jpg') }}',
+        posterUrl: config.posterUrl || '',
         activeTab: 0,
         todayFilled: false,
         submitted: false,
@@ -1247,7 +1261,7 @@ function dailyMentalCheck(config = {}) {
                     if (rotData.posters.length > 0) {
                         this.posterUrl = rotData.posters[0].url;
                     } else {
-                        this.posterUrl = '{{ asset('images/poster-daily-mental-check.jpg') }}';
+                        this.posterUrl = '';
                     }
                     Notify.success('Poster berhasil dihapus');
                 }
