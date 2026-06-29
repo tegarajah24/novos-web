@@ -340,6 +340,24 @@
             background-color: rgba(255, 255, 255, 0.04) !important;
         }
 
+        /* ── Panduan Pengguna Dark Mode ── */
+        .panduan-header-bg {
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.06) 0%, rgba(227, 242, 253, 0.8) 100%);
+        }
+        body.theme-dark .panduan-header-bg {
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.35) 0%, rgba(2, 119, 189, 0.15) 100%) !important;
+        }
+        .panduan-section-card {
+            background-color: rgba(249, 250, 251, 0.7);
+        }
+        body.theme-dark .panduan-section-card {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        body.theme-dark .bg-gray-50\/70 {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
         /* ── Shadow Dark Mode ── */
         body.theme-dark .shadow-sm,
         body.theme-dark .shadow {

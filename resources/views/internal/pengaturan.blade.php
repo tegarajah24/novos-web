@@ -320,7 +320,7 @@
     <div x-show="tab==='panduan'" x-transition x-cloak class="space-y-5">
 
         {{-- Header --}}
-        <div class="glass-card rounded-2xl p-7 bg-gradient-to-br from-[#1a237e]/5 to-blue-50">
+        <div class="glass-card rounded-2xl p-7 panduan-header-bg">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 bg-[#1a237e] rounded-2xl flex items-center justify-center shadow-lg shadow-[#1a237e]/20">
                     <i data-lucide="book-open" class="w-7 h-7 text-white"></i>
@@ -346,7 +346,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                 <template x-for="(item, index) in panduanMenu" :key="index">
                     <a @click.prevent="scrollTo('panduan-'+item.id)" href="#panduan-"+item.id
-                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors group">
                         <span class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
                             :style="'background:'+item.color">
                             <span x-text="index+1"></span>
@@ -379,7 +379,7 @@
                 </div>
                 <div class="mt-5 space-y-4">
                     <template x-for="(section, si) in item.sections" :key="si">
-                        <div class="p-4 rounded-xl bg-gray-50/70 border border-gray-100">
+                        <div class="panduan-section-card p-4 rounded-xl border border-gray-100">
                             <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
                                 <span class="w-5 h-5 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0"
                                     :style="'background:'+item.color" x-text="si+1"></span>
@@ -403,7 +403,7 @@
         </template>
 
         {{-- Footer Panduan --}}
-        <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-[#1a237e]/5 to-blue-50 text-center">
+        <div class="glass-card rounded-2xl p-6 panduan-header-bg text-center">
             <i data-lucide="heart" class="w-8 h-8 text-red-400 mx-auto mb-2"></i>
             <p class="text-sm text-gray-600">Terima kasih telah menggunakan Novos Web. <br> Tim Novos selalu siap membantu jika Anda mengalami kendala.</p>
         </div>
