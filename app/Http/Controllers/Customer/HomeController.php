@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Role;
 use App\Models\User;
 
 class HomeController extends Controller
