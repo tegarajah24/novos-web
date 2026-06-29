@@ -2,7 +2,7 @@
 {{-- NAVBAR CUSTOMER --}}
 {{-- ============================================================ --}}
 <div x-data="{ mobileOpen: false, lastScroll: 0, hidden: false }"
-     @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true; mobileOpen = false } else if (y < lastScroll) { hidden = false }; lastScroll = y">
+     @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true } else if (y < lastScroll) { hidden = false }; lastScroll = y">
 <nav :class="hidden ? '-translate-y-full' : 'translate-y-0'"
      class="fixed top-0 left-1/2 -translate-x-1/2 w-full h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
@@ -65,7 +65,7 @@
                 {{-- Wrap with password sidebar state --}}
                 <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-3">
                 {{-- Chat icon --}}
-                <div class="relative">
+                <div class="hidden md:block relative">
                     <a href="{{ route('chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors block relative" title="Chat">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
@@ -505,6 +505,22 @@
     </div>
 </div>
 </div>
+
+@auth
+{{-- Floating chat FAB untuk mobile --}}
+<div class="md:hidden fixed bottom-6 right-6 z-50">
+    <a href="{{ route('chat') }}"
+       class="flex items-center justify-center w-14 h-14 bg-[#1a237e] text-white rounded-full shadow-lg hover:bg-[#283593] transition-all duration-200 active:scale-95 relative"
+       title="Chat">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+        <span x-show="$store.summary.chatUnread > 0"
+              class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm"
+              x-text="$store.summary.chatUnread"></span>
+    </a>
+</div>
+@endauth
 
 <style>
     .nav-link {
