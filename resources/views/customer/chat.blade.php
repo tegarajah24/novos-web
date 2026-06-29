@@ -4,16 +4,16 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-8" x-data="chatApp()">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[calc(100vh-8rem)] flex">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[calc(100vh-8rem)] md:flex">
     {{-- Left Panel: Chat List --}}
-    <div class="w-60 shrink-0 bg-white border-r border-gray-200 flex flex-col">
+    <div x-show="mobileList || window.innerWidth >= 768" class="w-full md:w-60 md:shrink-0 bg-white md:border-r border-gray-200 flex flex-col">
         <div class="p-4 border-b border-gray-100">
             <h2 class="font-bold text-gray-900">Pesan</h2>
         </div>
         <div class="flex-1 overflow-y-auto">
             <template x-for="chat in chats" :key="chat.id">
                 <button
-                    @click="activeChat = chat.id; chat.unread = 0; markRead(chat.id)"
+                    @click="activeChat = chat.id; chat.unread = 0; markRead(chat.id); mobileList = false"
                     :class="activeChat === chat.id ? 'bg-blue-50 border-l-4 border-[#1a237e]' : 'hover:bg-gray-50 border-l-4 border-transparent'"
                     class="w-full text-left p-4 transition-colors border-b border-gray-50"
                 >
@@ -44,7 +44,7 @@
     </div>
 
     {{-- Right Panel: Chat Window --}}
-    <div class="flex-1 flex flex-col bg-gray-50">
+    <div x-show="!mobileList || window.innerWidth >= 768" class="flex-1 flex flex-col bg-gray-50">
         {{-- No chat selected --}}
         <div x-show="!activeChat" class="flex-1 flex items-center justify-center">
             <div class="text-center">
@@ -59,6 +59,9 @@
             <div class="flex-1 flex flex-col min-h-0">
                 {{-- Chat Header --}}
                 <div class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
+                    <button @click="mobileList = true" class="md:hidden p-1.5 -ml-1.5 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors" title="Kembali">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                    </button>
                     <div class="w-10 h-10 rounded-full shrink-0">
                         <template x-if="currentChat.sender_avatar_url">
                             <img :src="currentChat.sender_avatar_url" class="w-10 h-10 rounded-full object-cover" alt="Avatar">
@@ -198,6 +201,7 @@
 function chatApp() {
     return {
         activeChat: null,
+        mobileList: true,
         message: '',
         typing: false,
         sending: false,
