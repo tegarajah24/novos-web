@@ -33,7 +33,6 @@ class ProductController extends Controller
                     'description'    => $product->description ?? '',
                     'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
                     'image_belakang' => null,
-                    'is_featured'    => $product->is_featured ?? false,
                     'kerah'          => $product->kerah,
                     'bahan'          => $product->bahan,
                     'jenis_potongan' => $product->jenis_potongan,
@@ -54,8 +53,6 @@ class ProductController extends Controller
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
-        $data['is_featured'] = $request->boolean('is_featured');
-
         $product = Product::create($data);
 
         return response()->json([
@@ -69,7 +66,6 @@ class ProductController extends Controller
                 'description'    => $product->description ?? '',
                 'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
                 'image_belakang' => null,
-                'is_featured'    => $product->is_featured ?? false,
                 'kerah'          => $product->kerah,
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
@@ -89,8 +85,6 @@ class ProductController extends Controller
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
-        $data['is_featured'] = $request->boolean('is_featured');
-
         $product->update($data);
 
         return response()->json([
@@ -104,7 +98,6 @@ class ProductController extends Controller
                 'description'    => $product->description ?? '',
                 'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
                 'image_belakang' => null,
-                'is_featured'    => $product->is_featured ?? false,
                 'kerah'          => $product->kerah,
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
@@ -124,25 +117,6 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Produk berhasil dihapus',
-        ]);
-    }
-
-    public function toggleFeatured(Product $product)
-    {
-        $newValue = !$product->is_featured;
-
-        if ($newValue) {
-            Product::where('is_featured', true)->update(['is_featured' => false]);
-        }
-
-        $product->update(['is_featured' => $newValue]);
-
-        return response()->json([
-            'success' => true,
-            'is_featured' => $newValue,
-            'message' => $newValue
-                ? "{$product->name} sekarang menjadi produk utama"
-                : "{$product->name} tidak lagi menjadi produk utama",
         ]);
     }
 }

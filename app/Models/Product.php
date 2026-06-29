@@ -16,7 +16,6 @@ class Product extends Model
         'min_qty',
         'production_days',
         'is_active',
-        'is_featured',
         'theme_color',
         'kerah',
         'bahan',
@@ -29,7 +28,6 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'is_active' => 'boolean',
-            'is_featured' => 'boolean',
         ];
     }
 

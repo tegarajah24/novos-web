@@ -48,7 +48,6 @@
                         <th>Nama Jersey</th>
                         <th>Kategori</th>
                         <th>Harga</th>
-                        <th class="text-center">Hero Utama</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -81,14 +80,6 @@
                                 <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-semibold" x-text="getCategoryName(prod.category_id)"></span>
                             </td>
                             <td class="font-semibold text-emerald-600" x-text="formatRupiah(prod.price)"></td>
-                            <td class="text-center">
-                                <label class="cursor-pointer inline-flex items-center">
-                                    <input type="checkbox" class="toggle toggle-primary toggle-sm" 
-                                           :checked="prod.is_featured" 
-                                           @change="toggleFeatured(prod.id)">
-                                </label>
-                                <div x-show="prod.is_featured" class="text-[10px] font-bold text-[#1a237e] mt-1">AKTIF</div>
-                            </td>
                             <td class="text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <button @click="openEditForm(prod)" title="Edit Produk" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
@@ -291,7 +282,6 @@ function kelolaProdukApp() {
                 description: '',
                 imageDepanPreview: null,
                 imageBelakangPreview: null,
-                is_featured: false,
                 kerah: '',
                 bahan: '',
                 jenis_potongan: '',
@@ -329,7 +319,6 @@ function kelolaProdukApp() {
                 description: '',
                 imageDepanPreview: null,
                 imageBelakangPreview: null,
-                is_featured: false,
                 kerah: '',
                 bahan: '',
                 jenis_potongan: '',
@@ -349,7 +338,6 @@ function kelolaProdukApp() {
                 description: product.description,
                 imageDepanPreview: product.image_depan,
                 imageBelakangPreview: product.image_belakang,
-                is_featured: product.is_featured,
                 kerah: product.kerah || '',
                 bahan: product.bahan || '',
                 jenis_potongan: product.jenis_potongan || '',
@@ -392,7 +380,6 @@ function kelolaProdukApp() {
             fd.append('category_id', this.formData.category_id);
             fd.append('price', this.formData.price);
             fd.append('description', this.formData.description || '');
-            fd.append('is_featured', this.formData.is_featured ? '1' : '0');
             fd.append('kerah', this.formData.kerah || '');
             fd.append('bahan', this.formData.bahan || '');
             fd.append('jenis_potongan', this.formData.jenis_potongan || '');
@@ -488,32 +475,6 @@ function kelolaProdukApp() {
                 } catch (e) {
                     Notify.error('Gagal terhubung ke server.');
                 }
-            });
-        },
-
-        toggleFeatured(id) {
-            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-            fetch('{{ url("staf/kelola-produk") }}/' + id + '/featured', {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': csrf,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    this.products.forEach(p => {
-                        p.is_featured = p.id === id ? data.is_featured : false;
-                    });
-
-                    Notify.success(data.message, data.is_featured ? 'Hero Beranda Diperbarui!' : 'Featured Dinonaktifkan');
-                }
-            })
-            .catch(() => {
-                Notify.error('Gagal memperbarui status featured.');
             });
         },
 

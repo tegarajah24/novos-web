@@ -47,7 +47,6 @@
 | production_days | integer, nullable | estimasi hari produksi |
 | is_active | boolean, default true | |
 | theme_color | string, nullable | warna tema |
-| is_featured | boolean, default false | tampilkan di hero beranda |
 | kerah | string, nullable | jenis kerah (contoh: O-NECK V.1) |
 | bahan | string, nullable | bahan jersey (contoh: MILANO PREMIUM) |
 | jenis_potongan | string, nullable | jenis potongan (contoh: REGULER) |
