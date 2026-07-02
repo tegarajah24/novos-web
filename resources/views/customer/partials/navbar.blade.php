@@ -1,8 +1,9 @@
 {{-- ============================================================ --}}
 {{-- NAVBAR CUSTOMER --}}
 {{-- ============================================================ --}}
-<div x-data="{ mobileOpen: false, lastScroll: 0, hidden: false }"
-     @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true } else if (y < lastScroll) { hidden = false }; lastScroll = y">
+<div x-data="{ mobileOpen: false, lastScroll: 0, hidden: false, dropdownActive: false }"
+     @scroll.window="let y = window.scrollY; if (y > lastScroll && y > 80) { hidden = true } else if (y < lastScroll) { hidden = false }; lastScroll = y"
+     @dropdown-active.window="dropdownActive = $event.detail">
 <nav :class="hidden ? '-translate-y-full' : 'translate-y-0'"
      class="fixed top-0 left-1/2 -translate-x-1/2 w-full h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] z-50 transition-transform duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
@@ -63,7 +64,7 @@
         <div class="flex items-center gap-3" x-data="authSidebar()">
             @auth
                 {{-- Wrap with password sidebar state --}}
-                <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-3">
+                <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-0">
                 {{-- Chat icon --}}
                 <div class="hidden md:block relative">
                     <a href="{{ route('chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors block relative" title="Chat">
@@ -75,8 +76,11 @@
                 </div>
 
                 {{-- Notification icon --}}
-                <div class="relative" x-data="notificationDropdown()" @click.away="notifOpen = false">
-                    <button @click="notifOpen = !notifOpen; if(notifOpen) fetchNotifications()" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
+                <div class="relative" x-data="notificationDropdown()" 
+                     @mouseenter="notifOpen = true; fetchNotifications(); $dispatch('dropdown-active', true)" 
+                     @mouseleave="notifOpen = false; $dispatch('dropdown-active', false)"
+                     @click.away="notifOpen = false; $dispatch('dropdown-active', false)">
+                    <button @click="notifOpen = !notifOpen; if(notifOpen) { fetchNotifications(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -127,8 +131,11 @@
                 </div>
 
                 {{-- Cart icon --}}
-                <div class="relative" x-data="cartDropdown()" @click.away="cartOpen = false">
-                    <button @click="cartOpen = !cartOpen; if(cartOpen) fetchCart()" class="cart-icon-btn p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
+                <div class="relative" x-data="cartDropdown()" 
+                     @mouseenter="cartOpen = true; fetchCart(); $dispatch('dropdown-active', true)" 
+                     @mouseleave="cartOpen = false; $dispatch('dropdown-active', false)"
+                     @click.away="cartOpen = false; $dispatch('dropdown-active', false)">
+                    <button @click="cartOpen = !cartOpen; if(cartOpen) { fetchCart(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="cart-icon-btn p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -213,9 +220,11 @@
                 </div>
 
                 {{-- User dropdown --}}
-                <div class="relative" x-data="{ userOpen: false }"
-                     @click.away="userOpen = false">
-                    <button @click="userOpen = !userOpen"
+                <div class="relative ml-2" x-data="{ userOpen: false }"
+                     @mouseenter="userOpen = true; $dispatch('dropdown-active', true)"
+                     @mouseleave="userOpen = false; $dispatch('dropdown-active', false)"
+                     @click.away="userOpen = false; $dispatch('dropdown-active', false)">
+                    <button @click="userOpen = !userOpen; if(userOpen) { $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }"
                         class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                         @if(Auth::user()->avatar)
                             <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="w-7 h-7 rounded-full object-cover shrink-0">
@@ -473,6 +482,17 @@
     </div>
 </nav>
 
+{{-- Backdrop overlay for dropdowns --}}
+<div x-show="dropdownActive" 
+     x-cloak
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     class="fixed inset-0 bg-black/25 z-40 transition-opacity pointer-events-none"></div>
+
 {{-- Mobile menu dropdown --}}
 <div x-show="mobileOpen" x-cloak
      x-transition:enter="transition ease-out duration-200"
@@ -661,6 +681,7 @@
         return {
             cartOpen: false,
             cartItems: [],
+            hoverTimer: null,
 
             async fetchCart() {
                 try {
@@ -713,6 +734,7 @@
         return {
             notifOpen: false,
             notifications: [],
+            hoverTimer: null,
 
             async fetchNotifications() {
                 try {
