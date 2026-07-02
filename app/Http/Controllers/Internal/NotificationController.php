@@ -7,23 +7,6 @@ use App\Models\Notification;
 
 class NotificationController extends Controller
 {
-    public function index()
-    {
-        $notifications = Notification::where('user_id', auth()->id())
-            ->latest()
-            ->get()
-            ->map(fn($n) => $this->formatNotification($n));
-
-        $unreadCount = Notification::where('user_id', auth()->id())
-            ->where('is_read', false)
-            ->count();
-
-        return response()->json([
-            'notifications' => $notifications,
-            'unread_count' => $unreadCount,
-        ]);
-    }
-
     public function preview()
     {
         $notifications = Notification::where('user_id', auth()->id())
