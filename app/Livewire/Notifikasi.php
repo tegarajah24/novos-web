@@ -1,56 +1,59 @@
 <?php
 
-namespace App\Http\Controllers\Internal;
+namespace App\Livewire;
 
-use App\Http\Controllers\Controller;
+use Livewire\Component;
 use App\Models\Notification;
 
-class NotificationController extends Controller
+class Notifikasi extends Component
 {
-    public function index()
+    public $activeTab = 'all';
+    public $notifications = [];
+    public $unreadCount = 0;
+
+    public function mount()
     {
-        $notifications = Notification::where('user_id', auth()->id())
-            ->latest()
-            ->get()
-            ->map(fn($n) => $this->formatNotification($n));
-
-        $unreadCount = Notification::where('user_id', auth()->id())
-            ->where('is_read', false)
-            ->count();
-
-        return response()->json([
-            'notifications' => $notifications,
-            'unread_count' => $unreadCount,
-        ]);
+        $this->loadNotifications();
     }
 
-    public function preview()
+    public function loadNotifications()
     {
-        $notifications = Notification::where('user_id', auth()->id())
+        $notifs = Notification::where('user_id', auth()->id())
             ->latest()
-            ->take(5)
             ->get()
-            ->map(fn($n) => $this->formatNotification($n));
+            ->map(fn($n) => $this->formatNotification($n))
+            ->toArray();
 
-        $unreadCount = Notification::where('user_id', auth()->id())
+        $this->notifications = $notifs;
+        $this->unreadCount = Notification::where('user_id', auth()->id())
             ->where('is_read', false)
             ->count();
-
-        return response()->json([
-            'notifications' => $notifications,
-            'unread_count' => $unreadCount,
-        ]);
     }
 
-    public function markRead(Notification $notification)
+    public function getFilteredNotificationsProperty()
     {
-        if ($notification->user_id !== auth()->id()) {
-            abort(403);
+        if ($this->activeTab === 'unread') {
+            return array_filter($this->notifications, fn($n) => !$n['read']);
         }
+        return $this->notifications;
+    }
 
-        $notification->update(['is_read' => true]);
+    public function getTabsProperty()
+    {
+        $unreadTabCount = count(array_filter($this->notifications, fn($n) => !$n['read']));
+        return [
+            ['key' => 'all', 'label' => 'Semua', 'count' => 0],
+            ['key' => 'unread', 'label' => 'Belum Dibaca', 'count' => $unreadTabCount],
+        ];
+    }
 
-        return response()->json(['success' => true]);
+    public function markRead($id)
+    {
+        $notif = Notification::findOrFail($id);
+        if ($notif->user_id !== auth()->id()) return;
+
+        $notif->update(['is_read' => true]);
+        $this->loadNotifications();
     }
 
     public function markAllRead()
@@ -59,12 +62,13 @@ class NotificationController extends Controller
             ->where('is_read', false)
             ->update(['is_read' => true]);
 
-        return response()->json(['success' => true]);
+        $this->loadNotifications();
+        $this->dispatch('notify', type: 'success', message: 'Semua notifikasi telah ditandai dibaca.');
     }
 
-    public function viewPage()
+    public function setTab($tab)
     {
-        return view('internal.notifikasi');
+        $this->activeTab = $tab;
     }
 
     private function formatNotification(Notification $n): array
@@ -104,5 +108,10 @@ class NotificationController extends Controller
                 ? route('staf.detail-pesanan', $data['order_number'])
                 : null,
         ];
+    }
+
+    public function render()
+    {
+        return view('livewire.notifikasi');
     }
 }
