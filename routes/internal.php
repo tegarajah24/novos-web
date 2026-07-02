@@ -64,10 +64,6 @@ Route::prefix('staf')
         Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
 
         Route::get('/kategori', [CategoryController::class, 'index'])->name('kategori');
-        Route::get('/kategori/data', [CategoryController::class, 'getData'])->name('kategori.data');
-        Route::post('/kategori', [CategoryController::class, 'store'])->name('kategori.store');
-        Route::put('/kategori/{category}', [CategoryController::class, 'update'])->name('kategori.update');
-        Route::delete('/kategori/{category}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
 
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
         Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
