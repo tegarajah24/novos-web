@@ -54,10 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/error', [PaymentController::class, 'error'])->name('payment.error');
 
     Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking');
-    Route::post('/tracking/{id}/acc', [TrackingController::class, 'accDesign'])->name('tracking.acc');
-    Route::post('/tracking/{id}/revision', [TrackingController::class, 'revision'])->name('tracking.revision');
-    Route::post('/tracking/{id}/share-token', [TrackingController::class, 'generateToken'])->name('tracking.share-token');
-    Route::get('/tracking/search/json', [TrackingController::class, 'search'])->name('tracking.search');
+
 
     Route::get('/chat', [ChatController::class, 'index'])->name('chat');
     Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
