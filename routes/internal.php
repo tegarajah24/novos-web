@@ -31,9 +31,6 @@ Route::prefix('staf')
 
         Route::get('/kelola-produk', [ProductController::class, 'index'])->name('kelola-produk');
         Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
-        Route::post('/kelola-pengguna', [UserController::class, 'store'])->name('kelola-pengguna.store');
-        Route::put('/kelola-pengguna/{user}', [UserController::class, 'update'])->name('kelola-pengguna.update');
-        Route::delete('/kelola-pengguna/{user}', [UserController::class, 'destroy'])->name('kelola-pengguna.destroy');
 
         Route::get('/chat', [ChatController::class, 'index'])->name('chat');
         Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
