@@ -86,18 +86,21 @@
         <div class="max-w-[1200px] mx-auto px-6 pt-10 pb-10 flex flex-col">
             <div class="flex-1 min-w-0">
                 {{-- Search & Info Bar --}}
-                <div class="flex justify-end mb-5">
+                <div class="flex justify-end items-center gap-2 mb-5">
                     <div class="relative w-72">
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>
                         <input
                             type="text"
-                            wire:model.live.debounce.300ms="search"
+                            wire:model="search"
                             placeholder="Cari produk..."
                             class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e]"
                         >
                     </div>
+                    <button wire:click="$refresh" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors">
+                        Cari
+                    </button>
                 </div>
 
                 {{-- Product Grid --}}
