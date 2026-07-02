@@ -59,39 +59,7 @@
     }
 </style>
 
-<div
-    x-data="{
-        flyItem: { active: false, src: '', startX: 0, startY: 0, dx: 0, dy: 0, width: 0, height: 0 },
-        async flyToCart(event, product) {
-            const btn = event.currentTarget;
-            const card = btn.closest('[class*=\"group\"]');
-            const img = card.querySelector('img');
-            const rect = img.getBoundingClientRect();
-            const cartBtn = document.querySelector('.cart-icon-btn');
-            if (!cartBtn) { $wire.addToCart(product.id); return; }
-            const cartRect = cartBtn.getBoundingClientRect();
-            const dx = cartRect.left + cartRect.width / 2 - rect.left;
-            const dy = cartRect.top + cartRect.height / 2 - rect.top;
-
-            this.flyItem = { active: true, src: img.src, startX: rect.left, startY: rect.top, dx, dy, width: rect.width, height: rect.height };
-
-            await this.$nextTick();
-            this.$nextTick(() => {
-                const outer = this.$refs.flyOuter;
-                const inner = this.$refs.flyInner;
-                if (outer) outer.style.transform = 'translateX(' + dx + 'px)';
-                if (inner) { inner.style.transform = 'translateY(' + dy + 'px) scale(0.12)'; inner.style.opacity = '0.4'; }
-            });
-
-            setTimeout(() => {
-                this.flyItem.active = false;
-                $wire.addToCart(product.id);
-                const badge = document.querySelector('.cart-badge');
-                if (badge) { badge.classList.add('animate-badge-pop'); setTimeout(() => badge.classList.remove('animate-badge-pop'), 500); }
-            }, 750);
-        }
-    }"
->
+<div x-data="katalogFly()">
     {{-- Hero --}}
     <section class="relative w-full bg-[#0f2040] overflow-hidden" style="min-height:400px">
         <div class="absolute inset-0 z-0">
@@ -254,6 +222,42 @@
         </div>
     </template>
 </div>
+
+<script>
+function katalogFly() {
+    return {
+        flyItem: { active: false, src: '', startX: 0, startY: 0, dx: 0, dy: 0, width: 0, height: 0 },
+        async flyToCart(event, product) {
+            const btn = event.currentTarget;
+            const card = btn.closest('[class*=group]');
+            const img = card.querySelector('img');
+            const rect = img.getBoundingClientRect();
+            const cartBtn = document.querySelector('.cart-icon-btn');
+            if (!cartBtn) { window.Livewire.find('{{ $this->getId() }}').addToCart(product.id); return; }
+            const cartRect = cartBtn.getBoundingClientRect();
+            const dx = cartRect.left + cartRect.width / 2 - rect.left;
+            const dy = cartRect.top + cartRect.height / 2 - rect.top;
+
+            this.flyItem = { active: true, src: img.src, startX: rect.left, startY: rect.top, dx, dy, width: rect.width, height: rect.height };
+
+            await this.$nextTick();
+            this.$nextTick(() => {
+                const outer = this.$refs.flyOuter;
+                const inner = this.$refs.flyInner;
+                if (outer) outer.style.transform = 'translateX(' + dx + 'px)';
+                if (inner) { inner.style.transform = 'translateY(' + dy + 'px) scale(0.12)'; inner.style.opacity = '0.4'; }
+            });
+
+            setTimeout(() => {
+                this.flyItem.active = false;
+                window.Livewire.find('{{ $this->getId() }}').addToCart(product.id);
+                const badge = document.querySelector('.cart-badge');
+                if (badge) { badge.classList.add('animate-badge-pop'); setTimeout(() => badge.classList.remove('animate-badge-pop'), 500); }
+            }, 750);
+        }
+    };
+}
+</script>
 
 @push('scripts')
 <script>

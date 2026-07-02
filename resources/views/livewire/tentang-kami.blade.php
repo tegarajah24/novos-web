@@ -1,3 +1,4 @@
+<div>
 <style>
     [data-aos] { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
     [data-aos].aos-visible { opacity: 1; transform: translateY(0); }
@@ -152,3 +153,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+</div>
