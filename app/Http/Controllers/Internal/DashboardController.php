@@ -14,98 +14,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalOrders = Order::whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])->count();
-        $totalLastWeek = Order::whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
-            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
-            ->count();
-        $totalTrend = $totalOrders - $totalLastWeek;
-
-        $user = auth()->user();
-        $userRole = $user->role->name;
-        $isSAOManager = $user->isAdmin();
-        $isDesign     = $user->isDesign();
-        $isProduction = $user->isProduction();
-
-        $pendingOrders = Order::where('status', 'menunggu_validasi')->count();
-        $pendingLastWeek = Order::where('status', 'menunggu_validasi')
-            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
-            ->count();
-        $pendingTrend = $pendingOrders - $pendingLastWeek;
-
-        $inProcessOrders = Order::whereIn('status', ['di_design', 'siap_cetak', 'diproduksi'])->count();
-        $processLastWeek = Order::whereIn('status', ['di_design', 'siap_cetak', 'diproduksi'])
-            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
-            ->count();
-        $processTrend = $inProcessOrders - $processLastWeek;
-
-        $completedToday = Order::where('status', 'selesai')
-            ->whereDate('updated_at', today())
-            ->count();
-        $completedYesterday = Order::where('status', 'selesai')
-            ->whereDate('updated_at', today()->subDay())
-            ->count();
-        $completedTrend = $completedToday - $completedYesterday;
-
-        $recentOrders = Order::with(['user', 'designRequest'])
-            ->whereIn('status', ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $weeklyLabels = [];
-        $weeklyData = [];
-        for ($i = 7; $i >= 0; $i--) {
-            $weekStart = now()->subWeeks($i)->startOfWeek();
-            $weekEnd = now()->subWeeks($i)->endOfWeek();
-            $weeklyLabels[] = 'W' . (8 - $i);
-            $weeklyData[] = Order::whereBetween('created_at', [$weekStart, $weekEnd])->count();
-        }
-
-        $pending = Order::where('status', 'menunggu_validasi')->count();
-        $design = Order::whereIn('status', ['dikonfirmasi', 'disetujui', 'di_design'])->count();
-        $acc = Order::where('status', 'disetujui')->count();
-        $produksi = Order::whereIn('status', ['siap_cetak', 'diproduksi'])->count();
-        $selesai = Order::where('status', 'selesai')->count();
-
-        $statusLabels = ['Menunggu Validasi', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'];
-        $statusData = [$pending, $design, $acc, $produksi, $selesai];
-
-        // Revenue hanya untuk Super Admin & Manager
-        if ($isSAOManager) {
-            $totalRevenue = Payment::where('status', 'success')->sum('amount');
-            $lastMonthRevenue = Payment::where('status', 'success')
-                ->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])
-                ->sum('amount');
-            $revenueTrend = $totalRevenue > 0 && $lastMonthRevenue > 0
-                ? round(($totalRevenue - $lastMonthRevenue) / $lastMonthRevenue * 100)
-                : 0;
-        } else {
-            $totalRevenue = 0;
-            $revenueTrend = 0;
-        }
-
-        // Data khusus Design
-        $designWaiting     = Order::where('status', 'dikonfirmasi')->count();
-        $designInProgress  = Order::where('status', 'di_design')->count();
-        $designWaitingAcc  = Order::where('status', 'disetujui')->count();
-
-        // Data khusus Produksi
-        $printQueue  = Order::where('status', 'siap_cetak')->count();
-        $sewingQueue = Order::where('status', 'diproduksi')->count();
-
-        return view('internal.dashboard', compact(
-            'totalOrders', 'totalTrend',
-            'pendingOrders', 'pendingTrend',
-            'inProcessOrders', 'processTrend',
-            'completedToday', 'completedTrend',
-            'recentOrders',
-            'weeklyLabels', 'weeklyData',
-            'statusLabels', 'statusData',
-            'isSAOManager', 'isDesign', 'isProduction',
-            'totalRevenue', 'revenueTrend',
-            'designWaiting', 'designInProgress', 'designWaitingAcc',
-            'printQueue', 'sewingQueue',
-        ));
+        return view('internal.dashboard');
     }
 
     public function summary()
@@ -208,7 +117,7 @@ class DashboardController extends Controller
             [
                 'v' => (string) $totalSold,
                 'l' => 'Produk Terjual',
-                'c' => $totalSold > 0 ? '+' . $totalSold : '0',
+                'c' => '+' . $totalSold,
                 'up' => true,
                 'bg' => 'bg-teal-50', 'tc' => 'text-teal-600',
                 'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
@@ -236,7 +145,6 @@ class DashboardController extends Controller
             ->take(10)
             ->get()
             ->map(function ($history) {
-                $time = $history->created_at->diffForHumans();
                 $userName = $history->changedBy?->name ?? 'Sistem';
                 $colors = ['bg-green-500', 'bg-yellow-500', 'bg-blue-500', 'bg-purple-500', 'bg-red-500'];
                 return [
@@ -280,11 +188,11 @@ class DashboardController extends Controller
         $distLabels = ['Custom', 'Produk Katalog'];
         $distData = [round($customCount / $totalBoth * 100), round($catalogCount / $totalBoth * 100)];
 
-        return view('internal.summary', compact(
+        return compact(
             'kpi1', 'kpi2', 'employees', 'activities',
             'chartWeeks', 'chartRevenue', 'chartOrdersIn', 'chartOrdersOut',
             'topProductLabels', 'topProductData',
             'distLabels', 'distData',
-        ));
+        );
     }
 }
