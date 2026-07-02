@@ -233,7 +233,7 @@ function katalogFly() {
             const img = card.querySelector('img');
             const rect = img.getBoundingClientRect();
             const cartBtn = document.querySelector('.cart-icon-btn');
-            if (!cartBtn) { window.Livewire.find('{{ $this->getId() }}').addToCart(product.id); return; }
+            if (!cartBtn) { this.$wire.addToCart(product.id); return; }
             const cartRect = cartBtn.getBoundingClientRect();
             const dx = cartRect.left + cartRect.width / 2 - rect.left;
             const dy = cartRect.top + cartRect.height / 2 - rect.top;
@@ -250,7 +250,7 @@ function katalogFly() {
 
             setTimeout(() => {
                 this.flyItem.active = false;
-                window.Livewire.find('{{ $this->getId() }}').addToCart(product.id);
+                this.$wire.addToCart(product.id);
                 const badge = document.querySelector('.cart-badge');
                 if (badge) { badge.classList.add('animate-badge-pop'); setTimeout(() => badge.classList.remove('animate-badge-pop'), 500); }
             }, 750);

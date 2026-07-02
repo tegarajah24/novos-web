@@ -3,25 +3,23 @@
 namespace App\Livewire;
 
 use App\Models\Cart;
+use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Katalog extends Component
 {
-    public $products = [];
-    public $categories = [];
-    public $search = '';
-    public $selectedCats = [];
+    public string $search = '';
+    public array $selectedCats = [];
     public int $currentPage = 1;
     public int $perPage = 12;
 
-    public function mount($products, $categories)
+    public function mount()
     {
-        $this->products = $products;
-        $this->categories = $categories;
-
         $slug = request('kategori');
         if ($slug) {
-            $found = collect($categories)->firstWhere('slug', $slug);
+            $found = collect($this->getCategoriesProperty())->firstWhere('slug', $slug);
             if ($found) {
                 $this->selectedCats = [$found['name']];
             }
@@ -33,7 +31,36 @@ class Katalog extends Component
         $this->currentPage = 1;
     }
 
-    public function getFilteredProductsProperty()
+    public function getProductsProperty(): array
+    {
+        return Product::with('category')
+            ->where('is_active', true)
+            ->latest()
+            ->get()
+            ->map(fn($p) => [
+                'id'             => $p->id,
+                'name'           => $p->name,
+                'category'       => $p->category?->name ?? 'Katalog',
+                'price'          => $p->price ? (int) $p->price : null,
+                'badge'          => null,
+                'image'          => $p->image ? asset('storage/' . $p->image) : null,
+                'kerah'          => $p->kerah,
+                'bahan'          => $p->bahan,
+                'jenis_potongan' => $p->jenis_potongan,
+                'lengan_jahitan' => $p->lengan_jahitan,
+            ])
+            ->toArray();
+    }
+
+    public function getCategoriesProperty(): array
+    {
+        return Category::orderBy('name')->get()->map(fn($c) => [
+            'slug' => Str::slug($c->name),
+            'name' => $c->name,
+        ])->toArray();
+    }
+
+    public function getFilteredProductsProperty(): \Illuminate\Support\Collection
     {
         return collect($this->products)
             ->when($this->selectedCats, fn($col) => $col->whereIn('category', $this->selectedCats))
@@ -41,22 +68,22 @@ class Katalog extends Component
             ->values();
     }
 
-    public function getPagedProductsProperty()
+    public function getPagedProductsProperty(): \Illuminate\Support\Collection
     {
         return $this->filteredProducts->forPage($this->currentPage, $this->perPage);
     }
 
-    public function getTotalPagesProperty()
+    public function getTotalPagesProperty(): int
     {
         return max(1, (int) ceil($this->filteredProducts->count() / $this->perPage));
     }
 
-    public function getPageNumbersProperty()
+    public function getPageNumbersProperty(): array
     {
         return range(1, $this->totalPages);
     }
 
-    public function goPage($page)
+    public function goPage($page): void
     {
         $page = (int) $page;
         if ($page >= 1 && $page <= $this->totalPages) {
@@ -64,7 +91,7 @@ class Katalog extends Component
         }
     }
 
-    public function toggleCategory($name)
+    public function toggleCategory($name): void
     {
         if (in_array($name, $this->selectedCats)) {
             $this->selectedCats = array_values(array_filter($this->selectedCats, fn($c) => $c !== $name));
@@ -74,24 +101,24 @@ class Katalog extends Component
         $this->currentPage = 1;
     }
 
-    public function resetFilter()
+    public function resetFilter(): void
     {
         $this->search = '';
         $this->selectedCats = [];
         $this->currentPage = 1;
     }
 
-    public function addToCart($productId)
+    public function addToCart($productId): void
     {
         if (!auth()->check()) {
             return;
         }
 
         Cart::create([
-            'user_id' => auth()->id(),
+            'user_id'    => auth()->id(),
             'product_id' => $productId,
-            'size' => 'M',
-            'qty' => 1,
+            'size'       => 'M',
+            'qty'        => 1,
         ]);
 
         $this->dispatch('cart-updated');
