@@ -6,26 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
-use App\Models\User;
-use App\Models\Product;
 use App\Models\Role;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class LaporanController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $data = $this->getReportData($request);
-
-        return view('internal.laporan', $data);
-    }
-
-    public function getData(Request $request)
-    {
-        $data = $this->getReportData($request);
-
-        return response()->json($data);
+        return view('internal.laporan');
     }
 
     public function exportPdf(Request $request)

@@ -41,7 +41,6 @@ Route::prefix('staf')
         Route::post('/notifikasi/read-all', [NotificationController::class, 'markAllRead'])->name('notifikasi.read-all');
 
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
-        Route::get('/laporan/data', [LaporanController::class, 'getData'])->name('laporan.data');
         Route::get('/laporan/export/csv', [LaporanController::class, 'exportCsv'])->name('laporan.csv');
         Route::get('/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
         Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
