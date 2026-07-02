@@ -16,81 +16,9 @@ use App\Models\Notification;
 
 class OrderController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $dbStatuses = ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai', 'dibatalkan'];
-
-        $statusMap = [
-            'menunggu_validasi'  => 'menunggu_verifikasi',
-            'menunggu_pembayaran' => 'menunggu_pembayaran',
-            'dikonfirmasi'       => 'menunggu_acc',
-            'disetujui'          => 'tahap_desain',
-            'di_design'          => 'tahap_desain',
-            'siap_cetak'         => 'tahap_produksi',
-            'diproduksi'         => 'tahap_produksi',
-            'selesai'            => 'selesai',
-            'dibatalkan'         => 'dibatalkan',
-        ];
-
-        $filterStatus = $request->query('status');
-        $activeFilter = in_array($filterStatus, array_values($statusMap)) ? $filterStatus : null;
-
-        $query = Order::with(['user', 'orderItems', 'designRequest', 'assignee'])
-            ->whereIn('status', $dbStatuses);
-
-        if ($activeFilter) {
-            $filteredDbStatuses = array_keys(array_filter($statusMap, fn($v) => $v === $activeFilter));
-            $query->whereIn('status', $filteredDbStatuses);
-        }
-
-        $activeDateFrom = $request->query('date_from');
-        $activeDateTo = $request->query('date_to');
-
-        if ($activeDateFrom && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateFrom)) {
-            $query->whereDate('created_at', '>=', $activeDateFrom);
-        }
-        if ($activeDateTo && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateTo)) {
-            $query->whereDate('created_at', '<=', $activeDateTo);
-        }
-
-        $orders = $query->latest()
-            ->get()
-            ->map(function ($order) use ($statusMap) {
-                $produk = $order->designRequest
-                    ? 'Jersey ' . $order->designRequest->team_name
-                    : 'Jersey Custom';
-
-                $assigneeId = $order->assignee_id;
-                $assigneeName = $order->assignee ? $order->assignee->name : null;
-
-                return [
-                    'id'       => $order->id,
-                    'order_id' => $order->order_number,
-                    'customer' => $order->user->name ?? 'Unknown',
-                    'produk'   => $produk,
-                    'qty'      => $order->orderItems->sum('qty'),
-                    'total'    => (float) ($order->total_price ?? 0),
-                    'assignee_id' => $assigneeId,
-                    'assignee' => $assigneeName,
-                    'status'   => $statusMap[$order->status] ?? $order->status,
-                ];
-            })
-            ->toArray();
-
-        $colorKeys = ['purple', 'blue', 'orange', 'green', 'gray'];
-        $assignees = User::with('role')
-            ->whereHas('role', fn($q) => $q->where('name', 'Admin'))
-            ->get()
-            ->map(function ($user) use ($colorKeys) {
-                return [
-                    'id'    => $user->id,
-                    'name'  => $user->name,
-                    'color' => $colorKeys[array_rand($colorKeys)],
-                ];
-            })
-            ->toArray();
-
-        return view('internal.daftar-pesanan', compact('orders', 'assignees', 'activeFilter', 'activeDateFrom', 'activeDateTo'));
+        return view('internal.daftar-pesanan');
     }
 
     public function show(Order $order)
