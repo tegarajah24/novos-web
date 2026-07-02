@@ -37,11 +37,6 @@ Route::prefix('staf')
         Route::post('/chat/{chat}/read', [ChatController::class, 'markRead'])->name('chat.read');
         Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
         Route::get('/daily-mental-check', [DailyMentalCheckController::class, 'index'])->name('daily-mental-check');
-        Route::get('/daily-mental-check/today', [DailyMentalCheckController::class, 'getToday'])->name('daily-mental-check.today');
-        Route::post('/daily-mental-check/daily', [DailyMentalCheckController::class, 'storeDailyCheck'])->name('daily-mental-check.store-daily');
-        Route::post('/daily-mental-check/micro', [DailyMentalCheckController::class, 'storeMicroBreak'])->name('daily-mental-check.store-micro');
-        Route::get('/daily-mental-check/history', [DailyMentalCheckController::class, 'getHistory'])->name('daily-mental-check.history');
-        Route::get('/daily-mental-check/report', [DailyMentalCheckController::class, 'getReport'])->name('daily-mental-check.report');
         Route::get('/notifikasi', [NotificationController::class, 'viewPage'])->name('notifikasi');
         Route::get('/notifikasi/preview', [NotificationController::class, 'preview'])->name('notifikasi.preview');
         Route::post('/notifikasi/{notification}/read', [NotificationController::class, 'markRead'])->name('notifikasi.read');
