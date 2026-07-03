@@ -4,9 +4,27 @@ namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
+    public function index()
+    {
+        $notifications = Notification::where('user_id', auth()->id())
+            ->latest()
+            ->get()
+            ->map(fn($n) => $this->formatNotification($n));
+
+        $unreadCount = Notification::where('user_id', auth()->id())
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount,
+        ]);
+    }
+
     public function preview()
     {
         $notifications = Notification::where('user_id', auth()->id())
@@ -47,7 +65,16 @@ class NotificationController extends Controller
 
     public function viewPage()
     {
-        return view('internal.notifikasi');
+        $notifications = Notification::where('user_id', auth()->id())
+            ->latest()
+            ->get()
+            ->map(fn($n) => $this->formatNotification($n));
+
+        $unreadCount = Notification::where('user_id', auth()->id())
+            ->where('is_read', false)
+            ->count();
+
+        return view('internal.notifikasi', compact('notifications', 'unreadCount'));
     }
 
     private function formatNotification(Notification $n): array

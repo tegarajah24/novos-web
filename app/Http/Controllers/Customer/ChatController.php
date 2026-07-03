@@ -5,16 +5,46 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCustomerChatRequest;
 use App\Models\Chat;
-use App\Models\ChatMessage;
-use App\Models\Notification;
-use App\Services\ImageService;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
     public function index()
     {
-        return view('customer.chat');
+        $user = auth()->user();
+        $chats = Chat::with(['messages.sender', 'admin'])
+            ->where('customer_id', $user->id)
+            ->latest()
+            ->get()
+            ->map(fn($chat) => [
+                'id'          => $chat->id,
+                'name'        => $chat->admin?->name ?? 'Admin Novos',
+                'sender_avatar_url' => $chat->admin?->avatar ? Storage::url($chat->admin->avatar) : null,
+                'lastMessage' => $chat->messages->last()?->message
+                    ?? ($chat->messages->last()?->file_name
+                        ? '📎 ' . $chat->messages->last()->file_name
+                        : 'Mulai percakapan'),
+                'time'   => $chat->messages->last()?->created_at?->format('H:i') ?? '',
+                'unread' => $chat->messages
+                    ->where('is_read', false)
+                    ->where('sender_id', '!=', $user->id)
+                    ->count(),
+                'online'  => false,
+                'messages' => $chat->messages->map(fn($msg) => [
+                    'from'               => $msg->sender_id === $user->id ? 'customer' : 'admin',
+                    'text'               => $msg->message,
+                    'time'               => $msg->created_at->format('H:i'),
+                    'file_url'           => $msg->file_url,
+                    'file_name'          => $msg->file_name,
+                    'file_size_formatted' => $msg->file_size_formatted,
+                    'is_image'           => $msg->is_image,
+                    'is_video'           => $msg->is_video,
+                    'sender_avatar_url' => $msg->sender_avatar_url,
+                    'is_admin'           => $msg->sender_id === $chat->admin_id,
+                ])->values()->toArray(),
+            ])->values();
+
+        return view('customer.chat', compact('chats'));
     }
 
     public function unreadCount()
@@ -48,11 +78,12 @@ class ChatController extends Controller
 
         $user = auth()->user();
 
+        // Use provided chat_id if valid and belongs to customer, otherwise create/get default chat
         if ($data['chat_id']) {
             $chat = Chat::where('id', $data['chat_id'])
                 ->where('customer_id', $user->id)
                 ->first();
-
+            
             if (!$chat) {
                 return response()->json(['message' => 'Chat tidak ditemukan'], 404);
             }
@@ -104,14 +135,14 @@ class ChatController extends Controller
 
         return response()->json([
             'message' => [
-                'id'                  => $message->id,
-                'message'             => $message->message,
-                'file_url'            => $message->file_url,
-                'file_name'           => $message->file_name,
+                'id'                 => $message->id,
+                'message'            => $message->message,
+                'file_url'           => $message->file_url,
+                'file_name'          => $message->file_name,
                 'file_size_formatted' => $message->file_size_formatted,
-                'is_image'            => $message->is_image,
-                'is_video'            => $message->is_video,
-                'created_at'          => $message->created_at->format('H:i'),
+                'is_image'           => $message->is_image,
+                'is_video'           => $message->is_video,
+                'created_at'         => $message->created_at->format('H:i'),
             ],
         ]);
     }

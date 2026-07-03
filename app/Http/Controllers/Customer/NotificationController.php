@@ -10,7 +10,11 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        return view('customer.notifikasi');
+        $notifications = Notification::where('user_id', auth()->id())
+            ->latest()
+            ->paginate(20);
+
+        return view('customer.notifikasi', compact('notifications'));
     }
 
     public function recentJson()
