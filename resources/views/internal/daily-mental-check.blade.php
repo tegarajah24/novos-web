@@ -739,8 +739,11 @@
                     </tbody>
                 </table>
             </div>
-            <div x-show="!reportLoaded" class="text-center py-8 text-gray-400 text-sm">
+            <div x-show="!reportLoaded && !reportError" class="text-center py-8 text-gray-400 text-sm">
                 <p>Memuat data laporan...</p>
+            </div>
+            <div x-show="reportError" class="text-center py-8 text-red-400 text-sm">
+                <p x-text="reportError"></p>
             </div>
         </div>
 
@@ -941,6 +944,7 @@ function dailyMentalCheck(config = {}) {
             staff_stats: [],
         },
         reportLoaded: false,
+        reportError: '',
 
         form: {
             answers: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
@@ -1176,10 +1180,16 @@ function dailyMentalCheck(config = {}) {
             try {
                 const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                 const res = await fetch('/staf/daily-mental-check/report', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
                 this.reportData = data;
                 this.reportLoaded = true;
-            } catch (e) { console.error('Failed to load report:', e); this.reportLoaded = false; }
+                this.reportError = '';
+            } catch (e) {
+                console.error('Failed to load report:', e);
+                this.reportLoaded = false;
+                this.reportError = 'Gagal memuat laporan. Coba refresh halaman.';
+            }
         },
 
         // Poster Management

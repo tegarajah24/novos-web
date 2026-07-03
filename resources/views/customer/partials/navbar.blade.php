@@ -40,7 +40,7 @@
                      x-transition:leave="transition ease-in duration-100"
                      x-transition:leave-start="opacity-100 translate-y-0"
                      x-transition:leave-end="opacity-0 translate-y-2"
-                     class="absolute top-full left-0 pt-2 w-64 z-50">
+                     class="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-64 z-50">
                     <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2">
                     <a href="{{ route('katalog') }}"
                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1a237e] transition-colors font-medium">
@@ -95,7 +95,7 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-[70]">
+                         class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-[70]">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                             <h3 class="font-semibold text-gray-900 text-sm">Notifikasi</h3>
                             <button @click="markAllRead" class="text-xs text-blue-600 hover:underline">Tandai semua dibaca</button>
@@ -150,7 +150,7 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-100 rounded-xl shadow-lg z-[70]">
+                         class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-96 bg-white border border-gray-100 rounded-xl shadow-lg z-[70]">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                             <h3 class="font-semibold text-gray-900 text-sm">Keranjang Belanja</h3>
                             <span class="text-xs text-gray-400" x-text="cartItems.length + ' item'"></span>
