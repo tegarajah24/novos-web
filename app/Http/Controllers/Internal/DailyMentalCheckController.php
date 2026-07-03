@@ -9,6 +9,7 @@ use App\Http\Requests\StoreDailyCheckRequest;
 use App\Http\Requests\StoreMicroBreakRequest;
 use App\Models\DailyMentalCheck;
 use App\Models\MentalHealthPoster;
+use App\Models\Role;
 use App\Models\MicroBreak;
 use App\Models\PosterSetting;
 use App\Models\User;
