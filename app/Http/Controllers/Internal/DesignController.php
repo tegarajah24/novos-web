@@ -59,6 +59,13 @@ class DesignController extends Controller
 
         $user = auth()->user();
 
+        if (!in_array($user->role->name, ['Design', 'Super Admin', 'Manager'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk memperbarui status desain.',
+            ], 403);
+        }
+
         // Simpan file upload
         $uploadedFiles = [];
         if ($request->hasFile('files')) {

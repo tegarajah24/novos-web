@@ -78,6 +78,14 @@ class ProductionController extends Controller
         $data = $request->validated();
 
         $user = auth()->user();
+
+        if (!in_array($user->role->name, ['Produksi', 'Super Admin', 'Manager'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk memperbarui status produksi.',
+            ], 403);
+        }
+
         $oldStatus = $order->status;
 
         $statusMap = [

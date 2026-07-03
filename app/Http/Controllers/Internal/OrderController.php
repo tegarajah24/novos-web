@@ -380,15 +380,15 @@ class OrderController extends Controller
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'di_design' => [
-                'siap_cetak' => ['Design', 'Admin', 'Manager', 'Super Admin'],
+                'siap_cetak' => ['Design'],
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'siap_cetak' => [
-                'diproduksi' => ['Admin', 'Design', 'Manager', 'Super Admin'],
+                'diproduksi' => ['Admin', 'Manager', 'Super Admin'],
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'diproduksi' => [
-                'selesai'    => ['Produksi', 'Admin', 'Manager', 'Super Admin'],
+                'selesai'    => ['Produksi'],
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
         ];
