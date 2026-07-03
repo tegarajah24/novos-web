@@ -255,11 +255,18 @@ function katalogData() {
                         {{-- Image --}}
                         <div class="p-2">
                             <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
-                                <img
-                                    :src="currentImages[product.id] === 1 && product.image_belakang ? product.image_belakang : product.image || 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey'"
-                                    :alt="product.name"
-                                    class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-                                >
+                                {{-- Sliding carousel track --}}
+                                <div class="flex h-full transition-transform duration-300 ease-out"
+                                     :style="`transform: translateX(-${(currentImages[product.id] || 0) * 100}%)`">
+                                    <div class="w-full h-full shrink-0 group-hover:scale-105 transition-transform duration-300 ease-out">
+                                        <img :src="product.image || 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey'" :alt="product.name" class="w-full h-full object-cover">
+                                    </div>
+                                    <template x-if="product.image_belakang">
+                                        <div class="w-full h-full shrink-0 group-hover:scale-105 transition-transform duration-300 ease-out">
+                                            <img :src="product.image_belakang" :alt="product.name" class="w-full h-full object-cover">
+                                        </div>
+                                    </template>
+                                </div>
                                 {{-- Prev Arrow --}}
                                 <template x-if="product.image_belakang">
                                     <button @click.stop="currentImages[product.id] = (currentImages[product.id] || 0) === 0 ? 1 : 0"
