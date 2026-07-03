@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Category;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -50,11 +51,11 @@ class ProductController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = app(ImageService::class)->compressAndStore($request->file('image'), 'products');
         }
 
         if ($request->hasFile('image_belakang')) {
-            $data['image_belakang'] = $request->file('image_belakang')->store('products', 'public');
+            $data['image_belakang'] = app(ImageService::class)->compressAndStore($request->file('image_belakang'), 'products');
         }
 
         $product = Product::create($data);
@@ -86,14 +87,14 @@ class ProductController extends Controller
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = app(ImageService::class)->compressAndStore($request->file('image'), 'products');
         }
 
         if ($request->hasFile('image_belakang')) {
             if ($product->image_belakang) {
                 Storage::disk('public')->delete($product->image_belakang);
             }
-            $data['image_belakang'] = $request->file('image_belakang')->store('products', 'public');
+            $data['image_belakang'] = app(ImageService::class)->compressAndStore($request->file('image_belakang'), 'products');
         }
 
         $product->update($data);
