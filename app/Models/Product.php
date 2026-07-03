@@ -13,6 +13,7 @@ class Product extends Model
         'description',
         'price',
         'image',
+        'image_belakang',
         'min_qty',
         'production_days',
         'is_active',

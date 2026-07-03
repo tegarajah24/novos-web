@@ -19,6 +19,7 @@ class UpdateProductRequest extends FormRequest
             'price'           => 'required|numeric|min:0',
             'description'     => 'nullable|string|max:5000',
             'image'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image_belakang'  => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'kerah'           => 'nullable|string|max:100',
             'bahan'           => 'nullable|string|max:100',
             'jenis_potongan'  => 'nullable|string|max:100',

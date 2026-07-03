@@ -402,7 +402,8 @@ function kelolaProdukApp() {
 
             if (this.formMode === 'edit') {
                 url = '{{ url("staf/kelola-produk") }}/' + this.formData.id;
-                method = 'PUT';
+                method = 'POST';
+                fd.append('_method', 'PUT');
             }
 
             try {

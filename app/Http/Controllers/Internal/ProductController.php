@@ -32,7 +32,7 @@ class ProductController extends Controller
                     'price'          => (int) $product->price,
                     'description'    => $product->description ?? '',
                     'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
-                    'image_belakang' => null,
+                    'image_belakang' => $product->image_belakang ? asset('storage/' . $product->image_belakang) : null,
                     'kerah'          => $product->kerah,
                     'bahan'          => $product->bahan,
                     'jenis_potongan' => $product->jenis_potongan,
@@ -53,6 +53,10 @@ class ProductController extends Controller
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
+        if ($request->hasFile('image_belakang')) {
+            $data['image_belakang'] = $request->file('image_belakang')->store('products', 'public');
+        }
+
         $product = Product::create($data);
 
         return response()->json([
@@ -65,7 +69,7 @@ class ProductController extends Controller
                 'price'          => (int) $product->price,
                 'description'    => $product->description ?? '',
                 'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
-                'image_belakang' => null,
+                'image_belakang' => $product->image_belakang ? asset('storage/' . $product->image_belakang) : null,
                 'kerah'          => $product->kerah,
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
@@ -85,6 +89,13 @@ class ProductController extends Controller
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
+        if ($request->hasFile('image_belakang')) {
+            if ($product->image_belakang) {
+                Storage::disk('public')->delete($product->image_belakang);
+            }
+            $data['image_belakang'] = $request->file('image_belakang')->store('products', 'public');
+        }
+
         $product->update($data);
 
         return response()->json([
@@ -97,7 +108,7 @@ class ProductController extends Controller
                 'price'          => (int) $product->price,
                 'description'    => $product->description ?? '',
                 'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
-                'image_belakang' => null,
+                'image_belakang' => $product->image_belakang ? asset('storage/' . $product->image_belakang) : null,
                 'kerah'          => $product->kerah,
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
@@ -110,6 +121,10 @@ class ProductController extends Controller
     {
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
+        }
+
+        if ($product->image_belakang) {
+            Storage::disk('public')->delete($product->image_belakang);
         }
 
         $product->delete();
