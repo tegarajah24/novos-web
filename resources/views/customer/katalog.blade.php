@@ -71,6 +71,7 @@ function katalogData() {
             searchQuery: '',
             currentPage: 1,
             perPage: 12,
+            currentImages: {},
             products: @json($products),
             categories: @json($categories),
             flyItem: {
@@ -250,15 +251,36 @@ function katalogData() {
             {{-- Product Grid --}}
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 <template x-for="(product, index) in pagedProducts" :key="`${product.id}-${currentPage}`">
-                    <div @click="window.location.href = '{{ route('pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '') + '&kerah=' + encodeURIComponent(product.kerah ?? '') + '&bahan=' + encodeURIComponent(product.bahan ?? '') + '&jenis_potongan=' + encodeURIComponent(product.jenis_potongan ?? '') + '&lengan_jahitan=' + encodeURIComponent(product.lengan_jahitan ?? '')" :style="`animation-delay: ${index * 0.06}s`" class="group cursor-pointer bg-gray-50 animate-card flex flex-col">
+                    <div @click="window.location.href = '{{ route('pemesanan') }}?produk=' + encodeURIComponent(product.name) + '&kategori=' + encodeURIComponent(product.category) + '&harga=' + (product.price ?? '') + '&gambar=' + encodeURIComponent(product.image ?? '') + '&gambar_belakang=' + encodeURIComponent(product.image_belakang ?? '') + '&kerah=' + encodeURIComponent(product.kerah ?? '') + '&bahan=' + encodeURIComponent(product.bahan ?? '') + '&jenis_potongan=' + encodeURIComponent(product.jenis_potongan ?? '') + '&lengan_jahitan=' + encodeURIComponent(product.lengan_jahitan ?? '')" :style="`animation-delay: ${index * 0.06}s`" class="group cursor-pointer bg-gray-50 animate-card flex flex-col">
                         {{-- Image --}}
                         <div class="p-2">
                             <div class="relative w-full overflow-hidden" style="aspect-ratio:3/4">
                                 <img
-                                    :src="product.image || 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey'"
+                                    :src="currentImages[product.id] === 1 && product.image_belakang ? product.image_belakang : product.image || 'https://placehold.co/300x300/1a237e/ffffff?text=Jersey'"
                                     :alt="product.name"
                                     class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
                                 >
+                                {{-- Prev Arrow --}}
+                                <template x-if="product.image_belakang">
+                                    <button @click.stop="currentImages[product.id] = (currentImages[product.id] || 0) === 0 ? 1 : 0"
+                                        class="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 text-gray-700 shadow-sm opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 hover:bg-white">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                                    </button>
+                                </template>
+                                {{-- Next Arrow --}}
+                                <template x-if="product.image_belakang">
+                                    <button @click.stop="currentImages[product.id] = (currentImages[product.id] || 0) === 0 ? 1 : 0"
+                                        class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 text-gray-700 shadow-sm opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 hover:bg-white">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                                    </button>
+                                </template>
+                                {{-- Dots --}}
+                                <template x-if="product.image_belakang">
+                                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
+                                        <span :class="(currentImages[product.id] || 0) === 0 ? 'bg-white' : 'bg-white/50'" class="w-1.5 h-1.5 rounded-full"></span>
+                                        <span :class="(currentImages[product.id] || 0) === 1 ? 'bg-white' : 'bg-white/50'" class="w-1.5 h-1.5 rounded-full"></span>
+                                    </div>
+                                </template>
                                 {{-- Category Badge --}}
                                 <span
                                     class="absolute top-3 left-3 px-2.5 py-1 bg-[#1a237e]/80 text-white text-[10px] font-semibold"

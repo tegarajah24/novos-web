@@ -22,6 +22,7 @@ class ProductController extends Controller
                 'price'          => $p->price ? (int) $p->price : null,
                 'badge'          => null,
                 'image'          => $p->image ? asset('storage/' . $p->image) : null,
+                'image_belakang' => $p->image_belakang ? asset('storage/' . $p->image_belakang) : null,
                 'kerah'          => $p->kerah,
                 'bahan'          => $p->bahan,
                 'jenis_potongan' => $p->jenis_potongan,
