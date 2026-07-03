@@ -77,8 +77,8 @@
 
                 {{-- Notification icon --}}
                 <div class="relative" x-data="notificationDropdown()" 
-                     @mouseenter="notifOpen = true; fetchNotifications(); $dispatch('dropdown-active', true)" 
-                     @mouseleave="notifOpen = false; $dispatch('dropdown-active', false)"
+                     @mouseenter="clearTimeout(hoverTimer); notifOpen = true; fetchNotifications(); $dispatch('dropdown-active', true)" 
+                     @mouseleave="hoverTimer = setTimeout(() => { notifOpen = false; $dispatch('dropdown-active', false) }, 100)"
                      @click.away="notifOpen = false; $dispatch('dropdown-active', false)">
                     <button @click="notifOpen = !notifOpen; if(notifOpen) { fetchNotifications(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -95,7 +95,7 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-[70]">
+                         class="absolute left-1/2 -translate-x-1/2 top-full w-80 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-[70]">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                             <h3 class="font-semibold text-gray-900 text-sm">Notifikasi</h3>
                             <button @click="markAllRead" class="text-xs text-blue-600 hover:underline">Tandai semua dibaca</button>
@@ -132,8 +132,8 @@
 
                 {{-- Cart icon --}}
                 <div class="relative" x-data="cartDropdown()" 
-                     @mouseenter="cartOpen = true; fetchCart(); $dispatch('dropdown-active', true)" 
-                     @mouseleave="cartOpen = false; $dispatch('dropdown-active', false)"
+                     @mouseenter="clearTimeout(hoverTimer); cartOpen = true; fetchCart(); $dispatch('dropdown-active', true)" 
+                     @mouseleave="hoverTimer = setTimeout(() => { cartOpen = false; $dispatch('dropdown-active', false) }, 100)"
                      @click.away="cartOpen = false; $dispatch('dropdown-active', false)">
                     <button @click="cartOpen = !cartOpen; if(cartOpen) { fetchCart(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="cart-icon-btn p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -150,7 +150,7 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-96 bg-white border border-gray-100 rounded-xl shadow-lg z-[70]">
+                         class="absolute left-1/2 -translate-x-1/2 top-full w-96 bg-white border border-gray-100 rounded-xl shadow-lg z-[70]">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                             <h3 class="font-semibold text-gray-900 text-sm">Keranjang Belanja</h3>
                             <span class="text-xs text-gray-400" x-text="cartItems.length + ' item'"></span>
