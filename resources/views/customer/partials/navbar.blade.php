@@ -63,7 +63,7 @@
         <div class="flex items-center gap-3" x-data="authSidebar()">
             @auth
                 {{-- Wrap with password sidebar state --}}
-                <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-0">
+                <div x-data="{ passwordOpen: false, profileOpen: false }" class="flex items-center gap-1.5">
                 {{-- Chat icon --}}
                 <div class="hidden md:block relative">
                     <a href="{{ route('chat') }}" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors block relative" title="Chat">
