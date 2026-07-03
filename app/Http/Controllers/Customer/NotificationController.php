@@ -17,6 +17,21 @@ class NotificationController extends Controller
         return view('customer.notifikasi', compact('notifications'));
     }
 
+    public function paginatedJson(Request $request)
+    {
+        $notifications = Notification::where('user_id', auth()->id())
+            ->latest()
+            ->paginate(20, ['*'], 'page', $request->page ?? 1);
+
+        return response()->json([
+            'data'          => $notifications->items(),
+            'current_page'  => $notifications->currentPage(),
+            'last_page'     => $notifications->lastPage(),
+            'total'         => $notifications->total(),
+            'per_page'      => $notifications->perPage(),
+        ]);
+    }
+
     public function recentJson()
     {
         $notifications = Notification::where('user_id', auth()->id())

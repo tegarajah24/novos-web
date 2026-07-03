@@ -86,5 +86,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifikasi/read-all', [NotificationController::class, 'markAllRead'])->name('notifikasi.read-all');
     Route::get('/notifikasi/unread-count', [NotificationController::class, 'countUnread'])->name('notifikasi.unread-count');
     Route::get('/notifikasi/recent', [NotificationController::class, 'recentJson'])->name('notifikasi.recent');
+    Route::get('/notifikasi/json', [NotificationController::class, 'paginatedJson'])->name('notifikasi.json');
 
 });
