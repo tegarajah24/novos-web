@@ -27,7 +27,17 @@ class KelolaPengguna extends Component
     public $avatar;
     public $existingAvatar = null;
 
+    public $totalUsers = 0;
+    public $totalManager = 0;
+    public $totalAdmin = 0;
+    public $totalProduksiDesign = 0;
+
     public $submitting = false;
+
+    public function mount()
+    {
+        $this->users;
+    }
 
     protected function rules()
     {

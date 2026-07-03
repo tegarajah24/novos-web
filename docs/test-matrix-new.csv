@@ -1,0 +1,85 @@
+﻿Modul,Fitur / Skenario Test,Tipe Pengujian,Prioritas,Keterangan,Status
+AUTH,Register - form submit validasi error,Feature Test,Critical,Test: RegistrationTest
+AUTH,Login - form 4 role redirect wrong password empty field logout,E2E,Critical,Test: AuthTest (Dusk) - 1 case multiple assertion
+AUTH,Forgot Password - form submit,Feature Test,Medium,Test: PasswordResetTest
+AUTH,Reset Password - form submit,Feature Test,Medium,Test: PasswordResetTest
+AUTH,Email Verification - prompt verify link,Feature Test,Medium,Test: EmailVerificationTest
+AUTH,Confirm Password - form submit,Manual,Low,
+AUTH,Update Password,Manual,Medium,Profile menu > Ubah Password
+AUTH,Role Middleware - staff route ditolak customer,E2E,Critical,Test: AuthTest (Dusk)
+AUTH,Error pages 403 404 500,Manual,Low,Cek tampilan error blade
+PUBLIC PAGES,Beranda - load section best sellers latest testimonials,E2E,Medium,Test: PublicPagesTest (Dusk) - merge 4
+PUBLIC PAGES,Tentang Kami - load team members,E2E,Medium,Test: PublicPagesTest (Dusk) - merge 2
+PUBLIC PAGES,Katalog - display produk pagination,E2E,High,Test: PublicPagesTest (Dusk)
+PUBLIC PAGES,"Katalog - search produk BLOCKED",Manual,High,Warning: Fitur search tidak berfungsi - dugaan bug di component PHP
+PUBLIC PAGES,"Katalog - filter kategori BLOCKED",Manual,High,Warning: Bergantung pada search yang error. Issue yang sama
+PUBLIC PAGES,Katalog - add to cart fly animation,Manual,Medium,
+PUBLIC PAGES,Navbar Footer customer,Manual,Low,Cek link navigasi informasi kontak
+CUSTOMER - PESANAN,Form pemesanan - tampil multi-step wizard,Manual,Critical,Navigasi step 1 2 3 - pilih kategori upload desain ukuran prioritas
+CUSTOMER - PESANAN,Submit order langsung direct,E2E,Critical,Test: CustomerOrderTest FullOrderFlowTest (Dusk)
+CUSTOMER - PESANAN,Submit order dari cart,E2E,Critical,Test: CustomerOrderTest (Dusk)
+CUSTOMER - PESANAN,Validasi input order,Manual,Critical,Submit form kosong salah cek error message
+CUSTOMER - PESANAN,Notifikasi sukses setelah order,Manual,Critical,Cek alert muncul notif terkirim ke staff
+CUSTOMER - PEMBAYARAN,Midtrans Snap Token,Manual,Critical,Order divalidasi admin cek response token dari Midtrans
+CUSTOMER - PEMBAYARAN,ACC harga bayar approveAndPay,Manual,Critical,Customer klik ACC bayar via Midtrans Snap
+CUSTOMER - PEMBAYARAN,Midtrans callback webhook,Manual,Critical,Simulasi webhook dari Midtrans sukses pending gagal
+CUSTOMER - PEMBAYARAN,Payment redirect pages finish unfinish error,Manual,Medium,Test: CustomerOrderTest (Dusk) covers finish. Merge jadi 1
+CUSTOMER - TRACKING,Tracking - cari pesanan status stepper,Manual,High,Input nomor pesanan lihat progress bar
+CUSTOMER - TRACKING,Tracking - ACC desain,Manual,High,Klik ACC status berubah notifikasi
+CUSTOMER - TRACKING,Tracking - kirim revisi,Manual,High,Input catatan revisi notifikasi ke staff Design
+CUSTOMER - TRACKING,Tracking - generate share token,Manual,Low,
+CUSTOMER - TRACKING,Shared tracking public by token,Manual,Low,
+CUSTOMER - CHAT,Chat - page kirim pesan teks file,Manual,Medium,Test: CustomerOrderTest (Dusk) covers send
+CUSTOMER - CHAT,Chat - polling 10 detik,Manual,Low,
+CUSTOMER - CHAT,Chat - unread count API,Manual,Medium,
+CUSTOMER - CHAT,Chat - mark read API,Manual,Medium,
+CUSTOMER - PROFILE,Profile - page tabs Data Password History Cart Address,E2E,Medium,Test: CustomerProfileChatNotifTest (Dusk)
+CUSTOMER - PROFILE,Update profile nama avatar,E2E,Medium,Test: CustomerProfileChatNotifTest (Dusk)
+CUSTOMER - PROFILE,Delete account,Manual,Low,
+CUSTOMER - PROFILE,Update contact email telepon,Manual,Medium,Test: CustomerProfileChatNotifTest (Dusk)
+CUSTOMER - PROFILE,Alamat CRUD tambah edit hapus,E2E,Medium,Test: CustomerProfileChatNotifTest (Dusk) - merge 3
+CUSTOMER - PROFILE,Riwayat pesanan di profile,Manual,Medium,Cek tab Order History
+CUSTOMER - KERANJANG,Cart - operasi dasar add update qty delete toggle select,E2E,Medium,Test: CartTest (Dusk) - merge 4 multiple assertion
+CUSTOMER - KERANJANG,Cart - add custom design,Manual,Medium,
+CUSTOMER - KERANJANG,Cart - page count API,Manual,Medium,
+CUSTOMER - NOTIFIKASI,Notifikasi - page mark read mark all read,Manual,Medium,
+CUSTOMER - NOTIFIKASI,Notifikasi - unread count API,Manual,Medium,
+CUSTOMER - NOTIFIKASI,Notifikasi - recent JSON API,Manual,Medium,
+CUSTOMER - API,User summary API,Manual,Low,
+STAFF - DASHBOARD,Dashboard - load KPI cards,E2E,High,Test: StaffDashboardOrdersTest (Dusk) - merge KPI queue
+STAFF - DASHBOARD,Dashboard - charts Chart.js recent orders,Manual,Medium,Cek chart revenue orders tabel pesanan terbaru
+STAFF - SUMMARY,Summary - load KPI cards,Manual,Medium,8 KPI card tabel statistik karyawan
+STAFF - SUMMARY,Summary - charts activity log,Manual,Medium,Cek 4 Chart.js interaktif log aktivitas terbaru
+STAFF - PESANAN,Daftar Pesanan - list search,E2E,High,Test: StaffDashboardOrdersTest (Dusk)
+STAFF - PESANAN,Daftar Pesanan - filter status date range,E2E,High,Test: StaffDashboardOrdersTest (Dusk) - merge
+STAFF - PESANAN,Daftar Pesanan - assign order pagination,Manual,High,Assign ke staff navigasi halaman
+STAFF - PESANAN,Detail Pesanan - info status timeline,Manual,Critical,Buka detail pesanan cek timeline
+STAFF - PESANAN,Detail Pesanan - validasi pesanan SweetAlert,E2E,Critical,Test: StaffDashboardOrdersTest FullOrderFlowTest (Dusk)
+STAFF - PESANAN,Detail Pesanan - update status sesuai flow,E2E,Critical,Test: StaffDashboardOrdersTest (Dusk)
+STAFF - PESANAN,Detail Pesanan - status history,Manual,Medium,Cek riwayat perubahan status
+STAFF - DESIGN,Design - task list submit desain,E2E,Critical,Test: StaffDesignProduksiTest FullOrderFlowTest (Dusk)
+STAFF - DESIGN,Design - upload desain revision notes,Manual,Critical,Upload file cek catatan revisi dari customer
+STAFF - PRODUKSI,Produksi - task list tabs Printing Jahit QC,E2E,Critical,Test: StaffDesignProduksiTest (Dusk)
+STAFF - PRODUKSI,Produksi - update stage printing jahit QC,E2E,Critical,Test: FullOrderFlowTest (Dusk)
+STAFF - CHAT,Chat staff - daftar percakapan kirim pesan,E2E,Medium,Test: StaffSupportFeaturesTest (Dusk) - merge
+STAFF - CHAT,Chat staff - unread count API,Manual,Medium,
+STAFF - NOTIFIKASI,Notifikasi staff - daftar mark read all read,E2E,Medium,Test: StaffSupportFeaturesTest (Dusk)
+STAFF - NOTIFIKASI,Notifikasi staff - preview dropdown,Manual,Medium,Cek dropdown notif di sidebar
+STAFF - LAPORAN,Laporan - page filter range today week month custom,E2E,Medium,Test: StaffSupportFeaturesTest (Dusk) - 4 filter 1 case
+STAFF - LAPORAN,Laporan - export CSV Excel PDF,E2E,Medium,Test: StaffSupportFeaturesTest (Dusk) - 3 format loop
+STAFF - MANAJEMEN,Produk - CRUD create edit delete,E2E,High,Test: StaffManagementTest (Dusk) - merge
+STAFF - MANAJEMEN,Produk - search featured toggle upload gambar,E2E,High,Test: StaffManagementTest (Dusk) - merge 3
+STAFF - MANAJEMEN,Pengguna - CRUD create edit delete,E2E,High,Test: StaffManagementTest (Dusk) - merge
+STAFF - MANAJEMEN,Pengguna - search filter,Manual,High,
+STAFF - MANAJEMEN,Kategori - CRUD create edit delete,E2E,High,Test: StaffManagementTest (Dusk)
+STAFF - PENGATURAN,Pengaturan - edit profil perusahaan nama telepon email alamat,E2E,Medium,Test: StaffManagementTest (Dusk)
+STAFF - DMC,Daily Mental Check - page submit daily check micro break,E2E,Medium,Test: StaffSupportFeaturesTest (Dusk)
+STAFF - DMC,DMC - history weekly report all staff,Manual,Medium,
+STAFF - DMC,DMC - poster display,Manual,Low,
+STAFF - DMC,DMC - poster management Super Admin list upload delete rotation,Manual and E2E,Low,Test: StaffSupportFeaturesTest (Dusk) covers list
+E2E Dusk,Full order flow - Customer buat pesanan,E2E,Critical,Step 1 FullOrderFlowTest
+E2E Dusk,Full order flow - Admin validasi SweetAlert,E2E,Critical,Step 2. Checklist OK
+E2E Dusk,Full order flow - Simulasi pembayaran DB langsung,E2E,Critical,Step 3. Checklist OK
+E2E Dusk,Full order flow - Forward ke Design,E2E,Critical,Step 4
+E2E Dusk,Full order flow - Design upload desain,E2E,Critical,Step 5
+E2E Dusk,Full order flow - Produksi proses semua stage,E2E,Critical,Step 6. Checklist OK

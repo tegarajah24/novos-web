@@ -80,7 +80,7 @@
     </div>
 
     {{-- Modal Detail --}}
-    @if($isDetailOpen && $selectedOrder)
+    @if($isDetailOpen && $this->selectedOrder)
     @php $o = $this->selectedOrder; @endphp
     @if($o)
     <div class="fixed inset-0 z-50 overflow-y-auto">

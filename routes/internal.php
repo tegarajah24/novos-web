@@ -30,7 +30,6 @@ Route::prefix('staf')
         Route::get('/produksi', [ProductionController::class, 'index'])->name('produksi');
 
         Route::get('/kelola-produk', [ProductController::class, 'index'])->name('kelola-produk');
-        Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
 
         Route::get('/chat', [ChatController::class, 'index'])->name('chat');
         Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
@@ -48,6 +47,14 @@ Route::prefix('staf')
         Route::get('/kategori', [CategoryController::class, 'index'])->name('kategori');
 
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
+    });
+
+// Kelola pengguna — Super Admin only
+Route::prefix('staf')
+    ->middleware(['auth', 'role:Super Admin'])
+    ->name('staf.')
+    ->group(function () {
+        Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
     });
 
 // Poster management — Super Admin only

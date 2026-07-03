@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\DailyMentalCheck;
+use App\Models\DailyMentalCheck as DailyMentalCheckModel;
 use App\Models\MicroBreak;
 use App\Models\User;
 use App\Models\MentalHealthPoster;
@@ -72,7 +72,7 @@ class DailyMentalCheck extends Component
         $user = auth()->user();
         $today = Carbon::today();
 
-        $check = DailyMentalCheck::where('user_id', $user->id)->whereDate('check_date', $today)->first();
+        $check = DailyMentalCheckModel::where('user_id', $user->id)->whereDate('check_date', $today)->first();
         $micro = MicroBreak::where('user_id', $user->id)->whereDate('check_date', $today)->first();
 
         $this->todayCheck = $check ? $check->toArray() : null;
@@ -93,7 +93,7 @@ class DailyMentalCheck extends Component
             $category = 'perlu_pendampingan';
         }
 
-        DailyMentalCheck::updateOrCreate(
+        DailyMentalCheckModel::updateOrCreate(
             ['user_id' => $user->id, 'check_date' => $today],
             [
                 'answers' => $answers,
@@ -148,7 +148,7 @@ class DailyMentalCheck extends Component
         $today = Carbon::today();
         $weekAgo = $today->copy()->subDays(6);
 
-        $dailyChecks = DailyMentalCheck::where('user_id', $user->id)
+        $dailyChecks = DailyMentalCheckModel::where('user_id', $user->id)
             ->whereBetween('check_date', [$weekAgo, $today])
             ->get()->keyBy(fn($r) => $r->check_date->format('Y-m-d'));
 
@@ -184,7 +184,7 @@ class DailyMentalCheck extends Component
             ->with('role')->get();
         $staffIds = $staff->pluck('id');
 
-        $todayChecks = DailyMentalCheck::whereIn('user_id', $staffIds)->whereDate('check_date', $today)->get()->keyBy('user_id');
+        $todayChecks = DailyMentalCheckModel::whereIn('user_id', $staffIds)->whereDate('check_date', $today)->get()->keyBy('user_id');
         $todayMicros = MicroBreak::whereIn('user_id', $staffIds)->whereDate('check_date', $today)->get()->keyBy('user_id');
 
         $checkedToday = 0;
@@ -208,7 +208,7 @@ class DailyMentalCheck extends Component
         $weekSummary = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = $today->copy()->subDays($i);
-            $dayChecks = DailyMentalCheck::whereIn('user_id', $staffIds)->whereDate('check_date', $date)->get();
+            $dayChecks = DailyMentalCheckModel::whereIn('user_id', $staffIds)->whereDate('check_date', $date)->get();
             $dayMicros = MicroBreak::whereIn('user_id', $staffIds)->whereDate('check_date', $date)->get();
             $catCounts = $dayChecks->groupBy('category')->map->count();
             $weekSummary[] = [
@@ -222,7 +222,7 @@ class DailyMentalCheck extends Component
         }
 
         $staffStats = $staff->map(function ($s) use ($weekAgo, $today) {
-            $checks = DailyMentalCheck::where('user_id', $s->id)->whereBetween('check_date', [$weekAgo, $today])->get();
+            $checks = DailyMentalCheckModel::where('user_id', $s->id)->whereBetween('check_date', [$weekAgo, $today])->get();
             $micros = MicroBreak::where('user_id', $s->id)->whereBetween('check_date', [$weekAgo, $today])->get();
             return [
                 'user_id' => $s->id, 'name' => $s->name, 'role' => $s->role->name,

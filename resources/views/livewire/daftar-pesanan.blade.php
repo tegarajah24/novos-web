@@ -176,7 +176,7 @@
                 Menampilkan {{ $this->orders->firstItem() ?? 0 }} - {{ $this->orders->lastItem() ?? 0 }} dari {{ $this->orders->total() }} pesanan
             </div>
             <div class="join">
-                {{ $this->orders->links('livewire.tailwind') }}
+                {{ $this->orders->links() }}
             </div>
         </div>
     </div>
