@@ -77,10 +77,10 @@
 
                 {{-- Notification icon --}}
                 <div class="relative" x-data="notificationDropdown()" 
-                     @mouseenter="notifOpen = true; fetchNotifications(); $dispatch('dropdown-active', true)" 
-                     @mouseleave="notifOpen = false; $dispatch('dropdown-active', false)"
+                     @mouseenter="clearTimeout(hoverTimer); notifOpen = true; fetchNotifications(); $dispatch('dropdown-active', true)" 
+                     @mouseleave="hoverTimer = setTimeout(() => { notifOpen = false; $dispatch('dropdown-active', false) }, 150)"
                      @click.away="notifOpen = false; $dispatch('dropdown-active', false)">
-                    <button @click="notifOpen = !notifOpen; if(notifOpen) { fetchNotifications(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
+                    <button @click="clearTimeout(hoverTimer); notifOpen = !notifOpen; if(notifOpen) { fetchNotifications(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Notifikasi">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -135,10 +135,10 @@
 
                 {{-- Cart icon --}}
                 <div class="relative" x-data="cartDropdown()" 
-                     @mouseenter="cartOpen = true; fetchCart(); $dispatch('dropdown-active', true)" 
-                     @mouseleave="cartOpen = false; $dispatch('dropdown-active', false)"
+                     @mouseenter="clearTimeout(hoverTimer); cartOpen = true; fetchCart(); $dispatch('dropdown-active', true)" 
+                     @mouseleave="hoverTimer = setTimeout(() => { cartOpen = false; $dispatch('dropdown-active', false) }, 150)"
                      @click.away="cartOpen = false; $dispatch('dropdown-active', false)">
-                    <button @click="cartOpen = !cartOpen; if(cartOpen) { fetchCart(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="cart-icon-btn p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
+                    <button @click="clearTimeout(hoverTimer); cartOpen = !cartOpen; if(cartOpen) { fetchCart(); $dispatch('dropdown-active', true) } else { $dispatch('dropdown-active', false) }" class="cart-icon-btn p-1.5 rounded-lg hover:bg-gray-100 transition-colors relative" title="Keranjang">
                         <svg class="w-6 h-6 text-[#616161] hover:text-[#1a237e] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
