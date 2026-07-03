@@ -76,7 +76,7 @@
                 </div>
 
                 {{-- Notification icon --}}
-                <div class="relative pb-2" x-data="notificationDropdown()" 
+                <div class="relative" x-data="notificationDropdown()" 
                      @mouseenter="notifOpen = true; fetchNotifications(); $dispatch('dropdown-active', true)" 
                      @mouseleave="notifOpen = false; $dispatch('dropdown-active', false)"
                      @click.away="notifOpen = false; $dispatch('dropdown-active', false)">
@@ -95,7 +95,9 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-[70]">
+                         class="absolute left-1/2 -translate-x-1/2 top-full w-80 z-[70]">
+                        <div class="h-2"></div>
+                        <div class="bg-white border border-gray-100 rounded-xl shadow-lg py-2">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                             <h3 class="font-semibold text-gray-900 text-sm">Notifikasi</h3>
                             <button @click="markAllRead" class="text-xs text-blue-600 hover:underline">Tandai semua dibaca</button>
@@ -127,11 +129,12 @@
                         <div class="px-4 py-2 border-t border-gray-100 text-center">
                             <a href="{{ route('notifikasi') }}" class="text-sm text-blue-600 hover:underline">Lihat semua notifikasi</a>
                         </div>
+                        </div>
                     </div>
                 </div>
 
                 {{-- Cart icon --}}
-                <div class="relative pb-2" x-data="cartDropdown()" 
+                <div class="relative" x-data="cartDropdown()" 
                      @mouseenter="cartOpen = true; fetchCart(); $dispatch('dropdown-active', true)" 
                      @mouseleave="cartOpen = false; $dispatch('dropdown-active', false)"
                      @click.away="cartOpen = false; $dispatch('dropdown-active', false)">
@@ -150,7 +153,9 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-96 bg-white border border-gray-100 rounded-xl shadow-lg z-[70]">
+                         class="absolute left-1/2 -translate-x-1/2 top-full w-96 z-[70]">
+                        <div class="h-2"></div>
+                        <div class="bg-white border border-gray-100 rounded-xl shadow-lg">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                             <h3 class="font-semibold text-gray-900 text-sm">Keranjang Belanja</h3>
                             <span class="text-xs text-gray-400" x-text="cartItems.length + ' item'"></span>
@@ -215,6 +220,7 @@
                                class="w-full py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center gap-2">
                                 Lihat Keranjang Lengkap
                             </a>
+                        </div>
                         </div>
                     </div>
                 </div>
