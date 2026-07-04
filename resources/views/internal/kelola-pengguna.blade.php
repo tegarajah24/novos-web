@@ -104,8 +104,9 @@
     </div>
 
     {{-- Modal Tambah --}}
-    <div id="modalTambah" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div id="modalTambah" class="modal-wrapper fixed inset-0 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal(event,'modalTambah')">
+        <div class="modal-backdrop fixed inset-0 bg-black/40"></div>
+        <div class="modal-card bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Tambah Pengguna</h3>
                 <button onclick="closeModal(event, 'modalTambah')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -176,8 +177,9 @@
     </div>
 
     {{-- Modal Edit --}}
-    <div id="modalEdit" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div id="modalEdit" class="modal-wrapper fixed inset-0 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal(event,'modalEdit')">
+        <div class="modal-backdrop fixed inset-0 bg-black/40"></div>
+        <div class="modal-card bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Edit Pengguna</h3>
                 <button onclick="closeModal(event, 'modalEdit')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -249,8 +251,9 @@
     </div>
 
     {{-- Modal Detail --}}
-    <div id="modalDetail" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md">
+    <div id="modalDetail" class="modal-wrapper fixed inset-0 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal(event,'modalDetail')">
+        <div class="modal-backdrop fixed inset-0 bg-black/40"></div>
+        <div class="modal-card bg-white rounded-2xl shadow-xl w-full max-w-md">
             <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900">Detail Pengguna</h3>
                 <button onclick="closeModal(event, 'modalDetail')" class="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -417,12 +420,12 @@
         });
 
         function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
         function closeModal(event, id) {
-            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('active');
             document.body.style.overflow = '';
         }
 
@@ -567,11 +570,9 @@
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                document.querySelectorAll('[id^="modal"]').forEach(el => {
-                    if (!el.classList.contains('hidden')) {
-                        el.classList.add('hidden');
-                        document.body.style.overflow = '';
-                    }
+                document.querySelectorAll('.modal-wrapper.active').forEach(el => {
+                    el.classList.remove('active');
+                    document.body.style.overflow = '';
                 });
             }
         });

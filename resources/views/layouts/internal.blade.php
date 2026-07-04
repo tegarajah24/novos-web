@@ -179,12 +179,39 @@
         
         /* ── Entrance Animation ── */
         @keyframes slideUpEntrance {
-            0%   { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0%   { opacity: 0; margin-top: 15px; }
+            100% { opacity: 1; margin-top: 0; }
         }
 
         .animate-entrance {
             animation: slideUpEntrance 0.5s ease-out forwards;
+        }
+
+        /* ── Modal Animations ── */
+        .modal-wrapper {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.25s, opacity 0.25s;
+        }
+        .modal-wrapper.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-wrapper .modal-backdrop {
+            opacity: 0;
+            transition: opacity 0.25s ease-out;
+        }
+        .modal-wrapper.active .modal-backdrop {
+            opacity: 1;
+        }
+        .modal-wrapper .modal-card {
+            transform: scale(0.92) translateY(15px);
+            opacity: 0;
+            transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+        }
+        .modal-wrapper.active .modal-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
 
         /* ── Dark Mode Theme Styles ── */
