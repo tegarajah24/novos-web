@@ -161,10 +161,41 @@
                         </div>
                     </template>
                     <div class="flex items-center gap-3">
-                        <label class="cursor-pointer p-2 text-gray-400 hover:text-[#1a237e] transition-colors rounded-lg hover:bg-gray-100">
-                            <input type="file" @change="handleFileSelect" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar" class="hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18.84 5.6l-8.11 8.11a2 2 0 1 1-2.83-2.83l8.49-8.49"/></svg>
-                        </label>
+                        <div class="relative" @click.outside="fileDropdownOpen = false">
+                            <button @click.prevent="fileDropdownOpen = !fileDropdownOpen"
+                                class="cursor-pointer p-2 text-gray-400 hover:text-[#1a237e] transition-colors rounded-lg hover:bg-gray-100"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18.84 5.6l-8.11 8.11a2 2 0 1 1-2.83-2.83l8.49-8.49"/></svg>
+                            </button>
+                            <input type="file" x-ref="fileInput" @change="handleFileSelect" class="hidden">
+                            <div x-show="fileDropdownOpen"
+                                @click="fileDropdownOpen = false"
+                                class="absolute bottom-full mb-2 left-0 bg-white rounded-xl shadow-lg border border-gray-200 py-2 w-44 z-50"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="opacity-0 translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-1"
+                            >
+                                <button @click="uploadFileType('image/*')" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 shrink-0"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                    Gambar
+                                </button>
+                                <button @click="uploadFileType('.pdf,.doc,.docx')" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                    Dokumen
+                                </button>
+                                <button @click="uploadFileType('.xls,.xlsx')" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600 shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    Spreadsheet
+                                </button>
+                                <button @click="uploadFileType('.zip,.rar')" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500 shrink-0"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                                    Arsip
+                                </button>
+                            </div>
+                        </div>
                         <input
                             type="text"
                             x-model="message"
@@ -208,6 +239,7 @@ function chatApp() {
         selectedFile: null,
         selectedFilePreview: null,
         selectedFileIsImage: false,
+        fileDropdownOpen: false,
         chats: @json($chats),
         _pollTimer: null,
 
@@ -304,6 +336,14 @@ function chatApp() {
             this.selectedFile = null;
             this.selectedFilePreview = null;
             this.selectedFileIsImage = false;
+        },
+
+        uploadFileType(accept) {
+            const input = this.$refs.fileInput;
+            input.setAttribute('accept', accept);
+            input.value = '';
+            input.click();
+            this.fileDropdownOpen = false;
         },
 
         async sendMessage() {
