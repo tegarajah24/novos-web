@@ -751,6 +751,8 @@
                             'Accept': 'application/json',
                         }
                     });
+                    const summary = Alpine.store('summary');
+                    if (summary.notifUnread > 0) summary.notifUnread--;
                 } catch (e) {}
             },
 
@@ -763,6 +765,7 @@
                             'Accept': 'application/json',
                         }
                     });
+                    Alpine.store('summary').notifUnread = 0;
                     this.notifOpen = false;
                 } catch (e) {}
             },
