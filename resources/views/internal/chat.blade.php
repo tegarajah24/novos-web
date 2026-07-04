@@ -46,7 +46,7 @@
         </div>
 
         {{-- Right: Chat Window --}}
-        <div class="flex-1 flex flex-col bg-gray-50">
+        <div class="flex-1 flex flex-col bg-gray-50 min-w-0">
             {{-- No chat selected --}}
             <div x-show="!activeChat" class="flex-1 flex items-center justify-center">
                 <div class="text-center">
@@ -60,7 +60,7 @@
 
             {{-- Active chat --}}
             <template x-if="activeChat">
-                <div class="flex-1 flex flex-col min-h-0">
+                <div class="flex-1 flex flex-col min-h-0 min-w-0">
                     {{-- Header --}}
                     <div class="bg-white border-b border-gray-200 px-6 py-3.5 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-[#1a237e]/10 flex items-center justify-center text-[#1a237e] font-bold text-sm shrink-0">
@@ -135,7 +135,7 @@
                     <div class="bg-white border-t border-gray-200 px-6 py-4">
                         {{-- File preview --}}
                         <template x-if="selectedFile">
-                            <div class="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <div class="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200 min-w-0">
                                 <template x-if="selectedFileIsImage">
                                     <img :src="selectedFilePreview" class="w-12 h-12 rounded-lg object-cover shrink-0">
                                 </template>

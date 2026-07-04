@@ -58,7 +58,7 @@
     </div>
 
     {{-- Right Panel: Chat Window --}}
-    <div x-show="!mobileList || window.innerWidth >= 768" class="flex-1 flex flex-col bg-gray-50">
+    <div x-show="!mobileList || window.innerWidth >= 768" class="flex-1 flex flex-col bg-gray-50 min-w-0">
         {{-- No chat selected --}}
         <div x-show="!activeChat" class="flex-1 flex items-center justify-center">
             <div class="text-center">
@@ -70,7 +70,7 @@
 
         {{-- Active chat --}}
         <template x-if="activeChat">
-            <div class="flex-1 flex flex-col min-h-0">
+            <div class="flex-1 flex flex-col min-h-0 min-w-0">
                 {{-- Chat Header --}}
                 <div class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
                     <button @click="mobileList = true" class="md:hidden p-1.5 -ml-1.5 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors" title="Kembali">
@@ -156,7 +156,7 @@
                 <div class="bg-white border-t border-gray-200 px-6 py-4">
                     {{-- File preview --}}
                     <template x-if="selectedFile">
-                        <div class="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200 min-w-0">
                             <template x-if="selectedFileIsImage">
                                 <img :src="selectedFilePreview" class="w-12 h-12 rounded-lg object-cover shrink-0">
                             </template>
