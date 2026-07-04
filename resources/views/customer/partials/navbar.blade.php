@@ -532,7 +532,7 @@
 
 @auth
 {{-- Floating chat FAB untuk mobile --}}
-<div class="md:hidden fixed bottom-6 right-6 z-50">
+<div class="md:hidden fixed bottom-6 right-6 z-50 {{ request()->routeIs('chat') ? 'hidden' : '' }}">
     <a href="{{ route('chat') }}"
        class="flex items-center justify-center w-14 h-14 bg-[#1a237e] text-white rounded-full shadow-lg hover:bg-[#283593] transition-all duration-200 active:scale-95 relative"
        title="Chat">

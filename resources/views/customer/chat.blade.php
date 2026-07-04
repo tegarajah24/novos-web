@@ -2,11 +2,25 @@
 
 @section('title', 'Chat — Novos')
 
+@push('styles')
+<style>
+    @media (max-width: 767px) {
+        footer { display: none !important; }
+        .chat-container {
+            height: calc(var(--chat-height, 100dvh) - 4rem) !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="chatApp()">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[calc(100vh-8rem)] md:flex">
+<div class="max-w-6xl mx-auto px-4 py-0 md:py-8" x-data="chatApp()">
+    <div class="chat-container bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden md:h-[calc(100vh-8rem)] flex flex-col md:flex-row">
     {{-- Left Panel: Chat List --}}
-    <div x-show="mobileList || window.innerWidth >= 768" class="w-full md:w-60 md:shrink-0 bg-white md:border-r border-gray-200 flex flex-col">
+    <div x-show="mobileList || window.innerWidth >= 768" class="w-full flex-1 md:flex-none md:w-60 md:shrink-0 bg-white md:border-r border-gray-200 flex flex-col">
         <div class="p-4 border-b border-gray-100">
             <h2 class="font-bold text-gray-900">Pesan</h2>
         </div>
@@ -251,6 +265,14 @@ function chatApp() {
             this._pollTimer = setInterval(() => {
                 if (!document.hidden && this.activeChat) this.pollMessages();
             }, 5000);
+
+            if (window.visualViewport) {
+                const el = this.$el.querySelector('.chat-container');
+                const updateChatHeight = () => {
+                    if (el) el.style.setProperty('--chat-height', `${window.visualViewport.height}px`);
+                };
+                window.visualViewport.addEventListener('resize', updateChatHeight);
+            }
         },
 
         destroy() {
