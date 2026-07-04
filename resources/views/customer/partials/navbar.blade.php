@@ -204,21 +204,12 @@
                                             </div>
                                         </template>
                                     </div>
-                                    <div class="flex items-center gap-1 shrink-0">
-                                        <button @click="updateQty(item, item.qty - 1)" 
-                                            class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors text-sm"
-                                            :disabled="item.qty <= 1">
-                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
-                                        </button>
-                                        <span class="w-8 text-center text-xs font-semibold text-gray-700" x-text="item.qty"></span>
-                                        <button @click="updateQty(item, item.qty + 1)"
-                                            class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors text-sm">
-                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                                        </button>
+                                    <div class="flex flex-col items-end shrink-0">
+                                        <span class="text-xs text-gray-500" x-text="item.qty + ' pcs'"></span>
+                                        <a href="{{ route('profile.edit') }}?tab=keranjang" class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:text-gray-900 transition-colors">
+                                            Lihat Selengkapnya
+                                        </a>
                                     </div>
-                                    <button @click="removeItem(item)" class="p-1 text-gray-300 hover:text-red-500 transition-colors shrink-0">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                                    </button>
                                 </div>
                             </template>
                         </div>
@@ -700,25 +691,6 @@
                 } finally {
                     this.loadingCart = false;
                 }
-            },
-
-            async updateQty(item, newQty) {
-                if (newQty < 1) return;
-                try {
-                    const res = await fetch('/cart/' + item.id, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({ qty: newQty }),
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        item.qty = newQty;
-                    }
-                } catch (e) {}
             },
 
             async removeItem(item) {

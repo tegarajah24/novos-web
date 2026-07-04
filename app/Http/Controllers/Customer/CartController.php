@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateCartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
@@ -139,6 +140,31 @@ class CartController extends Controller
             'success' => true,
             'message' => 'Produk dihapus dari keranjang',
             'count' => $count,
+        ]);
+    }
+
+    public function updateSizes(Request $request, Cart $cart): JsonResponse
+    {
+        if ($cart->user_id !== auth()->id()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $sizes = $request->validate(['sizes' => 'required|array']);
+        $sizes = $sizes['sizes'];
+
+        $totalQty = collect($sizes)->sum(fn($v) => (int) $v);
+
+        $designData = $cart->design_data;
+        $designData['ukuran'] = $sizes;
+        $cart->update([
+            'design_data' => $designData,
+            'qty' => $totalQty,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'ukuran' => $sizes,
+            'qty' => $totalQty,
         ]);
     }
 

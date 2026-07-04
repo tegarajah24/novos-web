@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
     Route::post('/cart/design', [CartController::class, 'storeDesign'])->name('cart.store-design');
     Route::put('/cart/{cart}', [CartController::class, 'update'])->name('cart.update');
+    Route::put('/cart/{cart}/update-sizes', [CartController::class, 'updateSizes'])->name('cart.update-sizes');
     Route::delete('/cart/{cart}', [CartController::class, 'destroy'])->name('cart.destroy');
     Route::post('/cart/{cart}/toggle-select', [CartController::class, 'toggleSelect'])->name('cart.toggle-select');
 

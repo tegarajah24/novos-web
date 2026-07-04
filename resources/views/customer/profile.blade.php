@@ -319,75 +319,116 @@
 
                     <template x-if="cartItems.length > 0">
                         <div class="space-y-0">
-                            <div class="hidden md:grid grid-cols-[40px_60px_1fr_100px_120px_100px] gap-4 px-4 py-3 bg-gray-50 rounded-xl text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                            <div class="hidden md:grid grid-cols-[40px_60px_1fr_100px_120px_80px_72px] gap-4 px-4 py-3 bg-gray-50 rounded-xl text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                                 <span></span>
                                 <span></span>
                                 <span>Produk</span>
                                 <span>Ukuran</span>
                                 <span>Harga</span>
-                                <span class="text-center">Jumlah</span>
+                                <span class="text-center">Total</span>
+                                <span></span>
                             </div>
                             <template x-for="(item, index) in cartItems" :key="item.id">
-                                <div class="grid grid-cols-[40px_60px_1fr_100px_120px_100px_72px] md:grid-cols-[40px_60px_1fr_100px_120px_100px_72px] gap-4 items-center px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-100 last:border-0">
-                                    <div>
-                                        <input type="checkbox" :checked="item.is_selected" @change="toggleSelect(item)"
-                                            class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e] cursor-pointer">
-                                    </div>
-                                    <div class="w-14 h-14 rounded-lg bg-gray-100 overflow-hidden">
-                                        <template x-if="item.design_data">
-                                            <div class="w-full h-full bg-gradient-to-br from-[#1a237e] to-blue-400 flex items-center justify-center text-white text-xs font-bold">Custom</div>
-                                        </template>
-                                        <template x-if="!item.design_data">
-                                            <img :src="item.product?.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
-                                                 :alt="item.product?.name" class="w-full h-full object-cover">
-                                        </template>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <template x-if="item.design_data">
-                                            <div>
-                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="'Custom: ' + (item.design_data.team_name || 'Pesanan')"></p>
-                                                <p class="text-xs text-gray-400 truncate" x-text="item.design_data.bahan + ' | ' + item.design_data.kerah"></p>
-                                            </div>
-                                        </template>
-                                        <template x-if="!item.design_data">
-                                            <div>
-                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="item.product?.name || 'Produk'"></p>
-                                                <p class="text-xs text-gray-400 truncate" x-text="item.product?.category?.name || ''"></p>
-                                            </div>
-                                        </template>
-                                    </div>
-                                    <div>
-                                        <span class="text-sm font-medium text-gray-700" x-text="item.size"></span>
-                                    </div>
-                                    <div>
-                                        <template x-if="item.design_data">
-                                            <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.design_data.estimasi_total || 0).toLocaleString('id-ID')"></span>
-                                        </template>
-                                        <template x-if="!item.design_data">
-                                            <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.product?.price || 0).toLocaleString('id-ID')"></span>
-                                        </template>
-                                    </div>
-                                    <div class="flex items-center gap-1 justify-center">
-                                        <button @click="updateCartQty(item, item.qty - 1)" 
-                                            class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
-                                            :disabled="item.qty <= 1">
-                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
-                                        </button>
-                                        <span class="w-10 text-center text-sm font-semibold text-gray-700" x-text="item.qty"></span>
-                                        <button @click="updateCartQty(item, item.qty + 1)"
-                                            class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
-                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-center gap-1">
-                                        <template x-if="item.design_data">
-                                            <button @click="checkoutFromCart(item)" class="p-1.5 text-[#1a237e] hover:text-[#283593] transition-colors rounded-lg hover:bg-blue-50" title="Lanjutkan Pesanan">
-                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                <div>
+                                    <div class="grid grid-cols-[40px_60px_1fr_100px_120px_80px_72px] md:grid-cols-[40px_60px_1fr_100px_120px_80px_72px] gap-4 items-center px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-100 last:border-0">
+                                        <div>
+                                            <input type="checkbox" :checked="item.is_selected" @change="toggleSelect(item)"
+                                                class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e] cursor-pointer">
+                                        </div>
+                                        <div class="w-14 h-14 rounded-lg bg-gray-100 overflow-hidden">
+                                            <template x-if="item.design_data">
+                                                <div class="w-full h-full bg-gradient-to-br from-[#1a237e] to-blue-400 flex items-center justify-center text-white text-xs font-bold">Custom</div>
+                                            </template>
+                                            <template x-if="!item.design_data">
+                                                <img :src="item.product?.image ? '/storage/' + item.product.image : '/images/placeholder.png'" 
+                                                     :alt="item.product?.name" class="w-full h-full object-cover">
+                                            </template>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <template x-if="item.design_data">
+                                                <div>
+                                                    <p class="text-sm font-semibold text-gray-900 truncate" x-text="'Custom: ' + (item.design_data.team_name || 'Pesanan')"></p>
+                                                    <p class="text-xs text-gray-400 truncate" x-text="item.design_data.bahan + ' | ' + item.design_data.kerah"></p>
+                                                </div>
+                                            </template>
+                                            <template x-if="!item.design_data">
+                                                <div>
+                                                    <p class="text-sm font-semibold text-gray-900 truncate" x-text="item.product?.name || 'Produk'"></p>
+                                                    <p class="text-xs text-gray-400 truncate" x-text="item.product?.category?.name || ''"></p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700" x-text="item.size"></span>
+                                        </div>
+                                        <div>
+                                            <template x-if="item.design_data">
+                                                <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.design_data.estimasi_total || 0).toLocaleString('id-ID')"></span>
+                                            </template>
+                                            <template x-if="!item.design_data">
+                                                <span class="text-sm font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.product?.price || 0).toLocaleString('id-ID')"></span>
+                                            </template>
+                                        </div>
+                                        <div class="text-center">
+                                            <span class="text-sm font-semibold text-gray-700" x-text="item.qty + ' pcs'"></span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <button @click="toggleDetail(item)" class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:text-gray-900 transition-colors" x-text="expandedItemId === item.id ? 'Tutup' : 'Detail'"></button>
+                                            <button @click="deleteCartItem(item, index)" class="p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50">
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                             </button>
+                                        </div>
+                                    </div>
+                                    <div x-show="expandedItemId === item.id" x-cloak
+                                         x-transition:enter="transition ease-out duration-150"
+                                         x-transition:enter-start="opacity-0 -translate-y-1"
+                                         x-transition:enter-end="opacity-100 translate-y-0"
+                                         class="px-4 pb-4 pt-2 bg-gray-50/50 rounded-b-xl border-b border-gray-100">
+                                        <template x-if="item.design_data">
+                                            <div class="space-y-2">
+                                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Ukuran & Jumlah</p>
+                                                <template x-for="(qty, sizeKey) in item.design_data.ukuran" :key="sizeKey">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="text-sm font-medium text-gray-700 w-16" x-text="sizeKey"></span>
+                                                        <div class="flex items-center gap-1">
+                                                            <button @click="updateDesignSize(item, sizeKey, parseInt(qty) - 1)" 
+                                                                class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
+                                                                :disabled="parseInt(qty) <= 1">
+                                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+                                                            </button>
+                                                            <span class="w-8 text-center text-xs font-semibold text-gray-700" x-text="qty"></span>
+                                                            <button @click="updateDesignSize(item, sizeKey, parseInt(qty) + 1)"
+                                                                class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
+                                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <div class="pt-2 border-t border-gray-200 flex items-center gap-3">
+                                                    <button @click="checkoutFromCart(item)" class="px-4 py-1.5 bg-[#1a237e] text-white rounded-lg text-xs font-semibold hover:bg-[#283593] transition-colors">
+                                                        Pesan Sekarang
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </template>
-                                        <button @click="deleteCartItem(item, index)" class="p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50">
-                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                        </button>
+                                        <template x-if="!item.design_data">
+                                            <div class="flex items-center gap-3">
+                                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">Ukuran</p>
+                                                <span class="text-sm font-medium text-gray-700 w-16" x-text="item.size"></span>
+                                                <div class="flex items-center gap-1">
+                                                    <button @click="updateCartQty(item, item.qty - 1)" 
+                                                        class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
+                                                        :disabled="item.qty <= 1">
+                                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+                                                    </button>
+                                                    <span class="w-8 text-center text-xs font-semibold text-gray-700" x-text="item.qty"></span>
+                                                    <button @click="updateCartQty(item, item.qty + 1)"
+                                                        class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
+                                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </template>
@@ -833,6 +874,7 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
         // Address management
         addresses: initialAddresses,
         cartItems: initialCart,
+        expandedItemId: null,
         alamatMode: 'list',
         editingAddressId: null,
         addressForm: {
@@ -1403,6 +1445,30 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
                 timer: 1500,
                 showConfirmButton: false,
             });
+        },
+
+        toggleDetail(item) {
+            this.expandedItemId = this.expandedItemId === item.id ? null : item.id;
+        },
+
+        async updateDesignSize(item, sizeKey, newQty) {
+            if (newQty < 1) return;
+            try {
+                const res = await fetch('/cart/' + item.id + '/update-sizes', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ sizes: { ...item.design_data.ukuran, [sizeKey]: newQty } }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    item.design_data.ukuran = data.ukuran;
+                    item.qty = data.qty;
+                }
+            } catch (e) {}
         },
 
         checkoutFromCart(item) {
