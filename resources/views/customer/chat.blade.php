@@ -105,9 +105,19 @@
                                     <div>
                                         {{-- Image --}}
                                         <template x-if="msg.is_image">
-                                            <a :href="msg.file_url" target="_blank" class="block -mx-1 -mt-1">
-                                                <img :src="msg.file_url" :alt="msg.file_name" class="max-w-full rounded-xl max-h-60 object-cover">
-                                            </a>
+                                            <div @click="openPreview(msg.file_url, msg.file_name, msg.id)"
+                                                 class="-mx-1 -mt-1 rounded-xl overflow-hidden bg-gray-200 cursor-pointer"
+                                                 style="max-height: 240px; min-height: 120px;"
+                                            >
+                                                <img :src="msg.file_url" :alt="msg.file_name"
+                                                     class="w-full h-full object-cover"
+                                                     x-init="
+                                                         $el.style.opacity = '0';
+                                                         $el.addEventListener('load', () => $el.style.opacity = '1');
+                                                         if ($el.complete) $el.style.opacity = '1';
+                                                     "
+                                                >
+                                            </div>
                                         </template>
                                         {{-- Video --}}
                                         <template x-if="msg.is_video">
@@ -238,6 +248,35 @@
     </div>
 </div>
 
+{{-- Lightbox --}}
+<template x-if="previewImgUrl">
+    <div class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center"
+         @click="closePreview"
+         @keydown.escape.window="closePreview"
+    >
+        <div class="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+             @click.stop
+        >
+            <img :src="previewImgUrl" :alt="previewImgName" class="max-w-full max-h-[85vh] rounded-lg object-contain">
+
+            <div class="absolute top-4 right-4 flex items-center gap-2">
+                <a :href="'/chat/download/' + previewMsgId"
+                   class="w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+                   title="Unduh"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
+                <button @click="closePreview"
+                     class="w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+                     title="Tutup"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
 <style>
 [x-cloak] { display: none !important; }
 </style>
@@ -256,6 +295,9 @@ function chatApp() {
         fileDropdownOpen: false,
         chats: @json($chats),
         _pollTimer: null,
+        previewImgUrl: null,
+        previewImgName: '',
+        previewMsgId: null,
 
         get currentChat() {
             return this.chats.find(c => c.id === this.activeChat);
@@ -452,6 +494,20 @@ function chatApp() {
         scrollToBottom() {
             const el = this.$refs.messages;
             if (el) el.scrollTop = el.scrollHeight;
+        },
+
+        openPreview(url, name, id) {
+            this.previewImgUrl = url;
+            this.previewImgName = name;
+            this.previewMsgId = id;
+            document.body.style.overflow = 'hidden';
+        },
+
+        closePreview() {
+            this.previewImgUrl = null;
+            this.previewImgName = '';
+            this.previewMsgId = null;
+            document.body.style.overflow = '';
         }
     }
 }
