@@ -160,7 +160,15 @@
                             <span class="text-xs text-gray-400" x-text="cartItems.length + ' item'"></span>
                         </div>
                         <div class="max-h-80 overflow-y-auto">
-                            <template x-if="cartItems.length === 0">
+                            <template x-if="loadingCart && cartItems.length === 0">
+                                <div class="px-4 py-10 text-center">
+                                    <svg class="w-8 h-8 mx-auto text-gray-300 mb-3 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                                    </svg>
+                                    <p class="text-sm text-gray-400">Memuat keranjang...</p>
+                                </div>
+                            </template>
+                            <template x-if="!loadingCart && cartItems.length === 0">
                                 <div class="px-4 py-10 text-center">
                                     <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -678,15 +686,20 @@
             cartOpen: false,
             cartItems: [],
             hoverTimer: null,
+            loadingCart: false,
 
             async fetchCart() {
+                this.loadingCart = true;
                 try {
                     const res = await fetch('{{ route("cart.index") }}', {
                         headers: { 'Accept': 'application/json' }
                     });
                     const data = await res.json();
                     this.cartItems = data.items || [];
-                } catch (e) {}
+                } catch (e) {
+                } finally {
+                    this.loadingCart = false;
+                }
             },
 
             async updateQty(item, newQty) {

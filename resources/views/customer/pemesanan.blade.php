@@ -2019,6 +2019,8 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
                 this.orderNumber = data.orderNumber;
                 this.step = 4;
                 this.loading = false;
+                const store = window.Alpine.store('summary');
+                if (store) store.fetch();
             })
             .catch(err => {
                 Swal.fire({ icon: 'error', title: 'Oops...', text: err.message || 'Terjadi kesalahan' });
