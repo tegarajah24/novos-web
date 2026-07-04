@@ -114,15 +114,19 @@ class ChatController extends Controller
     {
         $data = $request->validated();
 
-        if (!$data['message'] && !$request->hasFile('file')) {
+        $message = $data['message'] ?? null;
+
+        if (!$message && !$request->hasFile('file')) {
             return response()->json(['message' => 'Pesan atau file harus diisi'], 422);
         }
 
         $user = auth()->user();
 
+        $chatId = $data['chat_id'] ?? null;
+
         // Use provided chat_id if valid and belongs to customer, otherwise create/get default chat
-        if ($data['chat_id']) {
-            $chat = Chat::where('id', $data['chat_id'])
+        if ($chatId) {
+            $chat = Chat::where('id', $chatId)
                 ->where('customer_id', $user->id)
                 ->first();
             
@@ -150,7 +154,7 @@ class ChatController extends Controller
             $fileType = $file->getMimeType();
         }
 
-        $message = ChatMessage::create([
+        $chatMessage = ChatMessage::create([
             'chat_id'   => $chat->id,
             'sender_id' => $user->id,
             'message'   => $data['message'] ?? null,
@@ -160,13 +164,13 @@ class ChatController extends Controller
             'file_type' => $fileType,
         ]);
 
-        $message->load('sender');
+        $chatMessage->load('sender');
 
         $chat->load('order');
         Notification::sendToAllStaff(
             'chat',
             'Pesan Baru',
-            "Pesan baru dari customer <strong>{$user->name}</strong>" . ($chat->order ? " untuk <strong>{$chat->order->order_number}</strong>" : '') . ($data['message'] ? ": {$data['message']}" : ''),
+            "Pesan baru dari customer <strong>{$user->name}</strong>" . ($chat->order ? " untuk <strong>{$chat->order->order_number}</strong>" : '') . ($data['message'] ?? null ? ": {$data['message']}" : ''),
             [
                 'initials' => collect(explode(' ', $user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
                 'role' => auth()->user()->role->name,
@@ -177,14 +181,14 @@ class ChatController extends Controller
 
         return response()->json([
             'message' => [
-                'id'                 => $message->id,
-                'message'            => $message->message,
-                'file_url'           => $message->file_url,
-                'file_name'          => $message->file_name,
-                'file_size_formatted' => $message->file_size_formatted,
-                'is_image'           => $message->is_image,
-                'is_video'           => $message->is_video,
-                'created_at'         => $message->created_at->format('H:i'),
+                'id'                 => $chatMessage->id,
+                'message'            => $chatMessage->message,
+                'file_url'           => $chatMessage->file_url,
+                'file_name'          => $chatMessage->file_name,
+                'file_size_formatted' => $chatMessage->file_size_formatted,
+                'is_image'           => $chatMessage->is_image,
+                'is_video'           => $chatMessage->is_video,
+                'created_at'         => $chatMessage->created_at->format('H:i'),
             ],
         ]);
     }

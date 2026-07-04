@@ -103,7 +103,9 @@ class ChatController extends Controller
     {
         $data = $request->validated();
 
-        if (!$data['message'] && !$request->hasFile('file')) {
+        $message = $data['message'] ?? null;
+
+        if (!$message && !$request->hasFile('file')) {
             return response()->json(['message' => 'Pesan atau file harus diisi'], 422);
         }
 
