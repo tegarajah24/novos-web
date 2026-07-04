@@ -27,7 +27,7 @@ class SummaryController extends Controller
                     ->count(),
             ],
             'cart' => [
-                'count' => Cart::where('user_id', $user->id)->sum('qty'),
+                'count' => Cart::where('user_id', $user->id)->count(),
             ],
         ]);
     }
