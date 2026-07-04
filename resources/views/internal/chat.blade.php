@@ -78,7 +78,7 @@
                             <div class="flex" :class="msg.from === 'admin' ? 'justify-end' : 'justify-start'">
                                 <div
                                     :class="msg.from === 'admin' ? 'bg-[#1a237e] text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
-                                    class="max-w-[70%] px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5"
+                                    class="max-w-[70%] px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5 min-w-0"
                                 >
                                     {{-- File attachment --}}
                                     <template x-if="msg.file_url">
@@ -97,7 +97,7 @@
                                             <template x-if="!msg.is_image && !msg.is_video">
                                                 <a :href="'/staf/chat/download/' + msg.id"
                                                     :class="msg.from === 'admin' ? 'bg-[#1a237e] hover:bg-[#283593]' : 'bg-gray-100 hover:bg-gray-200'"
-                                                    class="flex items-center gap-3 p-3 rounded-xl transition-colors min-w-0"
+                                                    class="flex items-center gap-3 p-3 rounded-xl transition-colors min-w-0 overflow-hidden"
                                                 >
                                                     <div :class="msg.from === 'admin' ? 'bg-[#283593]' : 'bg-blue-100'" class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="msg.from === 'admin' ? 'text-white' : 'text-blue-900'"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
