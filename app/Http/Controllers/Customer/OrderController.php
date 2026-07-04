@@ -11,6 +11,7 @@ use App\Models\DesignRequest;
 use App\Models\OrderStatusHistory;
 use App\Models\Chat;
 use App\Models\ChatMessage;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
