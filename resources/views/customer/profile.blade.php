@@ -328,7 +328,7 @@
                                 <span class="text-center">Jumlah</span>
                             </div>
                             <template x-for="(item, index) in cartItems" :key="item.id">
-                                <div class="grid grid-cols-[40px_60px_1fr_100px_120px_100px_40px] md:grid-cols-[40px_60px_1fr_100px_120px_100px_40px] gap-4 items-center px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-100 last:border-0">
+                                <div class="grid grid-cols-[40px_60px_1fr_100px_120px_100px_72px] md:grid-cols-[40px_60px_1fr_100px_120px_100px_72px] gap-4 items-center px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-100 last:border-0">
                                     <div>
                                         <input type="checkbox" :checked="item.is_selected" @change="toggleSelect(item)"
                                             class="w-4 h-4 rounded border-gray-300 text-[#1a237e] accent-[#1a237e] cursor-pointer">

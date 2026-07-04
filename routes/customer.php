@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
 
     Route::post('/chat/{chat}/read', [ChatController::class, 'markRead'])->name('chat.read');
+    Route::get('/chat/{chat}/poll', [ChatController::class, 'poll'])->name('chat.poll');
     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

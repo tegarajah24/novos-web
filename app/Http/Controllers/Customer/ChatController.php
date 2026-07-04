@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCustomerChatRequest;
 use App\Models\Chat;
+use App\Models\ChatMessage;
+use App\Models\Notification;
+use App\Services\ImageService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
@@ -31,6 +35,7 @@ class ChatController extends Controller
                     ->count(),
                 'online'  => false,
                 'messages' => $chat->messages->map(fn($msg) => [
+                    'id'                 => $msg->id,
                     'from'               => $msg->sender_id === $user->id ? 'customer' : 'admin',
                     'text'               => $msg->message,
                     'time'               => $msg->created_at->format('H:i'),
@@ -66,6 +71,43 @@ class ChatController extends Controller
             ->where('is_read', false)
             ->update(['is_read' => true]);
         return response()->json(['success' => true]);
+    }
+
+    public function poll(Request $request, Chat $chat)
+    {
+        if ($chat->customer_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $afterId = $request->integer('after', 0);
+
+        $messages = ChatMessage::where('chat_id', $chat->id)
+            ->where('id', '>', $afterId)
+            ->orderBy('id')
+            ->get()
+            ->map(fn($msg) => [
+                'id'                 => $msg->id,
+                'from'               => $msg->sender_id === auth()->id() ? 'customer' : 'admin',
+                'text'               => $msg->message,
+                'time'               => $msg->created_at->format('H:i'),
+                'file_url'           => $msg->file_url,
+                'file_name'          => $msg->file_name,
+                'file_size_formatted' => $msg->file_size_formatted,
+                'is_image'           => $msg->is_image,
+                'is_video'           => $msg->is_video,
+                'sender_avatar_url'  => $msg->sender_avatar_url,
+                'is_admin'           => $msg->sender_id === $chat->admin_id,
+            ]);
+
+        $unreadCount = ChatMessage::where('chat_id', $chat->id)
+            ->where('sender_id', '!=', auth()->id())
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json([
+            'messages' => $messages,
+            'unread'   => $unreadCount,
+        ]);
     }
 
     public function store(StoreCustomerChatRequest $request)

@@ -227,12 +227,31 @@ function chatApp() {
 
         async pollMessages() {
             try {
-                const res = await fetch('/chat/unread-count', {
-                    headers: { 'Accept': 'application/json' }
-                });
-                const data = await res.json();
-                if (data.count > 0) {
-                    window.location.reload();
+                if (this.activeChat) {
+                    const chat = this.currentChat;
+                    if (!chat) return;
+
+                    const lastId = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].id || 0 : 0;
+
+                    const res = await fetch('/chat/' + this.activeChat + '/poll?after=' + lastId, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+
+                    if (data.messages && data.messages.length > 0) {
+                        for (const msg of data.messages) {
+                            chat.messages.push(msg);
+                        }
+                        const last = data.messages[data.messages.length - 1];
+                        if (last.text) {
+                            chat.lastMessage = last.text;
+                        } else if (last.file_name) {
+                            chat.lastMessage = '\u{1F4CE} ' + last.file_name;
+                        }
+                        chat.time = last.time;
+                        chat.unread = data.unread ?? 0;
+                        this.$nextTick(() => this.scrollToBottom());
+                    }
                 }
             } catch (e) {}
         },
@@ -321,6 +340,7 @@ function chatApp() {
                 const msg = result.message;
 
                 chat.messages.push({
+                    id: msg.id,
                     from: 'customer',
                     text: msg.message || '',
                     time: msg.created_at,
