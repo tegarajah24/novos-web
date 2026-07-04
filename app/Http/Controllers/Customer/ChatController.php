@@ -11,6 +11,7 @@ use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+
 class ChatController extends Controller
 {
     public function index()
@@ -191,5 +192,23 @@ class ChatController extends Controller
                 'created_at'         => $chatMessage->created_at->format('H:i'),
             ],
         ]);
+    }
+
+    public function download(ChatMessage $chatMessage)
+    {
+        $user = auth()->user();
+
+        if ($chatMessage->chat->customer_id !== $user->id) {
+            abort(403);
+        }
+
+        if (!$chatMessage->file_path || !Storage::disk('public')->exists($chatMessage->file_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download(
+            $chatMessage->file_path,
+            $chatMessage->file_name
+        );
     }
 }

@@ -162,4 +162,16 @@ class ChatController extends Controller
             ],
         ]);
     }
+
+    public function download(ChatMessage $chatMessage)
+    {
+        if (!$chatMessage->file_path || !Storage::disk('public')->exists($chatMessage->file_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download(
+            $chatMessage->file_path,
+            $chatMessage->file_name
+        );
+    }
 }

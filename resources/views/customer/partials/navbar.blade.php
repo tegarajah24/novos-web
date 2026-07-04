@@ -204,7 +204,7 @@
                                             </div>
                                         </template>
                                     </div>
-                                    <div class="flex flex-col items-end shrink-0">
+                                    <div class="flex flex-col items-end justify-between shrink-0 self-stretch py-0.5">
                                         <span class="text-xs text-gray-500" x-text="item.qty + ' pcs'"></span>
                                         <a href="{{ route('profile.edit') }}?tab=keranjang" class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:text-gray-900 transition-colors">
                                             Lihat Selengkapnya

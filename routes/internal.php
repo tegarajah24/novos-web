@@ -48,6 +48,7 @@ Route::prefix('staf')
         Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
         Route::post('/chat/{chat}/read', [ChatController::class, 'markRead'])->name('chat.read');
         Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
+        Route::get('/chat/download/{chatMessage}', [ChatController::class, 'download'])->name('chat.download');
         Route::get('/daily-mental-check', [DailyMentalCheckController::class, 'index'])->name('daily-mental-check');
         Route::get('/daily-mental-check/today', [DailyMentalCheckController::class, 'getToday'])->name('daily-mental-check.today');
         Route::post('/daily-mental-check/daily', [DailyMentalCheckController::class, 'storeDailyCheck'])->name('daily-mental-check.store-daily');

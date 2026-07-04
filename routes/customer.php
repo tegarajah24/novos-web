@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/{chat}/read', [ChatController::class, 'markRead'])->name('chat.read');
     Route::get('/chat/{chat}/poll', [ChatController::class, 'poll'])->name('chat.poll');
     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
+    Route::get('/chat/download/{chatMessage}', [ChatController::class, 'download'])->name('chat.download');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
