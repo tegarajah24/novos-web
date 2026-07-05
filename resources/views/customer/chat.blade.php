@@ -248,45 +248,44 @@
     </div>
 
     {{-- Lightbox --}}
-    <template x-if="previewImgUrl">
-        <div class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center"
+    <div x-show="previewImgUrl"
+         class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="closePreview"
+         @keydown.escape.window="closePreview"
+    >
+        <div class="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
              x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
+             x-transition:enter-start="scale-95 opacity-0"
+             x-transition:enter-end="scale-100 opacity-100"
              x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @click="closePreview"
-             @keydown.escape.window="closePreview"
+             x-transition:leave-start="scale-100 opacity-100"
+             x-transition:leave-end="scale-95 opacity-0"
+             @click.stop
         >
-            <div class="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="scale-95 opacity-0"
-                 x-transition:enter-end="scale-100 opacity-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="scale-100 opacity-100"
-                 x-transition:leave-end="scale-95 opacity-0"
-                 @click.stop
-            >
-                <img :src="previewImgUrl" :alt="previewImgName" class="max-w-full max-h-[85vh] rounded-lg object-contain">
+            <img :src="previewImgUrl" :alt="previewImgName" class="max-w-full max-h-[85vh] rounded-lg object-contain">
 
-                <div class="absolute top-4 right-4 flex items-center gap-2">
-                    <a :href="'/chat/download/' + previewMsgId"
-                       class="w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
-                       title="Unduh"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    </a>
-                    <button @click="closePreview"
-                         class="w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
-                         title="Tutup"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                </div>
+            <div class="absolute top-4 right-4 flex items-center gap-2">
+                <a :href="'/chat/download/' + previewMsgId"
+                   class="w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+                   title="Unduh"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
+                <button @click="closePreview"
+                     class="w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+                     title="Tutup"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
             </div>
         </div>
-    </template>
+    </div>
 </div>
 
 <style>
