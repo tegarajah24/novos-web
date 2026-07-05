@@ -98,7 +98,7 @@
                         <div class="flex" :class="msg.from === 'customer' ? 'justify-end' : 'justify-start'">
                             <div
                                 :class="msg.from === 'customer' ? 'bg-[#1a237e] text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
-                                class="max-w-[70%] px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5 min-w-0"
+                                class="max-w-[70%] min-w-[160px] px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5"
                             >
                                 {{-- File attachment --}}
                                 <template x-if="msg.file_url">
@@ -106,7 +106,7 @@
                                         {{-- Image --}}
                                         <template x-if="msg.is_image">
                                             <div @click="openPreview(msg.file_url, msg.file_name, msg.id)"
-                                                 class="-mx-1 -mt-1 rounded-xl overflow-hidden bg-gray-200 cursor-pointer"
+                                                 class="-mx-1 -mt-1 w-full rounded-xl overflow-hidden bg-gray-200 cursor-pointer"
                                                  style="max-height: 240px; min-height: 120px;"
                                             >
                                                 <img :src="msg.file_url" :alt="msg.file_name"
