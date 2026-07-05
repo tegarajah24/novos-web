@@ -17,6 +17,7 @@ class ChatController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $user->forceFill(['chat_active_at' => now()])->save();
 
         Chat::firstOrCreate(['customer_id' => $user->id]);
 
@@ -37,7 +38,7 @@ class ChatController extends Controller
                     ->where('is_read', false)
                     ->where('sender_id', '!=', $user->id)
                     ->count(),
-                'online'    => $chat->admin?->last_active_at && $chat->admin->last_active_at->gt(now()->subMinutes(2)),
+                'online'    => $chat->admin?->chat_active_at && $chat->admin->chat_active_at->gt(now()->subMinutes(2)),
                 'unassigned' => $chat->admin_id === null,
                 'messages' => $chat->messages->map(fn($msg) => [
                     'id'                 => $msg->id,
@@ -84,6 +85,8 @@ class ChatController extends Controller
             abort(403);
         }
 
+        auth()->user()->forceFill(['chat_active_at' => now()])->save();
+
         $afterId = $request->integer('after', 0);
 
         $messages = ChatMessage::where('chat_id', $chat->id)
@@ -116,7 +119,7 @@ class ChatController extends Controller
             'admin'     => $chat->admin_id ? [
                 'name'       => $chat->admin->name,
                 'avatar_url' => $chat->admin->avatar ? Storage::url($chat->admin->avatar) : null,
-                'online'     => $chat->admin->last_active_at && $chat->admin->last_active_at->gt(now()->subMinutes(2)),
+                'online'     => $chat->admin->chat_active_at && $chat->admin->chat_active_at->gt(now()->subMinutes(2)),
             ] : null,
         ]);
     }

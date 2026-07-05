@@ -15,6 +15,7 @@ class ChatController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $user->forceFill(['chat_active_at' => now()])->save();
 
         $chats = Chat::with(['customer', 'messages' => function ($q) {
                 $q->latest()->take(1);
@@ -62,7 +63,7 @@ class ChatController extends Controller
                             ? '📎 ' . $lastMsg->file_name
                             : 'Belum ada pesan'),
                     'unread'       => $unread,
-                    'online'       => $chat->customer?->last_active_at && $chat->customer->last_active_at->gt(now()->subMinutes(2)),
+                    'online'       => $chat->customer?->chat_active_at && $chat->customer->chat_active_at->gt(now()->subMinutes(2)),
                     'messages'     => $messages,
                 ];
             })
@@ -87,6 +88,46 @@ class ChatController extends Controller
             ->count();
 
         return response()->json(['count' => $count]);
+    }
+
+    public function poll()
+    {
+        $user = auth()->user();
+        $user->forceFill(['chat_active_at' => now()])->save();
+
+        $chats = Chat::with(['customer', 'messages' => function ($q) {
+                $q->latest()->take(1);
+            }])
+            ->where(function ($q) use ($user) {
+                $q->where('admin_id', $user->id)
+                  ->orWhereNull('admin_id');
+            })
+            ->latest()
+            ->get()
+            ->map(function ($chat) use ($user) {
+                $lastMsg = $chat->messages->first();
+
+                $unread = ChatMessage::where('chat_id', $chat->id)
+                    ->where('sender_id', '!=', $user->id)
+                    ->where('is_read', false)
+                    ->count();
+
+                return [
+                    'id'          => $chat->id,
+                    'name'        => $chat->customer->name ?? 'Unknown',
+                    'time'        => $lastMsg?->created_at->format('H:i') ?? $chat->created_at->format('H:i'),
+                    'lastMessage' => $lastMsg?->message
+                        ?? ($lastMsg?->file_name
+                            ? '📎 ' . $lastMsg->file_name
+                            : 'Belum ada pesan'),
+                    'unread'      => $unread,
+                    'online'      => $chat->customer?->chat_active_at && $chat->customer->chat_active_at->gt(now()->subMinutes(2)),
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        return response()->json(['chats' => $chats]);
     }
 
     public function markRead(Chat $chat)
@@ -165,6 +206,7 @@ class ChatController extends Controller
 
     public function heartbeat()
     {
+        auth()->user()->forceFill(['chat_active_at' => now()])->save();
         return response()->json(['ok' => true]);
     }
 

@@ -241,19 +241,49 @@ function internalChatApp() {
         previewImgName: '',
         previewMsgId: null,
         _heartbeatTimer: null,
+        _pollTimer: null,
 
         init() {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
             this._heartbeatTimer = setInterval(() => {
                 fetch('{{ route("staf.chat.heartbeat") }}', {
                     method: 'POST',
                     headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
                 }).catch(() => {});
             }, 30000);
+
+            this._pollTimer = setInterval(() => {
+                this.pollChats();
+            }, 5000);
         },
 
         destroy() {
             clearInterval(this._heartbeatTimer);
+            clearInterval(this._pollTimer);
+        },
+
+        async pollChats() {
+            try {
+                const res = await fetch('{{ route("staf.chat.poll") }}', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (!data.chats) return;
+
+                for (const incoming of data.chats) {
+                    const existing = this.chats.find(c => c.id === incoming.id);
+                    if (existing) {
+                        existing.lastMessage = incoming.lastMessage;
+                        existing.time = incoming.time;
+                        existing.unread = incoming.unread;
+                        existing.online = incoming.online;
+                    } else {
+                        incoming.messages = [];
+                        this.chats.push(incoming);
+                    }
+                }
+            } catch (e) {}
         },
 
         get currentChat() {
