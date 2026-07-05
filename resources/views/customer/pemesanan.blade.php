@@ -5,7 +5,7 @@
 @section('content')
 @auth
 
-<div class="max-w-5xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }})">
+<div class="max-w-5xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
@@ -82,7 +82,7 @@
 
         <div class="flex justify-end mt-8">
             <button
-                @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else step = 2;"
+                @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else if (!hasOrders) showFirstOrderAlert(); else step = 2;"
                 :disabled="!jenis"
                 :class="jenis ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                 class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
@@ -1511,7 +1511,7 @@
 
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 <script>
-function pemesananForm(catalogProduct = null, userAddresses = []) {
+function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true) {
     return {
         step: 1,
         mode: 'single',
@@ -1590,6 +1590,7 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
         dragOver: false,
         dragOverRef: false,
         loading: false,
+        hasOrders: hasOrders,
         prioritasOptions: [
             { value: 'normal', label: 'Normal', desc: '7\u201314 hari kerja', harga: 'Gratis' },
             { value: 'express', label: 'Express', desc: '3\u20136 hari kerja', harga: '+Rp50.000' },
@@ -2149,6 +2150,25 @@ function pemesananForm(catalogProduct = null, userAddresses = []) {
             this.tmpQty = 1;
             this.prioritas = 'normal';
             this.selectedAddressId = null;
+        },
+
+        showFirstOrderAlert() {
+            Swal.fire({
+                icon: 'info',
+                title: 'Konsultasi Dulu Yuk!',
+                text: 'Karena ini pemesanan pertamamu, silakan konsultasi dengan admin kami terlebih dahulu agar hasil jerseys-nya maksimal.',
+                confirmButtonColor: '#1a237e',
+                confirmButtonText: 'Hubungi Admin',
+                showCancelButton: true,
+                cancelButtonColor: '#6b7280',
+                cancelButtonText: 'Lanjutkan Pesan',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '{{ route("chat") }}';
+                } else {
+                    this.step = 2;
+                }
+            });
         }
     }
 }

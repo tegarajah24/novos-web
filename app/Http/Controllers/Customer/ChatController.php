@@ -17,6 +17,9 @@ class ChatController extends Controller
     public function index()
     {
         $user = auth()->user();
+
+        Chat::firstOrCreate(['customer_id' => $user->id]);
+
         $chats = Chat::with(['messages.sender', 'admin'])
             ->where('customer_id', $user->id)
             ->latest()
@@ -34,7 +37,8 @@ class ChatController extends Controller
                     ->where('is_read', false)
                     ->where('sender_id', '!=', $user->id)
                     ->count(),
-                'online'  => false,
+                'online'    => false,
+                'unassigned' => $chat->admin_id === null,
                 'messages' => $chat->messages->map(fn($msg) => [
                     'id'                 => $msg->id,
                     'from'               => $msg->sender_id === $user->id ? 'customer' : 'admin',
@@ -106,8 +110,13 @@ class ChatController extends Controller
             ->count();
 
         return response()->json([
-            'messages' => $messages,
-            'unread'   => $unreadCount,
+            'messages'  => $messages,
+            'unread'    => $unreadCount,
+            'unassigned' => $chat->admin_id === null,
+            'admin'     => $chat->admin_id ? [
+                'name'       => $chat->admin->name,
+                'avatar_url' => $chat->admin->avatar ? Storage::url($chat->admin->avatar) : null,
+            ] : null,
         ]);
     }
 

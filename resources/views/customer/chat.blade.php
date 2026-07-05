@@ -88,7 +88,7 @@
                     </div>
                     <div>
                         <p class="font-semibold text-gray-900" x-text="currentChat.name"></p>
-                        <p class="text-xs" :class="currentChat.online ? 'text-green-600' : 'text-gray-400'" x-text="currentChat.online ? 'Online' : 'Offline'"></p>
+                        <p x-show="!currentChat.unassigned" class="text-xs text-gray-400">Offline</p>
                     </div>
                 </div>
 
@@ -304,6 +304,12 @@ function chatApp() {
         },
 
         init() {
+            if (this.chats.length > 0 && !this.activeChat) {
+                this.activeChat = this.chats[0].id;
+                this.mobileList = false;
+                this.$nextTick(() => this.markRead(this.activeChat));
+            }
+
             this._pollTimer = setInterval(() => {
                 if (!document.hidden && this.activeChat) this.pollMessages();
             }, 5000);
@@ -334,6 +340,15 @@ function chatApp() {
                     });
                     const data = await res.json();
 
+                    if (data.unassigned !== undefined) {
+                        chat.unassigned = data.unassigned;
+                    }
+
+                    if (data.admin) {
+                        chat.name = data.admin.name;
+                        chat.sender_avatar_url = data.admin.avatar_url;
+                    }
+
                     if (data.messages && data.messages.length > 0) {
                         for (const msg of data.messages) {
                             chat.messages.push(msg);
@@ -345,7 +360,12 @@ function chatApp() {
                             chat.lastMessage = '\u{1F4CE} ' + last.file_name;
                         }
                         chat.time = last.time;
-                        chat.unread = data.unread ?? 0;
+                        if (this.activeChat === chat.id) {
+                            chat.unread = 0;
+                            this.markRead(chat.id);
+                        } else {
+                            chat.unread = data.unread ?? 0;
+                        }
                         this.$nextTick(() => this.scrollToBottom());
                     }
                 }

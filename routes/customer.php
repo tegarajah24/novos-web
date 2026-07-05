@@ -30,8 +30,9 @@ Route::get('/pesan', function () {
 
         $produkData = $produk ? compact('produk', 'kategori', 'harga', 'gambar', 'kerah', 'bahan', 'jenis_potongan', 'lengan_jahitan') : null;
         $addresses = auth()->check() ? auth()->user()->addresses : collect([]);
+        $hasOrders = auth()->check() ? auth()->user()->orders()->exists() : false;
 
-        return view('customer.pemesanan', compact('produkData', 'addresses'));
+        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders'));
     })->name('pemesanan');
 
 // Public routes (Midtrans callback)
