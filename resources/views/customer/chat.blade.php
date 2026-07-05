@@ -250,10 +250,22 @@
     {{-- Lightbox --}}
     <template x-if="previewImgUrl">
         <div class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
              @click="closePreview"
              @keydown.escape.window="closePreview"
         >
             <div class="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="scale-95 opacity-0"
+                 x-transition:enter-end="scale-100 opacity-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="scale-100 opacity-100"
+                 x-transition:leave-end="scale-95 opacity-0"
                  @click.stop
             >
                 <img :src="previewImgUrl" :alt="previewImgName" class="max-w-full max-h-[85vh] rounded-lg object-contain">
