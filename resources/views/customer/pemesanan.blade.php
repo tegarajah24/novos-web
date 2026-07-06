@@ -544,13 +544,23 @@
             <div class="grid lg:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Total Quantity (pcs) <span class="text-red-500">*</span></label>
-                    <input
-                        type="number"
-                        x-model="form.total_qty"
-                        min="1"
-                        placeholder="Contoh: 20"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
-                    >
+                    <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white w-fit">
+                        <button
+                            @click="form.total_qty = Math.max(1, (parseInt(form.total_qty) || 1) - 1)"
+                            :class="(parseInt(form.total_qty) || 0) <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-100 cursor-pointer'"
+                            class="w-9 h-[42px] flex items-center justify-center transition-colors text-lg font-semibold shrink-0"
+                            type="button"
+                        >−</button>
+                        <span
+                            class="w-14 text-center text-sm font-semibold text-gray-900 select-none"
+                            x-text="parseInt(form.total_qty) || 0"
+                        ></span>
+                        <button
+                            @click="form.total_qty = (parseInt(form.total_qty) || 0) + 1"
+                            class="w-9 h-[42px] flex items-center justify-center text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors text-lg font-semibold shrink-0"
+                            type="button"
+                        >+</button>
+                    </div>
                     <p class="text-xs text-gray-400 mt-1">Total keseluruhan jumlah jersey yang dipesan</p>
                 </div>
             </div>
