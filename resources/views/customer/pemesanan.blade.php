@@ -653,12 +653,11 @@
                             <template x-if="ukuranTab === 'potongan'">
                                 <div>
                                     <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk potongan <strong class="text-[#1a237e]" x-text="form.jenis_potongan || 'REGULER'"></strong>.</p>
-                                    <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50" style="min-height: 400px;">
-                                        <embed
+                                    <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
+                                        <img
                                             :src="activeSizePdf"
-                                            type="application/pdf"
-                                            class="w-full"
-                                            style="min-height: 80vh;"
+                                            class="w-full h-auto object-contain"
+                                            alt="Referensi Ukuran"
                                         >
                                     </div>
                                 </div>
@@ -672,22 +671,20 @@
                                         <div>
                                             <h4 class="text-sm font-semibold text-gray-700 mb-2">Training Long Sleeve</h4>
                                             <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <embed
-                                                    src="/images/referensi-ukuran/TRAININGLONG.pdf"
-                                                    type="application/pdf"
-                                                    class="w-full"
-                                                    style="min-height: 70vh;"
+                                                <img
+                                                    src="/images/referensi-ukuran/TRAININGLONG.png"
+                                                    class="w-full h-auto object-contain"
+                                                    alt="Training Long Sleeve"
                                                 >
                                             </div>
                                         </div>
                                         <div>
                                             <h4 class="text-sm font-semibold text-gray-700 mb-2">Training Short Sleeve</h4>
                                             <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <embed
-                                                    src="/images/referensi-ukuran/TRAININGSHORT.pdf"
-                                                    type="application/pdf"
-                                                    class="w-full"
-                                                    style="min-height: 70vh;"
+                                                <img
+                                                    src="/images/referensi-ukuran/TRAININGSHORT.png"
+                                                    class="w-full h-auto object-contain"
+                                                    alt="Training Short Sleeve"
                                                 >
                                             </div>
                                         </div>
@@ -1681,13 +1678,13 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         get activeSizePdf() {
             const map = {
-                'REGULER': '/images/referensi-ukuran/REGCUT-NVS-2026.pdf',
-                'SLIMFIT CEWE': '/images/referensi-ukuran/WMNSLMCUT-NVS-2026.pdf',
-                'OVERSIZE': '/images/referensi-ukuran/OVRCUT-NVS-2026.pdf',
-                'TUNIK': '/images/referensi-ukuran/TUNIKCUT-NVS-2026.pdf',
-                'SLIM FIT UNISEX': '/images/referensi-ukuran/UNISEXSLMCUT-NVS-2026.pdf',
-                'BOXY CUT': '/images/referensi-ukuran/BOXYCUT-NVS-2026.pdf',
-                'KIDS': '/images/referensi-ukuran/KIDSCUT-NVS-2026.pdf',
+                'REGULER': '/images/referensi-ukuran/REGCUT-NVS-2026.png',
+                'SLIMFIT CEWE': '/images/referensi-ukuran/WMNSLMCUT-NVS-2026.png',
+                'OVERSIZE': '/images/referensi-ukuran/OVRCUT-NVS-2026.png',
+                'TUNIK': '/images/referensi-ukuran/TUNIKCUT-NVS-2026.png',
+                'SLIM FIT UNISEX': '/images/referensi-ukuran/UNISEXSLMCUT-NVS-2026.png',
+                'BOXY CUT': '/images/referensi-ukuran/BOXYCUT-NVS-2026.png',
+                'KIDS': '/images/referensi-ukuran/KIDSCUT-NVS-2026.png',
             };
             return map[this.form.jenis_potongan] || '/images/referensi-ukuran/REGCUT-NVS-2026.pdf';
         },
