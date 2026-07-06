@@ -567,7 +567,85 @@
 
             {{-- Detail Pesanan --}}
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Pesanan</label>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-sm font-medium text-gray-700">Detail Pesanan</label>
+                    <button
+                        type="button"
+                        @click="showUkuranRef = true"
+                        class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
+                    >
+                        Referensi Ukuran
+                    </button>
+                </div>
+
+                {{-- Modal Referensi Ukuran --}}
+                <template x-teleport="body">
+                <div
+                    x-show="showUkuranRef"
+                    x-cloak
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
+                    @click.self="showUkuranRef = false"
+                >
+                    <div
+                        x-show="showUkuranRef"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                        class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden"
+                        @click.stop
+                    >
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/>
+                                        <path d="m14.5 12.5 2-2"/>
+                                        <path d="m11.5 9.5 2-2"/>
+                                        <path d="m8.5 6.5 2-2"/>
+                                        <path d="m17.5 15.5 2-2"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-base font-bold text-gray-900">Referensi Ukuran</h3>
+                            </div>
+                            <button
+                                @click="showUkuranRef = false"
+                                class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                        <div class="px-6 py-4 overflow-y-auto max-h-[80vh]">
+                            <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk potongan <strong class="text-[#1a237e]" x-text="form.jenis_potongan || 'REGULER'"></strong>.</p>
+                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50" style="min-height: 400px;">
+                                <embed
+                                    :src="activeSizePdf"
+                                    type="application/pdf"
+                                    class="w-full"
+                                    style="min-height: 80vh;"
+                                >
+                            </div>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                            <button
+                                @click="showUkuranRef = false"
+                                class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
+                            >
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                </template>
+
                 <textarea
                     x-model="form.catatan"
                     rows="6"
@@ -1425,6 +1503,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
         prioritas: 'normal',
         pembayaran: 'midtrans',
+        showUkuranRef: false,
         uploads: [],
         refUploads: [],
         orderNumber: null,
@@ -1536,6 +1615,17 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.prioritas === 'express') return 50000;
             if (this.prioritas === 'super_express') return 150000;
             return 0;
+        },
+
+        get activeSizePdf() {
+            const map = {
+                'REGULER': '/images/referensi-ukuran/REGCUT-NVS-2026.pdf',
+                'SLIMFIT CEWE': '/images/referensi-ukuran/WMNSLMCUT-NVS-2026.pdf',
+                'OVERSIZE': '/images/referensi-ukuran/OVRCUT-NVS-2026.pdf',
+                'TUNIK': '/images/referensi-ukuran/TUNIKCUT-NVS-2026.pdf',
+                'SLIM FIT UNISEX': '/images/referensi-ukuran/UNISEXSLMCUT-NVS-2026.pdf',
+            };
+            return map[this.form.jenis_potongan] || '/images/referensi-ukuran/REGCUT-NVS-2026.pdf';
         },
 
         get estimasiTotal() {
