@@ -602,7 +602,7 @@
                         x-transition:leave="transition ease-in duration-150"
                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                         x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                        class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden"
+                        class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
                         @click.stop
                         x-data="{ ukuranTab: 'potongan' }"
                     >
@@ -648,18 +648,34 @@
                         </div>
 
                         {{-- Tab Content --}}
-                        <div class="px-6 py-4 overflow-y-auto max-h-[80vh]">
+                        <div class="px-6 py-4 overflow-y-auto flex-1 min-h-0">
                             {{-- Tab: Ukuran Potongan --}}
                             <template x-if="ukuranTab === 'potongan'">
                                 <div>
-                                    <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk potongan <strong class="text-[#1a237e]" x-text="form.jenis_potongan || 'REGULER'"></strong>.</p>
-                                    <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                        <img
-                                            :src="activeSizePdf"
-                                            class="w-full h-auto object-contain"
-                                            alt="Referensi Ukuran"
-                                        >
-                                    </div>
+                                    <template x-if="!form.jenis_potongan">
+                                        <div class="flex flex-col items-center justify-center py-16 text-center">
+                                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="11" cy="11" r="8"/>
+                                                    <path d="m21 21-4.3-4.3"/>
+                                                </svg>
+                                            </div>
+                                            <p class="text-sm font-semibold text-gray-700 mb-1">Belum ada referensi ukuran</p>
+                                            <p class="text-xs text-gray-400 max-w-xs">Silakan pilih <strong>Jenis Potongan</strong> terlebih dahulu untuk melihat referensi ukuran yang sesuai.</p>
+                                        </div>
+                                    </template>
+                                    <template x-if="form.jenis_potongan">
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk potongan <strong class="text-[#1a237e]" x-text="form.jenis_potongan"></strong>.</p>
+                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
+                                                <img
+                                                    :src="activeSizePdf"
+                                                    class="w-full h-auto object-contain"
+                                                    alt="Referensi Ukuran"
+                                                >
+                                            </div>
+                                        </div>
+                                    </template>
                                 </div>
                             </template>
 
