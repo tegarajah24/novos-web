@@ -219,7 +219,7 @@ new Chart(document.getElementById('chartOrders'), {
 new Chart(document.getElementById('chartTop5'), {
     type:'bar',
     data:{
-        labels: @json($topProductLabels),
+        labels: @json($topProductLabels).map((label) => '           ' + label),
         datasets:[
             {
                 label:'Terjual',
@@ -240,7 +240,7 @@ new Chart(document.getElementById('chartTop5'), {
         },
         scales:{
             x:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},border:{display:false},ticks:{font:{size:11}}},
-            y:{grid:{display:false},border:{display:false},ticks:{font:{size:12,family:"'Poppins',sans-serif"}}}
+            y:{grid:{display:false},border:{display:false},ticks:{crossAlign:'far',padding:10,font:{size:12,family:"'Poppins',sans-serif"}}}
         },
         hover:{mode:'nearest',intersect:true}
     },
@@ -249,15 +249,17 @@ new Chart(document.getElementById('chartTop5'), {
             id:'rankingBadges',
             afterDatasetsDraw(chart){
                 const ctx=chart.ctx;
+                const yAxis=chart.scales.y;
+                if(!yAxis) return;
                 const meta=chart.getDatasetMeta(0);
                 const badges=['🥇','🥈','🥉'];
                 meta.data.forEach((bar,index)=>{
                     if(index<3){
                         ctx.save();
                         ctx.font='16px serif';
-                        ctx.textAlign='right';
+                        ctx.textAlign='left';
                         ctx.textBaseline='middle';
-                        ctx.fillText(badges[index],bar.base-12,bar.y);
+                        ctx.fillText(badges[index],yAxis.left + 10,bar.y);
                         ctx.restore();
                     }
                 });
