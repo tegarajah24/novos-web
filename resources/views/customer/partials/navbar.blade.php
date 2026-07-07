@@ -348,14 +348,25 @@
 
             {{-- ===== OFF-CANVAS AUTH SIDEBAR ===== --}}
             <template x-teleport="body">
-                <div x-show="sidebarOpen" x-cloak
-                    class="fixed inset-0 z-[60]" @click.away="sidebarOpen = false">
+                <div class="fixed inset-0 z-[60]" x-cloak>
                     {{-- Backdrop --}}
-                    <div class="absolute inset-0 bg-black/40" @click="sidebarOpen = false"></div>
+                    <div x-show="sidebarOpen" class="absolute inset-0 bg-black/40" @click="sidebarOpen = false"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"></div>
 
                     {{-- Panel --}}
-                    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl overflow-y-auto"
-                        @click.outside="sidebarOpen = false">
+                    <div x-show="sidebarOpen" class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl overflow-y-auto"
+                        @click.outside="sidebarOpen = false"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="translate-x-full"
+                        x-transition:enter-end="translate-x-0"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="translate-x-0"
+                        x-transition:leave-end="translate-x-full">
                         {{-- Header --}}
                         <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
                             <h2 class="text-lg font-bold text-gray-900" x-text="tab === 'login' ? 'Masuk' : 'Daftar Akun'"></h2>
