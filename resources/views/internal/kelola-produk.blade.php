@@ -224,36 +224,36 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Depan</label>
-                            <div class="flex items-center gap-3">
-                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-xl hover:bg-[#283593] transition-colors font-medium cursor-pointer">
-                                    <i data-lucide="upload" class="w-4 h-4"></i> Pilih File
-                                    <input type="file" x-ref="inputDepan" class="hidden" accept="image/*" @change="handleUploadDepan">
-                                </label>
-                                <div class="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
+                            <div class="flex items-start gap-2">
+                                <div class="flex-1 h-36 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
                                     <template x-if="formData.imageDepanPreview">
                                         <img :src="formData.imageDepanPreview" class="object-cover w-full h-full" alt="Preview Depan">
                                     </template>
                                     <template x-if="!formData.imageDepanPreview">
-                                        <i data-lucide="image" class="w-5 h-5 text-gray-400"></i>
+                                        <i data-lucide="image" class="w-10 h-10 text-gray-300"></i>
                                     </template>
                                 </div>
+                                <label class="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1a237e] text-white rounded-xl hover:bg-[#283593] transition-colors cursor-pointer">
+                                    <i data-lucide="upload" class="w-5 h-5"></i>
+                                    <input type="file" x-ref="inputDepan" class="hidden" accept="image/*" @change="handleUploadDepan">
+                                </label>
                             </div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Belakang</label>
-                            <div class="flex items-center gap-3">
-                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm rounded-xl hover:bg-[#283593] transition-colors font-medium cursor-pointer">
-                                    <i data-lucide="upload" class="w-4 h-4"></i> Pilih File
-                                    <input type="file" x-ref="inputBelakang" class="hidden" accept="image/*" @change="handleUploadBelakang">
-                                </label>
-                                <div class="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
+                            <div class="flex items-start gap-2">
+                                <div class="flex-1 h-36 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
                                     <template x-if="formData.imageBelakangPreview">
                                         <img :src="formData.imageBelakangPreview" class="object-cover w-full h-full" alt="Preview Belakang">
                                     </template>
                                     <template x-if="!formData.imageBelakangPreview">
-                                        <i data-lucide="image" class="w-5 h-5 text-gray-400"></i>
+                                        <i data-lucide="image" class="w-10 h-10 text-gray-300"></i>
                                     </template>
                                 </div>
+                                <label class="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1a237e] text-white rounded-xl hover:bg-[#283593] transition-colors cursor-pointer">
+                                    <i data-lucide="upload" class="w-5 h-5"></i>
+                                    <input type="file" x-ref="inputBelakang" class="hidden" accept="image/*" @change="handleUploadBelakang">
+                                </label>
                             </div>
                         </div>
                     </div>
