@@ -110,7 +110,7 @@
 {{-- ─── CHARTS ROW 2 ──────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">🏆 Top 5 Bahan Terlaris</h3>
+        <h3 class="font-semibold text-gray-900 mb-4">Top 5 Bahan Terlaris</h3>
         <div class="h-56"><canvas id="chartTop5"></canvas></div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
@@ -245,26 +245,7 @@ new Chart(document.getElementById('chartTop5'), {
         hover:{mode:'nearest',intersect:true}
     },
     plugins:[
-        {
-            id:'rankingBadges',
-            afterDatasetsDraw(chart){
-                const ctx=chart.ctx;
-                const yAxis=chart.scales.y;
-                if(!yAxis) return;
-                const meta=chart.getDatasetMeta(0);
-                const badges=['🥇','🥈','🥉'];
-                meta.data.forEach((bar,index)=>{
-                    if(index<3){
-                        ctx.save();
-                        ctx.font='16px serif';
-                        ctx.textAlign='left';
-                        ctx.textBaseline='middle';
-                        ctx.fillText(badges[index],yAxis.left + 10,bar.y);
-                        ctx.restore();
-                    }
-                });
-            }
-        },
+
         {
             id:'valueLabels',
             afterDatasetsDraw(chart){
@@ -282,23 +263,6 @@ new Chart(document.getElementById('chartTop5'), {
                 });
             }
         },
-        {
-            id:'hoverEnlarge',
-            beforeDatasetsDraw(chart){
-                const active=chart.getActiveElements();
-                if(!active.length) return;
-                const ctx=chart.ctx;
-                active.forEach(el=>{
-                    const {x,base,y,width}=el.element;
-                    const thickness=width*1.4;
-                    const newY=y-thickness/2;
-                    ctx.save();
-                    ctx.fillStyle='rgba(26,35,126,0.12)';
-                    ctx.fillRect(base,newY,x-base,thickness);
-                    ctx.restore();
-                });
-            }
-        }
     ]
 });
 
