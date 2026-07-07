@@ -121,17 +121,27 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 
 
         {{-- Detail Produk --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div x-data="editProduk(@json($order['product']))" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 Detail Produk
+                <button @click="openModal()" class="ml-auto inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1a237e] bg-[#1a237e]/5 hover:bg-[#1a237e]/10 rounded-lg transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    Edit
+                </button>
             </h3>
-            <div class="grid grid-cols-2 gap-x-8 gap-y-2.5 text-sm mb-4">
+            <div class="grid grid-cols-3 gap-x-8 gap-y-2.5 text-sm mb-4">
                 <div><span class="text-gray-500 text-xs">Jenis</span><div class="font-medium text-gray-900">{{ $order['product']['type'] }}</div></div>
-                <div><span class="text-gray-500 text-xs">Olahraga</span><div class="font-medium text-gray-900">{{ $order['product']['sport'] }}</div></div>
-                <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-medium text-gray-900">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-medium text-gray-900">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Nama Pemesan</span><div class="font-medium text-gray-900">{{ $order['product']['nama_pemesan'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Olahraga / Motif</span><div class="font-medium text-gray-900" x-text="form.motif || '{{ $order['product']['sport'] }}'">{{ $order['product']['sport'] }}</div></div>
+                <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-medium text-gray-900" x-text="form.team_name || 'Jersey Custom'">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-medium text-gray-900" :class="{ 'text-gray-400 italic': !form.nama_artikel }" x-text="form.nama_artikel || 'Belum diisi'">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Nama Pemesan</span><div class="font-medium text-gray-900" x-text="form.nama_pemesan || '-'">{{ $order['product']['nama_pemesan'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Detail Sponsor</span><div class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'">{{ $order['product']['detail_sponsor'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Bahan</span><div class="font-medium text-gray-900" x-text="form.material || '-'">{{ $order['product']['material'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Kerah</span><div class="font-medium text-gray-900" x-text="form.collar_style || '-'">{{ $order['product']['collar_style'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Prioritas</span><div class="font-medium text-gray-900" x-text="form.priority || 'normal'">{{ $order['product']['priority'] ?? 'normal' }}</div></div>
             </div>
             {{-- Item Details Table --}}
             @if(!empty($order['item_details']))
@@ -175,7 +185,88 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
             {{-- Catatan --}}
             <div class="text-xs text-gray-500 mt-2">
                 <span class="font-medium text-gray-600">Catatan / Spesifikasi:</span>
-                <p class="mt-1 text-gray-500 whitespace-pre-line">{{ $order['product']['notes'] }}</p>
+                <p class="mt-1 text-gray-500 whitespace-pre-line" x-text="form.additional_notes || '-'">{{ $order['product']['notes'] }}</p>
+            </div>
+
+            {{-- Edit Modal --}}
+            <div x-show="editModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
+                <div class="flex items-center justify-center min-h-screen px-4">
+                    <div x-show="editModalOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" @click="editModalOpen = false"></div>
+                    <div x-show="editModalOpen" x-transition.scale.origin.bottom class="relative w-full max-w-3xl p-6 my-8 bg-white rounded-2xl shadow-2xl border border-gray-200">
+                        <div class="flex items-center justify-between mb-5">
+                            <h3 class="text-lg font-bold text-gray-900">Edit Detail Produk</h3>
+                            <button @click="editModalOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Tim</label>
+                                <input type="text" x-model="form.team_name" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Artikel <span class="text-red-500">*</span></label>
+                                <input type="text" x-model="form.nama_artikel" placeholder="Isi nama artikel" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Pemesan</label>
+                                <input type="text" x-model="form.nama_pemesan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Olahraga / Motif</label>
+                                <input type="text" x-model="form.motif" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Detail Sponsor</label>
+                                <input type="text" x-model="form.detail_sponsor" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Bahan</label>
+                                <input type="text" x-model="form.material" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Kerah</label>
+                                <input type="text" x-model="form.collar_style" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Potongan</label>
+                                <input type="text" x-model="form.jenis_potongan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Lengan & Jahitan</label>
+                                <input type="text" x-model="form.lengan_jahitan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Warna Primer</label>
+                                <input type="text" x-model="form.primary_color" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Warna Sekunder</label>
+                                <input type="text" x-model="form.secondary_color" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Prioritas</label>
+                                <select x-model="form.priority" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all bg-white">
+                                    <option value="normal">Normal</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Catatan / Spesifikasi</label>
+                            <textarea x-model="form.additional_notes" rows="3" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all"></textarea>
+                        </div>
+                        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
+                            <button @click="editModalOpen = false" class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                                Batal
+                            </button>
+                            <button @click="save()" :disabled="loading" class="px-5 py-2 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#0d124a] rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
+                                <svg x-show="loading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                Simpan Perubahan
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -537,6 +628,70 @@ function updateStatusSection() {
                 this.updating = false;
             }
         }
+        }
     }
-}
+
+    function editProduk(product) {
+        return {
+            editModalOpen: false,
+            loading: false,
+            form: {
+                team_name: product.team_name || '',
+                nama_artikel: product.nama_artikel || '',
+                nama_pemesan: product.nama_pemesan || '',
+                detail_sponsor: product.detail_sponsor || '',
+                material: product.material || '',
+                collar_style: product.collar_style || '',
+                jenis_potongan: product.jenis_potongan || '',
+                lengan_jahitan: product.lengan_jahitan || '',
+                motif: product.motif || '',
+                primary_color: product.primary_color || '',
+                secondary_color: product.secondary_color || '',
+                priority: product.priority || 'normal',
+                additional_notes: product.notes || '',
+            },
+            openModal() {
+                this.form.team_name = product.team_name || '';
+                this.form.nama_artikel = product.nama_artikel || '';
+                this.form.nama_pemesan = product.nama_pemesan || '';
+                this.form.detail_sponsor = product.detail_sponsor || '';
+                this.form.material = product.material || '';
+                this.form.collar_style = product.collar_style || '';
+                this.form.jenis_potongan = product.jenis_potongan || '';
+                this.form.lengan_jahitan = product.lengan_jahitan || '';
+                this.form.motif = product.motif || '';
+                this.form.primary_color = product.primary_color || '';
+                this.form.secondary_color = product.secondary_color || '';
+                this.form.priority = product.priority || 'normal';
+                this.form.additional_notes = product.notes || '';
+                this.editModalOpen = true;
+            },
+            async save() {
+                this.loading = true;
+                try {
+                    const res = await fetch('{{ route("staf.pesanan.update-design-request", $order["order_id"]) }}', {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(this.form)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        Object.assign(product, this.form);
+                        Notify.success(data.message, 'Berhasil!');
+                        this.editModalOpen = false;
+                    } else {
+                        Notify.error(data.message || 'Terjadi kesalahan.');
+                    }
+                } catch (e) {
+                    Notify.error('Terjadi kesalahan sistem.');
+                } finally {
+                    this.loading = false;
+                }
+            }
+        }
+    }
 </script>
