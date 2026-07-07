@@ -14,6 +14,9 @@ use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Notification;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class OrderController extends Controller
 {
@@ -834,5 +837,175 @@ class OrderController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportExcel(Order $order)
+    {
+        $order->load([
+            'user',
+            'orderItems',
+            'itemDetails',
+            'designRequest',
+            'payment',
+        ]);
+
+        $spreadsheet = new Spreadsheet();
+
+        // ── Sheet 1: Detail Produk ──
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Detail Produk');
+
+        $sheet->setCellValue('A1', 'Detail Produk');
+        $sheet->mergeCells('A1:E1');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+
+        $sheet->setCellValue('A2', 'No. Pesanan: ' . $order->order_number);
+        $sheet->mergeCells('A2:E2');
+
+        $row = 4;
+        $fields = [
+            'Jenis'            => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog',
+            'Nama Tim'         => $order->designRequest?->team_name ?? '-',
+            'Nama Artikel'     => $order->designRequest?->nama_artikel ?? '-',
+            'Nama Pemesan'     => $order->designRequest?->nama_pemesan ?? '-',
+            'Detail Sponsor'   => $order->designRequest?->detail_sponsor ?? '-',
+            'Bahan'            => $order->designRequest?->material ?? '-',
+            'Kerah'            => $order->designRequest?->collar_style ?? '-',
+            'Jenis Potongan'   => $order->designRequest?->jenis_potongan ?? '-',
+            'Lengan & Jahitan' => $order->designRequest?->lengan_jahitan ?? '-',
+            'Prioritas'        => match ($order->designRequest?->priority) {
+                'express'      => 'Express',
+                'super_express' => 'Super Express',
+                default        => 'Normal',
+            },
+        ];
+
+        foreach ($fields as $label => $value) {
+            $sheet->setCellValue('A' . $row, $label);
+            $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+            $sheet->setCellValue('B' . $row, $value);
+            $row++;
+        }
+
+        // Sizes
+        $row++;
+        $sheet->setCellValue('A' . $row, 'Ukuran');
+        $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+        $row++;
+        if ($order->orderItems->isNotEmpty()) {
+            $sheet->setCellValue('A' . $row, 'Size');
+            $sheet->setCellValue('B' . $row, 'Qty');
+            $sheet->getStyle('A' . $row . ':B' . $row)->getFont()->setBold(true);
+            $row++;
+            foreach ($order->orderItems as $item) {
+                $sheet->setCellValue('A' . $row, $item->size);
+                $sheet->setCellValue('B' . $row, $item->qty);
+                $row++;
+            }
+        } else {
+            $sheet->setCellValue('A' . $row, '-');
+            $row++;
+        }
+
+        // ── Images: Logo & Referensi ──
+        if ($order->designRequest) {
+            $logoPath = $order->designRequest->logo;
+            $designFiles = $order->designRequest->design_files ?? [];
+
+            // Collect unique image paths (logo + design files)
+            $imagePaths = [];
+            if ($logoPath) {
+                $imagePaths[] = ['path' => $logoPath, 'type' => 'logo'];
+            }
+            if ($designFiles) {
+                foreach ($designFiles as $i => $f) {
+                    $path = $f['path'] ?? null;
+                    if ($path && $path !== $logoPath) {
+                        $imagePaths[] = ['path' => $path, 'type' => 'design'];
+                    }
+                }
+            }
+
+            if (!empty($imagePaths)) {
+                $row++;
+                $sheet->setCellValue('A' . $row, 'Gambar');
+                $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+                $row++;
+
+                $col = 'A';
+                foreach ($imagePaths as $img) {
+                    $fullPath = storage_path('app/public/' . $img['path']);
+                    if (!file_exists($fullPath)) continue;
+
+                    $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+                    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'])) continue;
+
+                    try {
+                        $drawing = new Drawing();
+                        $drawing->setPath($fullPath);
+                        $drawing->setHeight(120);
+                        $drawing->setCoordinates($col . $row);
+                        $drawing->setWorksheet($sheet);
+
+                        $sheet->getColumnDimension($col)->setWidth(25);
+                        $sheet->getRowDimension($row)->setRowHeight(90);
+
+                        $label = $img['type'] === 'logo' ? 'Logo Tim' : ('Referensi ' . basename($img['path']));
+                        $sheet->setCellValue($col . ($row - 1), $label);
+                        $sheet->getStyle($col . ($row - 1))->getFont()->setSize(9)->setItalic(true);
+
+                        $col++;
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
+            }
+        }
+
+        // ── Sheet 2: Detail Item ──
+        if ($order->itemDetails && $order->itemDetails->isNotEmpty()) {
+            $sheet2 = $spreadsheet->createSheet();
+            $sheet2->setTitle('Detail Item');
+
+            $sheet2->setCellValue('A1', 'Detail Item Pesanan');
+            $sheet2->mergeCells('A1:E1');
+            $sheet2->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+
+            $sheet2->setCellValue('A3', 'No Punggung');
+            $sheet2->setCellValue('B3', 'Nama Punggung');
+            $sheet2->setCellValue('C3', 'Model Lengan');
+            $sheet2->setCellValue('D3', 'Size');
+            $sheet2->setCellValue('E3', 'Keterangan');
+            $sheet2->getStyle('A3:E3')->getFont()->setBold(true);
+
+            $r = 4;
+            foreach ($order->itemDetails as $detail) {
+                $sheet2->setCellValue('A' . $r, $detail->no_punggung ?? '');
+                $sheet2->setCellValue('B' . $r, $detail->nama_punggung ?? '');
+                $sheet2->setCellValue('C' . $r, $detail->model_lengan ?? '');
+                $sheet2->setCellValue('D' . $r, $detail->size ?? '');
+                $sheet2->setCellValue('E' . $r, $detail->keterangan ?? '');
+                $r++;
+            }
+
+            foreach (range('A', 'E') as $col) {
+                $sheet2->getColumnDimension($col)->setAutoSize(true);
+            }
+        }
+
+        // Auto-size columns for Sheet 1
+        foreach (range('A', 'E') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = $order->order_number . '-detail-produk.xlsx';
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'export');
+        $writer->save($tempFile);
+
+        return response()->download($tempFile, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
     }
 }

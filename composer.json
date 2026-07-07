@@ -10,7 +10,8 @@
         "barryvdh/laravel-dompdf": "*",
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",
-        "mckenziearts/laravel-notify": "*"
+        "mckenziearts/laravel-notify": "*",
+        "phpoffice/phpspreadsheet": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
