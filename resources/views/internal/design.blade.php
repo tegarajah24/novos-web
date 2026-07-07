@@ -322,6 +322,7 @@ function designApp() {
 
                 xhr.setRequestHeader('X-CSRF-TOKEN', csrf);
                 xhr.setRequestHeader('Accept', 'application/json');
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
                 xhr.upload.onprogress = (e) => {
                     if (e.lengthComputable) {
@@ -351,7 +352,12 @@ function designApp() {
                             Notify.error('Response tidak valid.');
                         }
                     } else {
-                        Notify.error('Server error (' + xhr.status + ').');
+                        let msg = 'Server error (' + xhr.status + ').';
+                        try {
+                            const res = JSON.parse(xhr.responseText);
+                            if (res.message) msg = res.message;
+                        } catch (e) {}
+                        Notify.error(msg);
                     }
                 };
 
