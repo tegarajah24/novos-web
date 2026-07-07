@@ -7,7 +7,7 @@
 @endsection
 
 @section('internal-content')
-<div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}', posterUrl: '{{ $posterUrl }}' })">
+<div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}', posterUrl: '{{ $posterUrl }}', reminderTimes: {{ json_encode($reminderTimes) }} })">
     {{-- Tab Navigation --}}
     <div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
@@ -97,7 +97,13 @@
 
             {{-- Card: Reminder Berikutnya --}}
             <div class="bg-white rounded-2xl shadow-sm p-6 h-full">
-                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">Reminder Berikutnya</p>
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Reminder Berikutnya</p>
+                    <button x-show="userRole === 'Super Admin'" @click="openSettings()"
+                        class="p-1.5 text-gray-400 hover:text-[#1a237e] rounded-lg hover:bg-gray-50 transition-colors" title="Atur Jadwal Reminder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </button>
+                </div>
                 <div class="text-center py-4">
                     <p class="text-4xl font-bold text-[#1a237e] mb-1" x-text="nextReminder.time"></p>
                     <p class="text-sm text-gray-500" x-text="nextReminder.label"></p>
@@ -935,6 +941,56 @@
         </div>
     </div>
     </template>
+
+    {{-- MODAL: ATUR JADWAL REMINDER (Super Admin only) --}}
+    <template x-teleport="body">
+    <div x-show="settingsOpen && userRole === 'Super Admin'" x-cloak
+        class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div x-show="settingsOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" aria-hidden="true"></div>
+            <div x-show="settingsOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
+                <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900">Atur Jadwal Reminder</h3>
+                    <button @click="settingsOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <p class="text-sm text-gray-500 mb-4">Atur waktu pengingat micro-break untuk staff.</p>
+
+                <div class="space-y-3 mb-6">
+                    <template x-for="(t, i) in editTimes" :key="i">
+                        <div class="flex items-center gap-3">
+                            <input type="time" x-model="editTimes[i]"
+                                class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                            <button @click="removeTime(i)" x-show="editTimes.length > 1"
+                                class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <button @click="addTime()"
+                    class="w-full mb-6 px-3 py-2 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-500 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors inline-flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    Tambah Waktu
+                </button>
+
+                <div class="flex gap-3">
+                    <button @click="settingsOpen = false"
+                        class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                        Batal
+                    </button>
+                    <button @click="saveSettings()"
+                        class="flex-1 px-4 py-2.5 bg-[#1a237e] text-white rounded-xl text-sm font-semibold hover:bg-[#283593] transition-colors inline-flex items-center justify-center gap-2">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </template>
 </div>
 
 <script>
@@ -942,6 +998,9 @@ function dailyMentalCheck(config = {}) {
     return {
         userRole: config.role || '',
         posterUrl: config.posterUrl || '',
+        reminderTimes: config.reminderTimes || ['10:00', '13:00', '15:00'],
+        settingsOpen: false,
+        editTimes: [],
         activeTab: 0,
         todayFilled: false,
         submitted: false,
@@ -1310,6 +1369,44 @@ function dailyMentalCheck(config = {}) {
             this.rotationSaving = false;
         },
 
+        // Reminder Settings
+        openSettings() {
+            this.editTimes = [...this.reminderTimes];
+            this.settingsOpen = true;
+        },
+
+        addTime() {
+            this.editTimes.push('16:00');
+        },
+
+        removeTime(index) {
+            if (this.editTimes.length > 1) {
+                this.editTimes.splice(index, 1);
+            }
+        },
+
+        async saveSettings() {
+            if (this.editTimes.length === 0) return;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+            try {
+                const res = await fetch('/staf/daily-mental-check/reminder-times', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    body: JSON.stringify({ times: this.editTimes }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.reminderTimes = [...this.editTimes];
+                    this.settingsOpen = false;
+                    Notify.success(data.message);
+                } else {
+                    Notify.error(data.message || 'Gagal menyimpan.');
+                }
+            } catch (e) {
+                Notify.error('Gagal menyimpan pengaturan.');
+            }
+        },
+
         // Quotes
         quotes: [
             { text: 'Kesehatan mental bukanlah tujuan, melainkan proses. Ini tentang bagaimana Anda berkendara, bukan ke mana Anda pergi.', author: '— Noam Shpancer' },
@@ -1340,11 +1437,16 @@ function dailyMentalCheck(config = {}) {
             const now = new Date();
             const jam = now.getHours();
             const menit = now.getMinutes();
-            const times = [
-                { time: '10:00', label: 'Micro-Break Pagi ☕', hour: 10, min: 0 },
-                { time: '13:00', label: 'Micro-Break Siang 🌤️', hour: 13, min: 0 },
-                { time: '15:00', label: 'Micro-Break Sore ☕', hour: 15, min: 0 },
-            ];
+
+            const times = this.reminderTimes.map(t => {
+                const [h, m] = t.split(':').map(Number);
+                let label;
+                const hourNum = h + m / 60;
+                if (hourNum < 12) label = 'Micro-Break Pagi ☕';
+                else if (hourNum < 16) label = 'Micro-Break Siang 🌤️';
+                else label = 'Micro-Break Sore ☕';
+                return { time: t, label, hour: h, min: m };
+            }).sort((a, b) => a.hour * 60 + a.min - (b.hour * 60 + b.min));
 
             const currentMinutes = jam * 60 + menit;
 

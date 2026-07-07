@@ -63,6 +63,7 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::get('/daily-mental-check/report', [DailyMentalCheckController::class, 'getReport'])->name('daily-mental-check.report');
         Route::get('/daily-mental-check/export/csv', [DailyMentalCheckController::class, 'exportReportCsv'])->name('daily-mental-check.export-csv');
         Route::get('/daily-mental-check/export/excel', [DailyMentalCheckController::class, 'exportReportExcel'])->name('daily-mental-check.export-excel');
+        Route::patch('/daily-mental-check/reminder-times', [DailyMentalCheckController::class, 'updateReminderTimes'])->name('daily-mental-check.reminder-times')->middleware('role:Super Admin');
         Route::get('/notifikasi', [NotificationController::class, 'viewPage'])->name('notifikasi');
         Route::get('/notifikasi/data', [NotificationController::class, 'index'])->name('notifikasi.data');
         Route::get('/notifikasi/preview', [NotificationController::class, 'preview'])->name('notifikasi.preview');

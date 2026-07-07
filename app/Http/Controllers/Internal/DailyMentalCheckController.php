@@ -12,6 +12,7 @@ use App\Models\MentalHealthPoster;
 use App\Models\Role;
 use App\Models\MicroBreak;
 use App\Models\PosterSetting;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
@@ -23,8 +24,9 @@ class DailyMentalCheckController extends Controller
     public function index()
     {
         $posterUrl = $this->resolvePoster();
+        $reminderTimes = json_decode(Setting::get('reminder_times', '["10:00","13:00","15:00"]'));
 
-        return view('internal.daily-mental-check', compact('posterUrl'));
+        return view('internal.daily-mental-check', compact('posterUrl', 'reminderTimes'));
     }
 
     private function resolvePoster(): string
@@ -115,6 +117,21 @@ class DailyMentalCheckController extends Controller
         return response()->json([
             'success'   => true,
             'posterUrl' => $posterUrl,
+        ]);
+    }
+
+    public function updateReminderTimes(Request $request)
+    {
+        $request->validate([
+            'times' => 'required|array|min:1',
+            'times.*' => 'required|string|date_format:H:i',
+        ]);
+
+        Setting::set('reminder_times', json_encode($request->times));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Waktu reminder berhasil diperbarui.',
         ]);
     }
 
