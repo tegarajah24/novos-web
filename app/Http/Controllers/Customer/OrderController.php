@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Notification;
+use App\Models\Payment;
 use App\Models\User;
 use App\Services\ImageService;
 
@@ -381,6 +382,64 @@ class OrderController extends Controller
             'success'     => true,
             'order'       => $order,
             'orderNumber' => $order->order_number,
+        ]);
+    }
+
+    public function uploadPaymentProof(Request $request, Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'menunggu_pembayaran') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pesanan tidak dalam status menunggu pembayaran.',
+            ], 422);
+        }
+
+        $request->validate([
+            'payment_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ]);
+
+        $file = $request->file('payment_proof');
+        $path = $file->store('payment-proofs/' . $order->order_number, 'public');
+
+        Payment::updateOrCreate(
+            ['order_id' => $order->id],
+            [
+                'payment_proof'      => $path,
+                'payment_proof_name' => $file->getClientOriginalName(),
+                'status'             => 'pending',
+            ]
+        );
+
+        $chat = Chat::firstOrCreate([
+            'order_id'    => $order->id,
+            'customer_id' => $order->user_id,
+        ]);
+        ChatMessage::create([
+            'chat_id'   => $chat->id,
+            'sender_id' => auth()->id(),
+            'message'   => 'Saya telah mengupload bukti pembayaran untuk ' . $order->order_number,
+        ]);
+
+        Notification::sendToAllStaff(
+            'payment_upload',
+            'Bukti Pembayaran',
+            "Customer <strong>{$order->user->name}</strong> telah mengupload bukti pembayaran untuk <strong>{$order->order_number}</strong>.",
+            [
+                'initials'      => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
+                'role'          => $order->user->role->name,
+                'role_initial'  => 'C',
+                'role_color'    => '#16a34a',
+                'order_number'  => $order->order_number,
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bukti pembayaran berhasil diupload.',
         ]);
     }
 

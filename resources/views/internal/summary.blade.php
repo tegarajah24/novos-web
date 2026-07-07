@@ -110,7 +110,7 @@
 {{-- ─── CHARTS ROW 2 ──────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">🏆 Top 5 Produk Terlaris</h3>
+        <h3 class="font-semibold text-gray-900 mb-4">🏆 Top 5 Bahan Terlaris</h3>
         <div class="h-56"><canvas id="chartTop5"></canvas></div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
@@ -219,11 +219,11 @@ new Chart(document.getElementById('chartOrders'), {
 new Chart(document.getElementById('chartTop5'), {
     type:'bar',
     data:{
-        labels: @json($topProductLabels).map((label) => '           ' + label),
+        labels: @json($topMaterialLabels),
         datasets:[
             {
                 label:'Terjual',
-                data: @json($topProductData),
+                data: @json($topMaterialData),
                 backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'],
                 borderRadius:6,
                 barPercentage:0.7,

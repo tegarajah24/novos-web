@@ -1577,16 +1577,34 @@
                     Upload Bukti Pembayaran
                 </h4>
                 <p class="text-xs text-gray-500 mb-3">Setelah transfer, upload bukti pembayaran di sini atau kirim melalui chat.</p>
-                <div class="flex items-center gap-3">
-                    <label class="flex-1 flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#1a237e] transition-colors text-xs text-gray-500 hover:text-[#1a237e]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <span>Pilih File Bukti</span>
-                        <input type="file" accept="image/*,.pdf" class="hidden">
-                    </label>
-                    <a :href="'/chat?order=' + orderNumber" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap">
-                        Kirim via Chat
-                    </a>
-                </div>
+                <template x-if="!buktiBayarFile">
+                    <div class="flex items-center gap-3">
+                        <label class="flex-1 flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#1a237e] transition-colors text-xs text-gray-500 hover:text-[#1a237e]">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Pilih File Bukti</span>
+                            <input type="file" accept="image/*,.pdf" class="hidden" @change="uploadPaymentProof(orderNumber, $event)">
+                        </label>
+                        <a :href="'/chat?order=' + orderNumber" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap">
+                            Kirim via Chat
+                        </a>
+                    </div>
+                </template>
+                <template x-if="buktiBayarFile">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                            <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-medium text-green-800 truncate" x-text="buktiBayarFile.name"></p>
+                                <p class="text-xs text-green-600">Bukti berhasil diupload</p>
+                            </div>
+                        </div>
+                        <a :href="'/chat?order=' + orderNumber" class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-semibold transition-colors w-full justify-center">
+                            Kirim via Chat
+                        </a>
+                    </div>
+                </template>
             </div>
 
             {{-- Buttons --}}
@@ -1697,6 +1715,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         uploads: [],
         refUploads: [],
         orderNumber: null,
+        buktiBayarFile: null,
         dragOver: false,
         dragOverRef: false,
         loading: false,
@@ -2033,6 +2052,48 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     this.uploads.push({ file, url: e.target.result, name: file.name });
                 };
                 reader.readAsDataURL(file);
+            });
+        },
+
+        uploadPaymentProof(orderNumber, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('payment_proof', file);
+
+            fetch('/pesan/' + orderNumber + '/payment-proof', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData,
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    this.buktiBayarFile = file;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Bukti pembayaran berhasil diupload. Admin akan segera memvalidasi.',
+                        confirmButtonColor: '#1a237e',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message || 'Gagal upload bukti pembayaran.',
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Terjadi kesalahan. Silakan coba lagi atau kirim via chat.',
+                });
             });
         },
 

@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pesan', [OrderController::class, 'store'])->name('pesan.store');
     Route::post('/pesan/cart', [OrderController::class, 'storeCart'])->name('pesan.store-cart');
     Route::post('/pesan/{order:order_number}/approve', [OrderController::class, 'approve'])->name('pesan.approve');
+    Route::post('/pesan/{order:order_number}/payment-proof', [OrderController::class, 'uploadPaymentProof'])->name('pesan.payment-proof');
 
     Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking');
     Route::post('/tracking/{id}/acc', [TrackingController::class, 'accDesign'])->name('tracking.acc');

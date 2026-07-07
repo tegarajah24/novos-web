@@ -292,11 +292,13 @@ class OrderController extends Controller
             'history_notes' => $historyNotes,
             'status_history' => $statusHistory,
             'payment'       => [
-                'subtotal'        => (float) ($order->orderItems->sum('subtotal')),
-                'biaya_prioritas' => 0,
-                'total'           => (float) ($order->payment?->amount ?? $order->total_price ?? 0),
-                'method'          => $order->payment?->payment_method ?? '-',
-                'status'          => $order->payment?->status === 'success' ? 'lunas' : 'pending',
+                'subtotal'          => (float) ($order->orderItems->sum('subtotal')),
+                'biaya_prioritas'   => 0,
+                'total'             => (float) ($order->payment?->amount ?? $order->total_price ?? 0),
+                'method'            => $order->payment?->payment_method ?? '-',
+                'status'            => $order->payment?->status === 'success' ? 'lunas' : 'pending',
+                'payment_proof'     => $order->payment?->payment_proof ? asset('storage/' . $order->payment->payment_proof) : null,
+                'payment_proof_name' => $order->payment?->payment_proof_name ?? null,
             ],
         ];
 
@@ -322,7 +324,8 @@ class OrderController extends Controller
     {
         $transitions = [
             'menunggu_pembayaran' => [
-                'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
+                'dikonfirmasi' => ['Admin', 'Manager', 'Super Admin'],
+                'dibatalkan'   => ['Admin', 'Manager', 'Super Admin'],
             ],
             'dikonfirmasi' => [
                 'disetujui'  => ['Admin', 'Manager', 'Super Admin'],
@@ -498,6 +501,79 @@ class OrderController extends Controller
             'success' => true,
             'message' => 'Status pesanan berhasil diperbarui ke "' . $this->statusLabel($newDbStatus) . '".',
             'new_status' => $newDbStatus,
+        ]);
+    }
+
+    public function updatePaymentStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|in:success,rejected',
+            'notes'  => 'nullable|string|max:2000',
+        ]);
+
+        $newStatus = $request->status;
+        $payment = $order->payment;
+
+        if (!$payment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Belum ada data pembayaran.',
+            ], 422);
+        }
+
+        if ($payment->status === 'success') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pembayaran sudah lunas.',
+            ], 422);
+        }
+
+        DB::transaction(function () use ($payment, $newStatus, $request, $order) {
+            $payment->update([
+                'status' => $newStatus,
+                'paid_at' => $newStatus === 'success' ? now() : $payment->paid_at,
+            ]);
+
+            $order->statusHistories()->create([
+                'status'     => $order->status,
+                'changed_by' => auth()->id(),
+                'notes'      => $newStatus === 'success'
+                    ? 'Pembayaran divalidasi (Lunas)'
+                    : 'Pembayaran ditolak: ' . ($request->notes ?? '-'),
+            ]);
+
+            $chat = Chat::firstOrCreate([
+                'order_id'    => $order->id,
+                'customer_id' => $order->user_id,
+            ]);
+
+            $msg = $newStatus === 'success'
+                ? 'Pembayaran untuk ' . $order->order_number . ' telah divalidasi. Terima kasih!'
+                : 'Pembayaran untuk ' . $order->order_number . ' perlu diperbaiki. ' . ($request->notes ?? 'Silakan hubungi admin.');
+
+            ChatMessage::create([
+                'chat_id'   => $chat->id,
+                'sender_id' => auth()->id(),
+                'message'   => $msg,
+            ]);
+        });
+
+        $title = $newStatus === 'success' ? 'Pembayaran Divalidasi' : 'Pembayaran Ditolak';
+        $msg = $newStatus === 'success'
+            ? 'Pembayaran pesanan ' . $order->order_number . ' telah divalidasi.'
+            : 'Pembayaran pesanan ' . $order->order_number . ' ditolak. ' . ($request->notes ?? '');
+
+        Notification::sendToCustomer(
+            $order->user_id,
+            'payment_status',
+            $title,
+            $msg,
+            ['order_number' => $order->order_number]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pembayaran berhasil diperbarui.',
         ]);
     }
 

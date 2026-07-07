@@ -275,7 +275,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
     <div class="w-80 shrink-0 space-y-5">
 
         {{-- Pembayaran --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5" x-data="paymentSection()">
             <h3 class="font-semibold text-gray-900 mb-4 text-sm">Pembayaran</h3>
             <div class="space-y-2 text-sm">
                 <div class="flex justify-between"><span class="text-gray-500">Subtotal</span><span class="font-medium text-gray-900">{{ rh($order['payment']['subtotal']) }}</span></div>
@@ -292,6 +292,37 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     <span class="text-xs font-semibold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Pending</span>
                     @endif
                 </div>
+
+                {{-- Bukti Pembayaran --}}
+                @if($order['payment']['payment_proof'])
+                <div class="pt-2 border-t border-gray-100">
+                    <span class="text-xs text-gray-500 block mb-2">Bukti Pembayaran</span>
+                    <a href="{{ $order['payment']['payment_proof'] }}" target="_blank" class="block relative group rounded-lg overflow-hidden border border-gray-200 hover:border-[#1a237e]/40 transition-colors">
+                        <img src="{{ $order['payment']['payment_proof'] }}" alt="Bukti Pembayaran" class="w-full h-32 object-cover">
+                        <div class="absolute inset-0 bg-[#1a237e]/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <span class="text-white text-xs font-semibold">Lihat Detail</span>
+                        </div>
+                    </a>
+                    <p class="text-xs text-gray-400 mt-1 truncate">{{ $order['payment']['payment_proof_name'] ?? 'bukti-pembayaran' }}</p>
+                </div>
+                @endif
+
+                {{-- Tombol Validasi Pembayaran (hanya untuk Admin/Manager/Super Admin) --}}
+                @if($order['payment']['status'] !== 'lunas' && $order['payment']['payment_proof'])
+                <div class="pt-3 border-t border-gray-100 space-y-2">
+                    <button @click="validatePayment('success')" :disabled="loading"
+                        class="w-full py-2 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
+                        :class="loading ? 'bg-gray-300 text-white cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'">
+                        <svg x-show="loading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Validasi Pembayaran (Lunas)
+                    </button>
+                    <button @click="validatePayment('rejected')" :disabled="loading"
+                        class="w-full py-2 rounded-lg text-xs font-semibold transition-colors"
+                        :class="loading ? 'bg-gray-300 text-white cursor-not-allowed' : 'bg-red-100 hover:bg-red-200 text-red-700 cursor-pointer'">
+                        Tolak Pembayaran
+                    </button>
+                </div>
+                @endif
             </div>
         </div>
 
@@ -341,6 +372,66 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 @endsection
 
 <script>
+function paymentSection() {
+    return {
+        loading: false,
+        async validatePayment(status) {
+            if (this.loading) return;
+
+            const actionLabel = status === 'success' ? 'Validasi Pembayaran' : 'Tolak Pembayaran';
+            const result = await Swal.fire({
+                title: actionLabel + '?',
+                html: status === 'success'
+                    ? 'Pembayaran akan ditandai sebagai <strong>Lunas</strong>.'
+                    : 'Pembayaran akan ditolak. Silakan beri alasan di kotak bawah.',
+                icon: 'question',
+                input: status === 'rejected' ? 'textarea' : undefined,
+                inputPlaceholder: 'Alasan penolakan...',
+                showCancelButton: true,
+                confirmButtonColor: status === 'success' ? '#16a34a' : '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, ' + (status === 'success' ? 'Validasi!' : 'Tolak!'),
+                cancelButtonText: 'Batal',
+                preConfirm: (value) => {
+                    if (status === 'rejected' && !value) {
+                        Swal.showValidationMessage('Alasan penolakan wajib diisi');
+                    }
+                    return value;
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            this.loading = true;
+            try {
+                const res = await fetch('{{ route("staf.pesanan.payment-status", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: status,
+                        notes: result.value || ''
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Notify.success(data.message, 'Berhasil!');
+                    setTimeout(() => location.reload(), 1200);
+                } else {
+                    Notify.error(data.message || 'Terjadi kesalahan.');
+                }
+            } catch (e) {
+                Notify.error('Terjadi kesalahan sistem.');
+            } finally {
+                this.loading = false;
+            }
+        }
+    };
+}
+
 function updateStatusSection() {
     return {
         allowedStatuses: [],

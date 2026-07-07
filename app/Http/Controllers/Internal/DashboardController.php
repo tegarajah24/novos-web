@@ -248,14 +248,17 @@ class DashboardController extends Controller
                 ->count();
         }
 
-        $topProducts = DB::table('order_items')
-            ->select('size', DB::raw('SUM(qty) as total_qty'))
-            ->groupBy('size')
+        $topMaterials = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('design_requests', 'orders.id', '=', 'design_requests.order_id')
+            ->select('design_requests.material', DB::raw('SUM(order_items.qty) as total_qty'))
+            ->whereNotNull('design_requests.material')
+            ->groupBy('design_requests.material')
             ->orderByDesc('total_qty')
             ->take(5)
             ->get();
-        $topProductLabels = $topProducts->pluck('size')->map(fn($s) => 'Size ' . $s)->toArray();
-        $topProductData = $topProducts->pluck('total_qty')->toArray();
+        $topMaterialLabels = $topMaterials->pluck('material')->toArray();
+        $topMaterialData = $topMaterials->pluck('total_qty')->toArray();
 
         $customCount = Order::whereHas('designRequest')->count();
         $catalogCount = Order::whereDoesntHave('designRequest')->count();
@@ -266,7 +269,7 @@ class DashboardController extends Controller
         return view('internal.summary', compact(
             'kpi1', 'kpi2', 'employees', 'activities',
             'chartWeeks', 'chartRevenue', 'chartOrdersIn', 'chartOrdersOut',
-            'topProductLabels', 'topProductData',
+            'topMaterialLabels', 'topMaterialData',
             'distLabels', 'distData',
         ));
     }
