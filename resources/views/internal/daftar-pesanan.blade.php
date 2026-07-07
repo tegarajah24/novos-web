@@ -49,8 +49,8 @@ function rupiah($n) {
             <div x-show="open" @click.outside="open = false" x-cloak x-transition class="absolute left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 z-30 p-5 space-y-4">
                 <div>
                     <label class="block text-xs text-gray-500 mb-1 font-medium">Status</label>
-                    <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
-                        <option {{ !$activeFilter ? 'selected' : '' }}>Semua</option>
+                    <select id="filter-status" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                        <option value="">Semua</option>
                         <option value="menunggu_pembayaran" {{ $activeFilter === 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran</option>
                         <option value="tahap_desain" {{ $activeFilter === 'tahap_desain' ? 'selected' : '' }}>Tahap Desain</option>
                         <option value="menunggu_acc" {{ $activeFilter === 'menunggu_acc' ? 'selected' : '' }}>Menunggu ACC</option>
@@ -60,19 +60,21 @@ function rupiah($n) {
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 mb-1 font-medium">Assignee</label>
-                    <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
-                        <option>Semua</option>
-                        @foreach($assignees as $a) <option>{{ $a['name'] }}</option> @endforeach
-                        <option>Unassigned</option>
+                    <select id="filter-assignee" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                        <option value="">Semua</option>
+                        @foreach($assignees as $a)
+                        <option value="{{ $a['id'] }}">{{ $a['name'] }}</option>
+                        @endforeach
+                        <option value="unassigned">Unassigned</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 mb-1 font-medium">Prioritas</label>
-                    <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
-                        <option>Semua</option>
-                        <option>Normal</option>
-                        <option>Express</option>
-                        <option>Super Express</option>
+                    <select id="filter-priority" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                        <option value="">Semua</option>
+                        <option value="normal">Normal</option>
+                        <option value="express">Express</option>
+                        <option value="super_express">Super Express</option>
                     </select>
                 </div>
                 <div>
@@ -89,10 +91,16 @@ function rupiah($n) {
                     <button @click="window.location.href='{{ route('staf.daftar-pesanan') }}'" class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">Reset</button>
                     <button @click="
                         let params = new URLSearchParams();
-                        let s = document.querySelector('#filter-date-from');
-                        let e = document.querySelector('#filter-date-to');
-                        if (s && s.value) params.set('date_from', s.value);
-                        if (e && e.value) params.set('date_to', e.value);
+                        let st = document.querySelector('#filter-status');
+                        let as = document.querySelector('#filter-assignee');
+                        let pr = document.querySelector('#filter-priority');
+                        let fr = document.querySelector('#filter-date-from');
+                        let to = document.querySelector('#filter-date-to');
+                        if (st && st.value) params.set('status', st.value);
+                        if (as && as.value) params.set('assignee', as.value);
+                        if (pr && pr.value) params.set('priority', pr.value);
+                        if (fr && fr.value) params.set('date_from', fr.value);
+                        if (to && to.value) params.set('date_to', to.value);
                         window.location.href='{{ route('staf.daftar-pesanan') }}' + (params.toString() ? '?' + params.toString() : '');
                     " class="flex-1 px-3 py-2 text-sm bg-[#1a237e] text-white rounded-lg hover:bg-[#1a237e]/90 font-medium">Terapkan</button>
                 </div>
@@ -100,6 +108,11 @@ function rupiah($n) {
         </div>
 
         <div class="ml-auto flex items-center gap-2">
+            <a href="{{ route('staf.daftar-pesanan.export') }}{{ request()->getQueryString() ? '?' . request()->getQueryString() : '' }}"
+               class="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Export CSV
+            </a>
             <a href="{{ route('staf.laporan') }}" class="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Lihat Laporan
@@ -107,13 +120,31 @@ function rupiah($n) {
         </div>
     </div>
 
-    @if($activeFilter || $activeDateFrom || $activeDateTo)
+    @if($activeFilter || $activeAssignee || $activePriority || $activeDateFrom || $activeDateTo)
     <div class="flex items-center gap-3 flex-wrap">
         @if($activeFilter)
         <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             <span class="font-medium">{{ ucwords(str_replace('_', ' ', $activeFilter)) }}</span>
-            <a href="{{ route('staf.daftar-pesanan') }}{{ ($activeDateFrom || $activeDateTo) ? '?'.http_build_query(array_filter(['date_from' => $activeDateFrom, 'date_to' => $activeDateTo])) : '' }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['assignee' => $activeAssignee, 'priority' => $activePriority, 'date_from' => $activeDateFrom, 'date_to' => $activeDateTo])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </a>
+        </div>
+        @endif
+        @if($activeAssignee)
+        <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span class="font-medium">Assignee: {{ $activeAssignee === 'unassigned' ? 'Unassigned' : collect($assignees)->firstWhere('id', (int)$activeAssignee)['name'] ?? $activeAssignee }}</span>
+            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'priority' => $activePriority, 'date_from' => $activeDateFrom, 'date_to' => $activeDateTo])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </a>
+        </div>
+        @endif
+        @if($activePriority)
+        <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span class="font-medium">{{ ucwords(str_replace('_', ' ', $activePriority)) }}</span>
+            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'assignee' => $activeAssignee, 'date_from' => $activeDateFrom, 'date_to' => $activeDateTo])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </a>
         </div>
@@ -122,7 +153,7 @@ function rupiah($n) {
         <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             <span class="font-medium">Dari {{ \Carbon\Carbon::parse($activeDateFrom)->format('d M Y') }}</span>
-            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'date_to' => $activeDateTo])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'assignee' => $activeAssignee, 'priority' => $activePriority, 'date_to' => $activeDateTo])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </a>
         </div>
@@ -131,12 +162,12 @@ function rupiah($n) {
         <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a237e]/5 border border-[#1a237e]/15 rounded-lg text-sm text-[#1a237e]">
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             <span class="font-medium">Sampai {{ \Carbon\Carbon::parse($activeDateTo)->format('d M Y') }}</span>
-            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'date_from' => $activeDateFrom])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
+            <a href="{{ route('staf.daftar-pesanan') }}?{{ http_build_query(array_filter(['status' => $activeFilter, 'assignee' => $activeAssignee, 'priority' => $activePriority, 'date_from' => $activeDateFrom])) }}" class="ml-1 text-[#1a237e]/50 hover:text-[#1a237e]">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </a>
         </div>
         @endif
-        @if($activeFilter || $activeDateFrom || $activeDateTo)
+        @if($activeFilter || $activeAssignee || $activePriority || $activeDateFrom || $activeDateTo)
         <a href="{{ route('staf.daftar-pesanan') }}" class="text-xs text-gray-400 hover:text-gray-600 underline">Reset semua</a>
         @endif
     </div>

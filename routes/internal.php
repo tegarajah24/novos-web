@@ -23,6 +23,7 @@ Route::prefix('staf')
         Route::get('/summary', [DashboardController::class, 'summary'])->name('summary');
 
         Route::get('/daftar-pesanan', [OrderController::class, 'index'])->name('daftar-pesanan');
+Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesanan'])->name('daftar-pesanan.export');
         Route::get('/detail-pesanan/{order:order_number}', [OrderController::class, 'show'])->name('detail-pesanan');
         Route::patch('/pesanan/{order:order_number}/assign', [OrderController::class, 'assign'])->name('pesanan.assign');
         Route::post('/pesanan/{order:order_number}/update-status', [OrderController::class, 'updateStatus'])->name('pesanan.update-status');

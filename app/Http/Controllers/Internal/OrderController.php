@@ -19,43 +19,12 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $dbStatuses = ['menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai', 'dibatalkan'];
-
-        $statusMap = [
-            'menunggu_pembayaran' => 'menunggu_pembayaran',
-            'dikonfirmasi'       => 'menunggu_acc',
-            'disetujui'          => 'tahap_desain',
-            'di_design'          => 'tahap_desain',
-            'siap_cetak'         => 'tahap_produksi',
-            'diproduksi'         => 'tahap_produksi',
-            'selesai'            => 'selesai',
-            'dibatalkan'         => 'dibatalkan',
-        ];
-
-        $filterStatus = $request->query('status');
-        $activeFilter = in_array($filterStatus, array_values($statusMap)) ? $filterStatus : null;
-
-        $query = Order::with(['user', 'orderItems', 'designRequest', 'assignee'])
-            ->whereIn('status', $dbStatuses);
-
-        if ($activeFilter) {
-            $filteredDbStatuses = array_keys(array_filter($statusMap, fn($v) => $v === $activeFilter));
-            $query->whereIn('status', $filteredDbStatuses);
-        }
-
-        $activeDateFrom = $request->query('date_from');
-        $activeDateTo = $request->query('date_to');
-
-        if ($activeDateFrom && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateFrom)) {
-            $query->whereDate('created_at', '>=', $activeDateFrom);
-        }
-        if ($activeDateTo && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateTo)) {
-            $query->whereDate('created_at', '<=', $activeDateTo);
-        }
+        $query = $this->buildFilteredQuery($request);
 
         $orders = $query->latest()
             ->get()
-            ->map(function ($order) use ($statusMap) {
+            ->map(function ($order) {
+                $statusMap = $this->getStatusMap();
                 $produk = $order->designRequest
                     ? 'Jersey ' . $order->designRequest->team_name
                     : 'Jersey Custom';
@@ -73,9 +42,17 @@ class OrderController extends Controller
                     'assignee_id' => $assigneeId,
                     'assignee' => $assigneeName,
                     'status'   => $statusMap[$order->status] ?? $order->status,
+                    'priority' => $order->designRequest?->priority ?? 'normal',
+                    'created_at' => $order->created_at->format('d/m/Y'),
                 ];
             })
             ->toArray();
+
+        $activeFilter = $request->query('status');
+        $activeDateFrom = $request->query('date_from');
+        $activeDateTo = $request->query('date_to');
+        $activeAssignee = $request->query('assignee');
+        $activePriority = $request->query('priority');
 
         $colorKeys = ['purple', 'blue', 'orange', 'green', 'gray'];
         $assignees = User::with('role')
@@ -90,7 +67,64 @@ class OrderController extends Controller
             })
             ->toArray();
 
-        return view('internal.daftar-pesanan', compact('orders', 'assignees', 'activeFilter', 'activeDateFrom', 'activeDateTo'));
+        return view('internal.daftar-pesanan', compact('orders', 'assignees', 'activeFilter', 'activeDateFrom', 'activeDateTo', 'activeAssignee', 'activePriority'));
+    }
+
+    private function getStatusMap(): array
+    {
+        return [
+            'menunggu_pembayaran' => 'menunggu_pembayaran',
+            'dikonfirmasi'       => 'menunggu_acc',
+            'disetujui'          => 'tahap_desain',
+            'di_design'          => 'tahap_desain',
+            'siap_cetak'         => 'tahap_produksi',
+            'diproduksi'         => 'tahap_produksi',
+            'selesai'            => 'selesai',
+            'dibatalkan'         => 'dibatalkan',
+        ];
+    }
+
+    private function buildFilteredQuery(Request $request)
+    {
+        $dbStatuses = ['menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai', 'dibatalkan'];
+        $statusMap = $this->getStatusMap();
+
+        $query = Order::with(['user', 'orderItems', 'designRequest', 'assignee'])
+            ->whereIn('status', $dbStatuses);
+
+        // Status filter
+        $filterStatus = $request->query('status');
+        if ($filterStatus && in_array($filterStatus, array_values($statusMap))) {
+            $filteredDbStatuses = array_keys(array_filter($statusMap, fn($v) => $v === $filterStatus));
+            $query->whereIn('status', $filteredDbStatuses);
+        }
+
+        // Assignee filter
+        $filterAssignee = $request->query('assignee');
+        if ($filterAssignee === 'unassigned') {
+            $query->whereNull('assignee_id');
+        } elseif ($filterAssignee) {
+            $query->where('assignee_id', $filterAssignee);
+        }
+
+        // Priority filter (from design_requests)
+        $filterPriority = $request->query('priority');
+        if ($filterPriority) {
+            $query->whereHas('designRequest', fn($q) => $q->where('priority', $filterPriority));
+        }
+
+        // Date range filter
+        $activeDateFrom = $request->query('date_from');
+        $activeDateTo = $request->query('date_to');
+
+        if ($activeDateFrom && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateFrom)) {
+            $query->whereDate('created_at', '>=', $activeDateFrom);
+        }
+        if ($activeDateTo && preg_match('/^\d{4}-\d{2}-\d{2}$/', $activeDateTo)) {
+            $query->whereDate('created_at', '<=', $activeDateTo);
+        }
+
+        return $query;
     }
 
     public function show(Order $order)
@@ -329,11 +363,10 @@ class OrderController extends Controller
             ],
             'dikonfirmasi' => [
                 'disetujui'  => ['Admin', 'Manager', 'Super Admin'],
-                'di_design'  => ['Admin', 'Manager', 'Super Admin'],
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'disetujui' => [
-                'di_design'  => ['Admin', 'Manager', 'Super Admin'],
+                'di_design'  => ['Design'],
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'di_design' => [
@@ -602,6 +635,67 @@ class OrderController extends Controller
         }
 
         return response()->json(['statuses' => $result]);
+    }
+
+    public function exportDaftarPesanan(Request $request)
+    {
+        $query = $this->buildFilteredQuery($request);
+        $orders = $query->latest()->get();
+        $statusMap = $this->getStatusMap();
+
+        $filename = 'daftar-pesanan-' . now()->format('Ymd-His') . '.csv';
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($orders, $statusMap) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            fputcsv($handle, ['Order ID', 'Customer', 'Produk', 'Qty', 'Total', 'Assignee', 'Prioritas', 'Status', 'Tanggal']);
+
+            foreach ($orders as $order) {
+                $produk = $order->designRequest
+                    ? 'Jersey ' . $order->designRequest->team_name
+                    : 'Jersey Custom';
+
+                $assigneeName = $order->assignee ? $order->assignee->name : '-';
+
+                $priorityLabel = match ($order->designRequest?->priority) {
+                    'express'       => 'Express',
+                    'super_express' => 'Super Express',
+                    default         => 'Normal',
+                };
+
+                $statusLabelMap = [
+                    'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                    'dikonfirmasi'       => 'Menunggu ACC',
+                    'disetujui'          => 'Tahap Desain',
+                    'di_design'          => 'Tahap Desain',
+                    'siap_cetak'         => 'Produksi',
+                    'diproduksi'         => 'Produksi',
+                    'selesai'            => 'Selesai',
+                    'dibatalkan'         => 'Dibatalkan',
+                ];
+
+                fputcsv($handle, [
+                    $order->order_number,
+                    $order->user->name ?? 'Unknown',
+                    $produk,
+                    $order->orderItems->sum('qty'),
+                    (float) ($order->total_price ?? 0),
+                    $assigneeName,
+                    $priorityLabel,
+                    $statusLabelMap[$order->status] ?? $order->status,
+                    $order->created_at->format('d/m/Y'),
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function exportCsv(Order $order)
