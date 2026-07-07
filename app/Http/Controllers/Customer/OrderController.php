@@ -410,6 +410,7 @@ class OrderController extends Controller
             [
                 'payment_proof'      => $path,
                 'payment_proof_name' => $file->getClientOriginalName(),
+                'amount'             => $order->total_price ?? 0,
                 'status'             => 'pending',
             ]
         );
