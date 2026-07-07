@@ -181,12 +181,13 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 
         {{-- File Desain Customer --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            {{-- Logo Tim --}}
             <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                File Desain Customer
+                Logo Tim
             </h3>
-            <div class="grid grid-cols-3 gap-4">
-                @forelse($order['design_files'] as $f)
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                @forelse(collect($order['design_files'])->where('type', 'logo') as $f)
                 <div class="relative group bg-gray-100 rounded-xl aspect-square border border-gray-200 hover:border-[#1a237e]/40 transition-colors overflow-hidden">
                     @if(isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
                         <img src="{{ $f['url'] }}" alt="{{ $f['name'] }}" class="w-full h-full object-cover">
@@ -206,7 +207,37 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     </div>
                 </div>
                 @empty
-                <div class="col-span-3 py-8 text-center text-gray-400 text-sm">Belum ada file desain dari customer.</div>
+                <div class="col-span-3 py-6 text-center text-gray-400 text-sm">Tidak ada logo tim.</div>
+                @endforelse
+            </div>
+
+            {{-- Referensi Desain --}}
+            <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm">
+                <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Referensi Desain
+            </h3>
+            <div class="grid grid-cols-3 gap-4">
+                @forelse(collect($order['design_files'])->where('type', 'design') as $f)
+                <div class="relative group bg-gray-100 rounded-xl aspect-square border border-gray-200 hover:border-[#1a237e]/40 transition-colors overflow-hidden">
+                    @if(isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
+                        <img src="{{ $f['url'] }}" alt="{{ $f['name'] }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full flex flex-col items-center justify-center gap-2">
+                            <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        </div>
+                    @endif
+                    <div class="absolute inset-0 bg-[#1a237e]/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity gap-2 p-2">
+                        <a href="{{ $f['url'] }}" target="_blank" class="text-gray-900 text-xs font-medium bg-white/90 px-3 py-1 rounded hover:bg-white inline-flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <span>Download</span>
+                        </a>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                        <span class="text-xs text-white text-center truncate block">{{ $f['name'] }}</span>
+                    </div>
+                </div>
+                @empty
+                <div class="col-span-3 py-6 text-center text-gray-400 text-sm">Belum ada referensi desain.</div>
                 @endforelse
             </div>
         </div>
