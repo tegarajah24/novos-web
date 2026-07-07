@@ -212,6 +212,16 @@ class ChatController extends Controller
         return response()->json(['ok' => true]);
     }
 
+    public function destroy(Chat $chat)
+    {
+        $user = auth()->user();
+
+        $chat->messages()->delete();
+        $chat->delete();
+
+        return response()->json(['success' => true]);
+    }
+
     public function download(ChatMessage $chatMessage)
     {
         if (!$chatMessage->file_path || !Storage::disk('public')->exists($chatMessage->file_path)) {

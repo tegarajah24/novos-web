@@ -207,6 +207,48 @@ class ChatController extends Controller
         ]);
     }
 
+    public function pollList()
+    {
+        $user = auth()->user();
+        $user->forceFill(['chat_active_at' => now()])->save();
+
+        $chats = Chat::with('admin')
+            ->where('customer_id', $user->id)
+            ->latest()
+            ->get()
+            ->map(fn($chat) => [
+                'id'               => $chat->id,
+                'name'             => $chat->admin?->name ?? 'Admin Novos',
+                'sender_avatar_url' => $chat->admin?->avatar ? Storage::url($chat->admin->avatar) : null,
+                'time'             => $chat->messages->last()?->created_at?->format('H:i') ?? '',
+                'lastMessage'      => $chat->messages->last()?->message
+                    ?? ($chat->messages->last()?->file_name
+                        ? "\xF0\x9F\x93\x8E " . $chat->messages->last()->file_name
+                        : 'Mulai percakapan'),
+                'unread'    => $chat->messages
+                    ->where('is_read', false)
+                    ->where('sender_id', '!=', $user->id)
+                    ->count(),
+                'online'     => $chat->admin?->chat_active_at && $chat->admin->chat_active_at->gt(now()->subMinutes(2)),
+                'unassigned' => $chat->admin_id === null,
+            ])
+            ->values();
+
+        return response()->json(['chats' => $chats]);
+    }
+
+    public function destroy(Chat $chat)
+    {
+        if ($chat->customer_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $chat->messages()->delete();
+        $chat->delete();
+
+        return response()->json(['success' => true]);
+    }
+
     public function download(ChatMessage $chatMessage)
     {
         $user = auth()->user();

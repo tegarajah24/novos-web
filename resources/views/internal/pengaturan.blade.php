@@ -12,11 +12,13 @@
 
     {{-- Tab Navigation --}}
     <div class="flex gap-1 mb-6 bg-white border border-gray-200 rounded-2xl p-1.5 w-fit shadow-sm">
+        @if(auth()->user()->role->name === 'Super Admin')
         <button @click="tab='toko'"
             :class="tab==='toko' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
             <i data-lucide="store" class="w-4 h-4"></i> Toko
         </button>
+        @endif
         <button @click="tab='tampilan'"
             :class="tab==='tampilan' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
@@ -30,6 +32,7 @@
     </div>
 
     {{-- ======================== TAB TOKO ======================== --}}
+    @if(auth()->user()->role->name === 'Super Admin')
     <div x-show="tab==='toko'" x-transition>
         <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-6">
@@ -76,6 +79,7 @@
             </form>
         </div>
     </div>
+    @endif
 
     {{-- ======================== TAB TAMPILAN ======================== --}}
     <div x-show="tab==='tampilan'" x-transition x-cloak class="space-y-5">
@@ -425,7 +429,7 @@ function settingApp() {
     };
 
     return {
-        tab: 'toko',
+        tab: {{ auth()->user()->role->name === 'Super Admin' ? "'toko'" : "'tampilan'" }},
         saving: false,
 
         form: {
