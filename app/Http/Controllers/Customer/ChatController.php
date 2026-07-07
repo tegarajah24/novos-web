@@ -45,6 +45,7 @@ class ChatController extends Controller
                     'from'               => $msg->sender_id === $user->id ? 'customer' : 'admin',
                     'text'               => $msg->message,
                     'time'               => $msg->created_at->format('H:i'),
+                    'created_at'         => $msg->created_at->toIso8601String(),
                     'file_url'           => $msg->file_url,
                     'file_name'          => $msg->file_name,
                     'file_size_formatted' => $msg->file_size_formatted,
@@ -101,6 +102,7 @@ class ChatController extends Controller
                 'from'               => $msg->sender_id === auth()->id() ? 'customer' : 'admin',
                 'text'               => $msg->message,
                 'time'               => $msg->created_at->format('H:i'),
+                'created_at'         => $msg->created_at->toIso8601String(),
                 'file_url'           => $msg->file_url,
                 'file_name'          => $msg->file_name,
                 'file_size_formatted' => $msg->file_size_formatted,
@@ -203,13 +205,15 @@ class ChatController extends Controller
         return response()->json([
             'message' => [
                 'id'                 => $chatMessage->id,
+                'from'               => 'customer',
                 'message'            => $chatMessage->message,
                 'file_url'           => $chatMessage->file_url,
                 'file_name'          => $chatMessage->file_name,
                 'file_size_formatted' => $chatMessage->file_size_formatted,
                 'is_image'           => $chatMessage->is_image,
                 'is_video'           => $chatMessage->is_video,
-                'created_at'         => $chatMessage->created_at->format('H:i'),
+                'created_at'         => $chatMessage->created_at->toIso8601String(),
+                'time'               => $chatMessage->created_at->format('H:i'),
                 'reply_to_id'        => $chatMessage->reply_to_id,
                 'reply_to_text'      => $chatMessage->replyTo?->message,
                 'reply_to_from'      => $chatMessage->replyTo ? ($chatMessage->replyTo->sender_id === $chat->admin_id ? 'admin' : 'customer') : null,
@@ -219,9 +223,10 @@ class ChatController extends Controller
 
     public function destroyMessage(ChatMessage $chatMessage)
     {
-        if ($chatMessage->chat->customer_id !== auth()->id()) {
-            abort(403);
-        }
+        $user = auth()->user();
+
+        abort_if($chatMessage->sender_id !== $user->id, 403);
+        abort_if($chatMessage->created_at->lt(now()->subDay()), 403);
 
         $chatMessage->delete();
 

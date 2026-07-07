@@ -36,6 +36,7 @@ class ChatController extends Controller
                             'from'               => $isAdmin ? 'admin' : 'customer',
                             'text'               => $msg->message,
                             'time'               => $msg->created_at->format('H:i'),
+                            'created_at'         => $msg->created_at->toIso8601String(),
                             'file_url'           => $msg->file_url,
                             'file_name'          => $msg->file_name,
                             'file_size_formatted' => $msg->file_size_formatted,
@@ -201,6 +202,7 @@ class ChatController extends Controller
                 'from'               => 'admin',
                 'text'               => $message->message,
                 'time'               => $message->created_at->format('H:i'),
+                'created_at'         => $message->created_at->toIso8601String(),
                 'file_url'           => $message->file_url,
                 'file_name'          => $message->file_name,
                 'file_size_formatted' => $message->file_size_formatted,
@@ -231,6 +233,11 @@ class ChatController extends Controller
 
     public function destroyMessage(ChatMessage $chatMessage)
     {
+        $user = auth()->user();
+
+        abort_if($chatMessage->sender_id !== $user->id, 403);
+        abort_if($chatMessage->created_at->lt(now()->subDay()), 403);
+
         $chatMessage->delete();
 
         return response()->json(['success' => true]);

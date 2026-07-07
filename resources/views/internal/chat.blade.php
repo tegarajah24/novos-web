@@ -93,97 +93,102 @@
                         <template x-for="(msg, i) in currentChat.messages" :key="i">
                             <div class="flex" :class="msg.from === 'admin' ? 'justify-end' : 'justify-start'">
                                 <div class="relative max-w-[70%] min-w-[160px] group">
-                                    {{-- Dropdown trigger --}}
-                                    <button @click.stop="toggleDropdown(msg)"
-                                            :class="msg.from === 'admin' ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'"
-                                            class="absolute -top-2 w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer hover:bg-gray-50">
-                                        <svg class="w-3.5 h-3.5 text-gray-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                                    </button>
                                     {{-- Bubble --}}
                                     <div
                                         :class="msg.from === 'admin' ? 'bg-[#1a237e] text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
-                                        class="px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5"
+                                        class="px-4 py-2.5 rounded-2xl shadow-sm"
                                     >
-                                        {{-- Reply indicator --}}
-                                        <template x-if="msg.reply_to_id">
-                                            <div :class="msg.from === 'admin' ? 'bg-blue-800/40 border-blue-600/30' : 'bg-gray-100 border-gray-200'"
-                                                 class="rounded-lg px-3 py-2 border-l-4 space-y-0.5 -mx-1">
-                                                <p class="text-[11px] font-semibold" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-500'" x-text="'Membalas ' + (msg.reply_to_from === msg.from ? 'diri sendiri' : (msg.reply_to_from === 'admin' ? 'Admin' : 'Customer'))"></p>
-                                                <p class="text-xs truncate" :class="msg.from === 'admin' ? 'text-blue-100' : 'text-gray-600'" x-text="msg.reply_to_text || '(file)'"></p>
+                                        <div class="flex items-start gap-1.5" :class="msg.from === 'admin' ? '' : 'flex-row-reverse'">
+                                            <div class="flex-1 min-w-0 space-y-1.5">
+                                                {{-- Reply indicator --}}
+                                                <template x-if="msg.reply_to_id">
+                                                    <div :class="msg.from === 'admin' ? 'bg-blue-800/40 border-blue-600/30' : 'bg-gray-100 border-gray-200'"
+                                                         class="rounded-lg px-3 py-2 border-l-4 space-y-0.5 -mx-1">
+                                                        <p class="text-[11px] font-semibold" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-500'" x-text="'Membalas ' + (msg.reply_to_from === msg.from ? 'diri sendiri' : (msg.reply_to_from === 'admin' ? 'Admin' : 'Customer'))"></p>
+                                                        <p class="text-xs truncate" :class="msg.from === 'admin' ? 'text-blue-100' : 'text-gray-600'" x-text="msg.reply_to_text || '(file)'"></p>
+                                                    </div>
+                                                </template>
+                                                {{-- File attachment --}}
+                                                <template x-if="msg.file_url">
+                                                    <div>
+                                                        {{-- Image --}}
+                                                        <template x-if="msg.is_image">
+                                                            <div @click="openPreview(msg.file_url, msg.file_name, msg.id)"
+                                                                 class="-mx-1 w-full rounded-xl overflow-hidden bg-gray-200 cursor-pointer"
+                                                                 style="max-height: 240px; min-height: 120px;"
+                                                            >
+                                                                <img :src="msg.file_url" :alt="msg.file_name"
+                                                                     class="w-full h-full object-cover"
+                                                                     x-init="
+                                                                         $el.style.opacity = '0';
+                                                                         $el.addEventListener('load', () => $el.style.opacity = '1');
+                                                                         if ($el.complete) $el.style.opacity = '1';
+                                                                     "
+                                                                >
+                                                            </div>
+                                                        </template>
+                                                        {{-- Video --}}
+                                                        <template x-if="msg.is_video">
+                                                            <video :src="msg.file_url" controls class="max-w-full rounded-xl max-h-60" @click.stop></video>
+                                                        </template>
+                                                        {{-- Other file --}}
+                                                        <template x-if="!msg.is_image && !msg.is_video">
+                                                            <a :href="'/staf/chat/download/' + msg.id"
+                                                                :class="msg.from === 'admin' ? 'bg-[#1a237e] hover:bg-[#283593]' : 'bg-gray-100 hover:bg-gray-200'"
+                                                                class="flex items-center gap-3 p-3 rounded-xl transition-colors min-w-0 overflow-hidden"
+                                                            >
+                                                                <div :class="msg.from === 'admin' ? 'bg-[#283593]' : 'bg-blue-100'" class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="msg.from === 'admin' ? 'text-white' : 'text-blue-900'"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                                                </div>
+                                                                <div class="min-w-0 flex-1">
+                                                                    <p class="text-sm font-medium truncate" :class="msg.from === 'admin' ? 'text-blue-100' : 'text-gray-900'" x-text="msg.file_name"></p>
+                                                                    <p class="text-xs" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.file_size_formatted"></p>
+                                                                </div>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                                            </a>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                                {{-- Text message --}}
+                                                <template x-if="msg.text">
+                                                    <p class="text-sm leading-relaxed" x-text="msg.text"></p>
+                                                </template>
+                                                <p class="text-xs" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.time"></p>
                                             </div>
-                                        </template>
-                                        {{-- File attachment --}}
-                                        <template x-if="msg.file_url">
-                                        <div>
-                                            {{-- Image --}}
-                                            <template x-if="msg.is_image">
-                                                <div @click="openPreview(msg.file_url, msg.file_name, msg.id)"
-                                                     class="-mx-1 -mt-1 w-full rounded-xl overflow-hidden bg-gray-200 cursor-pointer"
-                                                     style="max-height: 240px; min-height: 120px;"
-                                                >
-                                                    <img :src="msg.file_url" :alt="msg.file_name"
-                                                         class="w-full h-full object-cover"
-                                                         x-init="
-                                                             $el.style.opacity = '0';
-                                                             $el.addEventListener('load', () => $el.style.opacity = '1');
-                                                             if ($el.complete) $el.style.opacity = '1';
-                                                         "
-                                                    >
-                                                </div>
-                                            </template>
-                                            {{-- Video --}}
-                                            <template x-if="msg.is_video">
-                                                <video :src="msg.file_url" controls class="max-w-full rounded-xl max-h-60" @click.stop></video>
-                                            </template>
-                                            {{-- Other file --}}
-                                            <template x-if="!msg.is_image && !msg.is_video">
-                                                <a :href="'/staf/chat/download/' + msg.id"
-                                                    :class="msg.from === 'admin' ? 'bg-[#1a237e] hover:bg-[#283593]' : 'bg-gray-100 hover:bg-gray-200'"
-                                                    class="flex items-center gap-3 p-3 rounded-xl transition-colors min-w-0 overflow-hidden"
-                                                >
-                                                    <div :class="msg.from === 'admin' ? 'bg-[#283593]' : 'bg-blue-100'" class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="msg.from === 'admin' ? 'text-white' : 'text-blue-900'"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                                    </div>
-                                                    <div class="min-w-0 flex-1">
-                                                        <p class="text-sm font-medium truncate" :class="msg.from === 'admin' ? 'text-blue-100' : 'text-gray-900'" x-text="msg.file_name"></p>
-                                                        <p class="text-xs" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.file_size_formatted"></p>
-                                                    </div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                                                </a>
-                                            </template>
+                                            {{-- Dropdown trigger (inside bubble, at corner) --}}
+                                            <button @click.stop="toggleDropdown(msg)"
+                                                    class="shrink-0 mt-0.5 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:opacity-80"
+                                                    :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'">
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                                            </button>
                                         </div>
-                                    </template>
-                                    {{-- Text message --}}
-                                    <template x-if="msg.text">
-                                        <p class="text-sm leading-relaxed" x-text="msg.text"></p>
-                                    </template>
-                                    <p class="text-xs" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.time"></p>
-                                </div>
-                                {{-- Dropdown menu --}}
-                                <div x-show="openDropdownMsgId === msg.id"
-                                     @click.away="openDropdownMsgId = null"
-                                     @click.stop
-                                     :class="msg.from === 'admin' ? 'left-0' : 'right-0'"
-                                     class="absolute -top-1 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
-                                     x-transition:enter="transition ease-out duration-100"
-                                     x-transition:enter-start="opacity-0 scale-95"
-                                     x-transition:enter-end="opacity-100 scale-100"
-                                     x-transition:leave="transition ease-in duration-75"
-                                     x-transition:leave-start="opacity-100 scale-100"
-                                     x-transition:leave-end="opacity-0 scale-95"
-                                >
-                                    <button @click="replyToMessage(msg)" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors">
-                                        <svg class="w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
-                                        Balas
-                                    </button>
-                                    <button @click="copyMessage(msg)" x-show="msg.text" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors">
-                                        <svg class="w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                        Salin
-                                    </button>
-                                    <button @click="deleteMessage(msg)" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition-colors">
-                                        <svg class="w-4 h-4 text-red-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                        Hapus
-                                    </button>
+                                    </div>
+                                    {{-- Dropdown menu --}}
+                                    <div x-show="openDropdownMsgId === msg.id"
+                                         @click.away="openDropdownMsgId = null"
+                                         @click.stop
+                                         :class="msg.from === 'admin' ? 'right-0' : 'left-0'"
+                                         class="absolute z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
+                                         x-transition:enter="transition ease-out duration-100"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         x-transition:leave="transition ease-in duration-75"
+                                         x-transition:leave-start="opacity-100 scale-100"
+                                         x-transition:leave-end="opacity-0 scale-95"
+                                    >
+                                        <button @click="replyToMessage(msg)" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors">
+                                            <svg class="w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+                                            Balas
+                                        </button>
+                                        <button @click="copyMessage(msg)" x-show="msg.text" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors">
+                                            <svg class="w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                            Salin
+                                        </button>
+                                        <button x-show="canDeleteMessage(msg)" @click="deleteMessage(msg)" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition-colors">
+                                            <svg class="w-4 h-4 text-red-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                            Hapus
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -505,6 +510,7 @@ function internalChatApp() {
                     from: 'admin',
                     text: msg.text || '',
                     time: msg.time,
+                    created_at: msg.created_at,
                     file_url: msg.file_url,
                     file_name: msg.file_name,
                     file_size_formatted: msg.file_size_formatted,
@@ -626,6 +632,12 @@ function internalChatApp() {
 
         cancelReply() {
             this.replyTo = null;
+        },
+
+        canDeleteMessage(msg) {
+            if (msg.from !== 'admin') return false;
+            if (!msg.created_at) return true;
+            return Date.now() - new Date(msg.created_at).getTime() < 86400000;
         },
 
         async deleteChat(chat) {

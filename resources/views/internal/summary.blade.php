@@ -79,7 +79,8 @@
                 <select x-model="form.priority" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
                     <option value="">Semua</option>
                     <option value="normal">Normal</option>
-                    <option value="High">High</option>
+                    <option value="express">Express</option>
+                    <option value="super_express">Super Express</option>
                 </select>
             </div>
             <div>

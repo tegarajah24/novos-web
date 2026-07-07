@@ -274,7 +274,7 @@ class DashboardController extends Controller
         $distData = [round($customCount / $totalBoth * 100), round($catalogCount / $totalBoth * 100)];
 
         $assignees = User::with('role')
-            ->whereHas('role', fn($q) => $q->whereNot('name', 'Customer'))
+            ->whereHas('role', fn($q) => $q->where('name', 'Admin'))
             ->orderBy('name')
             ->get()
             ->map(fn($u) => ['id' => $u->id, 'name' => $u->name, 'role' => $u->role->name])
