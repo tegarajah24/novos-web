@@ -18,8 +18,6 @@ class StoreUserRequest extends FormRequest
             'email'    => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'role'     => 'required|string|in:Super Admin,Manager,Admin,Design,Produksi',
-            'fullname' => 'nullable|string|max:255',
-            'phone'    => 'nullable|string|max:30',
             'avatar'   => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ];
     }

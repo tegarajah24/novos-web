@@ -24,10 +24,8 @@ class UserController extends Controller
                 return [
                     'id'         => $user->id,
                     'name'       => $user->name,
-                    'fullname'   => $user->fullname ?? '-',
                     'email'      => $user->email,
                     'username'   => explode('@', $user->email)[0],
-                    'phone'      => $user->phone ?? '-',
                     'role'       => $user->role->name,
                     'avatar'     => $user->avatar,
                     'status'     => 'Aktif',
@@ -71,11 +69,9 @@ class UserController extends Controller
         $user = DB::transaction(function () use ($data, $role, $avatarPath) {
             return User::create([
                 'name'     => $data['name'],
-                'fullname' => $data['fullname'] ?? null,
                 'email'    => $data['email'],
                 'password' => Hash::make($data['password']),
                 'role_id'  => $role->id,
-                'phone'    => $data['phone'] ?? null,
                 'avatar'   => $avatarPath,
             ]);
         });
@@ -86,7 +82,6 @@ class UserController extends Controller
             'user'    => [
                 'id'         => $user->id,
                 'name'       => $user->name,
-                'fullname'   => $user->fullname ?? '-',
                 'email'      => $user->email,
                 'username'   => explode('@', $user->email)[0],
                 'phone'      => $user->phone ?? '-',
@@ -132,12 +127,10 @@ class UserController extends Controller
 
         DB::transaction(function () use ($data, $role, $user, $avatarPath) {
             $user->update([
-                'name'     => $data['name'],
-                'fullname' => $data['fullname'] ?? null,
-                'email'    => $data['email'],
-                'role_id'  => $role->id,
-                'phone'    => $data['phone'] ?? null,
-                'avatar'   => $avatarPath,
+                'name'    => $data['name'],
+                'email'   => $data['email'],
+                'role_id' => $role->id,
+                'avatar'  => $avatarPath,
             ]);
 
             if ($data['password']) {
@@ -151,10 +144,8 @@ class UserController extends Controller
             'user'    => [
                 'id'         => $user->id,
                 'name'       => $user->name,
-                'fullname'   => $user->fresh()->fullname ?? '-',
                 'email'      => $user->email,
                 'username'   => explode('@', $user->email)[0],
-                'phone'      => $user->phone ?? '-',
                 'role'       => $role->name,
                 'avatar'     => $user->fresh()->avatar,
                 'status'     => 'Aktif',

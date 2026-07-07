@@ -78,10 +78,8 @@
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wider">
                         <th class="px-6 py-4 font-semibold">Nama</th>
-                        <th class="px-6 py-4 font-semibold">Nama Lengkap</th>
                         <th class="px-6 py-4 font-semibold">Username</th>
                         <th class="px-6 py-4 font-semibold">Email</th>
-                        <th class="px-6 py-4 font-semibold">No. WhatsApp</th>
                         <th class="px-6 py-4 font-semibold">Role</th>
                         <th class="px-6 py-4 font-semibold">Status</th>
                         <th class="px-6 py-4 font-semibold">Tanggal Dibuat</th>
@@ -120,14 +118,6 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Pengguna</label>
                     <input type="text" name="name" id="tambahNama" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan nama pengguna">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
-                    <input type="text" name="fullname" id="tambahFullname" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan nama lengkap">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor WhatsApp</label>
-                    <input type="text" name="phone" id="tambahPhone" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Contoh: 08123456789">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
@@ -205,14 +195,6 @@
                     <input type="text" name="name" id="editNama" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
-                    <input type="text" name="fullname" id="editFullname" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Masukkan nama lengkap">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor WhatsApp</label>
-                    <input type="text" name="phone" id="editPhone" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" placeholder="Contoh: 08123456789">
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
                     <input type="email" name="email" id="editEmail" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all" value="ahmad@novos.co.id">
                 </div>
@@ -285,16 +267,8 @@
             </div>
             <div class="px-6 pb-6 space-y-4">
                 <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-xl">
-                    <span class="text-sm text-gray-500">Nama Lengkap</span>
-                    <span class="text-sm font-medium text-gray-900" id="detailFullname">-</span>
-                </div>
-                <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-xl">
                     <span class="text-sm text-gray-500">Email</span>
                     <span class="text-sm font-medium text-gray-900" id="detailEmail">admin@novos.com</span>
-                </div>
-                <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-xl">
-                    <span class="text-sm text-gray-500">No. WhatsApp</span>
-                    <span class="text-sm font-medium text-gray-900" id="detailPhone">-</span>
                 </div>
                 <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-xl">
                     <span class="text-sm text-gray-500">Role</span>
@@ -339,7 +313,7 @@
             const tbody = document.getElementById('userTableBody');
             const total = document.getElementById('totalDisplay');
             if (!data.length) {
-                tbody.innerHTML = '<tr><td colspan="9" class="px-6 py-10 text-center text-gray-500">Tidak ada pengguna ditemukan.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500">Tidak ada pengguna ditemukan.</td></tr>';
                 total.textContent = '0';
                 document.getElementById('infoDisplay').textContent = 'Menampilkan 0 dari 0 pengguna';
                 return;
@@ -352,8 +326,6 @@
                 const avatarHtml = u.avatar
                     ? `<img src="/storage/${u.avatar}" alt="${u.name}" class="w-9 h-9 rounded-full object-cover shrink-0">`
                     : `<div class="w-9 h-9 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0">${initials}</div>`;
-                const fullnameDisplay = u.fullname || '-';
-                const phoneDisplay = u.phone || '-';
                 return `<tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
@@ -361,10 +333,8 @@
                             <span class="font-medium text-gray-900">${u.name}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-gray-600">${fullnameDisplay}</td>
                     <td class="px-6 py-4 text-gray-500">${u.username}</td>
                     <td class="px-6 py-4 text-gray-600">${u.email}</td>
-                    <td class="px-6 py-4 text-gray-600">${phoneDisplay}</td>
                     <td class="px-6 py-4"><x-badge type="${roleBadge}">${u.role}</x-badge></td>
                     <td class="px-6 py-4"><x-badge type="green">${u.status}</x-badge></td>
                     <td class="px-6 py-4 text-gray-500">${u.created_at}</td>
@@ -471,9 +441,7 @@
                 avatarEl.className = 'w-20 h-20 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 overflow-hidden';
             }
             document.getElementById('detailNama').textContent = user.name;
-            document.getElementById('detailFullname').textContent = user.fullname || '-';
             document.getElementById('detailEmail').textContent = user.email;
-            document.getElementById('detailPhone').textContent = user.phone || '-';
             document.getElementById('detailUsername').textContent = '@' + user.username;
             document.getElementById('detailRole').innerHTML = `<x-badge type="${roleBadgeColor(user.role)}">${user.role}</x-badge>`;
             document.getElementById('detailStatus').innerHTML = `<x-badge type="green">${user.status}</x-badge>`;
@@ -499,8 +467,6 @@
             if (!user) return;
             document.getElementById('editId').value = user.id;
             document.getElementById('editNama').value = user.name;
-            document.getElementById('editFullname').value = user.fullname || '';
-            document.getElementById('editPhone').value = user.phone || '';
             document.getElementById('editEmail').value = user.email;
             document.getElementById('editPassword').value = '';
             document.getElementById('editPasswordConfirmation').value = '';
