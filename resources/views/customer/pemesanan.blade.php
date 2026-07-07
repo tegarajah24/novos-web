@@ -1088,7 +1088,6 @@
                                         x-model="selectedProvinceId"
                                         @change="const prov = provinces.find(p => p.id === selectedProvinceId); addressForm.province = prov ? prov.name : ''; fetchRegencies();"
                                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none"
-                                        :disabled="addressLoading.provinces"
                                     >
                                         <option value="">Pilih Provinsi</option>
                                         <template x-for="prov in provinces" :key="prov.id">
@@ -1096,15 +1095,7 @@
                                         </template>
                                     </select>
                                     <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                                        <template x-if="addressLoading.provinces">
-                                            <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                                            </svg>
-                                        </template>
-                                        <template x-if="!addressLoading.provinces">
-                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                        </template>
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>
                                 </div>
                             </div>
@@ -1769,7 +1760,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 }
             } else {
                 this.addressMode = 'create';
-                this.fetchProvinces();
             }
         },
 
@@ -1857,7 +1847,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 }
             } else {
                 this.addressMode = 'create';
-                this.fetchProvinces();
             }
         },
 
@@ -1880,7 +1869,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             this.selectedProvinceId = '';
             this.selectedRegencyId = '';
             this.selectedDistrictId = '';
-            this.fetchProvinces();
         },
 
         useSelectedAddress() {
@@ -1895,21 +1883,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         openAddressModal() {
             this.saveCheckoutState();
             window.location.href = '/profile?tab=alamat';
-        },
-
-        fetchProvinces() {
-            if (this.provinces.length > 0) return;
-            this.addressLoading.provinces = true;
-            fetch('/api/wilayah/provinces')
-                .then(res => res.json())
-                .then(data => {
-                    this.provinces = data;
-                    this.addressLoading.provinces = false;
-                })
-                .catch(err => {
-                    console.error('Gagal mengambil data provinsi', err);
-                    this.addressLoading.provinces = false;
-                });
         },
 
         fetchRegencies() {

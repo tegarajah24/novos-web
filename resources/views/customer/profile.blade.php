@@ -13,7 +13,7 @@
 @endpush
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser, window.profileAddresses, window.profileCart)">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser, window.profileAddresses, window.profileCart, window.profileProvinces)">
     {{-- Alerts --}}
     @if (session('status') === 'profile-updated')
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
@@ -656,20 +656,14 @@
                                     <div class="relative">
                                         <select x-model="selectedProvinceId"
                                             @change="const prov = provinces.find(p => p.id === selectedProvinceId); addressForm.province = prov ? prov.name : ''; fetchRegencies();"
-                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none text-sm"
-                                            :disabled="addressLoading.provinces">
+                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-shadow bg-white appearance-none text-sm">
                                             <option value="">Pilih Provinsi</option>
                                             <template x-for="prov in provinces" :key="prov.id">
                                                 <option :value="prov.id" x-text="prov.name"></option>
                                             </template>
                                         </select>
                                         <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                                            <template x-if="addressLoading.provinces">
-                                                <svg class="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                                            </template>
-                                            <template x-if="!addressLoading.provinces">
-                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                            </template>
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </div>
                                     </div>
                                 </div>
@@ -859,8 +853,9 @@ window.profileOrders = @json($orders);
 window.profileUser = @json($user);
 window.profileAddresses = @json($addresses);
 window.profileCart = @json($cartItems);
+window.profileProvinces = @json($provinces);
 
-function profileDashboard(orders = [], user = {}, initialAddresses = [], initialCart = []) {
+function profileDashboard(orders = [], user = {}, initialAddresses = [], initialCart = [], provinces = []) {
     return {
         activeTab: (new URLSearchParams(window.location.search)).get('tab') || 'pengaturan',
         orderFilter: 'menunggu_pembayaran',
@@ -886,7 +881,7 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
             postal_code: '',
             address_type: 'rumah',
         },
-        provinces: [],
+        provinces: provinces,
         regencies: [],
         districts: [],
         selectedProvinceId: '',
@@ -1143,16 +1138,6 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
         // ─── Cascade Address Fetch ───
 
         async fetchProvinces() {
-            if (this.provinces.length > 0) return;
-            this.addressLoading.provinces = true;
-            try {
-                const res = await fetch('/api/wilayah/provinces');
-                this.provinces = await res.json();
-            } catch (e) {
-                console.error('Gagal memuat provinsi', e);
-            } finally {
-                this.addressLoading.provinces = false;
-            }
         },
 
         async fetchRegencies() {
