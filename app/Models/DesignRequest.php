@@ -10,6 +10,8 @@ class DesignRequest extends Model
     protected $fillable = [
         'order_id',
         'team_name',
+        'nama_artikel',
+        'nama_pemesan',
         'no_punggung',
         'detail_sponsor',
         'jenis_potongan',

@@ -155,6 +155,31 @@
                 </div>
             </div>
 
+            {{-- Row: Nama Artikel + Nama Pemesan --}}
+            <div class="grid lg:grid-cols-2 gap-6">
+                {{-- Nama Artikel --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Artikel</label>
+                    <input
+                        type="text"
+                        x-model="form.nama_artikel"
+                        placeholder="Contoh: Jersey Tim Futsal"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                    >
+                </div>
+
+                {{-- Nama Pemesan --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Pemesan</label>
+                    <input
+                        type="text"
+                        x-model="form.nama_pemesan"
+                        placeholder="Contoh: John Doe"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                    >
+                </div>
+            </div>
+
             <div class="grid lg:grid-cols-2 gap-6">
                 {{-- Jenis Kerah --}}
                 <div x-data="{ showCollarGuide: false }">
@@ -1654,6 +1679,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
         form: {
             team_name: '',
+            nama_artikel: '',
+            nama_pemesan: '',
             detail_sponsor: '',
             kerah: '',
             bahan: '',
@@ -2015,6 +2042,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
             const formData = new FormData();
             formData.append('team_name', this.form.team_name);
+            formData.append('nama_artikel', this.form.nama_artikel);
+            formData.append('nama_pemesan', this.form.nama_pemesan);
             formData.append('detail_sponsor', this.form.detail_sponsor);
             formData.append('kerah', this.form.kerah);
             formData.append('bahan', this.form.bahan);
@@ -2131,6 +2160,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 image: getFirstImage(),
                 design_data: {
                     team_name: this.form.team_name,
+                    nama_artikel: this.form.nama_artikel,
+                    nama_pemesan: this.form.nama_pemesan,
                     detail_sponsor: this.form.detail_sponsor,
                     kerah: this.form.kerah,
                     bahan: this.form.bahan,
@@ -2196,6 +2227,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             this.jenis = null;
             this.form = {
                 team_name: '',
+                nama_artikel: '',
+                nama_pemesan: '',
                 detail_sponsor: '',
                 kerah: '',
                 bahan: '',

@@ -112,6 +112,8 @@ class OrderController extends Controller
             DesignRequest::create([
                 'order_id'         => $order->id,
                 'team_name'        => $data['team_name'],
+                'nama_artikel'     => $data['nama_artikel'] ?? null,
+                'nama_pemesan'     => $data['nama_pemesan'] ?? null,
                 'detail_sponsor'   => $data['detail_sponsor'] ?? null,
                 'jenis_potongan'   => $data['jenis_potongan'],
                 'lengan_jahitan'   => $data['lengan_jahitan'],
@@ -264,6 +266,8 @@ class OrderController extends Controller
                 DesignRequest::create([
                     'order_id'         => $order->id,
                     'team_name'        => "Multiple Orders (Lihat Catatan)",
+                    'nama_artikel'     => $designDataMerged['nama_artikel'] ?? null,
+                    'nama_pemesan'     => $designDataMerged['nama_pemesan'] ?? null,
                     'detail_sponsor'   => $designDataMerged['detail_sponsor'] ?? null,
                     'jenis_potongan'   => $designDataMerged['jenis_potongan'] ?? '-',
                     'lengan_jahitan'   => $designDataMerged['lengan_jahitan'] ?? '-',
@@ -279,6 +283,8 @@ class OrderController extends Controller
                 DesignRequest::create([
                     'order_id'         => $order->id,
                     'team_name'        => "Katalog",
+                    'nama_artikel'     => null,
+                    'nama_pemesan'     => null,
                     'jenis_potongan'   => '-',
                     'lengan_jahitan'   => '-',
                     'material'         => '-',

@@ -101,6 +101,8 @@
 | id | bigIncrements | |
 | order_id | foreignId | relasi ke orders |
 | team_name | string | nama tim |
+| nama_artikel | string, nullable | nama artikel |
+| nama_pemesan | string, nullable | nama pemesan |
 | logo | string, nullable | file path logo |
 | primary_color | string | warna utama |
 | secondary_color | string, nullable | warna kedua |

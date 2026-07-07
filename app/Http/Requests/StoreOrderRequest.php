@@ -15,6 +15,8 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'team_name'      => 'nullable|string|max:255',
+            'nama_artikel'   => 'nullable|string|max:255',
+            'nama_pemesan'   => 'nullable|string|max:255',
             'detail_sponsor' => 'nullable|string|max:255',
             'kerah'          => 'required|string|max:100',
             'bahan'          => 'required|string|max:100',

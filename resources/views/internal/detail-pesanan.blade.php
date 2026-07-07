@@ -129,7 +129,9 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
             <div class="grid grid-cols-2 gap-x-8 gap-y-2.5 text-sm mb-4">
                 <div><span class="text-gray-500 text-xs">Jenis</span><div class="font-medium text-gray-900">{{ $order['product']['type'] }}</div></div>
                 <div><span class="text-gray-500 text-xs">Olahraga</span><div class="font-medium text-gray-900">{{ $order['product']['sport'] }}</div></div>
-                <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-medium text-gray-900">Jersey Custom</div></div>
+                <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-medium text-gray-900">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-medium text-gray-900">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Nama Pemesan</span><div class="font-medium text-gray-900">{{ $order['product']['nama_pemesan'] ?? '-' }}</div></div>
             </div>
             {{-- Item Details Table --}}
             @if(!empty($order['item_details']))
