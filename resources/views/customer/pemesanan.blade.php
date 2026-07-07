@@ -2318,7 +2318,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     this.step = 2;
                 }
             });
-        }
+        },
 
         copyRekening(norek) {
             navigator.clipboard.writeText(norek).then(() => {
