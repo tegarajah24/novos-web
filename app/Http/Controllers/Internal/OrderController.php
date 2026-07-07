@@ -346,9 +346,18 @@ class OrderController extends Controller
             }
         }
 
+        $deadlineDays = match ($order->designRequest?->priority) {
+            'super_express' => 2,
+            'express'       => 6,
+            default         => 14,
+        };
+
         $order = [
             'order_id'      => $order->order_number,
             'last_update'   => $order->updated_at->format('j M Y, H:i'),
+            'tanggal_masuk' => $order->created_at->format('j M Y'),
+            'deadline'      => $order->created_at->copy()->addDays($deadlineDays)->format('j M Y'),
+            'total_qty'     => $order->orderItems->sum('qty'),
             'customer'      => [
                 'name'  => $order->user->name ?? '-',
                 'email' => $order->user->email ?? '-',
@@ -861,6 +870,12 @@ class OrderController extends Controller
         $sheet->mergeCells('A2:B2');
 
         $row = 4;
+        $deadlineDays = match ($order->designRequest?->priority) {
+            'super_express' => 2,
+            'express'       => 6,
+            default         => 14,
+        };
+
         $fields = [
             'Jenis'            => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog',
             'Nama Tim'         => $order->designRequest?->team_name ?? '-',
@@ -876,6 +891,9 @@ class OrderController extends Controller
                 'super_express' => 'Super Express',
                 default        => 'Normal',
             },
+            'Tanggal Masuk'    => $order->created_at->format('j M Y'),
+            'Deadline'         => $order->created_at->copy()->addDays($deadlineDays)->format('j M Y'),
+            'Total Qty'        => $order->orderItems->sum('qty') . ' pcs',
         ];
 
         foreach ($fields as $label => $value) {

@@ -150,6 +150,9 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Prioritas</span><div class="font-medium" :class="{'text-green-600 font-semibold': form.priority === 'normal', 'text-orange-600 font-semibold': form.priority === 'express', 'text-red-600 font-bold': form.priority === 'super_express'}" x-text="form.priority === 'express' ? 'Express' : form.priority === 'super_express' ? 'Super Express' : 'Normal'">{{ $order['product']['priority'] ?? 'normal' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Tanggal Masuk</span><div class="font-medium text-gray-900">{{ $order['tanggal_masuk'] }}</div></div>
+                <div><span class="text-gray-500 text-xs">Deadline</span><div class="font-medium text-red-600">{{ $order['deadline'] }}</div></div>
+                <div><span class="text-gray-500 text-xs">Total Qty</span><div class="font-medium text-gray-900">{{ $order['total_qty'] }} pcs</div></div>
             </div>
             {{-- Item Details Table --}}
             @if(!empty($order['item_details']))
