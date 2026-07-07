@@ -709,32 +709,45 @@
 
                             {{-- Notif List --}}
                             <div class="max-h-80 overflow-y-auto divide-y divide-gray-50">
-                                <template x-for="notif in previewNotifs" :key="notif.id">
-                                    <div @click="markRead(notif.id)"
-                                         :class="notif.read ? 'bg-white' : 'bg-blue-50/50'"
-                                         class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
-                                        <div class="relative shrink-0">
-                                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                                                 :style="`background: ${notif.color}`"
-                                                 x-text="notif.initials">
+                                <template x-if="loading">
+                                    <div class="px-4 py-8 text-center">
+                                        <svg class="w-6 h-6 mx-auto text-[#1a237e] animate-spin mb-2" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-400">Memuat notifikasi...</p>
+                                    </div>
+                                </template>
+                                <template x-if="!loading">
+                                    <div>
+                                        <template x-for="notif in previewNotifs" :key="notif.id">
+                                            <div @click="markRead(notif.id)"
+                                                 :class="notif.read ? 'bg-white' : 'bg-blue-50/50'"
+                                                 class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                                                <div class="relative shrink-0">
+                                                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                                                         :style="`background: ${notif.color}`"
+                                                         x-text="notif.initials">
+                                                    </div>
+                                                    <span x-show="!notif.read"
+                                                          class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full">
+                                                    </span>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-xs text-gray-800 leading-relaxed" x-html="notif.message"></p>
+                                                    <div class="flex items-center gap-2 mt-1">
+                                                        <span class="text-[10px] text-gray-400" x-text="notif.time"></span>
+                                                        <span class="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
+                                                              :class="notif.badgeClass" x-text="notif.badge"></span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span x-show="!notif.read"
-                                                  class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full">
-                                            </span>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs text-gray-800 leading-relaxed" x-html="notif.message"></p>
-                                            <div class="flex items-center gap-2 mt-1">
-                                                <span class="text-[10px] text-gray-400" x-text="notif.time"></span>
-                                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
-                                                      :class="notif.badgeClass" x-text="notif.badge"></span>
-                                            </div>
+                                        </template>
+                                        <div x-show="!loading && previewNotifs.length === 0" class="px-4 py-8 text-center">
+                                            <p class="text-xs text-gray-400">Tidak ada notifikasi baru</p>
                                         </div>
                                     </div>
                                 </template>
-                                <div x-show="previewNotifs.length === 0" class="px-4 py-8 text-center">
-                                    <p class="text-xs text-gray-400">Tidak ada notifikasi baru</p>
-                                </div>
                             </div>
 
                             {{-- Footer --}}
@@ -1056,6 +1069,7 @@ function staffChatBadge() {
 function notifDropdown() {
     return {
         open: false,
+        loading: true,
         notifications: [],
         get unreadCount() {
             return this.notifications.filter(n => !n.read).length;
@@ -1068,6 +1082,7 @@ function notifDropdown() {
             setInterval(() => this.loadNotifications(), 60000);
         },
         async loadNotifications() {
+            this.loading = true;
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             try {
                 const res = await fetch('{{ route("staf.notifikasi.preview") }}', {
@@ -1075,7 +1090,9 @@ function notifDropdown() {
                 });
                 const data = await res.json();
                 this.notifications = data.notifications;
-            } catch (e) {}
+            } catch (e) {} finally {
+                this.loading = false;
+            }
         },
         async markRead(id) {
             const n = this.notifications.find(n => n.id === id);

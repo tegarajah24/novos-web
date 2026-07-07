@@ -353,6 +353,23 @@ class OrderController extends Controller
 
     public function assign(AssignOrderRequest $request, Order $order)
     {
+        if ($order->assignee_id !== null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assignee sudah ditetapkan dan tidak dapat diubah.',
+            ], 422);
+        }
+
+        if ($request->assignee_id) {
+            $assignee = User::find($request->assignee_id);
+            if (!$assignee || !$assignee->role || !in_array($assignee->role->name, ['Admin', 'Super Admin', 'Manager'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Hanya admin yang dapat ditetapkan sebagai assignee.',
+                ], 422);
+            }
+        }
+
         $order->update([
             'assignee_id' => $request->assignee_id,
         ]);
@@ -460,6 +477,10 @@ class OrderController extends Controller
 
         DB::transaction(function () use ($order, $newDbStatus, $data, $user) {
             $order->update(['status' => $newDbStatus]);
+
+            if ($order->assignee_id === null && $user->isAdmin()) {
+                $order->update(['assignee_id' => $user->id]);
+            }
 
             $order->statusHistories()->create([
                 'status'     => $newDbStatus,

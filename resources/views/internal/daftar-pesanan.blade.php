@@ -198,14 +198,22 @@ function rupiah($n) {
                         <td class="px-5 py-4 text-gray-700 text-center whitespace-nowrap">{{ $o['qty'] }}</td>
                         <td class="px-5 py-4 text-gray-700 whitespace-nowrap font-medium">{{ rupiah($o['total']) }}</td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <select @change="assignOrder('{{ $o['order_id'] }}', $event.target.value)" class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-white min-w-[140px]">
-                                <option value="">Unassigned</option>
-                                @foreach($assignees as $a)
-                                    <option value="{{ $a['id'] }}" {{ $o['assignee_id'] == $a['id'] ? 'selected' : '' }}>
-                                        {{ $a['name'] }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            @canFullAccess('orders')
+                                @if(is_null($o['assignee_id']))
+                                <select @change="assignOrder('{{ $o['order_id'] }}', $event.target.value)" class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-white min-w-[140px]">
+                                    <option value="">Unassigned</option>
+                                    @foreach($assignees as $a)
+                                        <option value="{{ $a['id'] }}" {{ $o['assignee_id'] == $a['id'] ? 'selected' : '' }}>
+                                            {{ $a['name'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @else
+                                <span class="text-sm font-medium text-gray-700">{{ $o['assignee'] }}</span>
+                                @endif
+                            @else
+                                <span class="text-sm text-gray-600">{{ $o['assignee'] ?? 'Unassigned' }}</span>
+                            @endcanFullAccess
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">{!! badge($o['status']) !!}</td>
                         <td class="px-5 py-4 text-center whitespace-nowrap">
