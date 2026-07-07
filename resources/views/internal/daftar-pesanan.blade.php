@@ -197,10 +197,21 @@ function rupiah($n) {
                         <td class="px-5 py-4 text-gray-700 whitespace-nowrap">{{ $o['produk'] }}</td>
                         <td class="px-5 py-4 text-gray-700 text-center whitespace-nowrap">{{ $o['qty'] }}</td>
                         <td class="px-5 py-4 text-gray-700 whitespace-nowrap font-medium">{{ rupiah($o['total']) }}</td>
-                        <td class="px-5 py-4 whitespace-nowrap">
+                        <td class="px-5 py-4 whitespace-nowrap"
                             @canFullAccess('orders')
-                                @if(is_null($o['assignee_id']))
-                                <select @change="assignOrder('{{ $o['order_id'] }}', $event.target.value)" class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-white min-w-[140px]">
+                            x-data="{ aId: {{ $o['assignee_id'] ?? 'null' }}, aName: '{{ $o['assignee'] ?? '' }}' }"
+                            @endcanFullAccess
+                        >
+                            @canFullAccess('orders')
+                                <select x-show="aId === null"
+                                        @change="
+                                            let opt = $event.target.options[$event.target.selectedIndex];
+                                            let txt = opt ? opt.text : '';
+                                            assignOrder('{{ $o['order_id'] }}', $event.target.value, (id) => {
+                                                if (id) { aId = id; aName = txt; }
+                                            });
+                                        "
+                                        class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-white min-w-[140px]">
                                     <option value="">Unassigned</option>
                                     @foreach($assignees as $a)
                                         <option value="{{ $a['id'] }}" {{ $o['assignee_id'] == $a['id'] ? 'selected' : '' }}>
@@ -208,9 +219,7 @@ function rupiah($n) {
                                         </option>
                                     @endforeach
                                 </select>
-                                @else
-                                <span class="text-sm font-medium text-gray-700">{{ $o['assignee'] }}</span>
-                                @endif
+                                <span x-show="aId !== null" class="text-sm font-medium text-gray-700" x-text="aName"></span>
                             @else
                                 <span class="text-sm text-gray-600">{{ $o['assignee'] ?? 'Unassigned' }}</span>
                             @endcanFullAccess
@@ -246,7 +255,7 @@ function rupiah($n) {
 function orderManager() {
     return {
         search: '',
-        assignOrder(orderId, assigneeId) {
+        assignOrder(orderId, assigneeId, onSuccess) {
             fetch(`/staf/pesanan/${orderId}/assign`, {
                 method: 'PATCH',
                 headers: {
@@ -259,6 +268,7 @@ function orderManager() {
             .then(data => {
                 if(data.success) {
                     Notify.success(data.message);
+                    if (onSuccess) onSuccess(assigneeId);
                 } else {
                     Notify.error(data.message || 'Terjadi kesalahan.');
                 }

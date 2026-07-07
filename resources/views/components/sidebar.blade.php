@@ -124,14 +124,12 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
         </a>
         @endcanAccess
 
-        @canAccess('settings')
         <a href="{{ route('staf.pengaturan') }}"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.pengaturan') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
             <i data-lucide="settings" class="w-5 h-5 shrink-0 {{ request()->routeIs('staf.pengaturan') ? 'text-white' : 'text-[#1a237e]' }}"></i>
             <span x-show="sidebarOpen" @if(!$isSidebarOpen) style="display:none" @endif class="font-medium whitespace-nowrap">Pengaturan</span>
         </a>
-        @endcanAccess
     </nav>
 
     {{-- (Footer profile removed) --}}
