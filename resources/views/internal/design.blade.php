@@ -172,6 +172,35 @@
                             </div>
                         </div>
 
+                        {{-- History Catatan --}}
+                        <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                            <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
+                                <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                History Catatan
+                            </h4>
+                            <div class="space-y-3">
+                                <template x-if="selectedOrder?.history_notes?.length === 0">
+                                    <p class="text-sm text-gray-400 text-center py-2">Belum ada catatan.</p>
+                                </template>
+                                <template x-for="(h, i) in selectedOrder?.history_notes || []" :key="i">
+                                    <div class="flex gap-3">
+                                        <div class="mt-1.5 w-2 h-2 rounded-full shrink-0"
+                                             :class="'bg-' + (['green','yellow','blue','purple'][i % 4]) + '-500'"></div>
+                                        <div class="min-w-0">
+                                            <p class="text-xs text-gray-400 mb-0.5">
+                                                <span x-text="h.date + ' — ' + h.user"></span>
+                                                <span class="inline-block ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                                                      :class="h.origin === 'Customer' ? 'bg-blue-100 text-blue-700' : (h.origin === 'Design' ? 'bg-purple-100 text-purple-700' : (h.origin?.includes('Produksi') ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'))">
+                                                    <span x-text="'[' + (h.origin || 'Sistem') + ']'"></span>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-gray-700 whitespace-pre-wrap" x-text="h.note"></p>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
                     </div>
 
                     {{-- KANAN: Upload Design & Action (1 Kolom) --}}

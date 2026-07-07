@@ -247,10 +247,22 @@ class OrderController extends Controller
             }
             if ($isAuto) continue;
 
+            $roleName = $h->changedBy?->role?->name;
+            $origin = match ($roleName) {
+                'Design'   => 'Design',
+                'Customer' => 'Customer',
+                'Produksi' => str_contains($note, 'printing') ? 'Produksi (Printing)'
+                            : (str_contains($note, 'jahit')    ? 'Produksi (Jahit)'
+                            : (str_contains($note, 'qc') || str_contains($note, 'QC') ? 'Produksi (QC)' : 'Produksi')),
+                null       => 'Sistem',
+                default    => $roleName,
+            };
+
             $historyNotes[] = [
-                'date' => $h->created_at->format('j M Y, H:i'),
-                'user' => $h->changedBy?->name ?? 'Sistem',
-                'note' => $note,
+                'date'   => $h->created_at->format('j M Y, H:i'),
+                'user'   => $h->changedBy?->name ?? 'Sistem',
+                'origin' => $origin,
+                'note'   => $note,
             ];
         }
 

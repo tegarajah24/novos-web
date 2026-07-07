@@ -333,9 +333,14 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 @forelse($order['history_notes'] as $i => $h)
                 <div class="flex gap-3">
                     <div class="mt-1.5 w-2 h-2 rounded-full {{ $noteColors[$i % count($noteColors)] }} shrink-0"></div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-0.5">{{ $h['date'] }} — <span class="font-medium text-gray-600">{{ $h['user'] }}</span></p>
-                        <p class="text-sm text-gray-700">{{ $h['note'] }}</p>
+                    <div class="min-w-0">
+                        <p class="text-xs text-gray-400 mb-0.5">
+                            {{ $h['date'] }} — <span class="font-medium text-gray-600">{{ $h['user'] }}</span>
+                            <span class="inline-block ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium {{ match($h['origin'] ?? '') { 'Customer' => 'bg-blue-100 text-blue-700', 'Design' => 'bg-purple-100 text-purple-700', 'Produksi', 'Produksi (Printing)', 'Produksi (Jahit)', 'Produksi (QC)' => 'bg-amber-100 text-amber-700', default => 'bg-gray-100 text-gray-600' } }}">
+                                [{{ $h['origin'] ?? 'Sistem' }}]
+                            </span>
+                        </p>
+                        <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ $h['note'] }}</p>
                     </div>
                 </div>
                 @empty
