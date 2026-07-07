@@ -225,13 +225,11 @@
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Depan</label>
                             <div class="flex items-start gap-2">
-                                <div class="flex-1 h-36 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                    <template x-if="formData.imageDepanPreview">
-                                        <img :src="formData.imageDepanPreview" class="object-cover w-full h-full" alt="Preview Depan">
-                                    </template>
-                                    <template x-if="!formData.imageDepanPreview">
+                                <div class="flex-1 h-36 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden relative">
+                                    <img :src="formData.imageDepanPreview" x-show="formData.imageDepanPreview" class="absolute inset-0 w-full h-full object-cover" alt="Preview Depan">
+                                    <div x-show="!formData.imageDepanPreview" class="absolute inset-0 flex items-center justify-center">
                                         <i data-lucide="image" class="w-10 h-10 text-gray-300"></i>
-                                    </template>
+                                    </div>
                                 </div>
                                 <label class="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1a237e] text-white rounded-xl hover:bg-[#283593] transition-colors cursor-pointer">
                                     <i data-lucide="upload" class="w-5 h-5"></i>
@@ -242,13 +240,11 @@
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Belakang</label>
                             <div class="flex items-start gap-2">
-                                <div class="flex-1 h-36 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                    <template x-if="formData.imageBelakangPreview">
-                                        <img :src="formData.imageBelakangPreview" class="object-cover w-full h-full" alt="Preview Belakang">
-                                    </template>
-                                    <template x-if="!formData.imageBelakangPreview">
+                                <div class="flex-1 h-36 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden relative">
+                                    <img :src="formData.imageBelakangPreview" x-show="formData.imageBelakangPreview" class="absolute inset-0 w-full h-full object-cover" alt="Preview Belakang">
+                                    <div x-show="!formData.imageBelakangPreview" class="absolute inset-0 flex items-center justify-center">
                                         <i data-lucide="image" class="w-10 h-10 text-gray-300"></i>
-                                    </template>
+                                    </div>
                                 </div>
                                 <label class="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1a237e] text-white rounded-xl hover:bg-[#283593] transition-colors cursor-pointer">
                                     <i data-lucide="upload" class="w-5 h-5"></i>
