@@ -13,7 +13,7 @@ class ProductionController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['user', 'designRequest', 'orderItems', 'statusHistories'])
+        $orders = Order::with(['user', 'designRequest', 'orderItems', 'itemDetails', 'statusHistories'])
             ->whereIn('status', ['siap_cetak', 'diproduksi'])
             ->latest()
             ->get()
@@ -92,6 +92,13 @@ class ProductionController extends Controller
                     'material'          => $dr?->material ?? '-',
                     'collar'            => $dr?->collar_style ?? '-',
                     'pattern'           => $dr?->motif ?? '-',
+                    'item_details'      => $order->itemDetails?->map(fn($d) => [
+                        'no_punggung'  => $d->no_punggung,
+                        'nama_punggung' => $d->nama_punggung,
+                        'model_lengan' => $d->model_lengan,
+                        'size'         => $d->size,
+                        'keterangan'   => $d->keterangan,
+                    ])->values()->toArray() ?? [],
                     'notes'             => nl2br(e($allNotes)),
                     'total_qty'         => $order->orderItems->sum('qty'),
                     'sizes'             => $sizes,

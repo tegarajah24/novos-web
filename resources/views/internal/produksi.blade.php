@@ -169,6 +169,43 @@
                             </div>
                         </div>
 
+                        {{-- Detail Item Pesanan --}}
+                        <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                            <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
+                                <i data-lucide="list" class="w-4 h-4 text-[#1a237e]"></i>
+                                Detail Item Pesanan
+                            </h4>
+                            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+                                        <tr>
+                                            <th class="px-3 py-2 text-left font-semibold">No Punggung</th>
+                                            <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
+                                            <th class="px-3 py-2 text-left font-semibold">Model Lengan</th>
+                                            <th class="px-3 py-2 text-left font-semibold">Size</th>
+                                            <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        <template x-if="!selectedOrder?.item_details || selectedOrder.item_details.length === 0">
+                                            <tr>
+                                                <td colspan="5" class="px-3 py-6 text-center text-gray-400 text-sm">Tidak ada detail item.</td>
+                                            </tr>
+                                        </template>
+                                        <template x-for="(detail, idx) in selectedOrder?.item_details || []" :key="idx">
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td class="px-3 py-2 text-gray-800 font-medium" x-text="detail.no_punggung ?? '-'"></td>
+                                                <td class="px-3 py-2 text-gray-700" x-text="detail.nama_punggung ?? '-'"></td>
+                                                <td class="px-3 py-2 text-gray-700" x-text="detail.model_lengan ?? '-'"></td>
+                                                <td class="px-3 py-2 text-gray-700" x-text="detail.size ?? '-'"></td>
+                                                <td class="px-3 py-2 text-gray-700" x-text="detail.keterangan ?? '-'"></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                         {{-- Rekap Ukuran --}}
                         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
                             <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
