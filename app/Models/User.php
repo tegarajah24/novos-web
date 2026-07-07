@@ -47,6 +47,21 @@ class User extends Authenticatable
         return $this->role?->name === 'Customer';
     }
 
+    public function hasAccess(string $permissionSlug): bool
+    {
+        return $this->role && $this->role->hasAccess($permissionSlug);
+    }
+
+    public function hasFullAccess(string $permissionSlug): bool
+    {
+        return $this->role && $this->role->hasFullAccess($permissionSlug);
+    }
+
+    public function getAccessLevel(string $permissionSlug): string
+    {
+        return $this->role ? $this->role->getAccessLevel($permissionSlug) : 'none';
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
