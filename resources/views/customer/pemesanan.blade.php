@@ -5,7 +5,7 @@
 @section('content')
 @auth
 
-<div class="max-w-5xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }})">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
@@ -1247,32 +1247,80 @@
             {{-- Left: Prioritas Pengerjaan --}}
             <div>
                 <h3 class="text-base font-semibold text-gray-800 mb-4">Prioritas Pengerjaan</h3>
-                <div class="space-y-3">
+                <div class="grid grid-cols-3 gap-3">
                     <template x-for="(p, i) in prioritasOptions" :key="i">
                         <div
                             @click="prioritas = p.value"
                             :class="prioritas === p.value ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
-                            class="border-2 rounded-xl p-4 cursor-pointer transition-all animate-fade-slide"
+                            class="border-2 rounded-xl py-3 px-4 cursor-pointer transition-all animate-fade-slide flex items-center gap-2"
                             :style="`animation-delay: ${0.05 + i * 0.07}s`"
                         >
-                            <div class="flex items-center justify-between mb-1">
-                                <div class="flex items-center gap-3">
-                                    <div :class="prioritas === p.value ? 'bg-[#1a237e] border-[#1a237e]' : 'border-gray-300'" class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0">
-                                        <div x-show="prioritas === p.value" class="w-2 h-2 bg-white rounded-full"></div>
-                                    </div>
-                                    <span class="font-semibold text-gray-900" x-text="p.label"></span>
-                                </div>
-                                <span class="text-sm font-bold text-gray-900" x-text="p.harga"></span>
+                            <div :class="prioritas === p.value ? 'bg-[#1a237e] border-[#1a237e]' : 'border-gray-300'" class="w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors shrink-0">
+                                <div x-show="prioritas === p.value" class="w-1.5 h-1.5 bg-white rounded-full"></div>
                             </div>
-                            <p class="text-sm text-gray-500 ml-8" x-text="'Estimasi ' + p.desc"></p>
+                            <span class="font-semibold text-gray-900 text-sm" x-text="p.label"></span>
                         </div>
                     </template>
                 </div>
+                <div class="mt-3 flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
+                    <span class="text-sm text-gray-500" x-text="'Estimasi ' + (prioritasOptions.find(o => o.value === prioritas)?.desc || '')"></span>
+                    <span class="text-sm font-bold text-gray-900" x-text="prioritasOptions.find(o => o.value === prioritas)?.harga || 'Gratis'"></span>
+                </div>
+
+                {{-- Info DP --}}
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-amber-800">DP Minimal 10%</p>
+                            <p class="text-xs text-amber-700 mt-0.5">Pembayaran dilakukan setelah admin memvalidasi pesanan. DP minimal <strong>10% dari total</strong> (Rp <span x-text="Math.ceil(estimasiTotal * 0.1).toLocaleString('id-ID')"></span>) via transfer bank ke rekening di bawah.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Info Rekening --}}
+                <div class="bg-white border border-gray-200 rounded-xl p-5 mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                        Pembayaran via Transfer Bank
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">BCA</p>
+                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-mono font-bold text-[#1a237e]">123 456 7890</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Mandiri</p>
+                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-mono font-bold text-[#1a237e]">987 654 3210</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">BNI</p>
+                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-mono font-bold text-[#1a237e]">555 666 7777</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-3">Setelah transfer, kirimkan bukti pembayaran melalui halaman konfirmasi atau chat dengan admin.</p>
+                </div>
             </div>
 
-            {{-- Right: Ringkasan + Pembayaran --}}
-            <div class="space-y-6">
-                {{-- Ringkasan Pesanan --}}
+            {{-- Right: Ringkasan Pesanan --}}
+            <div>
                 <div class="bg-white border border-gray-200 rounded-xl p-6">
                     <h3 class="text-base font-semibold text-gray-800 mb-4">Ringkasan Pesanan</h3>
                     
@@ -1350,59 +1398,7 @@
                         <span class="text-xl font-bold text-[#1a237e]" x-text="formatRupiah(estimasiTotal)"></span>
                     </div>
                 </div>
-
-                {{-- Info DP --}}
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-semibold text-amber-800">DP Minimal 10%</p>
-                            <p class="text-xs text-amber-700 mt-0.5">Pembayaran dilakukan setelah admin memvalidasi pesanan. DP minimal <strong>10% dari total</strong> (Rp <span x-text="Math.ceil(estimasiTotal * 0.1).toLocaleString('id-ID')"></span>) via transfer bank ke rekening di bawah.</p>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Info Rekening --}}
-                <div class="bg-white border border-gray-200 rounded-xl p-5">
-                    <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                        Pembayaran via Transfer Bank
-                    </h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">BCA</p>
-                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-mono font-bold text-[#1a237e]">123 456 7890</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">Mandiri</p>
-                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-mono font-bold text-[#1a237e]">987 654 3210</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">BNI</p>
-                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-mono font-bold text-[#1a237e]">555 666 7777</p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-3">Setelah transfer, kirimkan bukti pembayaran melalui halaman konfirmasi atau chat dengan admin.</p>
-                </div>
             </div>
-
         </div>
 
         <div class="flex justify-end gap-4 mt-8">
