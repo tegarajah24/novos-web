@@ -164,7 +164,7 @@
                                                 </div>
                                             </div>
                                             {{-- Dropdown trigger (top-right inside bubble) --}}
-                                            <button @click.stop="toggleDropdown(msg)"
+                                            <button @click.stop="toggleDropdown(msg, $event)"
                                                     class="shrink-0 mt-0.5 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:opacity-80"
                                                     :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'">
                                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
@@ -174,7 +174,8 @@
                                     {{-- Dropdown menu --}}
                                     <div x-show="openDropdownMsgId === msg.id"
                                          @click.stop
-                                         class="absolute z-20 top-full mt-1 right-0 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
+                                         class="absolute z-20 right-0 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
+                                         :class="dropdownUp ? 'bottom-full mb-1' : 'top-full mt-1'"
                                          x-transition:enter="transition ease-out duration-100"
                                          x-transition:enter-start="opacity-0 scale-95"
                                          x-transition:enter-end="opacity-100 scale-100"
@@ -369,6 +370,7 @@ function internalChatApp() {
         previewImgName: '',
         previewMsgId: null,
         openDropdownMsgId: null,
+        dropdownUp: false,
         replyTo: null,
         _heartbeatTimer: null,
         _pollTimer: null,
@@ -584,8 +586,27 @@ function internalChatApp() {
             document.body.style.overflow = '';
         },
 
-        toggleDropdown(msg) {
-            this.openDropdownMsgId = this.openDropdownMsgId === msg.id ? null : msg.id;
+        toggleDropdown(msg, event) {
+            if (this.openDropdownMsgId === msg.id) {
+                this.openDropdownMsgId = null;
+                return;
+            }
+            this.openDropdownMsgId = msg.id;
+
+            const scrollEl = this.$refs?.messages;
+            if (scrollEl && event?.target) {
+                const msgEl = event.target.closest('.group');
+                if (msgEl) {
+                    const msgRect = msgEl.getBoundingClientRect();
+                    const scrollRect = scrollEl.getBoundingClientRect();
+                    const spaceAbove = msgRect.top - scrollRect.top;
+                    const spaceBelow = scrollRect.bottom - msgRect.bottom;
+                    const need = 200;
+                    this.dropdownUp = spaceBelow < need && spaceAbove >= need;
+                    return;
+                }
+            }
+            this.dropdownUp = false;
         },
 
         copyMessage(msg) {
