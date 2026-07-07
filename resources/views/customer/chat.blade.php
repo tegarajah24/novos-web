@@ -321,17 +321,13 @@ function chatApp() {
         },
 
         init() {
-            if (this.chats.length > 0 && !this.activeChat) {
-                this.activeChat = this.chats[0].id;
-                this.mobileList = false;
-                this.$nextTick(() => {
-                    this.markRead(this.activeChat);
-                    this.scrollToBottom();
-                });
-            }
-
             this._pollTimer = setInterval(() => {
-                if (!document.hidden && this.activeChat) this.pollMessages();
+                if (document.hidden) return;
+                if (this.activeChat) {
+                    this.pollMessages();
+                } else {
+                    this.pollChats();
+                }
             }, 5000);
 
             if (window.visualViewport) {
@@ -345,6 +341,32 @@ function chatApp() {
 
         destroy() {
             clearInterval(this._pollTimer);
+        },
+
+        async pollChats() {
+            try {
+                const res = await fetch('/chat/poll-list', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (!data.chats) return;
+
+                for (const incoming of data.chats) {
+                    const existing = this.chats.find(c => c.id === incoming.id);
+                    if (existing) {
+                        existing.name = incoming.name;
+                        existing.sender_avatar_url = incoming.sender_avatar_url;
+                        existing.time = incoming.time;
+                        existing.lastMessage = incoming.lastMessage;
+                        existing.unread = incoming.unread;
+                        existing.online = incoming.online;
+                        existing.unassigned = incoming.unassigned;
+                    } else {
+                        incoming.messages = [];
+                        this.chats.push(incoming);
+                    }
+                }
+            } catch (e) {}
         },
 
         async pollMessages() {
@@ -559,6 +581,45 @@ function chatApp() {
             this.previewImgName = '';
             this.previewMsgId = null;
             document.body.style.overflow = '';
+        },
+
+        async deleteChat(chat) {
+            const result = await Swal.fire({
+                title: 'Hapus percakapan?',
+                text: 'Semua pesan dalam percakapan ini akan dihapus.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc2626',
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                const res = await fetch('/chat/' + chat.id, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+                });
+
+                if (!res.ok) throw new Error();
+
+                const idx = this.chats.indexOf(chat);
+                if (idx !== -1) {
+                    this.chats.splice(idx, 1);
+                    if (this.activeChat === chat.id) {
+                        this.activeChat = null;
+                        this.mobileList = true;
+                    }
+                }
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal menghapus',
+                    text: 'Terjadi kesalahan saat menghapus percakapan',
+                });
+            }
         }
     }
 }

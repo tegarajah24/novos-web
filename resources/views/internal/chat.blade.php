@@ -44,7 +44,12 @@
                                 </div>
                                 <p class="text-xs text-gray-500 truncate mt-0.5" x-text="chat.lastMessage"></p>
                             </div>
-                            <span x-show="chat.unread > 0" class="shrink-0 bg-[#1a237e] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center" x-text="chat.unread"></span>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <span x-show="chat.unread > 0" class="bg-[#1a237e] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center" x-text="chat.unread"></span>
+                                <button @click.stop="deleteChat(chat)" class="text-gray-300 hover:text-red-500 transition-colors p-1" title="Hapus percakapan">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
                         </div>
                     </button>
                 </template>
@@ -501,6 +506,40 @@ function internalChatApp() {
             this.previewImgName = '';
             this.previewMsgId = null;
             document.body.style.overflow = '';
+        },
+
+        async deleteChat(chat) {
+            const result = await Swal.fire({
+                title: 'Hapus percakapan?',
+                text: 'Semua pesan dalam percakapan ini akan dihapus.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc2626',
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                const res = await fetch('/staf/chat/' + chat.id, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+                });
+
+                if (!res.ok) throw new Error();
+
+                const idx = this.chats.indexOf(chat);
+                if (idx !== -1) {
+                    this.chats.splice(idx, 1);
+                    if (this.activeChat === chat.id) {
+                        this.activeChat = null;
+                    }
+                }
+            } catch (e) {
+                Notify.error('Terjadi kesalahan saat menghapus percakapan', 'Gagal menghapus');
+            }
         }
     }
 }
