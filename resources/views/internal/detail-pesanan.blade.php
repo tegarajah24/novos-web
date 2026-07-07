@@ -132,7 +132,6 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
             </h3>
             <div class="grid grid-cols-3 gap-x-8 gap-y-2.5 text-sm mb-4">
                 <div><span class="text-gray-500 text-xs">Jenis</span><div class="font-medium text-gray-900">{{ $order['product']['type'] }}</div></div>
-                <div><span class="text-gray-500 text-xs">Olahraga / Motif</span><div class="font-medium text-gray-900" x-text="form.motif || '{{ $order['product']['sport'] }}'">{{ $order['product']['sport'] }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-medium text-gray-900" x-text="form.team_name || 'Jersey Custom'">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-medium text-gray-900" :class="{ 'text-gray-400 italic': !form.nama_artikel }" x-text="form.nama_artikel || 'Belum diisi'">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Pemesan</span><div class="font-medium text-gray-900" x-text="form.nama_pemesan || '-'">{{ $order['product']['nama_pemesan'] ?? '-' }}</div></div>
@@ -141,7 +140,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 <div><span class="text-gray-500 text-xs">Kerah</span><div class="font-medium text-gray-900" x-text="form.collar_style || '-'">{{ $order['product']['collar_style'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Prioritas</span><div class="font-medium text-gray-900" x-text="form.priority || 'normal'">{{ $order['product']['priority'] ?? 'normal' }}</div></div>
+                <div><span class="text-gray-500 text-xs">Prioritas</span><div class="font-medium" :class="{'text-green-600 font-semibold': form.priority === 'normal', 'text-orange-600 font-semibold': form.priority === 'express', 'text-red-600 font-bold': form.priority === 'super_express'}" x-text="form.priority === 'express' ? 'Express' : form.priority === 'super_express' ? 'Super Express' : 'Normal'">{{ $order['product']['priority'] ?? 'normal' }}</div></div>
             </div>
             {{-- Item Details Table --}}
             @if(!empty($order['item_details']))
@@ -213,10 +212,6 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                                 <input type="text" x-model="form.nama_pemesan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Olahraga / Motif</label>
-                                <input type="text" x-model="form.motif" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Detail Sponsor</label>
                                 <input type="text" x-model="form.detail_sponsor" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
                             </div>
@@ -237,18 +232,11 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                                 <input type="text" x-model="form.lengan_jahitan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Warna Primer</label>
-                                <input type="text" x-model="form.primary_color" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Warna Sekunder</label>
-                                <input type="text" x-model="form.secondary_color" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Prioritas</label>
                                 <select x-model="form.priority" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all bg-white">
-                                    <option value="normal">Normal</option>
-                                    <option value="High">High</option>
+                                    <option value="normal">Normal (7–14 hari)</option>
+                                    <option value="express">Express (3–6 hari)</option>
+                                    <option value="super_express">Super Express (1–2 hari)</option>
                                 </select>
                             </div>
                         </div>
@@ -646,9 +634,6 @@ function updateStatusSection() {
                 collar_style: '',
                 jenis_potongan: '',
                 lengan_jahitan: '',
-                motif: '',
-                primary_color: '',
-                secondary_color: '',
                 priority: 'normal',
                 additional_notes: '',
             },
@@ -662,9 +647,6 @@ function updateStatusSection() {
                 this.form.collar_style = p.collar_style || '';
                 this.form.jenis_potongan = p.jenis_potongan || '';
                 this.form.lengan_jahitan = p.lengan_jahitan || '';
-                this.form.motif = p.motif || '';
-                this.form.primary_color = p.primary_color || '';
-                this.form.secondary_color = p.secondary_color || '';
                 this.form.priority = p.priority || 'normal';
                 this.form.additional_notes = p.notes || '';
                 this.editModalOpen = true;

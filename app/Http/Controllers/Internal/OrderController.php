@@ -317,7 +317,6 @@ class OrderController extends Controller
             ],
             'product'       => [
                 'type'  => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog',
-                'sport' => $order->designRequest?->motif ?? 'Umum',
                 'notes' => $order->designRequest?->additional_notes ?? $order->notes ?? '-',
                 'team_name'      => $order->designRequest?->team_name ?? '-',
                 'nama_artikel'   => $order->designRequest?->nama_artikel ?? '-',
@@ -327,9 +326,6 @@ class OrderController extends Controller
                 'collar_style'   => $order->designRequest?->collar_style ?? '-',
                 'jenis_potongan' => $order->designRequest?->jenis_potongan ?? '-',
                 'lengan_jahitan' => $order->designRequest?->lengan_jahitan ?? '-',
-                'motif'          => $order->designRequest?->motif ?? '-',
-                'primary_color'  => $order->designRequest?->primary_color ?? '-',
-                'secondary_color' => $order->designRequest?->secondary_color ?? '-',
                 'priority'       => $order->designRequest?->priority ?? 'normal',
             ],
             'sizes'         => $sizes,
@@ -654,10 +650,8 @@ class OrderController extends Controller
             'collar_style'   => 'nullable|string|max:255',
             'jenis_potongan' => 'nullable|string|max:255',
             'lengan_jahitan' => 'nullable|string|max:255',
-            'motif'          => 'nullable|string|max:255',
-            'primary_color'  => 'nullable|string|max:100',
-            'secondary_color'=> 'nullable|string|max:100',
             'additional_notes' => 'nullable|string|max:5000',
+            'priority'       => 'nullable|string|in:normal,express,super_express',
         ]);
 
         if (!$order->designRequest) {
@@ -670,7 +664,7 @@ class OrderController extends Controller
         $order->designRequest->update($request->only([
             'team_name', 'nama_artikel', 'nama_pemesan', 'detail_sponsor',
             'material', 'collar_style', 'jenis_potongan', 'lengan_jahitan',
-            'motif', 'primary_color', 'secondary_color', 'additional_notes',
+            'additional_notes', 'priority',
         ]));
 
         return response()->json([

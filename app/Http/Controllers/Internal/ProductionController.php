@@ -27,10 +27,7 @@ class ProductionController extends Controller
 
                 $stage = $order->production_stage ?? 'printing';
 
-                $priority = 'Normal';
-                if ($order->admin_notes && preg_match('/Prioritas: (Express|Super Express)/', $order->admin_notes, $matches)) {
-                    $priority = $matches[1];
-                }
+                $priority = $dr?->priority ?? 'normal';
 
                 // Collect production notes from status histories
                 $prodHistoryNotes = $order->statusHistories

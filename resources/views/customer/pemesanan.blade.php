@@ -1717,8 +1717,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             jenis_potongan: '',
             lengan_jahitan: '',
 
-            warna_utama: '#1a237e',
-            warna_sekunder: '#ffffff',
             catatan: '',
             total_qty: 1,
         },
@@ -2108,8 +2106,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             formData.append('catatan', this.form.catatan);
             formData.append('total_qty', this.form.total_qty || 1);
             formData.append('prioritas', this.prioritas);
-            formData.append('warna_utama', this.form.warna_utama);
-            formData.append('warna_sekunder', this.form.warna_sekunder);
             if (this.selectedAddressId) {
                 formData.append('address_id', this.selectedAddressId);
             }
@@ -2223,8 +2219,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     bahan: this.form.bahan,
                     jenis_potongan: this.form.jenis_potongan,
                     lengan_jahitan: this.form.lengan_jahitan,
-                    warna_utama: this.form.warna_utama,
-                    warna_sekunder: this.form.warna_sekunder,
                     catatan: this.form.catatan,
                     total_qty: this.form.total_qty,
                     prioritas: this.prioritas,
@@ -2290,8 +2284,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 bahan: '',
                 jenis_potongan: '',
                 lengan_jahitan: '',
-                warna_utama: '#1a237e',
-                warna_sekunder: '#ffffff',
                 catatan: '',
                 total_qty: 1,
             };

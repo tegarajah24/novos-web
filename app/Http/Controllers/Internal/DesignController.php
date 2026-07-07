@@ -22,10 +22,7 @@ class DesignController extends Controller
             ->map(function ($order) {
                 $dr = $order->designRequest;
                 $revision = $order->statusHistories->first();
-                $priority = 'Normal';
-                if ($order->admin_notes && preg_match('/Prioritas: (Express|Super Express)/', $order->admin_notes, $matches)) {
-                    $priority = $matches[1];
-                }
+                $priority = $dr?->priority ?? 'normal';
                 return [
                     'id'                => $order->id,
                     'order_id'          => $order->order_number,

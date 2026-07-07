@@ -120,8 +120,7 @@ class OrderController extends Controller
                 'lengan_jahitan'   => $data['lengan_jahitan'],
                 'material'         => $data['bahan'],
                 'collar_style'     => $data['kerah'],
-                'primary_color'    => $data['warna_utama'] ?? null,
-                'secondary_color'  => $data['warna_sekunder'] ?? null,
+                'priority'         => $data['prioritas'] ?? 'normal',
                 'logo'             => $logoPath,
                 'design_files'     => $designFiles,
                 'additional_notes' => $catatanText,
@@ -274,8 +273,7 @@ class OrderController extends Controller
                     'lengan_jahitan'   => $designDataMerged['lengan_jahitan'] ?? '-',
                     'material'         => $designDataMerged['bahan'] ?? '-',
                     'collar_style'     => $designDataMerged['kerah'] ?? '-',
-                    'primary_color'    => $designDataMerged['warna_utama'] ?? null,
-                    'secondary_color'  => $designDataMerged['warna_sekunder'] ?? null,
+                    'priority'         => $data['prioritas'] ?? 'normal',
                     'logo'             => null,
                     'design_files'     => [],
                     'additional_notes' => $catatanText,
@@ -290,6 +288,7 @@ class OrderController extends Controller
                     'lengan_jahitan'   => '-',
                     'material'         => '-',
                     'collar_style'     => '-',
+                    'priority'         => $data['prioritas'] ?? 'normal',
                     'additional_notes' => $catatanText,
                 ]);
             }

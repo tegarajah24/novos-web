@@ -80,10 +80,10 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span x-show="order.priority === 'High'" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-50 text-red-700 text-xs font-semibold border border-red-100">
-                                    <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> High
+                                <span x-show="order.priority === 'express' || order.priority === 'super_express'" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-50 text-red-700 text-xs font-semibold border border-red-100">
+                                    <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> <span x-text="order.priority === 'super_express' ? 'Super Express' : 'Express'"></span>
                                 </span>
-                                <span x-show="order.priority !== 'High'" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200">
+                                <span x-show="order.priority === 'normal'" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200">
                                     Normal
                                 </span>
                             </td>
