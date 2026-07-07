@@ -43,6 +43,9 @@ class ChatController extends Controller
                             'is_video'           => $msg->is_video,
                             'sender_avatar_url'  => $msg->sender_avatar_url,
                             'is_admin'           => $isAdmin,
+                            'reply_to_id'        => $msg->reply_to_id,
+                            'reply_to_text'      => $msg->replyTo?->message,
+                            'reply_to_from'      => $msg->replyTo ? ($msg->replyTo->sender_id === $user->id ? 'admin' : 'customer') : null,
                         ];
                     })
                     ->toArray();
@@ -179,16 +182,17 @@ class ChatController extends Controller
         }
 
         $message = ChatMessage::create([
-            'chat_id'   => $chat->id,
-            'sender_id' => $user->id,
-            'message'   => $data['message'] ?? null,
-            'file_path' => $filePath,
-            'file_name' => $fileName,
-            'file_size' => $fileSize,
-            'file_type' => $fileType,
+            'chat_id'     => $chat->id,
+            'sender_id'   => $user->id,
+            'reply_to_id' => $data['reply_to_id'] ?? null,
+            'message'     => $data['message'] ?? null,
+            'file_path'   => $filePath,
+            'file_name'   => $fileName,
+            'file_size'   => $fileSize,
+            'file_type'   => $fileType,
         ]);
 
-        $message->load('sender');
+        $message->load('sender', 'replyTo');
 
         return response()->json([
             'success' => true,
@@ -202,6 +206,9 @@ class ChatController extends Controller
                 'file_size_formatted' => $message->file_size_formatted,
                 'is_image'           => $message->is_image,
                 'is_video'           => $message->is_video,
+                'reply_to_id'        => $message->reply_to_id,
+                'reply_to_text'      => $message->replyTo?->message,
+                'reply_to_from'      => $message->replyTo ? ($message->replyTo->sender_id === $user->id ? 'admin' : 'customer') : null,
             ],
         ]);
     }
@@ -218,6 +225,13 @@ class ChatController extends Controller
 
         $chat->messages()->delete();
         $chat->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function destroyMessage(ChatMessage $chatMessage)
+    {
+        $chatMessage->delete();
 
         return response()->json(['success' => true]);
     }

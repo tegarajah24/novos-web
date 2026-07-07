@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{chat}/poll', [ChatController::class, 'poll'])->name('chat.poll');
     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
     Route::delete('/chat/{chat}', [ChatController::class, 'destroy'])->name('chat.destroy');
+    Route::delete('/chat/message/{chatMessage}', [ChatController::class, 'destroyMessage'])->name('chat.message.destroy');
     Route::get('/chat/download/{chatMessage}', [ChatController::class, 'download'])->name('chat.download');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

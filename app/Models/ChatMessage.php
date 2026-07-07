@@ -11,6 +11,7 @@ class ChatMessage extends Model
     protected $fillable = [
         'chat_id',
         'sender_id',
+        'reply_to_id',
         'message',
         'is_read',
         'file_path',
@@ -35,6 +36,11 @@ class ChatMessage extends Model
     public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    public function replyTo(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'reply_to_id');
     }
 
     public function getSenderAvatarUrlAttribute(): ?string

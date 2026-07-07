@@ -14,9 +14,10 @@ class StoreInternalChatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'chat_id' => 'required|exists:chats,id',
-            'message' => 'nullable|string|max:2000',
-            'file'    => 'nullable|file|max:20480',
+            'chat_id'     => 'required|exists:chats,id',
+            'message'     => 'nullable|string|max:2000',
+            'file'        => 'nullable|file|max:20480',
+            'reply_to_id' => 'nullable|exists:chat_messages,id',
         ];
     }
 }

@@ -92,12 +92,28 @@
                     <div x-ref="messages" class="messages-scroll flex-1 overflow-y-auto min-h-0 px-6 py-4 space-y-3">
                         <template x-for="(msg, i) in currentChat.messages" :key="i">
                             <div class="flex" :class="msg.from === 'admin' ? 'justify-end' : 'justify-start'">
-                                <div
-                                    :class="msg.from === 'admin' ? 'bg-[#1a237e] text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
-                                    class="max-w-[70%] min-w-[160px] px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5"
-                                >
-                                    {{-- File attachment --}}
-                                    <template x-if="msg.file_url">
+                                <div class="relative max-w-[70%] min-w-[160px] group">
+                                    {{-- Dropdown trigger --}}
+                                    <button @click.stop="toggleDropdown(msg)"
+                                            :class="msg.from === 'admin' ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'"
+                                            class="absolute -top-2 w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer hover:bg-gray-50">
+                                        <svg class="w-3.5 h-3.5 text-gray-500 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </button>
+                                    {{-- Bubble --}}
+                                    <div
+                                        :class="msg.from === 'admin' ? 'bg-[#1a237e] text-white rounded-br-none' : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'"
+                                        class="px-4 py-2.5 rounded-2xl shadow-sm space-y-1.5"
+                                    >
+                                        {{-- Reply indicator --}}
+                                        <template x-if="msg.reply_to_id">
+                                            <div :class="msg.from === 'admin' ? 'bg-blue-800/40 border-blue-600/30' : 'bg-gray-100 border-gray-200'"
+                                                 class="rounded-lg px-3 py-2 border-l-4 space-y-0.5 -mx-1">
+                                                <p class="text-[11px] font-semibold" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-500'" x-text="'Membalas ' + (msg.reply_to_from === msg.from ? 'diri sendiri' : (msg.reply_to_from === 'admin' ? 'Admin' : 'Customer'))"></p>
+                                                <p class="text-xs truncate" :class="msg.from === 'admin' ? 'text-blue-100' : 'text-gray-600'" x-text="msg.reply_to_text || '(file)'"></p>
+                                            </div>
+                                        </template>
+                                        {{-- File attachment --}}
+                                        <template x-if="msg.file_url">
                                         <div>
                                             {{-- Image --}}
                                             <template x-if="msg.is_image">
@@ -143,6 +159,32 @@
                                     </template>
                                     <p class="text-xs" :class="msg.from === 'admin' ? 'text-blue-200' : 'text-gray-400'" x-text="msg.time"></p>
                                 </div>
+                                {{-- Dropdown menu --}}
+                                <div x-show="openDropdownMsgId === msg.id"
+                                     @click.away="openDropdownMsgId = null"
+                                     @click.stop
+                                     :class="msg.from === 'admin' ? 'left-0' : 'right-0'"
+                                     class="absolute -top-1 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                >
+                                    <button @click="replyToMessage(msg)" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors">
+                                        <svg class="w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+                                        Balas
+                                    </button>
+                                    <button @click="copyMessage(msg)" x-show="msg.text" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors">
+                                        <svg class="w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                        Salin
+                                    </button>
+                                    <button @click="deleteMessage(msg)" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition-colors">
+                                        <svg class="w-4 h-4 text-red-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        Hapus
+                                    </button>
+                                </div>
                             </div>
                         </template>
                         {{-- Typing --}}
@@ -159,6 +201,18 @@
 
                     {{-- Input --}}
                     <div class="bg-white border-t border-gray-200 px-6 py-4">
+                        {{-- Reply indicator --}}
+                        <template x-if="replyTo">
+                            <div class="flex items-center gap-3 mb-3 p-3 bg-blue-50 rounded-xl border border-blue-200 min-w-0">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-semibold text-blue-700">Membalas</p>
+                                    <p class="text-sm text-blue-600 truncate" x-text="replyTo.text || replyTo.file_name || 'Pesan'"></p>
+                                </div>
+                                <button @click="cancelReply" class="text-blue-400 hover:text-blue-600 transition-colors p-1 rounded-lg hover:bg-blue-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                        </template>
                         {{-- File preview --}}
                         <template x-if="selectedFile">
                             <div class="flex items-center gap-3 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200 min-w-0">
@@ -303,6 +357,8 @@ function internalChatApp() {
         previewImgUrl: null,
         previewImgName: '',
         previewMsgId: null,
+        openDropdownMsgId: null,
+        replyTo: null,
         _heartbeatTimer: null,
         _pollTimer: null,
 
@@ -421,6 +477,9 @@ function internalChatApp() {
             if (this.selectedFile) {
                 formData.append('file', this.selectedFile);
             }
+            if (this.replyTo) {
+                formData.append('reply_to_id', this.replyTo.id);
+            }
 
             try {
                 const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -451,6 +510,9 @@ function internalChatApp() {
                     file_size_formatted: msg.file_size_formatted,
                     is_image: msg.is_image,
                     is_video: msg.is_video,
+                    reply_to_id: msg.reply_to_id,
+                    reply_to_text: msg.reply_to_text,
+                    reply_to_from: msg.reply_to_from,
                 });
 
                 if (msg.text) {
@@ -462,6 +524,7 @@ function internalChatApp() {
 
                 this.message = '';
                 this.removeSelectedFile();
+                this.cancelReply();
 
                 this.$nextTick(() => this.scrollToBottom());
 
@@ -506,6 +569,63 @@ function internalChatApp() {
             this.previewImgName = '';
             this.previewMsgId = null;
             document.body.style.overflow = '';
+        },
+
+        toggleDropdown(msg) {
+            this.openDropdownMsgId = this.openDropdownMsgId === msg.id ? null : msg.id;
+        },
+
+        copyMessage(msg) {
+            if (!msg.text) return;
+            navigator.clipboard.writeText(msg.text).catch(() => {});
+            this.openDropdownMsgId = null;
+        },
+
+        async deleteMessage(msg) {
+            const result = await Swal.fire({
+                title: 'Hapus pesan ini?',
+                text: 'Pesan akan dihapus secara permanen.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc2626',
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                const res = await fetch('/staf/chat/message/' + msg.id, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+                });
+
+                if (!res.ok) throw new Error();
+
+                const chat = this.currentChat;
+                if (chat) {
+                    const idx = chat.messages.indexOf(msg);
+                    if (idx !== -1) {
+                        chat.messages.splice(idx, 1);
+                    }
+                }
+            } catch (e) {
+                Notify.error('Terjadi kesalahan saat menghapus pesan', 'Gagal menghapus');
+            }
+            this.openDropdownMsgId = null;
+        },
+
+        replyToMessage(msg) {
+            this.replyTo = msg;
+            this.openDropdownMsgId = null;
+            this.$nextTick(() => {
+                this.$el.querySelector('input[type="text"]')?.focus();
+            });
+        },
+
+        cancelReply() {
+            this.replyTo = null;
         },
 
         async deleteChat(chat) {

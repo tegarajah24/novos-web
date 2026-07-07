@@ -55,6 +55,7 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::post('/chat/{chat}/read', [ChatController::class, 'markRead'])->name('chat.read');
         Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
         Route::delete('/chat/{chat}', [ChatController::class, 'destroy'])->name('chat.destroy');
+        Route::delete('/chat/message/{chatMessage}', [ChatController::class, 'destroyMessage'])->name('chat.message.destroy');
         Route::get('/chat/download/{chatMessage}', [ChatController::class, 'download'])->name('chat.download');
         Route::get('/daily-mental-check', [DailyMentalCheckController::class, 'index'])->name('daily-mental-check');
         Route::get('/daily-mental-check/today', [DailyMentalCheckController::class, 'getToday'])->name('daily-mental-check.today');
