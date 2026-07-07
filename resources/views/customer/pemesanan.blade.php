@@ -1769,6 +1769,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 }
             } else {
                 this.addressMode = 'create';
+                this.fetchProvinces();
             }
         },
 
@@ -1899,7 +1900,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         fetchProvinces() {
             if (this.provinces.length > 0) return;
             this.addressLoading.provinces = true;
-            fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+            fetch('/api/wilayah/provinces')
                 .then(res => res.json())
                 .then(data => {
                     this.provinces = data;
@@ -1920,7 +1921,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             this.addressForm.district = '';
             this.selectedRegencyId = '';
             this.selectedDistrictId = '';
-            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${this.selectedProvinceId}.json`)
+            fetch(`/api/wilayah/regencies/${this.selectedProvinceId}`)
                 .then(res => res.json())
                 .then(data => {
                     this.regencies = data;
@@ -1938,7 +1939,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             this.districts = [];
             this.addressForm.district = '';
             this.selectedDistrictId = '';
-            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${this.selectedRegencyId}.json`)
+            fetch(`/api/wilayah/districts/${this.selectedRegencyId}`)
                 .then(res => res.json())
                 .then(data => {
                     this.districts = data;

@@ -11,6 +11,7 @@ use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Api\SummaryController;
+use App\Http\Controllers\Api\WilayahController;
 
 // Public routes
 Route::get('/tentang-kami', [HomeController::class, 'tentang'])->name('tentang');
@@ -33,6 +34,11 @@ Route::get('/pesan', function () {
 
         return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders'));
     })->name('pemesanan');
+
+// Public routes for wilayah data
+Route::get('/api/wilayah/provinces', [WilayahController::class, 'provinces'])->name('api.wilayah.provinces');
+Route::get('/api/wilayah/regencies/{provinceCode}', [WilayahController::class, 'regencies'])->name('api.wilayah.regencies');
+Route::get('/api/wilayah/districts/{regencyCode}', [WilayahController::class, 'districts'])->name('api.wilayah.districts');
 
 // Public route (shared tracking)
 Route::get('/tracking/shared/{token}', [TrackingController::class, 'shared'])->name('tracking.shared');

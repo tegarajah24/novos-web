@@ -1146,7 +1146,7 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
             if (this.provinces.length > 0) return;
             this.addressLoading.provinces = true;
             try {
-                const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+                const res = await fetch('/api/wilayah/provinces');
                 this.provinces = await res.json();
             } catch (e) {
                 console.error('Gagal memuat provinsi', e);
@@ -1165,7 +1165,7 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
             this.addressForm.city = '';
             this.addressForm.district = '';
             try {
-                const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/regencies/' + this.selectedProvinceId + '.json');
+                const res = await fetch('/api/wilayah/regencies/' + this.selectedProvinceId);
                 this.regencies = await res.json();
             } catch (e) {
                 console.error('Gagal memuat kabupaten/kota', e);
@@ -1181,7 +1181,7 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
             this.selectedDistrictId = '';
             this.addressForm.district = '';
             try {
-                const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/districts/' + this.selectedRegencyId + '.json');
+                const res = await fetch('/api/wilayah/districts/' + this.selectedRegencyId);
                 this.districts = await res.json();
             } catch (e) {
                 console.error('Gagal memuat kecamatan', e);
