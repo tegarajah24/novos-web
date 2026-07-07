@@ -12,6 +12,7 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Api\SummaryController;
 use App\Http\Controllers\Api\WilayahController;
+use App\Models\Wilayah;
 
 // Public routes
 Route::get('/tentang-kami', [HomeController::class, 'tentang'])->name('tentang');
@@ -31,8 +32,9 @@ Route::get('/pesan', function () {
         $produkData = $produk ? compact('produk', 'kategori', 'harga', 'gambar', 'kerah', 'bahan', 'jenis_potongan', 'lengan_jahitan') : null;
         $addresses = auth()->check() ? auth()->user()->addresses : collect([]);
         $hasOrders = auth()->check() ? auth()->user()->orders()->exists() : false;
+        $provinces = Wilayah::whereRaw('CHAR_LENGTH(kode) = 2')->orderBy('nama')->get()->map(fn($i) => ['id' => $i->kode, 'name' => $i->nama]);
 
-        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders'));
+        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces'));
     })->name('pemesanan');
 
 // Public routes for wilayah data

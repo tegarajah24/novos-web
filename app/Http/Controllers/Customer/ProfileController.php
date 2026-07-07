@@ -12,6 +12,7 @@ use Illuminate\View\View;
 use App\Models\Order;
 use App\Models\CustomerAddress;
 use App\Models\Cart;
+use App\Models\Wilayah;
 
 class ProfileController extends Controller
 {
@@ -47,11 +48,14 @@ class ProfileController extends Controller
             ->latest()
             ->get();
 
+        $provinces = Wilayah::whereRaw('CHAR_LENGTH(kode) = 2')->orderBy('nama')->get()->map(fn($i) => ['id' => $i->kode, 'name' => $i->nama]);
+
         return view('customer.profile', [
             'user' => $user,
             'orders' => $orders,
             'addresses' => $addresses,
             'cartItems' => $cartItems,
+            'provinces' => $provinces,
         ]);
     }
 

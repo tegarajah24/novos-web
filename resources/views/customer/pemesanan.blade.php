@@ -5,7 +5,7 @@
 @section('content')
 @auth
 
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }})">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
@@ -1637,7 +1637,7 @@
 </style>
 
 <script>
-function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true) {
+function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = []) {
     return {
         step: 1,
         mode: 'single',
@@ -1649,7 +1649,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         addresses: userAddresses,
         addressMode: 'select',
         selectedAddressId: null,
-        provinces: [],
+        provinces: provinces,
         regencies: [],
         districts: [],
         selectedProvinceId: '',
