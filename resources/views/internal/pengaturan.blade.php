@@ -429,7 +429,7 @@ function settingApp() {
     };
 
     return {
-        tab: {{ auth()->user()->role->name === 'Super Admin' ? "'toko'" : "'tampilan'" }},
+        tab: @json(auth()->user()->role->name === 'Super Admin' ? 'toko' : 'tampilan'),
         saving: false,
 
         form: {
