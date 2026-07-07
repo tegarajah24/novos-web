@@ -8,7 +8,7 @@
             {{-- Col 1: Brand --}}
             <div class="flex-1">
                 <p class="text-white text-2xl font-extrabold tracking-tight mb-4">NOVOS</p>
-                <p class="text-sm text-[#9e9e9e] leading-relaxed mb-6">Custom Sports Jersey — Desain bebas, kualitas premium, pengerjaan cepat dan tepat waktu.</p>
+                <p class="text-sm text-[#9e9e9e] leading-relaxed mb-6">Jl. Jatisari No.56, Karangmiri, Sumampir, Kec. Purwokerto Utara, Kabupaten Banyumas, Jawa Tengah 53121</p>
                 <div class="flex items-center gap-3">
                     {{-- WhatsApp --}}
                     <a href="#" class="w-9 h-9 rounded-full border border-[#00e5ff]/40 flex items-center justify-center text-[#00e5ff] hover:bg-[#00e5ff] hover:text-[#0d0d2b] transition-all">
