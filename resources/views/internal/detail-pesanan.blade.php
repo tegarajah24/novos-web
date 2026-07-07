@@ -121,7 +121,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 
 
         {{-- Detail Produk --}}
-        <div x-data="editProduk(@json($order['product']))" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div x-data="editProduk()" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 Detail Produk
@@ -631,39 +631,42 @@ function updateStatusSection() {
         }
     }
 
-    function editProduk(product) {
+    const __product = @json($order['product']);
+
+    function editProduk() {
         return {
             editModalOpen: false,
             loading: false,
             form: {
-                team_name: product.team_name || '',
-                nama_artikel: product.nama_artikel || '',
-                nama_pemesan: product.nama_pemesan || '',
-                detail_sponsor: product.detail_sponsor || '',
-                material: product.material || '',
-                collar_style: product.collar_style || '',
-                jenis_potongan: product.jenis_potongan || '',
-                lengan_jahitan: product.lengan_jahitan || '',
-                motif: product.motif || '',
-                primary_color: product.primary_color || '',
-                secondary_color: product.secondary_color || '',
-                priority: product.priority || 'normal',
-                additional_notes: product.notes || '',
+                team_name: '',
+                nama_artikel: '',
+                nama_pemesan: '',
+                detail_sponsor: '',
+                material: '',
+                collar_style: '',
+                jenis_potongan: '',
+                lengan_jahitan: '',
+                motif: '',
+                primary_color: '',
+                secondary_color: '',
+                priority: 'normal',
+                additional_notes: '',
             },
             openModal() {
-                this.form.team_name = product.team_name || '';
-                this.form.nama_artikel = product.nama_artikel || '';
-                this.form.nama_pemesan = product.nama_pemesan || '';
-                this.form.detail_sponsor = product.detail_sponsor || '';
-                this.form.material = product.material || '';
-                this.form.collar_style = product.collar_style || '';
-                this.form.jenis_potongan = product.jenis_potongan || '';
-                this.form.lengan_jahitan = product.lengan_jahitan || '';
-                this.form.motif = product.motif || '';
-                this.form.primary_color = product.primary_color || '';
-                this.form.secondary_color = product.secondary_color || '';
-                this.form.priority = product.priority || 'normal';
-                this.form.additional_notes = product.notes || '';
+                const p = __product;
+                this.form.team_name = p.team_name || '';
+                this.form.nama_artikel = p.nama_artikel || '';
+                this.form.nama_pemesan = p.nama_pemesan || '';
+                this.form.detail_sponsor = p.detail_sponsor || '';
+                this.form.material = p.material || '';
+                this.form.collar_style = p.collar_style || '';
+                this.form.jenis_potongan = p.jenis_potongan || '';
+                this.form.lengan_jahitan = p.lengan_jahitan || '';
+                this.form.motif = p.motif || '';
+                this.form.primary_color = p.primary_color || '';
+                this.form.secondary_color = p.secondary_color || '';
+                this.form.priority = p.priority || 'normal';
+                this.form.additional_notes = p.notes || '';
                 this.editModalOpen = true;
             },
             async save() {
@@ -680,7 +683,7 @@ function updateStatusSection() {
                     });
                     const data = await res.json();
                     if (data.success) {
-                        Object.assign(product, this.form);
+                        Object.assign(__product, this.form);
                         Notify.success(data.message, 'Berhasil!');
                         this.editModalOpen = false;
                     } else {
