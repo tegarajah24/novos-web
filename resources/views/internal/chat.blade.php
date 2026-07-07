@@ -174,7 +174,7 @@
                                     {{-- Dropdown menu --}}
                                     <div x-show="openDropdownMsgId === msg.id"
                                          @click.stop
-                                         class="absolute z-20 bottom-full mb-1 right-0 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
+                                         class="absolute z-20 top-full mt-1 right-0 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
                                          x-transition:enter="transition ease-out duration-100"
                                          x-transition:enter-start="opacity-0 scale-95"
                                          x-transition:enter-end="opacity-100 scale-100"
