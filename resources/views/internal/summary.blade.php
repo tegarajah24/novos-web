@@ -78,7 +78,7 @@
             <div>
                 <label class="block text-xs text-gray-500 mb-1 font-medium">Status</label>
                 <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
-                    <option>Semua</option><option>Menunggu Verifikasi</option><option>Tahap Desain</option><option>Menunggu ACC</option><option>Produksi</option><option>Selesai</option>
+                    <option>Semua</option><option>Menunggu Pembayaran</option><option>Tahap Desain</option><option>Menunggu ACC</option><option>Produksi</option><option>Selesai</option>
                 </select>
             </div>
             <div>

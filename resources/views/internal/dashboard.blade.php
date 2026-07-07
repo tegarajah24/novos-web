@@ -10,7 +10,6 @@
 @php
 function statusLabel($status) {
     return match($status) {
-        'menunggu_verifikasi' => 'Menunggu Verifikasi',
         'menunggu_pembayaran' => 'Menunggu Pembayaran',
         'tahap_desain' => 'Tahap Desain',
         'menunggu_acc' => 'Menunggu ACC',
@@ -21,7 +20,6 @@ function statusLabel($status) {
 }
 function statusBadgeType($status) {
     return match($status) {
-        'menunggu_verifikasi' => 'yellow',
         'menunggu_pembayaran' => 'orange',
         'tahap_desain' => 'blue',
         'menunggu_acc' => 'orange',
@@ -183,8 +181,8 @@ function statusBadgeType($status) {
             <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
         </a>
 
-        <!-- Card 2: Menunggu Verifikasi -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=menunggu_verifikasi" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-orange-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <!-- Card 2: Menunggu Pembayaran -->
+        <a href="{{ route('staf.daftar-pesanan') }}?status=menunggu_pembayaran" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-xl hover:border-orange-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
             <div class="flex justify-between items-start mb-4">
                 <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {{-- Clock icon (Heroicons) --}}
@@ -202,7 +200,7 @@ function statusBadgeType($status) {
                 </div>
             </div>
             <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $pendingOrders }}">0</h3>
-            <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Verifikasi</p>
+            <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Pembayaran</p>
         </a>
 
         <!-- Card 3: Sedang Diproses -->

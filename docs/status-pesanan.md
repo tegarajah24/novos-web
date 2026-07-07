@@ -7,9 +7,8 @@ Setiap perubahan status dicatat di tabel `order_status_histories`.
 
 | Status | Kode | Keterangan |
 |--------|------|------------|
-| Menunggu Validasi | `menunggu_validasi` | Pesanan baru masuk, menunggu validasi admin |
-| Menunggu Pembayaran | `menunggu_pembayaran` | Admin sudah validasi, menunggu customer bayar |
-| Dikonfirmasi | `dikonfirmasi` | Pembayaran sukses dikonfirmasi |
+| Menunggu Pembayaran | `menunggu_pembayaran` | Pesanan baru masuk, menunggu customer bayar DP |
+| Dikonfirmasi | `dikonfirmasi` | Customer konfirmasi, menunggu admin proses |
 | Disetujui | `disetujui` | Admin setujui & teruskan ke Design |
 | Di Design | `di_design` | Sedang dikerjakan tim Design |
 | Siap Cetak | `siap_cetak` | Design selesai, siap diprint & ke Produksi |
@@ -20,10 +19,8 @@ Setiap perubahan status dicatat di tabel `order_status_histories`.
 ## Alur Status
 
 ```
-menunggu_validasi
-  ↓ (admin validasi)
 menunggu_pembayaran
-  ↓ (customer ACC + bayar via Midtrans)
+  ↓ (customer konfirmasi)
 dikonfirmasi
   ↓ (admin teruskan ke design)
 disetujui
@@ -43,8 +40,7 @@ Dari status manapun bisa → `dibatalkan`
 
 | Dari | Ke | Siapa |
 |------|----|-------|
-| menunggu_validasi | menunggu_pembayaran | Admin |
-| menunggu_pembayaran | dikonfirmasi | Customer (via Midtrans) |
+| menunggu_pembayaran | dikonfirmasi | Customer |
 | dikonfirmasi | disetujui / di_design | Admin |
 | disetujui | di_design | Admin |
 | di_design | siap_cetak | Design |
@@ -55,6 +51,4 @@ Dari status manapun bisa → `dibatalkan`
 ## Auto Chat
 
 Setiap perubahan status otomatis mengirim pesan ke chat room:
-- `menunggu_validasi` → chat ke customer: "Pesanan Anda telah dibuat..."
-- `menunggu_pembayaran` → chat ke customer: "Pesanan telah divalidasi..."
-- `dikonfirmasi` → chat ke admin: "Pembayaran untuk pesanan {number} telah dikonfirmasi."
+- `menunggu_pembayaran` → chat ke customer: "Pesanan Anda telah dibuat..."

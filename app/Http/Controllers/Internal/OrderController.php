@@ -19,10 +19,9 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $dbStatuses = ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai', 'dibatalkan'];
+        $dbStatuses = ['menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai', 'dibatalkan'];
 
         $statusMap = [
-            'menunggu_validasi'  => 'menunggu_verifikasi',
             'menunggu_pembayaran' => 'menunggu_pembayaran',
             'dikonfirmasi'       => 'menunggu_acc',
             'disetujui'          => 'tahap_desain',
@@ -110,7 +109,6 @@ class OrderController extends Controller
 
         // Status view mapping
         $badgeStatusMap = [
-            'menunggu_validasi'  => ['label' => 'Menunggu Verifikasi', 'badge' => 'yellow'],
             'menunggu_pembayaran' => ['label' => 'Menunggu Pembayaran', 'badge' => 'orange'],
             'dikonfirmasi'       => ['label' => 'Dikonfirmasi',        'badge' => 'blue'],
             'disetujui'          => ['label' => 'Tahap Desain',        'badge' => 'blue'],
@@ -122,7 +120,6 @@ class OrderController extends Controller
         ];
 
         $badgeStatusCodeMap = [
-            'menunggu_validasi'  => 'menunggu_verifikasi',
             'menunggu_pembayaran' => 'menunggu_pembayaran',
             'dikonfirmasi'       => 'menunggu_acc',
             'disetujui'          => 'tahap_desain',
@@ -218,9 +215,8 @@ class OrderController extends Controller
         }
 
         // Stepper
-        $stepOrder = ['menunggu_validasi', 'menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'];
+        $stepOrder = ['menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'];
         $stepLabels = [
-            'menunggu_validasi'  => 'Menunggu Validasi',
             'menunggu_pembayaran' => 'Menunggu Pembayaran',
             'dikonfirmasi'       => 'Dikonfirmasi',
             'disetujui'          => 'Tahap Desain',
@@ -307,61 +303,6 @@ class OrderController extends Controller
         return view('internal.detail-pesanan', compact('order', 'badgeType', 'badgeLabel', 'steps') + ['rawStatus' => $rawStatus]);
     }
 
-    public function validateOrder(Request $request, Order $order)
-    {
-        if ($order->status !== 'menunggu_validasi') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Status pesanan tidak dapat divalidasi.',
-            ], 422);
-        }
-
-        DB::transaction(function () use ($order, $request) {
-            $order->update(['status' => 'menunggu_pembayaran']);
-
-            OrderStatusHistory::create([
-                'order_id'   => $order->id,
-                'status'     => 'menunggu_pembayaran',
-                'changed_by' => auth()->id(),
-                'notes'      => $request->note ?? 'Pesanan divalidasi oleh admin',
-            ]);
-
-            $chat = Chat::firstOrCreate([
-                'order_id'    => $order->id,
-                'customer_id' => $order->user_id,
-            ]);
-
-            if (!$chat->admin_id) {
-                $chat->update(['admin_id' => auth()->id()]);
-            }
-
-            ChatMessage::create([
-                'chat_id'   => $chat->id,
-                'sender_id' => auth()->id(),
-                'message'   => 'Pesanan ' . $order->order_number . ' telah divalidasi. Silakan lakukan pembayaran.',
-            ]);
-        });
-
-        $currentUser = auth()->user();
-        Notification::sendToAllStaff(
-            'order_validated',
-            'Pesanan Divalidasi',
-            "Pesanan <strong>{$order->order_number}</strong> telah divalidasi oleh <strong>{$currentUser->name}</strong> dan menunggu pembayaran customer.",
-            [
-                'initials' => collect(explode(' ', $currentUser->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
-                'role' => $currentUser->role->name,
-                'role_initial' => substr($currentUser->role->name, 0, 1),
-                'role_color' => '#1a237e',
-                'order_number' => $order->order_number,
-            ]
-        );
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pesanan berhasil divalidasi.',
-        ]);
-    }
-
     public function assign(AssignOrderRequest $request, Order $order)
     {
         $order->update([
@@ -380,9 +321,6 @@ class OrderController extends Controller
     private function getAllowedTransitions(string $currentStatus, string $roleName): array
     {
         $transitions = [
-            'menunggu_validasi' => [
-                'menunggu_pembayaran' => ['Admin', 'Manager', 'Super Admin'],
-            ],
             'menunggu_pembayaran' => [
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
@@ -432,7 +370,6 @@ class OrderController extends Controller
     private function toDbStatus(string $uiStatus): string
     {
         return match($uiStatus) {
-            'menunggu_verifikasi' => 'menunggu_validasi',
             'menunggu_acc'        => 'dikonfirmasi',
             'tahap_desain'        => 'di_design',
             'tahap_produksi'      => 'siap_cetak',
@@ -446,7 +383,6 @@ class OrderController extends Controller
     private function statusLabel(string $dbStatus): string
     {
         return match($dbStatus) {
-            'menunggu_validasi'   => 'Menunggu Validasi',
             'menunggu_pembayaran' => 'Menunggu Pembayaran',
             'dikonfirmasi'        => 'Dikonfirmasi',
             'disetujui'           => 'Disetujui',
@@ -575,7 +511,6 @@ class OrderController extends Controller
         $allowed = $this->getAllowedTransitions($order->status, $user->role->name ?? '');
 
         $uiStatusMap = [
-            'menunggu_validasi' => 'menunggu_verifikasi',
             'dikonfirmasi'      => 'menunggu_acc',
             'di_design'         => 'tahap_desain',
             'siap_cetak'        => 'tahap_produksi',

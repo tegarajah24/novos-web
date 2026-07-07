@@ -521,9 +521,8 @@ function settingApp() {
                 badge: 'Utama',
                 sections: [
                     { title: 'Melihat Daftar Pesanan', body: 'Halaman ini menampilkan semua pesanan dari pelanggan. Setiap baris menampilkan nomor pesanan, nama pelanggan, status, total harga, dan tanggal. Gunakan kolom pencarian untuk mencari berdasarkan nomor pesanan atau nama.' },
-                    { title: 'Filter Status', body: 'Gunakan tab filter di atas tabel untuk menyaring pesanan berdasarkan status: <strong>Semua</strong>, <strong>Menunggu Validasi</strong>, <strong>Proses Design</strong>, <strong>Produksi</strong>, <strong>Selesai</strong>, atau <strong>Dibatalkan</strong>.' },
-                    { title: 'Detail & Aksi', body: 'Klik nomor pesanan untuk membuka halaman detail. Di halaman detail Anda bisa: melihat data pemesan, chat dengan pelanggan, memperbarui status, dan validasi pesanan. Tombol aksi cepat juga tersedia langsung dari tabel.' },
-                    { title: 'Validasi Pesanan', body: 'Pesanan baru berstatus <strong>Menunggu Validasi</strong>. Admin harus melakukan validasi dengan mengecek data pemesan, memastikan desain bisa dikerjakan, lalu klik <strong>Validasi Pesanan</strong>. Sistem akan mengirim notifikasi ke pelanggan.' },
+                    { title: 'Filter Status', body: 'Gunakan tab filter di atas tabel untuk menyaring pesanan berdasarkan status: <strong>Semua</strong>, <strong>Menunggu Pembayaran</strong>, <strong>Proses Design</strong>, <strong>Produksi</strong>, <strong>Selesai</strong>, atau <strong>Dibatalkan</strong>.' },
+                    { title: 'Detail & Aksi', body: 'Klik nomor pesanan untuk membuka halaman detail. Di halaman detail Anda bisa: melihat data pemesan, chat dengan pelanggan, dan memperbarui status.' },
                     { title: 'Assign Petugas', body: 'Setelah divalidasi, Anda bisa menugaskan (assign) pesanan ke tim Design atau Produksi. Gunakan dropdown <strong>Assign ke</strong> di halaman detail untuk memilih petugas.' },
                 ]
             },

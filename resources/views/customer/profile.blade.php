@@ -1265,7 +1265,7 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
             
             return this.orders.filter(order => {
                 if (filter === 'menunggu_pembayaran') {
-                    return order.status === 'menunggu_validasi' || order.status === 'menunggu_pembayaran';
+                    return order.status === 'menunggu_pembayaran';
                 }
                 if (filter === 'proses') {
                     return ['dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak'].includes(order.status);
@@ -1282,7 +1282,6 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
 
         getStatusLabel(status) {
             const labels = {
-                'menunggu_validasi': 'Menunggu Validasi',
                 'menunggu_pembayaran': 'Menunggu Pembayaran',
                 'dikonfirmasi': 'Dikonfirmasi',
                 'disetujui': 'Desain Dikerjakan',
@@ -1297,7 +1296,6 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
 
         getStatusBadgeClass(status) {
             const classes = {
-                'menunggu_validasi': 'bg-amber-100 text-amber-800',
                 'menunggu_pembayaran': 'bg-orange-100 text-orange-800',
                 'dikonfirmasi': 'bg-blue-100 text-blue-800',
                 'disetujui': 'bg-indigo-100 text-indigo-800',

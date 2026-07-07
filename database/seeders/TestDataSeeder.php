@@ -105,12 +105,12 @@ class TestDataSeeder extends Seeder
         $design    = User::where('email', 'design@novos.com')->first();
         $produksi  = User::where('email', 'produksi@novos.com')->first();
 
-        // ── Custom Order 1: menunggu_validasi ──
+        // ── Custom Order 1: menunggu_pembayaran ──
         $o1 = Order::firstOrCreate(
             ['order_number' => 'NVS-20260703-001'],
             [
                 'user_id'     => $customer->id,
-                'status'      => 'menunggu_validasi',
+                'status'      => 'menunggu_pembayaran',
                 'total_price' => 1700000,
                 'notes'       => "Jenis Potongan: REGULER\nModel Lengan & Jahitan: REGULER OVERDECK\nCatatan: Logo di dada kiri",
                 'admin_notes' => 'Prioritas: Normal (0)',
@@ -130,15 +130,15 @@ class TestDataSeeder extends Seeder
                 'primary_color'  => '#1a237e',
                 'secondary_color' => '#ffffff',
             ]);
-            $this->recordHistory($o1->id, 'menunggu_validasi', $customer->id, 'Pesanan dibuat oleh customer');
+            $this->recordHistory($o1->id, 'menunggu_pembayaran', $customer->id, 'Pesanan dibuat oleh customer');
         }
 
-        // ── Custom Order 2: menunggu_pembayaran ──
+        // ── Custom Order 2: dikonfirmasi ──
         $o2 = Order::firstOrCreate(
             ['order_number' => 'NVS-20260703-002'],
             [
                 'user_id'     => $customer->id,
-                'status'      => 'menunggu_pembayaran',
+                'status'      => 'dikonfirmasi',
                 'total_price' => 2600000,
                 'notes'       => "Jenis Potongan: SLIMFIT CEWE\nModel Lengan & Jahitan: RAGLAN B PAKAI MANSET",
                 'admin_notes' => 'Prioritas: Normal (0)',
@@ -157,8 +157,8 @@ class TestDataSeeder extends Seeder
                 'collar_style'   => 'V-NECK',
                 'primary_color'  => '#e53935',
             ]);
-            $this->recordHistory($o2->id, 'menunggu_validasi',     $customer->id, 'Pesanan dibuat oleh customer');
-            $this->recordHistory($o2->id, 'menunggu_pembayaran',   $admin->id,    'Admin validasi pesanan');
+            $this->recordHistory($o2->id, 'menunggu_pembayaran',   $customer->id, 'Pesanan dibuat oleh customer');
+            $this->recordHistory($o2->id, 'dikonfirmasi',          $customer->id, 'Pesanan dikonfirmasi');
         }
 
         // ── Custom Order 3: dikonfirmasi ──
@@ -185,9 +185,8 @@ class TestDataSeeder extends Seeder
                 'collar_style'   => 'O-NECK V.1',
                 'primary_color'  => '#43a047',
             ]);
-            $this->recordHistory($o3->id, 'menunggu_validasi',   $customer->id, 'Pesanan dibuat oleh customer');
-            $this->recordHistory($o3->id, 'menunggu_pembayaran', $admin->id,    'Admin validasi pesanan');
-            $this->recordHistory($o3->id, 'dikonfirmasi',        $customer->id, 'Pembayaran dikonfirmasi via Midtrans');
+            $this->recordHistory($o3->id, 'menunggu_pembayaran', $customer->id, 'Pesanan dibuat oleh customer');
+            $this->recordHistory($o3->id, 'dikonfirmasi',        $customer->id, 'Pesanan dikonfirmasi');
         }
     }
 
@@ -204,12 +203,12 @@ class TestDataSeeder extends Seeder
         $futsal   = $products->where('name', 'Novos Futsal Pro')->first();
         $price    = 100000;
 
-        // ── Catalog Order 1: menunggu_validasi (single product) ──
+        // ── Catalog Order 1: menunggu_pembayaran (single product) ──
         $o1 = Order::firstOrCreate(
             ['order_number' => 'NVS-20260703-005'],
             [
                 'user_id'     => $customer->id,
-                'status'      => 'menunggu_validasi',
+                'status'      => 'menunggu_pembayaran',
                 'total_price' => 200000,
                 'notes'       => "Checkout dari Keranjang (1 Produk).\nProduk 1: Novos Running Pro",
                 'admin_notes' => 'Prioritas: Normal (Rp 0)',
@@ -232,7 +231,7 @@ class TestDataSeeder extends Seeder
                 'collar_style'   => 'O-NECK V.1',
                 'additional_notes' => "Checkout dari Keranjang (1 Produk).\nProduk 1: Novos Running Pro",
             ]);
-            $this->recordHistory($o1->id, 'menunggu_validasi', $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
+            $this->recordHistory($o1->id, 'menunggu_pembayaran', $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
         }
 
         // ── Catalog Order 2: dikonfirmasi (multiple products) ──

@@ -50,7 +50,7 @@ class FullOrderFlowTest extends DuskTestCase
 
             // Step 2: Isi detail desain
             $c->script('
-                let r = document.querySelector(".max-w-5xl")._x_dataStack[0];
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r && r.form) {
                     r.form.team_name = "Test Tim Dusk";
                     r.form.kerah = "O-NECK V.1";
@@ -66,7 +66,7 @@ class FullOrderFlowTest extends DuskTestCase
 
             // Step 3: Address
             $c->script('
-                let r = document.querySelector(".max-w-5xl")._x_dataStack[0];
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r && r.addresses && r.addresses.length > 0) {
                     r.selectedAddressId = r.addresses[0].id;
                     if (typeof r.useSelectedAddress === "function") r.useSelectedAddress();
@@ -75,12 +75,12 @@ class FullOrderFlowTest extends DuskTestCase
             $c->pause(2000);
 
             // Step 4: Set prioritas & konfirmasi
-            $c->script('let r = document.querySelector(".max-w-5xl")._x_dataStack[0]; if (r) r.prioritas = "normal";');
+            $c->script('let r = document.querySelector(".max-w-6xl")._x_dataStack[0]; if (r) r.prioritas = "normal";');
             $c->pause(500);
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Konfirmasi') || (b.textContent.includes('Bayar'))) { b.click(); break; } }");
             $c->pause(3000);
 
-            $orderNum = $c->script('return document.querySelector(".max-w-5xl")._x_dataStack[0].orderNumber || ""')[0];
+            $orderNum = $c->script('return document.querySelector(".max-w-6xl")._x_dataStack[0].orderNumber || ""')[0];
             if (empty($orderNum)) {
                 $orderNum = Order::latest()->first()?->order_number ?? '';
             }
@@ -89,21 +89,7 @@ class FullOrderFlowTest extends DuskTestCase
             $c->screenshot('01-customer-order-created');
 
             // ══════════════════════════════════════════════
-            // 2. ADMIN — Validasi Pesanan
-            // ══════════════════════════════════════════════
-            $a->loginAs($admin);
-            $a->visit('/staf/detail-pesanan/' . $this->orderNumber);
-            $a->waitForText('Validasi Pesanan', 5);
-            $a->pause(500);
-            $a->script("Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Validasi Pesanan'))?.click()");
-            $a->pause(800);
-            $a->script("document.querySelector('.swal2-confirm')?.click()");
-            $a->waitForText('Pesanan Divalidasi', 10);
-            echo "\n[✓] ADMIN: Pesanan {$this->orderNumber} divalidasi (-> menunggu_pembayaran)\n";
-            $a->screenshot('02-admin-validated');
-
-            // ══════════════════════════════════════════════
-            // 3. CUSTOMER — Setujui Detail Pesanan (approve)
+            // 2. CUSTOMER — Setujui Detail Pesanan (approve)
             // ══════════════════════════════════════════════
             $order = Order::where('order_number', $this->orderNumber)->first();
 
@@ -130,7 +116,7 @@ class FullOrderFlowTest extends DuskTestCase
             }
 
             // ══════════════════════════════════════════════
-            // 4. ADMIN — Teruskan ke Design
+            // 3. ADMIN — Teruskan ke Design
             // ══════════════════════════════════════════════
             $a->visit('/staf/detail-pesanan/' . $this->orderNumber);
             $a->waitForText('Update Status', 10);
@@ -162,7 +148,7 @@ class FullOrderFlowTest extends DuskTestCase
             $a->screenshot('03-admin-to-design');
 
             // ══════════════════════════════════════════════
-            // 5. DESIGN — Upload hasil desain
+            // 4. DESIGN — Upload hasil desain
             // ══════════════════════════════════════════════
             $d->loginAs($design);
             $d->visit('/staf/design');
@@ -195,7 +181,7 @@ class FullOrderFlowTest extends DuskTestCase
             $d->screenshot('04-design-done');
 
             // ══════════════════════════════════════════════
-            // 6. PRODUKSI — Proses tiap tahap produksi
+            // 5. PRODUKSI — Proses tiap tahap produksi
             // ══════════════════════════════════════════════
             $p->loginAs($produksi);
             $p->visit('/staf/produksi');

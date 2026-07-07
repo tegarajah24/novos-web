@@ -250,8 +250,8 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                     <tbody class="divide-y divide-gray-100">
                         @forelse($order['status_history'] as $sh)
                         @php
-                        $st = match($sh['status']) { 'menunggu_verifikasi'=>'yellow','menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','tahap_produksi'=>'purple','selesai'=>'green',default=>'gray' };
-                        $sl = match($sh['status']) { 'menunggu_verifikasi'=>'Menunggu Verifikasi','menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','tahap_produksi'=>'Produksi','selesai'=>'Selesai',default=>$sh['status'] };
+                        $st = match($sh['status']) { 'menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','tahap_produksi'=>'purple','selesai'=>'green',default=>'gray' };
+                        $sl = match($sh['status']) { 'menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','tahap_produksi'=>'Produksi','selesai'=>'Selesai',default=>$sh['status'] };
                         @endphp
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-3.5 text-gray-700">{{ $sh['date'] }}</td>
@@ -292,29 +292,6 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                 </div>
             </div>
         </div>
-
-        {{-- Validasi Pesanan --}}
-        @if($rawStatus === 'menunggu_validasi')
-        <div class="bg-white rounded-xl border border-green-200 shadow-sm p-5" x-data="{ validating: false, validationNote: '' }">
-            <h3 class="font-semibold text-gray-900 mb-4 text-sm flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Validasi Pesanan
-            </h3>
-            <p class="text-xs text-gray-500 mb-4">Pesanan ini menunggu validasi admin sebelum customer dapat melanjutkan ke pembayaran.</p>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1.5 font-medium">Catatan Validasi</label>
-                    <textarea x-model="validationNote" rows="2" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500/30 resize-none" placeholder="Opsional: catatan validasi..."></textarea>
-                </div>
-                <button @click="validasiPesanan('{{ $order['order_id'] }}')" :disabled="validating"
-                    class="w-full py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
-                    <svg x-show="!validating" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <svg x-show="validating" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                    <span x-text="validating ? 'Memvalidasi...' : 'Validasi Pesanan'"></span>
-                </button>
-            </div>
-        </div>
-        @endif
 
         {{-- Update Status --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5" x-data="updateStatusSection()" x-init="init()">
@@ -427,46 +404,6 @@ function updateStatusSection() {
                 this.updating = false;
             }
         }
-    }
-}
-
-async function validasiPesanan(orderId) {
-    const note = document.querySelector('[x-model="validationNote"]')?.value || '';
-
-    const result = await Swal.fire({
-        title: 'Validasi Pesanan?',
-        text: 'Pesanan akan divalidasi dan customer akan diarahkan ke pembayaran.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#16a34a',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Ya, Validasi!',
-        cancelButtonText: 'Batal'
-    });
-
-    if (!result.isConfirmed) return;
-
-    try {
-        const res = await fetch('/staf/validasi-pesanan/' + orderId, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ note: note })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-            Notify.success('Customer sekarang dapat melanjutkan ke pembayaran.', 'Pesanan Divalidasi!');
-            setTimeout(() => location.reload(), 1200);
-        } else {
-            Notify.error(data.message || 'Terjadi kesalahan.');
-        }
-    } catch (e) {
-        Notify.error('Terjadi kesalahan sistem.');
     }
 }
 </script>

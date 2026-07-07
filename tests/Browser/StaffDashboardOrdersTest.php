@@ -66,8 +66,7 @@ class StaffDashboardOrdersTest extends DuskTestCase
     public function test_admin_views_order_detail(): void
     {
         $admin = User::where('email', 'admin@novos.com')->firstOrFail();
-        $order = Order::where('status', 'menunggu_validasi')->first()
-              ?? Order::latest()->first();
+        $order = Order::latest()->first();
 
         $this->browse(function (Browser $b) use ($admin, $order) {
             $b->loginAs($admin);
@@ -80,33 +79,20 @@ class StaffDashboardOrdersTest extends DuskTestCase
         });
     }
 
-    public function test_admin_validates_order(): void
+    public function test_admin_views_pending_order(): void
     {
         $admin = User::where('email', 'admin@novos.com')->firstOrFail();
-        $order = Order::where('status', 'menunggu_validasi')->first();
-
-        if (!$order) {
-            echo "\n[!] SKIP: Tidak ada pesanan dengan status menunggu_validasi\n";
-            $this->assertTrue(true);
-            return;
-        }
+        $order = Order::where('status', 'menunggu_pembayaran')->first()
+              ?? Order::latest()->first();
 
         $this->browse(function (Browser $b) use ($admin, $order) {
             $b->loginAs($admin);
             $b->visit('/staf/detail-pesanan/' . $order->order_number);
             $b->waitForText($order->order_number, 5);
+            $b->assertSee('Info Pesanan');
 
-            // Click Validasi Pesanan button
-            $b->pause(500);
-            $b->script("Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Validasi Pesanan'))?.click()");
-            $b->pause(800);
-
-            // Confirm SweetAlert
-            $b->script("document.querySelector('.swal2-confirm')?.click()");
-            $b->pause(1000);
-
-            echo "\n[✓] PESANAN: Validasi pesanan {$order->order_number} berjalan\n";
-            $b->screenshot('staff-order-validated');
+            echo "\n[✓] PESANAN: Detail pesanan {$order->order_number} (menunggu pembayaran) tampil\n";
+            $b->screenshot('staff-order-pending');
         });
     }
 

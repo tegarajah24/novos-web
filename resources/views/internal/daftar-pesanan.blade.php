@@ -17,7 +17,6 @@ function avatar($name, $color) {
 
 function badge($status) {
     $map = [
-        'menunggu_verifikasi' => ['Menunggu Verifikasi', 'bg-yellow-100 text-yellow-700'],
         'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-orange-100 text-orange-700'],
         'tahap_desain' => ['Tahap Desain', 'bg-blue-100 text-blue-700'],
         'menunggu_acc' => ['Menunggu ACC', 'bg-orange-100 text-orange-700'],
@@ -52,7 +51,7 @@ function rupiah($n) {
                     <label class="block text-xs text-gray-500 mb-1 font-medium">Status</label>
                     <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
                         <option {{ !$activeFilter ? 'selected' : '' }}>Semua</option>
-                        <option value="menunggu_verifikasi" {{ $activeFilter === 'menunggu_verifikasi' ? 'selected' : '' }}>Menunggu Verifikasi</option>
+                        <option value="menunggu_pembayaran" {{ $activeFilter === 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran</option>
                         <option value="tahap_desain" {{ $activeFilter === 'tahap_desain' ? 'selected' : '' }}>Tahap Desain</option>
                         <option value="menunggu_acc" {{ $activeFilter === 'menunggu_acc' ? 'selected' : '' }}>Menunggu ACC</option>
                         <option value="tahap_produksi" {{ $activeFilter === 'tahap_produksi' ? 'selected' : '' }}>Produksi</option>

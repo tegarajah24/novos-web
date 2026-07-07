@@ -56,7 +56,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id'     => auth()->id(),
                 'order_number' => $orderNumber,
-                'status'      => 'menunggu_validasi',
+                'status'      => 'menunggu_pembayaran',
                 'total_price' => $totalPrice,
                 'notes'       => $catatanText,
                 'admin_notes' => 'Prioritas: ' . $prioritasLabel . ' (' . $biayaPrioritas . ')',
@@ -126,12 +126,12 @@ class OrderController extends Controller
 
             OrderStatusHistory::create([
                 'order_id'   => $order->id,
-                'status'     => 'menunggu_validasi',
+                'status'     => 'menunggu_pembayaran',
                 'changed_by' => auth()->id(),
                 'notes'      => 'Pesanan dibuat oleh customer',
             ]);
 
-            $this->sendSystemMessage($order, 'Pesanan Anda telah dibuat dan menunggu validasi admin.');
+            $this->sendSystemMessage($order, 'Pesanan Anda telah dibuat. Silakan lakukan pembayaran DP minimal 10%.');
 
             return $order;
         });
@@ -139,7 +139,7 @@ class OrderController extends Controller
         Notification::sendToAllStaff(
             'new_order',
             'Pesanan Baru',
-            "Pesanan baru dari <strong>{$order->user->name}</strong> — <strong>{$order->order_number}</strong>",
+            "Pesanan baru dari <strong>{$order->user->name}</strong> — <strong>{$order->order_number}</strong> — menunggu pembayaran",
             [
                 'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
                 'role' => $order->user->role->name,
@@ -217,7 +217,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id'      => auth()->id(),
                 'order_number' => $orderNumber,
-                'status'       => 'menunggu_validasi',
+                'status'       => 'menunggu_pembayaran',
                 'total_price'  => $totalPrice,
                 'notes'        => $catatanText,
                 'admin_notes'  => 'Prioritas: ' . $prioritasLabel . ' (Rp ' . number_format($biayaPrioritas, 0, ',', '.') . ')',
@@ -289,12 +289,12 @@ class OrderController extends Controller
 
             OrderStatusHistory::create([
                 'order_id'   => $order->id,
-                'status'     => 'menunggu_validasi',
+                'status'     => 'menunggu_pembayaran',
                 'changed_by' => auth()->id(),
                 'notes'      => 'Pesanan (dari keranjang) dibuat oleh customer',
             ]);
 
-            $this->sendSystemMessage($order, 'Pesanan Anda (via keranjang) telah dibuat dan menunggu validasi admin.');
+            $this->sendSystemMessage($order, 'Pesanan Anda (via keranjang) telah dibuat. Silakan lakukan pembayaran DP minimal 10%.');
 
             \App\Models\Cart::whereIn('id', $data['cart_item_ids'])->delete();
 
@@ -304,7 +304,7 @@ class OrderController extends Controller
         Notification::sendToAllStaff(
             'new_order',
             'Pesanan Baru (Keranjang)',
-            "Pesanan baru dari <strong>{$order->user->name}</strong> — <strong>{$order->order_number}</strong>",
+            "Pesanan baru dari <strong>{$order->user->name}</strong> — <strong>{$order->order_number}</strong> — menunggu pembayaran",
             [
                 'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
                 'role' => auth()->user()->role->name,
@@ -361,7 +361,7 @@ class OrderController extends Controller
         Notification::sendToAllStaff(
             'payment_success',
             'Pesanan Dikonfirmasi',
-            "Pesanan <strong>{$order->order_number}</strong> telah dikonfirmasi oleh customer. Menunggu pembayaran.",
+            "Pesanan <strong>{$order->order_number}</strong> telah dikonfirmasi oleh customer.",
             [
                 'initials' => collect(explode(' ', $order->user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
                 'role' => $order->user->role->name,

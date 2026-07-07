@@ -27,20 +27,20 @@ trait WithTestOrders
             return;
         }
 
-        // Order 1: menunggu_validasi
+        // Order 1: menunggu_pembayaran
         $order1 = Order::create([
             'user_id' => $customer->id,
             'order_number' => 'NVS-' . now()->format('Ymd') . '-001',
-            'status' => 'menunggu_validasi',
+            'status' => 'menunggu_pembayaran',
             'total_price' => 1500000,
             'notes' => 'Test order Dusk',
         ]);
         OrderItem::create(['order_id' => $order1->id, 'size' => 'M', 'qty' => 5, 'price_per_item' => 150000, 'subtotal' => 750000]);
         OrderItem::create(['order_id' => $order1->id, 'size' => 'L', 'qty' => 5, 'price_per_item' => 150000, 'subtotal' => 750000]);
         DesignRequest::create(['order_id' => $order1->id, 'team_name' => 'Tim Dusk 1', 'primary_color' => '#1a237e', 'material' => 'MILANO PREMIUM', 'collar_style' => 'O-NECK V.1']);
-        $this->recordHistory($order1->id, 'menunggu_validasi', $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order1->id, 'menunggu_pembayaran', $customer->id, 'Pesanan masuk');
 
-        // Order 2: dikonfirmasi (sudah divalidasi & dibayar)
+        // Order 2: dikonfirmasi
         $order2 = Order::create([
             'user_id' => $customer->id,
             'order_number' => 'NVS-' . now()->format('Ymd') . '-002',
@@ -50,9 +50,8 @@ trait WithTestOrders
         ]);
         OrderItem::create(['order_id' => $order2->id, 'size' => 'XL', 'qty' => 10, 'price_per_item' => 200000, 'subtotal' => 2000000]);
         DesignRequest::create(['order_id' => $order2->id, 'team_name' => 'Tim Dusk 2', 'primary_color' => '#e53935', 'material' => 'MILANO PREMIUM', 'collar_style' => 'V-Neck']);
-        $this->recordHistory($order2->id, 'menunggu_validasi', $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order2->id, 'menunggu_pembayaran', $admin->id, 'Admin validasi');
-        $this->recordHistory($order2->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order2->id, 'menunggu_pembayaran', $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order2->id, 'dikonfirmasi', $customer->id, 'Pesanan dikonfirmasi');
 
         // Order 3: siap_cetak (design selesai)
         $order3 = Order::create([
@@ -66,9 +65,8 @@ trait WithTestOrders
         OrderItem::create(['order_id' => $order3->id, 'size' => 'M', 'qty' => 15, 'price_per_item' => 150000, 'subtotal' => 2250000]);
         OrderItem::create(['order_id' => $order3->id, 'size' => 'L', 'qty' => 10, 'price_per_item' => 150000, 'subtotal' => 1500000]);
         DesignRequest::create(['order_id' => $order3->id, 'team_name' => 'Tim Dusk 3', 'primary_color' => '#43a047', 'material' => 'Drifit Polyester', 'collar_style' => 'Round Neck']);
-        $this->recordHistory($order3->id, 'menunggu_validasi', $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order3->id, 'menunggu_pembayaran', $admin->id, 'Admin validasi');
-        $this->recordHistory($order3->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order3->id, 'menunggu_pembayaran', $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order3->id, 'dikonfirmasi', $customer->id, 'Pesanan dikonfirmasi');
         $this->recordHistory($order3->id, 'disetujui', $admin->id, 'Ke Design');
         $this->recordHistory($order3->id, 'di_design', $admin->id, 'Ke Design');
         $this->recordHistory($order3->id, 'siap_cetak', $design->id, 'Design selesai');
@@ -91,9 +89,8 @@ trait WithTestOrders
         OrderItem::create(['order_id' => $order4->id, 'size' => 'L', 'qty' => 20, 'price_per_item' => 175000, 'subtotal' => 3500000]);
         OrderItem::create(['order_id' => $order4->id, 'size' => 'XL', 'qty' => 10, 'price_per_item' => 175000, 'subtotal' => 1750000]);
         DesignRequest::create(['order_id' => $order4->id, 'team_name' => 'Tim Dusk 4', 'primary_color' => '#6a1b9a', 'material' => 'Mesh Polyester', 'collar_style' => 'V-Neck']);
-        $this->recordHistory($order4->id, 'menunggu_validasi', $customer->id, 'Pesanan masuk');
-        $this->recordHistory($order4->id, 'menunggu_pembayaran', $admin->id, 'Admin validasi');
-        $this->recordHistory($order4->id, 'dikonfirmasi', $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistory($order4->id, 'menunggu_pembayaran', $customer->id, 'Pesanan masuk');
+        $this->recordHistory($order4->id, 'dikonfirmasi', $customer->id, 'Pesanan dikonfirmasi');
         $this->recordHistory($order4->id, 'disetujui', $admin->id, 'Ke Design');
         $this->recordHistory($order4->id, 'di_design', $admin->id, 'Ke Design');
         $this->recordHistory($order4->id, 'siap_cetak', $design->id, 'Design selesai');

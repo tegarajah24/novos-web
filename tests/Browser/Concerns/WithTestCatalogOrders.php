@@ -35,11 +35,11 @@ trait WithTestCatalogOrders
         $futsal    = Product::where('name', 'Novos Futsal Pro')->first();
         $price     = 100000;
 
-        // ── Catalog Order 1: menunggu_validasi ──
+        // ── Catalog Order 1: menunggu_pembayaran ──
         $o1 = Order::create([
             'user_id'      => $customer->id,
             'order_number' => "NVS-{$today}-005",
-            'status'       => 'menunggu_validasi',
+            'status'       => 'menunggu_pembayaran',
             'total_price'  => 200000,
             'notes'        => "Checkout dari Keranjang (1 Produk).\nProduk 1: Novos Running Pro",
         ]);
@@ -48,7 +48,7 @@ trait WithTestCatalogOrders
             'order_id' => $o1->id, 'team_name' => 'Katalog',
             'jenis_potongan' => 'REGULER', 'lengan_jahitan' => 'REGULER OVERDECK', 'material' => 'MILANO PREMIUM', 'collar_style' => 'O-NECK V.1',
         ]);
-        $this->recordHistoryCatalog($o1->id, 'menunggu_validasi', $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
+        $this->recordHistoryCatalog($o1->id, 'menunggu_pembayaran', $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
 
         // ── Catalog Order 2: dikonfirmasi ──
         $o2 = Order::create([
@@ -66,9 +66,8 @@ trait WithTestCatalogOrders
             'order_id' => $o2->id, 'team_name' => 'Katalog',
             'jenis_potongan' => 'REGULER', 'lengan_jahitan' => 'REGULER OVERDECK', 'material' => 'DRIFIT POLYESTER', 'collar_style' => 'V-NECK',
         ]);
-        $this->recordHistoryCatalog($o2->id, 'menunggu_validasi',   $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
-        $this->recordHistoryCatalog($o2->id, 'menunggu_pembayaran', $admin->id,    'Admin validasi');
-        $this->recordHistoryCatalog($o2->id, 'dikonfirmasi',        $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistoryCatalog($o2->id, 'menunggu_pembayaran', $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
+        $this->recordHistoryCatalog($o2->id, 'dikonfirmasi',        $customer->id, 'Pesanan dikonfirmasi');
 
         // ── Catalog Order 3: siap_cetak ──
         $o3 = Order::create([
@@ -85,9 +84,8 @@ trait WithTestCatalogOrders
             'order_id' => $o3->id, 'team_name' => 'Katalog',
             'jenis_potongan' => 'REGULER', 'lengan_jahitan' => 'REGULER OVERDECK', 'material' => 'MILANO PREMIUM', 'collar_style' => 'O-NECK V.1',
         ]);
-        $this->recordHistoryCatalog($o3->id, 'menunggu_validasi',   $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
-        $this->recordHistoryCatalog($o3->id, 'menunggu_pembayaran', $admin->id,    'Admin validasi');
-        $this->recordHistoryCatalog($o3->id, 'dikonfirmasi',        $customer->id, 'Pembayaran dikonfirmasi');
+        $this->recordHistoryCatalog($o3->id, 'menunggu_pembayaran', $customer->id, 'Pesanan (dari keranjang) dibuat oleh customer');
+        $this->recordHistoryCatalog($o3->id, 'dikonfirmasi',        $customer->id, 'Pesanan dikonfirmasi');
         $this->recordHistoryCatalog($o3->id, 'disetujui',           $admin->id,    'Teruskan ke Design');
         $this->recordHistoryCatalog($o3->id, 'di_design',           $admin->id,    'Dikerjakan Design');
         $this->recordHistoryCatalog($o3->id, 'siap_cetak',          $design->id,   'Design selesai');

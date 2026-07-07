@@ -48,7 +48,7 @@ class CustomerOrderTest extends DuskTestCase
 
             // Step 2: Isi detail desain
             $c->script('
-                let r = document.querySelector(".max-w-5xl")._x_dataStack[0];
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r) {
                     if (r.form) {
                         r.form.team_name = "Test Tim Dusk";
@@ -70,7 +70,7 @@ class CustomerOrderTest extends DuskTestCase
 
             // Step 3: Pilih alamat atau skip
             $c->script('
-                let r = document.querySelector(".max-w-5xl")._x_dataStack[0];
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r && r.addresses && r.addresses.length > 0) {
                     r.selectedAddressId = r.addresses[0].id;
                     if (typeof r.useSelectedAddress === "function") r.useSelectedAddress();
@@ -80,7 +80,7 @@ class CustomerOrderTest extends DuskTestCase
 
             // Step 4: Set prioritas & konfirmasi
             $c->script('
-                let r = document.querySelector(".max-w-5xl")._x_dataStack[0];
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r) r.prioritas = "normal";
             ');
             $c->pause(500);
@@ -88,7 +88,7 @@ class CustomerOrderTest extends DuskTestCase
             $c->pause(3000);
 
             // Capture result
-            $orderNum = $c->script('try { return document.querySelector(".max-w-5xl")._x_dataStack[0].orderNumber || ""; } catch(e) { return ""; }')[0];
+            $orderNum = $c->script('try { return document.querySelector(".max-w-6xl")._x_dataStack[0].orderNumber || ""; } catch(e) { return ""; }')[0];
             if (empty($orderNum)) {
                 $orderNum = Order::where('user_id', $customer->id)->latest()->first()?->order_number ?? '';
             }
