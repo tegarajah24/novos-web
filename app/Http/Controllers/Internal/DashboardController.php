@@ -300,7 +300,7 @@ class DashboardController extends Controller
             case 'day':
                 for ($i = 13; $i >= 0; $i--) {
                     $date = now()->subDays($i);
-                    $labels[] = $date->format('D j/n');
+                    $labels[] = $date->format('j/n');
                     $data[] = Order::whereDate('created_at', $date)->count();
                 }
                 break;
