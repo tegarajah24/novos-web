@@ -32,6 +32,10 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::get('/pesanan/{order:order_number}/allowed-statuses', [OrderController::class, 'allowedStatuses'])->name('pesanan.allowed-statuses');
         Route::get('/pesanan/{order:order_number}/export-csv', [OrderController::class, 'exportCsv'])->name('pesanan.export-csv');
         Route::get('/pesanan/{order:order_number}/export-excel', [OrderController::class, 'exportExcel'])->name('pesanan.export-excel');
+        Route::get('/pesanan/{order:order_number}/export-spk', [OrderController::class, 'exportSpk'])->name('pesanan.export-spk');
+        Route::post('/pesanan/{order:order_number}/upload-spk-file', [OrderController::class, 'uploadSpkFile'])->name('pesanan.upload-spk-file');
+        Route::post('/pesanan/{order:order_number}/delete-spk-file', [OrderController::class, 'deleteSpkFile'])->name('pesanan.delete-spk-file');
+        Route::post('/pesanan/{order:order_number}/update-spk-notes', [OrderController::class, 'updateSpkNotes'])->name('pesanan.update-spk-notes');
         Route::patch('/pesanan/{order:order_number}/design-request', [OrderController::class, 'updateDesignRequest'])->name('pesanan.update-design-request');
 
         Route::get('/design', [DesignController::class, 'index'])->name('design');

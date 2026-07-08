@@ -18,6 +18,166 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 @endsection
 
 @section('internal-content')
+@php
+$dewasaSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '6XL'];
+$anakSizes   = ['KIDS_S', 'KIDS_M', 'KIDS_L', 'KIDS_XL', 'KIDS_XXL'];
+
+$sizingGrid = [
+    'dewasa' => [
+        'short' => array_fill_keys($dewasaSizes, 0),
+        'long'  => array_fill_keys($dewasaSizes, 0),
+    ],
+    'anak' => [
+        'short' => array_fill_keys($anakSizes, 0),
+        'long'  => array_fill_keys($anakSizes, 0),
+    ]
+];
+
+if (!empty($order['item_details'])) {
+    foreach ($order['item_details'] as $detail) {
+        $sz = strtoupper(trim($detail['size'] ?? ''));
+        $modelLengan = strtolower(trim($detail['model_lengan'] ?? ''));
+        $isLong = str_contains($modelLengan, 'long') || str_contains($modelLengan, 'panjang');
+        
+        $model = $isLong ? 'long' : 'short';
+        
+        if (in_array($sz, $dewasaSizes)) {
+            $sizingGrid['dewasa'][$model][$sz]++;
+        } elseif (in_array($sz, $anakSizes)) {
+            $sizingGrid['anak'][$model][$sz]++;
+        } else {
+            if (in_array('KIDS_' . $sz, $anakSizes)) {
+                $sizingGrid['anak'][$model]['KIDS_' . $sz]++;
+            } elseif ($sz === 'XXL' && in_array('2XL', $dewasaSizes)) {
+                $sizingGrid['dewasa'][$model]['2XL']++;
+            } elseif ($sz === 'XXXL' && in_array('3XL', $dewasaSizes)) {
+                $sizingGrid['dewasa'][$model]['3XL']++;
+            }
+        }
+    }
+}
+@endphp
+
+<div x-data="{
+    activeTab: 'detail',
+    designFiles: @json($order['design_files'] ?? []),
+    spkNotes: @json($order['product']['notes'] ?? ''),
+    isSavingNotes: false,
+    uploadingSlot: null,
+    
+    get mockupDepan() {
+        return this.designFiles.find(f => f.role === 'mockup_depan') || null;
+    },
+    get mockupBelakang() {
+        return this.designFiles.find(f => f.role === 'mockup_belakang') || null;
+    },
+    get detailDepan() {
+        return this.designFiles.find(f => f.role === 'detail_depan') || null;
+    },
+    get detailBelakang() {
+        return this.designFiles.find(f => f.role === 'detail_belakang') || null;
+    },
+    get sponsorFiles() {
+        return this.designFiles.filter(f => f.role === 'sponsor');
+    },
+
+    async uploadFile(e, role) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        this.uploadingSlot = role;
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('role', role);
+
+        try {
+            const res = await fetch('{{ route("staf.pesanan.upload-spk-file", $order["order_id"]) }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                if (['mockup_depan', 'mockup_belakang', 'detail_depan', 'detail_belakang'].includes(role)) {
+                    this.designFiles = this.designFiles.filter(f => f.role !== role);
+                }
+                this.designFiles.push(data.file);
+                Notify.success(data.message, 'Berhasil!');
+            } else {
+                Notify.error(data.message || 'Terjadi kesalahan saat upload.');
+            }
+        } catch (err) {
+            Notify.error('Gagal mengupload file.');
+        } finally {
+            this.uploadingSlot = null;
+            e.target.value = '';
+        }
+    },
+
+    async deleteFile(path) {
+        const result = await Swal.fire({
+            title: 'Hapus File?',
+            text: 'Apakah Anda yakin ingin menghapus file ini dari SPK?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await fetch('{{ route("staf.pesanan.delete-spk-file", $order["order_id"]) }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ path: path })
+            });
+            const data = await res.json();
+            if (data.success) {
+                this.designFiles = this.designFiles.filter(f => f.path !== path);
+                Notify.success(data.message, 'Dihapus!');
+            } else {
+                Notify.error(data.message || 'Gagal menghapus file.');
+            }
+        } catch (err) {
+            Notify.error('Gagal menghapus file.');
+        }
+    },
+
+    async saveNotes() {
+        this.isSavingNotes = true;
+        try {
+            const res = await fetch('{{ route("staf.pesanan.update-spk-notes", $order["order_id"]) }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ notes: this.spkNotes })
+            });
+            const data = await res.json();
+            if (data.success) {
+                Notify.success(data.message, 'Tersimpan!');
+            } else {
+                Notify.error(data.message || 'Gagal menyimpan catatan.');
+            }
+        } catch (err) {
+            Notify.error('Gagal menyimpan catatan.');
+        } finally {
+            this.isSavingNotes = false;
+        }
+    }
+}">
 {{-- Kembali --}}
 <div class="mb-5">
     <a href="{{ route('staf.daftar-pesanan') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1a237e] transition-colors">
@@ -26,13 +186,25 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
     </a>
 </div>
 
+{{-- Tabs Navigation --}}
+<div class="flex border-b border-gray-200 mb-6 gap-2">
+    <button @click="activeTab = 'detail'" :class="activeTab === 'detail' ? 'border-[#1a237e] text-[#1a237e] font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700'" class="px-5 py-3 border-b-2 text-sm font-medium transition-all flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Detail Pesanan
+    </button>
+    <button @click="activeTab = 'spk'" :class="activeTab === 'spk' ? 'border-[#1a237e] text-[#1a237e] font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700'" class="px-5 py-3 border-b-2 text-sm font-medium transition-all flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Surat Perintah Kerja (SPK)
+    </button>
+</div>
+
 {{-- 2-COLUMN LAYOUT --}}
 <div class="flex gap-6 items-start">
 
     {{-- ── KOLOM KIRI ─────────────────────────────────────────────── --}}
-    <div class="flex-1 space-y-5 min-w-0">
-
-        {{-- Info Pesanan (Stepper) --}}
+    <div class="flex-1 min-w-0">
+        <div x-show="activeTab === 'detail'" class="space-y-5">
+            {{-- Info Pesanan (Stepper) --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 class="font-semibold text-gray-900 mb-6 flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -375,6 +547,271 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
                         @endforelse
                     </tbody>
                 </table>
+        </div>
+        </div>
+
+        {{-- ── TAB SPK CONTENT ── --}}
+        <div x-show="activeTab === 'spk'" x-cloak class="space-y-5">
+            {{-- SPK Header / Specs --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
+                        <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Surat Perintah Kerja (SPK) — Produksi
+                    </h3>
+                    
+                    {{-- SPK Download Button --}}
+                    <a href="{{ route('staf.pesanan.export-spk', $order['order_id']) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-all cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Export SPK (Excel)
+                    </a>
+                </div>
+
+                {{-- Specs Grid --}}
+                <div class="grid grid-cols-3 gap-x-8 gap-y-3.5 text-sm">
+                    <div><span class="text-gray-500 text-xs">Jenis</span><div class="font-semibold text-gray-900">Jersey Custom</div></div>
+                    <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-semibold text-gray-900">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
+                    <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-semibold text-gray-900">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
+                    <div><span class="text-gray-500 text-xs">Nama Pemesan</span><div class="font-semibold text-gray-900">{{ $order['product']['nama_pemesan'] ?? '-' }}</div></div>
+                    <div><span class="text-gray-500 text-xs">Bahan</span><div class="font-semibold text-gray-900">{{ $order['product']['material'] ?? '-' }}</div></div>
+                    <div><span class="text-gray-500 text-xs">Kerah</span><div class="font-semibold text-gray-900">{{ $order['product']['collar_style'] ?? '-' }}</div></div>
+                    <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-semibold text-gray-900">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
+                    <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-semibold text-gray-900">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
+                    <div><span class="text-gray-500 text-xs">Prioritas</span><div class="font-semibold text-gray-900">{{ $order['product']['priority'] ?? 'normal' }}</div></div>
+                </div>
+            </div>
+
+            {{-- Sizing Matrix --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 class="font-semibold text-gray-900 mb-4 text-sm">Rincian Total Ukuran</h3>
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full text-sm text-center">
+                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                            <tr>
+                                <th class="px-3 py-2 text-left font-semibold">Tipe</th>
+                                <th class="px-2 py-2 font-semibold">XS</th>
+                                <th class="px-2 py-2 font-semibold">S</th>
+                                <th class="px-2 py-2 font-semibold">M</th>
+                                <th class="px-2 py-2 font-semibold">L</th>
+                                <th class="px-2 py-2 font-semibold">XL</th>
+                                <th class="px-2 py-2 font-semibold">2XL</th>
+                                <th class="px-2 py-2 font-semibold">3XL</th>
+                                <th class="px-2 py-2 font-semibold">4XL</th>
+                                <th class="px-2 py-2 font-semibold">6XL</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="px-3 py-2.5 font-medium text-gray-800 text-left bg-gray-50/50">Lengan Pendek</td>
+                                @foreach($dewasaSizes as $sz)
+                                <td class="px-2 py-2.5">{{ $sizingGrid['dewasa']['short'][$sz] ?? 0 }}</td>
+                                @endforeach
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2.5 font-medium text-gray-800 text-left bg-gray-50/50">Lengan Panjang</td>
+                                @foreach($dewasaSizes as $sz)
+                                <td class="px-2 py-2.5">{{ $sizingGrid['dewasa']['long'][$sz] ?? 0 }}</td>
+                                @endforeach
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Mockup Desain Final (Tampak Depan & Belakang) --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 class="font-semibold text-gray-900 mb-6 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Mockup Jersey Final (Untuk SPK)
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    {{-- Tampak Depan Box --}}
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Tampak Depan (Portrait)</span>
+                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                            
+                            <template x-if="mockupDepan">
+                                <div class="w-full h-full relative">
+                                    <img :src="mockupDepan.url" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
+                                        <button @click="deleteFile(mockupDepan.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <template x-if="!mockupDepan">
+                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
+                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'mockup_depan')">
+                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Mockup Depan</span>
+                                </label>
+                            </template>
+                            
+                            <div x-show="uploadingSlot === 'mockup_depan'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                                <span class="loading loading-spinner text-[#1a237e]"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tampak Belakang Box --}}
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Tampak Belakang (Landscape)</span>
+                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[4/3] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                            
+                            <template x-if="mockupBelakang">
+                                <div class="w-full h-full relative">
+                                    <img :src="mockupBelakang.url" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
+                                        <button @click="deleteFile(mockupBelakang.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <template x-if="!mockupBelakang">
+                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
+                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'mockup_belakang')">
+                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Mockup Belakang</span>
+                                </label>
+                            </template>
+                            
+                            <div x-show="uploadingSlot === 'mockup_belakang'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                                <span class="loading loading-spinner text-[#1a237e]"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Detail Tampak Depan & Belakang --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 class="font-semibold text-gray-900 mb-6 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Detail Tampak Depan & Tampak Belakang Zoom
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    {{-- Detail Depan Box --}}
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Detail Tampak Depan</span>
+                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                            
+                            <template x-if="detailDepan">
+                                <div class="w-full h-full relative">
+                                    <img :src="detailDepan.url" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
+                                        <button @click="deleteFile(detailDepan.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <template x-if="!detailDepan">
+                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
+                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'detail_depan')">
+                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Detail Depan</span>
+                                </label>
+                            </template>
+                            
+                            <div x-show="uploadingSlot === 'detail_depan'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                                <span class="loading loading-spinner text-[#1a237e]"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Detail Belakang Box --}}
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Detail Tampak Belakang</span>
+                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                            
+                            <template x-if="detailBelakang">
+                                <div class="w-full h-full relative">
+                                    <img :src="detailBelakang.url" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
+                                        <button @click="deleteFile(detailBelakang.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <template x-if="!detailBelakang">
+                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
+                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'detail_belakang')">
+                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Detail Belakang</span>
+                                </label>
+                            </template>
+                            
+                            <div x-show="uploadingSlot === 'detail_belakang'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                                <span class="loading loading-spinner text-[#1a237e]"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Sponsor & Logo Final --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 class="font-semibold text-gray-900 mb-6 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                    Sponsor & Patch Final
+                </h3>
+                
+                <div class="grid grid-cols-4 gap-4">
+                    <template x-for="file in sponsorFiles" :key="file.path">
+                        <div class="relative bg-gray-50 border border-gray-200 rounded-xl aspect-square flex items-center justify-center overflow-hidden group">
+                            <img :src="file.url" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                <button @click="deleteFile(file.path)" class="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    {{-- Upload Sponsor Button --}}
+                    <label class="cursor-pointer bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-square flex flex-col items-center justify-center overflow-hidden transition-all group">
+                        <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'sponsor')">
+                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e] mb-1">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        </div>
+                        <span class="text-[10px] font-semibold text-gray-500 group-hover:text-gray-700">Tambah Sponsor</span>
+                    </label>
+                </div>
+            </div>
+
+            {{-- Catatan Desain (Editable) --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 class="font-semibold text-gray-900 mb-4 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    Catatan Desain / Detail Kerja SPK
+                </h3>
+                <div class="space-y-4">
+                    <textarea x-model="spkNotes" rows="5" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 resize-none bg-white" placeholder="Tuliskan spesifikasi detail printing, jenis bahan kerah, nama font, dll..."></textarea>
+                    
+                    <div class="flex justify-end">
+                        <button @click="saveNotes()" :disabled="isSavingNotes" class="px-5 py-2.5 bg-[#1a237e] hover:bg-[#1a237e]/90 text-white rounded-lg text-sm font-semibold flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer">
+                            <svg x-show="isSavingNotes" class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                            <span x-text="isSavingNotes ? 'Menyimpan...' : 'Simpan Catatan SPK'"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

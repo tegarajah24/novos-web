@@ -20,6 +20,7 @@ function badge($status) {
         'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-orange-100 text-orange-700'],
         'tahap_desain' => ['Tahap Desain', 'bg-blue-100 text-blue-700'],
         'menunggu_acc' => ['Menunggu ACC', 'bg-orange-100 text-orange-700'],
+        'menunggu_spk' => ['Menunggu SPK', 'bg-yellow-100 text-yellow-700'],
         'tahap_produksi' => ['Produksi', 'bg-purple-100 text-purple-700'],
         'selesai' => ['Selesai', 'bg-green-100 text-green-700'],
     ];
@@ -54,6 +55,7 @@ function rupiah($n) {
                         <option value="menunggu_pembayaran" {{ $activeFilter === 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran</option>
                         <option value="tahap_desain" {{ $activeFilter === 'tahap_desain' ? 'selected' : '' }}>Tahap Desain</option>
                         <option value="menunggu_acc" {{ $activeFilter === 'menunggu_acc' ? 'selected' : '' }}>Menunggu ACC</option>
+                        <option value="menunggu_spk" {{ $activeFilter === 'menunggu_spk' ? 'selected' : '' }}>Menunggu SPK</option>
                         <option value="tahap_produksi" {{ $activeFilter === 'tahap_produksi' ? 'selected' : '' }}>Produksi</option>
                         <option value="selesai" {{ $activeFilter === 'selesai' ? 'selected' : '' }}>Selesai</option>
                     </select>
