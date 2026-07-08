@@ -9,8 +9,25 @@
 @section('internal-content')
 <div x-data="kelolaProdukApp()" x-init="initApp()" class="space-y-6">
 
-    <!-- Tabel Data -->
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    @if(auth()->user()->role->name === 'Super Admin')
+    {{-- Tab Navigation --}}
+    <div class="flex gap-1 mb-6 bg-white border border-gray-200 rounded-2xl p-1.5 w-fit shadow-sm">
+        <button @click="tab='katalog'; $nextTick(() => renderIcons())"
+            :class="tab==='katalog' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+            <i data-lucide="layers" class="w-4 h-4"></i> Katalog Produk
+        </button>
+        <button @click="tab='referensi'; $nextTick(() => renderIcons())"
+            :class="tab==='referensi' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+            <i data-lucide="settings" class="w-4 h-4"></i> Referensi Jersey
+        </button>
+    </div>
+    @endif
+
+    <div x-show="tab==='katalog'">
+        <!-- Tabel Data -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
             <div class="flex flex-wrap items-center gap-3 flex-1">
                 <!-- Search -->
@@ -101,6 +118,243 @@
             </table>
         </div>
     </div>
+    </div>
+ 
+    @if(auth()->user()->role->name === 'Super Admin')
+    <div x-show="tab==='referensi'" x-cloak class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {{-- Bagian 1: Jenis Kerah --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 bg-[#1a237e]/10 rounded-xl flex items-center justify-center text-[#1a237e]">
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Jenis Kerah</h3>
+                            <p class="text-xs text-gray-500">Kelola daftar opsi kerah dan gambar panduannya</p>
+                        </div>
+                    </div>
+                    
+                    {{-- Input Tambah Opsi --}}
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" x-model="refInputs.collar" @keydown.enter.prevent="addRefOption('collar')" placeholder="Tambah jenis kerah baru..."
+                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
+                        <button type="button" @click="addRefOption('collar')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
+                    </div>
+ 
+                    {{-- List Opsi --}}
+                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
+                        <template x-for="(opt, idx) in referensi.collar.options" :key="idx">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
+                                <span x-text="opt"></span>
+                                <button type="button" @click="removeRefOption('collar', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </span>
+                        </template>
+                        <template x-if="referensi.collar.options.length === 0">
+                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
+                        </template>
+                    </div>
+ 
+                    {{-- Gambar Panduan --}}
+                    <div class="space-y-2 mb-4">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Gambar Panduan / Referensi</label>
+                        <div class="w-full h-44 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center relative group">
+                            <img :src="refPreviews.collar || referensi.collar.image" class="w-full h-full object-contain" alt="Kerah Guide">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <label class="px-3 py-1.5 bg-white text-xs font-bold text-gray-700 rounded-lg shadow cursor-pointer hover:bg-gray-50">
+                                    Ganti Gambar
+                                    <input type="file" @change="handleRefImageChange($event, 'collar')" accept="image/*" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" @click="saveReferensi('collar')" :disabled="refSaving.collar"
+                        class="w-full py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span x-show="!refSaving.collar">Simpan Perubahan</span>
+                    <span x-show="refSaving.collar">Menyimpan...</span>
+                </button>
+            </div>
+ 
+            {{-- Bagian 2: Bahan Jersey --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 bg-[#1a237e]/10 rounded-xl flex items-center justify-center text-[#1a237e]">
+                            <i data-lucide="shirt" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Bahan Jersey</h3>
+                            <p class="text-xs text-gray-500">Kelola daftar opsi bahan dan gambar panduannya</p>
+                        </div>
+                    </div>
+                    
+                    {{-- Input Tambah Opsi --}}
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" x-model="refInputs.bahan" @keydown.enter.prevent="addRefOption('bahan')" placeholder="Tambah bahan baru..."
+                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
+                        <button type="button" @click="addRefOption('bahan')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
+                    </div>
+ 
+                    {{-- List Opsi --}}
+                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
+                        <template x-for="(opt, idx) in referensi.bahan.options" :key="idx">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
+                                <span x-text="opt"></span>
+                                <button type="button" @click="removeRefOption('bahan', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </span>
+                        </template>
+                        <template x-if="referensi.bahan.options.length === 0">
+                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
+                        </template>
+                    </div>
+ 
+                    {{-- Gambar Panduan --}}
+                    <div class="space-y-2 mb-4">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Gambar Panduan / Referensi</label>
+                        <div class="w-full h-44 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center relative group">
+                            <img :src="refPreviews.bahan || referensi.bahan.image" class="w-full h-full object-contain" alt="Bahan Guide">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <label class="px-3 py-1.5 bg-white text-xs font-bold text-gray-700 rounded-lg shadow cursor-pointer hover:bg-gray-50">
+                                    Ganti Gambar
+                                    <input type="file" @change="handleRefImageChange($event, 'bahan')" accept="image/*" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" @click="saveReferensi('bahan')" :disabled="refSaving.bahan"
+                        class="w-full py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span x-show="!refSaving.bahan">Simpan Perubahan</span>
+                    <span x-show="refSaving.bahan">Menyimpan...</span>
+                </button>
+            </div>
+ 
+            {{-- Bagian 3: Jenis Potongan --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 bg-[#1a237e]/10 rounded-xl flex items-center justify-center text-[#1a237e]">
+                            <i data-lucide="scissors" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Jenis Potongan</h3>
+                            <p class="text-xs text-gray-500">Kelola daftar opsi potongan dan gambar panduannya</p>
+                        </div>
+                    </div>
+                    
+                    {{-- Input Tambah Opsi --}}
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" x-model="refInputs.potongan" @keydown.enter.prevent="addRefOption('potongan')" placeholder="Tambah potongan baru..."
+                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
+                        <button type="button" @click="addRefOption('potongan')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
+                    </div>
+ 
+                    {{-- List Opsi --}}
+                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
+                        <template x-for="(opt, idx) in referensi.potongan.options" :key="idx">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
+                                <span x-text="opt"></span>
+                                <button type="button" @click="removeRefOption('potongan', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </span>
+                        </template>
+                        <template x-if="referensi.potongan.options.length === 0">
+                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
+                        </template>
+                    </div>
+ 
+                    {{-- Gambar Panduan --}}
+                    <div class="space-y-2 mb-4">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Gambar Panduan / Referensi</label>
+                        <div class="w-full h-44 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center relative group">
+                            <img :src="refPreviews.potongan || referensi.potongan.image" class="w-full h-full object-contain" alt="Potongan Guide">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <label class="px-3 py-1.5 bg-white text-xs font-bold text-gray-700 rounded-lg shadow cursor-pointer hover:bg-gray-50">
+                                    Ganti Gambar
+                                    <input type="file" @change="handleRefImageChange($event, 'potongan')" accept="image/*" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" @click="saveReferensi('potongan')" :disabled="refSaving.potongan"
+                        class="w-full py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span x-show="!refSaving.potongan">Simpan Perubahan</span>
+                    <span x-show="refSaving.potongan">Menyimpan...</span>
+                </button>
+            </div>
+ 
+            {{-- Bagian 4: Model Lengan & Jahitan --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 bg-[#1a237e]/10 rounded-xl flex items-center justify-center text-[#1a237e]">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Model Lengan & Jahitan</h3>
+                            <p class="text-xs text-gray-500">Kelola daftar opsi lengan/jahitan dan gambar panduannya</p>
+                        </div>
+                    </div>
+                    
+                    {{-- Input Tambah Opsi --}}
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" x-model="refInputs.lengan" @keydown.enter.prevent="addRefOption('lengan')" placeholder="Tambah model lengan baru..."
+                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
+                        <button type="button" @click="addRefOption('lengan')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
+                    </div>
+ 
+                    {{-- List Opsi --}}
+                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
+                        <template x-for="(opt, idx) in referensi.lengan.options" :key="idx">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
+                                <span x-text="opt"></span>
+                                <button type="button" @click="removeRefOption('lengan', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </span>
+                        </template>
+                        <template x-if="referensi.lengan.options.length === 0">
+                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
+                        </template>
+                    </div>
+ 
+                    {{-- Gambar Panduan --}}
+                    <div class="space-y-2 mb-4">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Gambar Panduan / Referensi</label>
+                        <div class="w-full h-44 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center relative group">
+                            <img :src="refPreviews.lengan || referensi.lengan.image" class="w-full h-full object-contain" alt="Lengan Guide">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <label class="px-3 py-1.5 bg-white text-xs font-bold text-gray-700 rounded-lg shadow cursor-pointer hover:bg-gray-50">
+                                    Ganti Gambar
+                                    <input type="file" @change="handleRefImageChange($event, 'lengan')" accept="image/*" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" @click="saveReferensi('lengan')" :disabled="refSaving.lengan"
+                        class="w-full py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span x-show="!refSaving.lengan">Simpan Perubahan</span>
+                    <span x-show="refSaving.lengan">Menyimpan...</span>
+                </button>
+            </div>
+ 
+        </div>
+    </div>
+    @endif
 
     <!-- Modal Form -->
     <template x-teleport="body">
@@ -273,6 +527,7 @@
 <script>
 function kelolaProdukApp() {
     return {
+        tab: 'katalog',
         formMode: 'create',
         showModal: false,
         submitting: false,
@@ -286,22 +541,36 @@ function kelolaProdukApp() {
             category: ''
         },
 
-            formData: {
-                id: null,
-                name: '',
-                category_id: '',
-                price: '',
-                description: '',
-                imageDepanPreview: null,
-                imageBelakangPreview: null,
-                kerah: '',
-                bahan: '',
-                jenis_potongan: '',
-                lengan_jahitan: ''
-            },
+        referensi: {
+            collar: { options: [], image: '' },
+            bahan: { options: [], image: '' },
+            potongan: { options: [], image: '' },
+            lengan: { options: [], image: '' }
+        },
+        refInputs: { collar: '', bahan: '', potongan: '', lengan: '' },
+        refFiles: { collar: null, bahan: null, potongan: null, lengan: null },
+        refPreviews: { collar: null, bahan: null, potongan: null, lengan: null },
+        refSaving: { collar: false, bahan: false, potongan: false, lengan: false },
+
+        formData: {
+            id: null,
+            name: '',
+            category_id: '',
+            price: '',
+            description: '',
+            imageDepanPreview: null,
+            imageBelakangPreview: null,
+            kerah: '',
+            bahan: '',
+            jenis_potongan: '',
+            lengan_jahitan: ''
+        },
 
         initApp() {
             this.renderIcons();
+            @if(auth()->user()->role->name === 'Super Admin')
+            this.fetchReferensi();
+            @endif
         },
 
         get filteredProducts() {
@@ -496,6 +765,90 @@ function kelolaProdukApp() {
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
                     window.lucide.createIcons({ icons: window.lucide.icons });
                 }
+            });
+        },
+ 
+        fetchReferensi() {
+            fetch('{{ route('staf.kelola-produk.get-referensi') }}')
+                .then(res => res.json())
+                .then(data => {
+                    this.referensi = data;
+                })
+                .catch(e => console.error(e));
+        },
+ 
+        addRefOption(type) {
+            const val = this.refInputs[type].trim();
+            if (!val) return;
+            if (this.referensi[type].options.includes(val)) {
+                this.refInputs[type] = '';
+                return;
+            }
+            this.referensi[type].options.push(val);
+            this.refInputs[type] = '';
+        },
+ 
+        removeRefOption(type, index) {
+            this.referensi[type].options.splice(index, 1);
+        },
+ 
+        handleRefImageChange(e, type) {
+            const file = e.target.files[0];
+            if (!file) return;
+            this.refFiles[type] = file;
+            this.refPreviews[type] = URL.createObjectURL(file);
+        },
+ 
+        saveReferensi(type) {
+            if (this.refSaving[type]) return;
+            this.refSaving[type] = true;
+ 
+            const fd = new FormData();
+            fd.append('type', type);
+            fd.append('options', JSON.stringify(this.referensi[type].options));
+            if (this.refFiles[type]) {
+                fd.append('image', this.refFiles[type]);
+            }
+ 
+            fetch('{{ route('staf.kelola-produk.update-referensi') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: fd
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.refSaving[type] = false;
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Referensi ' + type + ' berhasil disimpan!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    if (this.refFiles[type]) {
+                        this.refFiles[type] = null;
+                        this.refPreviews[type] = null;
+                    }
+                    this.fetchReferensi();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(err => {
+                this.refSaving[type] = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan sistem'
+                });
             });
         }
     }

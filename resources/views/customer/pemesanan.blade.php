@@ -1,6 +1,43 @@
 @extends('layouts.customer')
 
 @section('title', 'Buat Pesanan — Novos')
+ 
+@php
+    $collarOptions = json_decode(App\Models\Setting::get('jersey_collar_options', json_encode([
+        "O-NECK V.1", "O-NECK V.2", "O-NECK V.3", "O-NECK V.4", "V-NECK V.5", 
+        "V-NECK V.1", "V-NECK V.2", "V-NECK V.3", "V-NECK V.4", "V-NECK V.5", 
+        "CLASSIC V.1", "CLASSIC V.2", "CLASSIC V.3", "CLASSIC V.4", "CLASSIC V.5", 
+        "V-NECK V3 TUMPUK", "TIMNAS"
+    ])), true);
+    $collarImage = App\Models\Setting::get('jersey_collar_image', 'images/jersey_collar_guide.png');
+    $collarImageUrl = (str_starts_with($collarImage, 'images/') || str_starts_with($collarImage, 'http'))
+        ? asset($collarImage)
+        : asset('storage/' . $collarImage);
+
+    $bahanOptions = json_decode(App\Models\Setting::get('jersey_bahan_options', json_encode([
+        "BINTIK JARUM GRADE B","MILANO GRADE B","BINTIK JARUM PREMIUM","MILANO PREMIUM","RABBIT","DROPPEDDLE","SMASH","WAFFLE","EMBOSH","MICROCOOL","JAQUARD AERO","COTTON 24S","COTTON 30S","LOTTO","PARASUT","PUMA","ULTRALIGHT A","ULTRALIGHT B"
+    ])), true);
+    $bahanImage = App\Models\Setting::get('jersey_bahan_image', 'images/Bahan Jersey.png');
+    $bahanImageUrl = (str_starts_with($bahanImage, 'images/') || str_starts_with($bahanImage, 'http'))
+        ? asset($bahanImage)
+        : asset('storage/' . $bahanImage);
+
+    $potonganOptions = json_decode(App\Models\Setting::get('jersey_potongan_options', json_encode([
+        "REGULER","SLIMFIT CEWE","OVERSIZE","TUNIK","SLIM FIT UNISEX","BOXY CUT","KIDS"
+    ])), true);
+    $potonganImage = App\Models\Setting::get('jersey_potongan_image', 'images/Jenis Potongan.png');
+    $potonganImageUrl = (str_starts_with($potonganImage, 'images/') || str_starts_with($potonganImage, 'http'))
+        ? asset($potonganImage)
+        : asset('storage/' . $potonganImage);
+
+    $lenganOptions = json_decode(App\Models\Setting::get('jersey_lengan_options', json_encode([
+        "REGULER OVERDECK","REGULER PAKAI MANSET","RAGLAN A OVERDECK","RAGLAN A PAKAI MANSET","RAGLAN B OVERDECK","RAGLAN B PAKAI MANSET"
+    ])), true);
+    $lenganImage = App\Models\Setting::get('jersey_lengan_image', 'images/Model Lengan & Jahitan.png');
+    $lenganImageUrl = (str_starts_with($lenganImage, 'images/') || str_starts_with($lenganImage, 'http'))
+        ? asset($lenganImage)
+        : asset('storage/' . $lenganImage);
+@endphp
 
 @section('content')
 @auth
@@ -195,25 +232,11 @@
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Jenis Kerah</option>
-                        <option value="O-NECK V.1">O-NECK V.1</option>
-                        <option value="O-NECK V.2">O-NECK V.2</option>
-                        <option value="O-NECK V.3">O-NECK V.3</option>
-                        <option value="O-NECK V.4">O-NECK V.4</option>
-                        <option value="V-NECK V.5">V-NECK V.5</option>
-                        <option value="V-NECK V.1">V-NECK V.1</option>
-                        <option value="V-NECK V.2">V-NECK V.2</option>
-                        <option value="V-NECK V.3">V-NECK V.3</option>
-                        <option value="V-NECK V.4">V-NECK V.4</option>
-                        <option value="V-NECK V.5">V-NECK V.5</option>
-                        <option value="CLASSIC V.1">CLASSIC V.1</option>
-                        <option value="CLASSIC V.2">CLASSIC V.2</option>
-                        <option value="CLASSIC V.3">CLASSIC V.3</option>
-                        <option value="CLASSIC V.4">CLASSIC V.4</option>
-                        <option value="CLASSIC V.5">CLASSIC V.5</option>
-                        <option value="V-NECK V3 TUMPUK">V-NECK V3 TUMPUK</option>
-                        <option value="TIMNAS">TIMNAS</option>
+                        @foreach($collarOptions as $opt)
+                            <option value="{{ $opt }}">{{ $opt }}</option>
+                        @endforeach
                     </select>
-
+ 
                     {{-- Modal Detail Kerah --}}
                     <template x-teleport="body">
                     <div
@@ -256,15 +279,15 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                 </button>
                             </div>
-
+ 
                             {{-- Modal Body --}}
                             <div class="px-6 py-5 overflow-y-auto max-h-[75vh]">
                                 <p class="text-xs text-gray-500 mb-4">Panduan referensi variasi desain kerah jersey. Pilih jenis kerah yang sesuai dengan selera Anda.</p>
-
+ 
                                 {{-- Gambar Panduan Kerah --}}
                                 <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                                     <img
-                                        src="{{ asset('images/jersey_collar_guide.png') }}"
+                                        src="{{ $collarImageUrl }}"
                                         alt="Panduan Desain Kerah Jersey"
                                         class="w-full h-auto object-contain"
                                     >
@@ -304,26 +327,11 @@
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Bahan Jersey</option>
-                        <option value="BINTIK JARUM GRADE B">BINTIK JARUM GRADE B</option>
-                        <option value="MILANO GRADE B">MILANO GRADE B</option>
-                        <option value="BINTIK JARUM PREMIUM">BINTIK JARUM PREMIUM</option>
-                        <option value="MILANO PREMIUM">MILANO PREMIUM</option>
-                        <option value="RABBIT">RABBIT</option>
-                        <option value="DROPPEDDLE">DROPPEDDLE</option>
-                        <option value="SMASH">SMASH</option>
-                        <option value="WAFFLE">WAFFLE</option>
-                        <option value="EMBOSH">EMBOSH</option>
-                        <option value="MICROCOOL">MICROCOOL</option>
-                        <option value="JAQUARD AERO">JAQUARD AERO</option>
-                        <option value="COTTON 24S">COTTON 24S</option>
-                        <option value="COTTON 30S">COTTON 30S</option>
-                        <option value="LOTTO">LOTTO</option>
-                        <option value="PARASUT">PARASUT</option>
-                        <option value="PUMA">PUMA</option>
-                        <option value="ULTRALIGHT A">ULTRALIGHT A</option>
-                        <option value="ULTRALIGHT B">ULTRALIGHT B</option>
+                        @foreach($bahanOptions as $opt)
+                            <option value="{{ $opt }}">{{ $opt }}</option>
+                        @endforeach
                     </select>
-
+ 
                     {{-- Modal Detail Bahan --}}
                     <template x-teleport="body">
                     <div
@@ -366,13 +374,13 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                 </button>
                             </div>
-
+ 
                             {{-- Modal Body --}}
                             <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
                                 <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis bahan jersey yang tersedia. Pilih bahan yang sesuai dengan kebutuhan Anda.</p>
                                 <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                                     <img
-                                        src="{{ asset('images/Bahan Jersey.png') }}"
+                                        src="{{ $bahanImageUrl }}"
                                         alt="Jenis Bahan Jersey"
                                         class="w-full h-auto object-contain"
                                     >
@@ -411,13 +419,9 @@
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Jenis Potongan</option>
-                        <option value="REGULER">REGULER</option>
-                        <option value="SLIMFIT CEWE">SLIMFIT CEWE</option>
-                        <option value="OVERSIZE">OVERSIZE</option>
-                        <option value="TUNIK">TUNIK</option>
-                        <option value="SLIM FIT UNISEX">SLIM FIT UNISEX</option>
-                        <option value="BOXY CUT">BOXY CUT</option>
-                        <option value="KIDS">KIDS</option>
+                        @foreach($potonganOptions as $opt)
+                            <option value="{{ $opt }}">{{ $opt }}</option>
+                        @endforeach
                     </select>
 
                     {{-- Modal Detail Potongan --}}
@@ -459,7 +463,7 @@
                             <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
                                 <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis-jenis potongan jersey yang tersedia.</p>
                                 <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img src="{{ asset('images/Jenis Potongan.png') }}" alt="Jenis Potongan Jersey" class="w-full h-auto object-contain">
+                                    <img src="{{ $potonganImageUrl }}" alt="Jenis Potongan Jersey" class="w-full h-auto object-contain">
                                 </div>
                                 <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan potongan dengan tim kami jika Anda membutuhkan penyesuaian khusus.</p>
                             </div>
@@ -490,12 +494,9 @@
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
                     >
                         <option value="">Pilih Model Lengan & Jahitan</option>
-                        <option value="REGULER OVERDECK">REGULER OVERDECK</option>
-                        <option value="REGULER PAKAI MANSET">REGULER PAKAI MANSET</option>
-                        <option value="RAGLAN A OVERDECK">RAGLAN A OVERDECK</option>
-                        <option value="RAGLAN A PAKAI MANSET">RAGLAN A PAKAI MANSET</option>
-                        <option value="RAGLAN B OVERDECK">RAGLAN B OVERDECK</option>
-                        <option value="RAGLAN B PAKAI MANSET">RAGLAN B PAKAI MANSET</option>
+                        @foreach($lenganOptions as $opt)
+                            <option value="{{ $opt }}">{{ $opt }}</option>
+                        @endforeach
                     </select>
 
                     {{-- Modal Detail Lengan & Jahitan --}}
@@ -541,7 +542,7 @@
                                 <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis model lengan & jahitan jersey yang tersedia.</p>
                                 <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                                     <img
-                                        src="{{ asset('images/Model Lengan & Jahitan.png') }}"
+                                        src="{{ $lenganImageUrl }}"
                                         alt="Model Lengan & Jahitan Jersey"
                                         class="w-full h-auto object-contain"
                                     >
