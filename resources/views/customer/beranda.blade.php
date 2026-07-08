@@ -414,10 +414,10 @@
         </div>
  
         {{-- Button "Lihat Semua Ulasan" --}}
-        <div class="flex justify-center mt-8" data-aos="fade-up">
-            <button @click="showAllModal = true" class="inline-flex items-center gap-2 px-6 py-3 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shadow-md cursor-pointer">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                Lihat Semua Ulasan Terbaru
+        <div class="flex justify-center mt-6" data-aos="fade-up">
+            <button @click="showAllModal = true" class="inline-flex items-center gap-1 px-4 py-1.5 bg-transparent text-[#1a237e]/80 hover:text-[#1a237e] text-xs font-bold rounded-lg border border-[#1a237e]/20 hover:border-[#1a237e]/40 hover:bg-[#1a237e]/5 transition-colors cursor-pointer">
+                Semua
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             </button>
         </div>
     </div>
