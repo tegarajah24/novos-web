@@ -10,6 +10,7 @@ enum OrderStatus: string
     case Disetujui = 'disetujui';
     case DiDesign = 'di_design';
     case SiapCetak = 'siap_cetak';
+    case MenungguSpk = 'menunggu_spk';
     case Diproduksi = 'diproduksi';
     case Selesai = 'selesai';
     case Dibatalkan = 'dibatalkan';

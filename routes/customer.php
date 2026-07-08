@@ -34,8 +34,12 @@ Route::get('/pesan', function () {
         $addresses = auth()->check() ? auth()->user()->addresses : collect([]);
         $hasOrders = auth()->check() ? auth()->user()->orders()->exists() : false;
         $provinces = Wilayah::whereRaw('CHAR_LENGTH(kode) = 2')->orderBy('nama')->get()->map(fn($i) => ['id' => $i->kode, 'name' => $i->nama]);
+        $adminPhone = preg_replace('/[^0-9]/', '', \App\Models\Setting::get('company_phone', '6281234567890'));
+        if (str_starts_with($adminPhone, '0')) {
+            $adminPhone = '62' . substr($adminPhone, 1);
+        }
 
-        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces'));
+        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone'));
     })->name('pemesanan');
 
 // Public routes for wilayah data

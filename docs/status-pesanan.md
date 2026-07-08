@@ -12,6 +12,7 @@ Setiap perubahan status dicatat di tabel `order_status_histories`.
 | Disetujui | `disetujui` | Admin setujui & teruskan ke Design |
 | Di Design | `di_design` | Sedang dikerjakan tim Design |
 | Siap Cetak | `siap_cetak` | Design selesai, siap diprint & ke Produksi |
+| Menunggu SPK | `menunggu_spk` | Admin sedang menyiapkan Surat Perintah Kerja |
 | Diproduksi | `diproduksi` | Sedang dikerjakan tim Produksi |
 | Selesai | `selesai` | Pesanan selesai |
 | Dibatalkan | `dibatalkan` | Pesanan dibatalkan |
@@ -28,6 +29,8 @@ disetujui
 di_design
   ↓ (design selesai, print)
 siap_cetak
+  ↓ (admin buat SPK)
+menunggu_spk
   ↓ (diserahkan ke produksi)
 diproduksi
   ↓ (produksi selesai)
@@ -44,7 +47,8 @@ Dari status manapun bisa → `dibatalkan`
 | dikonfirmasi | disetujui / di_design | Admin |
 | disetujui | di_design | Admin |
 | di_design | siap_cetak | Design |
-| siap_cetak | diproduksi | Admin / Design |
+| siap_cetak | menunggu_spk | Admin |
+| menunggu_spk | diproduksi | Admin |
 | diproduksi | selesai | Produksi |
 | apapun | dibatalkan | Admin / Super Admin |
 

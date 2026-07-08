@@ -87,6 +87,25 @@
         <h2 class="text-lg font-semibold text-gray-900">Pilih Jenis Pesanan</h2>
         <p class="text-sm text-gray-500 mt-1">Pilih jenis pesanan yang sesuai kebutuhan Anda</p>
 
+        {{-- Banner Konsultasi WhatsApp --}}
+        <div class="mb-5 flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 animate-fade-slide">
+            <span class="shrink-0 mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-green-600">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                </svg>
+            </span>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-green-800">Konsultasi dulu via WhatsApp sebelum pesan!</p>
+                <p class="text-xs text-green-700 mt-0.5 leading-relaxed">Untuk hasil jersey yang maksimal, silakan hubungi admin kami terlebih dahulu agar brief desain Anda bisa diproses dengan tepat.</p>
+            </div>
+            <a href="https://wa.me/{{ $adminPhone }}?text={{ urlencode('Halo Novos, saya ingin konsultasi pesanan jersey custom') }}"
+               target="_blank" rel="noopener"
+               class="shrink-0 inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                Chat Admin
+            </a>
+        </div>
+
         <div class="grid md:grid-cols-2 gap-6 mt-6">
             {{-- Jersey Custom --}}
             <div
@@ -2321,17 +2340,18 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         showFirstOrderAlert() {
             Swal.fire({
-                icon: 'info',
-                title: 'Konsultasi Dulu Yuk!',
-                text: 'Karena ini pemesanan pertamamu, silakan konsultasi dengan admin kami terlebih dahulu agar hasil jerseys-nya maksimal.',
-                confirmButtonColor: '#1a237e',
-                confirmButtonText: 'Hubungi Admin',
+                icon: 'success',
+                iconColor: '#25d366',
+                title: '\uD83D\uDCAC Konsultasi via WhatsApp Dulu Yuk!',
+                html: '<p class="text-sm text-gray-600">Karena ini pemesanan pertamamu, yuk brief admin Novos terlebih dahulu agar jersey yang dihasilkan sesuai ekspektasi kamu.</p>',
+                confirmButtonColor: '#25d366',
+                confirmButtonText: '\uD83D\uDCF1 Chat Admin Sekarang',
                 showCancelButton: true,
                 cancelButtonColor: '#6b7280',
-                cancelButtonText: 'Lanjutkan Pesan',
+                cancelButtonText: 'Saya Sudah Konsultasi',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = '{{ route("chat") }}';
+                    window.open('https://wa.me/{{ $adminPhone }}?text={{ urlencode("Halo Novos, saya ingin konsultasi pesanan jersey custom") }}', '_blank');
                 } else {
                     this.step = 2;
                 }

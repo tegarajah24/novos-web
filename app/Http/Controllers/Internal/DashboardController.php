@@ -32,8 +32,8 @@ class DashboardController extends Controller
             ->count();
         $pendingTrend = $pendingOrders - $pendingLastWeek;
 
-        $inProcessOrders = Order::whereIn('status', ['di_design', 'siap_cetak', 'diproduksi'])->count();
-        $processLastWeek = Order::whereIn('status', ['di_design', 'siap_cetak', 'diproduksi'])
+        $inProcessOrders = Order::whereIn('status', ['di_design', 'siap_cetak', 'menunggu_spk', 'diproduksi'])->count();
+        $processLastWeek = Order::whereIn('status', ['di_design', 'siap_cetak', 'menunggu_spk', 'diproduksi'])
             ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
             ->count();
         $processTrend = $inProcessOrders - $processLastWeek;
@@ -64,7 +64,7 @@ class DashboardController extends Controller
         $pending = Order::where('status', 'menunggu_pembayaran')->count();
         $design = Order::whereIn('status', ['dikonfirmasi', 'disetujui', 'di_design'])->count();
         $acc = Order::where('status', 'disetujui')->count();
-        $produksi = Order::whereIn('status', ['siap_cetak', 'diproduksi'])->count();
+        $produksi = Order::whereIn('status', ['siap_cetak', 'menunggu_spk', 'diproduksi'])->count();
         $selesai = Order::where('status', 'selesai')->count();
 
         $statusLabels = ['Menunggu Pembayaran', 'Desain', 'Menunggu ACC', 'Produksi', 'Selesai'];
@@ -76,7 +76,7 @@ class DashboardController extends Controller
         $designWaitingAcc  = Order::where('status', 'disetujui')->count();
 
         // Data khusus Produksi
-        $printQueue  = Order::where('status', 'siap_cetak')->count();
+        $printQueue  = Order::whereIn('status', ['siap_cetak', 'menunggu_spk'])->count();
         $sewingQueue = Order::where('status', 'diproduksi')->count();
 
         return view('internal.dashboard', compact(
