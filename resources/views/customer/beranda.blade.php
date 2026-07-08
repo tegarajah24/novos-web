@@ -280,11 +280,11 @@
                         border-t-2 border-dashed border-[#1a237e]/20 z-0 hidden md:block"></div>
 
             @foreach([
-                ['Buat Pesanan',       'Isi form & upload desain kamu',   true,  false],
-                ['Verifikasi Admin',   'Admin cek & konfirmasi pesanan',   false, true ],
-                ['Pembayaran',         'Bayar dp atau lunas via transfer', true,  false],
-                ['ACC Desain',         'Setujui desain final dari tim',    false, false],
-                ['Produksi & Selesai', 'Diproduksi & dikirim ke kamu',    false, false],
+                ['Buat Pesanan',         'Isi form detail jersey custom kamu', true,  false],
+                ['Bayar DP',             'Transfer DP minimal 10% via bank',   false, true ],
+                ['Proses Desain',        'Tim desain buatkan desainmu',        true,  false],
+                ['Produksi',             'Jersey dicetak & dijahit',           false, false],
+                ['Pelunasan & Selesai',  'Lunas, jersey siap dikirim/diambil', false, false],
             ] as $i => $s)
             <div class="flex-shrink-0 flex flex-col items-center text-center relative z-10 w-full md:flex-1 px-2" data-aos="fade-up" data-aos-delay="{{ $i * 100 }}">
 
