@@ -3,7 +3,7 @@
 @section('title', 'Tracking Pesanan — Novos')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-8" x-data="trackingForm()">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="trackingForm()">
     {{-- Header --}}
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900">Tracking Pesanan</h1>
@@ -118,7 +118,7 @@
 
                     {{-- Stages --}}
                     <template x-for="(stage, i) in stages" :key="i">
-                        <div class="flex flex-col items-center text-center relative z-10" style="width: 16.666%">
+                        <div class="flex flex-col items-center text-center relative z-10" style="width: 14.285%">
                             {{-- Circle --}}
                             <div class="relative">
                                 {{-- Ping ring for active --}}
@@ -345,7 +345,7 @@ function trackingForm() {
 
         get statusLabel() {
             const labels = {
-                'menunggu_pembayaran': 'Menunggu Pembayaran',
+                'menunggu_pembayaran': 'Pembayaran DP',
                 'dikonfirmasi': 'Dikonfirmasi',
                 'disetujui': 'Disetujui',
                 'di_design': 'Di Design',
@@ -377,14 +377,16 @@ function trackingForm() {
 
         get stages() {
             const stageDefs = [
-                { key: 'menunggu_pembayaran', label: 'Menunggu Pembayaran' },
-                { key: 'dikonfirmasi', label: 'Pembayaran Dikonfirmasi' },
+                { key: 'menunggu_pembayaran', label: 'Pembayaran DP' },
+                { key: 'dikonfirmasi', label: 'Dikonfirmasi' },
                 { key: 'di_design', label: 'Tahap Desain' },
                 { key: 'siap_cetak', label: 'Menunggu ACC Customer' },
-                { key: 'diproduksi', label: 'Produksi & Selesai' }
+                { key: 'diproduksi', label: 'Produksi' },
+                { key: 'pelunasan', label: 'Pelunasan' },
+                { key: 'selesai', label: 'Selesai' }
             ];
 
-            const statusOrder = ['menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'selesai'];
+            const statusOrder = ['menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'diproduksi', 'pelunasan', 'selesai'];
             const currentIdx = statusOrder.indexOf(this.order.status);
 
             return stageDefs.map((s, i) => {

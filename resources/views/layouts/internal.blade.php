@@ -901,6 +901,7 @@
                 activeReminder: null,
                 showTestMenu: false,
                 reminders: slots,
+                _timer: null,
 
                 init() {
                     const d = new Date().toDateString();
@@ -912,16 +913,36 @@
                             localStorage.setItem('microbreak_date', d);
                         } catch (e) {}
                     }
-                    this.checkTime();
-                    setInterval(() => this.checkTime(), 60000);
+                    this._checkTime();
+                    this._catchUp();
+                    this._timer = setInterval(() => this._checkTime(), 15000);
+                    document.addEventListener('visibilitychange', () => {
+                        if (!document.hidden) { this._checkTime(); this._catchUp(); }
+                    });
                 },
 
-                checkTime() {
+                _catchUp() {
                     const now = new Date();
-                    const h = now.getHours();
-                    const m = now.getMinutes();
+                    const currentMinutes = now.getHours() * 60 + now.getMinutes();
                     for (const r of this.reminders) {
-                        if (h === r.hour && m === r.min && !this.shownSlots.includes(r.key)) {
+                        const target = r.hour * 60 + r.min;
+                        if (target > currentMinutes || currentMinutes - target > 30) continue;
+                        if (!this.shownSlots.includes(r.key)) {
+                            this.shownSlots.push(r.key);
+                            this.activeReminder = r;
+                            try {
+                                localStorage.setItem('microbreak_shown', JSON.stringify(this.shownSlots));
+                            } catch (e) {}
+                        }
+                    }
+                },
+
+                _checkTime() {
+                    const now = new Date();
+                    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                    for (const r of this.reminders) {
+                        const target = r.hour * 60 + r.min;
+                        if (Math.abs(currentMinutes - target) <= 1 && !this.shownSlots.includes(r.key)) {
                             this.activeReminder = r;
                             this.shownSlots.push(r.key);
                             try {

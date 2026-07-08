@@ -1151,6 +1151,7 @@ function dailyMentalCheck(config = {}) {
             if (['Super Admin', 'Manager'].includes(this.userRole)) {
                 await this.fetchReport();
             }
+
         },
 
         get allAnswered() {

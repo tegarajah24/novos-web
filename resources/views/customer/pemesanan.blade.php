@@ -1079,6 +1079,20 @@
                             </div>
                         </div>
 
+                        {{-- Nomor WhatsApp --}}
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor WhatsApp <span class="text-red-500">*</span></label>
+                                <input
+                                    type="text"
+                                    x-model="formPhone"
+                                    placeholder="Contoh: 081234567890"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                                >
+                                <p class="text-xs text-gray-400 mt-1">Nomor ini akan tersimpan di profil Anda.</p>
+                            </div>
+                        </div>
+
                         <div class="grid md:grid-cols-3 gap-6">
                             {{-- Provinsi --}}
                             <div>
@@ -1686,6 +1700,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             email: '{{ auth()->user()->email }}',
             phone: '{{ auth()->user()->phone ?? '' }}'
         },
+        formPhone: '{{ auth()->user()->phone ?? '' }}',
         contactForm: { name: '', fullname: '', email: '', phone: '' },
         editAddressForm: {
             first_name: '', last_name: '', province: '', city: '',
@@ -2106,6 +2121,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             formData.append('catatan', this.form.catatan);
             formData.append('total_qty', this.form.total_qty || 1);
             formData.append('prioritas', this.prioritas);
+            formData.append('phone', this.formPhone);
             if (this.selectedAddressId) {
                 formData.append('address_id', this.selectedAddressId);
             }

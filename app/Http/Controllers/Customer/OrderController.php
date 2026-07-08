@@ -126,6 +126,10 @@ class OrderController extends Controller
                 'additional_notes' => $catatanText,
             ]);
 
+            if (!empty($data['phone'])) {
+                $request->user()->update(['phone' => $data['phone']]);
+            }
+
             OrderStatusHistory::create([
                 'order_id'   => $order->id,
                 'status'     => 'menunggu_pembayaran',

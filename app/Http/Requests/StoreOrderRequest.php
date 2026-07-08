@@ -31,6 +31,7 @@ class StoreOrderRequest extends FormRequest
             'design_files'   => 'nullable|array',
             'design_files.*' => 'file|mimes:jpg,jpeg,png,pdf,ai,eps,psd,zip,rar|max:20480',
             'address_id'     => 'nullable|exists:customer_addresses,id,user_id,' . $this->user()?->id,
+            'phone'          => 'required|string|max:20',
         ];
     }
 }

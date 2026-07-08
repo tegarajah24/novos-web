@@ -44,6 +44,8 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::post('/kelola-produk', [ProductController::class, 'store'])->name('kelola-produk.store');
         Route::put('/kelola-produk/{product}', [ProductController::class, 'update'])->name('kelola-produk.update');
         Route::delete('/kelola-produk/{product}', [ProductController::class, 'destroy'])->name('kelola-produk.destroy');
+        Route::get('/kelola-produk/referensi', [ProductController::class, 'getReferensi'])->name('kelola-produk.get-referensi');
+        Route::post('/kelola-produk/referensi', [ProductController::class, 'updateReferensi'])->name('kelola-produk.update-referensi');
         Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
         Route::post('/kelola-pengguna', [UserController::class, 'store'])->name('kelola-pengguna.store');
         Route::put('/kelola-pengguna/{user}', [UserController::class, 'update'])->name('kelola-pengguna.update');
