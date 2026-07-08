@@ -34,7 +34,10 @@ class OrderController extends Controller
                 \App\Models\CustomerAddress::where('id', $addressId)->where('user_id', auth()->id())->update(['is_primary' => true]);
             }
 
-            $orderNumber = 'NVS-' . now()->format('Ymd') . '-' . str_pad(Order::whereDate('created_at', today())->count() + 1, 3, '0', STR_PAD_LEFT);
+            $todayPrefix = 'NVS-' . now()->format('Ymd') . '-';
+            $lastOrder = Order::where('order_number', 'like', $todayPrefix . '%')->orderBy('order_number', 'desc')->lockForUpdate()->first();
+            $nextSeq = $lastOrder ? (int) substr($lastOrder->order_number, -3) + 1 : 1;
+            $orderNumber = $todayPrefix . str_pad($nextSeq, 3, '0', STR_PAD_LEFT);
 
             $totalQty = $data['total_qty'] ?? 0;
             $pricePerItem = \App\Models\Setting::get('base_price_per_pcs', 85000);
