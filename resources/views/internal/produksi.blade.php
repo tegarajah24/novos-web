@@ -146,7 +146,7 @@
                                     <span class="text-gray-500 block mb-1 text-xs font-medium uppercase tracking-wider">Deadline</span>
                                     <span class="font-semibold text-red-600" x-text="selectedOrder?.deadline"></span>
                                 </div>
-                                <div class="col-span-2 grid grid-cols-3 gap-4 pt-2">
+                                <div class="col-span-2 grid grid-cols-2 sm:grid-cols-5 gap-4 pt-2">
                                     <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
                                         <span class="text-gray-400 block mb-0.5 text-xs">Bahan</span>
                                         <span class="font-medium text-gray-900" x-text="selectedOrder?.material"></span>
@@ -158,6 +158,14 @@
                                     <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
                                         <span class="text-gray-400 block mb-0.5 text-xs">Pola Jahitan</span>
                                         <span class="font-medium text-gray-900" x-text="selectedOrder?.pattern"></span>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                        <span class="text-gray-400 block mb-0.5 text-xs">Jenis Potongan</span>
+                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.jenis_potongan"></span>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                        <span class="text-gray-400 block mb-0.5 text-xs">Model Lengan &amp; Jahitan</span>
+                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.model_lengan_jahitan"></span>
                                     </div>
                                 </div>
                             </div>
@@ -234,19 +242,7 @@
                                 <i data-lucide="file-check-2" class="w-4 h-4 text-[#1a237e]"></i>
                                 File Desain & Pola Cetak (Dari Tim Design)
                             </h4>
-                            <div class="grid grid-cols-3 gap-4">
-                                <template x-for="img in selectedOrder?.reference_files" :key="img">
-                                    <a :href="img" target="_blank"
-                                       class="aspect-square rounded-xl border border-gray-200 overflow-hidden bg-gray-100 relative group cursor-pointer hover:border-[#1a237e] hover:shadow-md transition-all block">
-                                        <img :src="img" class="w-full h-full object-cover">
-                                        <div class="absolute inset-0 bg-[#1a237e]/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity gap-2">
-                                            <i data-lucide="download" class="w-6 h-6 text-white"></i>
-                                            <span class="text-white text-xs font-medium">Download</span>
-                                        </div>
-                                    </a>
-                                </template>
-                            </div>
-                            <div class="mt-4 space-y-2">
+                            <div class="space-y-2">
                                 <template x-for="file in selectedOrder?.design_files" :key="file.name">
                                     <div class="flex items-center gap-3 p-2.5 bg-blue-50/50 border border-blue-100 rounded-lg">
                                         <div class="w-8 h-8 rounded bg-white flex items-center justify-center shrink-0 shadow-sm">

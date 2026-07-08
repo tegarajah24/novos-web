@@ -2135,7 +2135,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.uploads.forEach(u => {
                     formData.append('logo_files[]', u.file);
                 });
-                formData.append('logo', this.uploads[0].file);
             }
             if (this.refUploads.length > 0) {
                 this.refUploads.forEach(ref => {

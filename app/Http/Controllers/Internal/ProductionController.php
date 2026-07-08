@@ -37,8 +37,10 @@ class ProductionController extends Controller
                     ->values();
 
                 $originalNotes = $dr?->additional_notes ?? $order->notes;
-                $allNotes = $originalNotes
-                    ? collect([$originalNotes])->merge($prodHistoryNotes)->implode("\n\n")
+                $cleanNotes = preg_replace('/^(Jenis Potongan:.*|Model Lengan & Jahitan:.*)\n?/m', '', $originalNotes);
+                $cleanNotes = trim($cleanNotes);
+                $allNotes = $cleanNotes
+                    ? collect([$cleanNotes])->merge($prodHistoryNotes)->implode("\n\n")
                     : ($prodHistoryNotes->isNotEmpty() ? $prodHistoryNotes->implode("\n\n") : 'Tidak ada catatan');
 
                 // History notes with origin
@@ -92,6 +94,8 @@ class ProductionController extends Controller
                     'material'          => $dr?->material ?? '-',
                     'collar'            => $dr?->collar_style ?? '-',
                     'pattern'           => $dr?->motif ?? '-',
+                    'jenis_potongan'    => $dr?->jenis_potongan ?? '-',
+                    'model_lengan_jahitan' => $dr?->lengan_jahitan ?? '-',
                     'item_details'      => $order->itemDetails?->map(fn($d) => [
                         'no_punggung'  => $d->no_punggung,
                         'nama_punggung' => $d->nama_punggung,
@@ -102,11 +106,14 @@ class ProductionController extends Controller
                     'notes'             => nl2br(e($allNotes)),
                     'total_qty'         => $order->orderItems->sum('qty'),
                     'sizes'             => $sizes,
-                    'reference_files'   => array_merge(
-                        $dr?->logo ? [asset('storage/' . $dr->logo)] : [],
-                        collect($dr?->design_files ?? [])->map(fn($f) => asset('storage/' . $f['path']))->values()->toArray(),
-                    ),
-                    'design_files'      => [],
+                    'reference_files'   => $dr?->logo ? [asset('storage/' . $dr->logo)] : [],
+                    'design_files'      => collect($dr?->design_files ?? [])
+                        ->reject(fn($f) => isset($f['role'])) // hanya file dari tim design (tanpa role)
+                        ->map(fn($f) => [
+                            'name' => $f['name'] ?? 'File',
+                            'type' => $f['type'] ?? 'application/octet-stream',
+                            'path' => asset('storage/' . $f['path']),
+                        ])->values()->toArray(),
                     'history_notes'     => $historyNotes,
                 ];
             })
