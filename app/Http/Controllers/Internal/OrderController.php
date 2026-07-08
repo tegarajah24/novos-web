@@ -1036,9 +1036,11 @@ class OrderController extends Controller
             $sheet->getRowDimension($currentRow)->setRowHeight(20);
             $currentRow++;
         }
+        $sheet->getStyle('A4:J' . ($currentRow - 1))->applyFromArray($borderBox);
 
         // ── SIZING GRID SECTION ──
         $currentRow += 2;
+        $sizingStartRow = $currentRow;
         $sheet->setCellValue('A' . $currentRow, 'RINCIAN TOTAL UKURAN');
         $sheet->mergeCells('A' . $currentRow . ':J' . $currentRow);
         $sheet->getStyle('A' . $currentRow . ':J' . $currentRow)->applyFromArray($styleHeader);
@@ -1158,6 +1160,7 @@ class OrderController extends Controller
         $sheet->getStyle('A' . $currentRow . ':J' . $currentRow)->applyFromArray($borderThin);
         $sheet->getRowDimension($currentRow)->setRowHeight(20);
         $currentRow++;
+        $sheet->getStyle('A' . $sizingStartRow . ':J' . ($currentRow - 1))->applyFromArray($borderBox);
 
 
         // ── IMAGES BOX SECTION ──
@@ -1390,11 +1393,12 @@ class OrderController extends Controller
             $sheet->getRowDimension($rightRow)->setRowHeight(20);
             $rightRow++;
         }
-
-
+        $sheet->getStyle('L4:P' . ($rightRow - 1))->applyFromArray($borderBox);
+ 
+ 
         // ── VALIDASI PRODUKSI SECTION ──
         $maxRow = max($leftMaxRow, $rightRow) + 3;
-
+ 
         $sheet->setCellValue('A' . $maxRow, 'DESAINER');
         $sheet->mergeCells('A' . $maxRow . ':C' . $maxRow);
         $sheet->getStyle('A' . $maxRow . ':C' . $maxRow)->applyFromArray([
