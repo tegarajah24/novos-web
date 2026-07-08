@@ -835,7 +835,17 @@
     </div>
 
     {{-- Micro-Break Reminder --}}
-    <div x-data="microBreakReminder()" x-init="init()">
+    @php
+        $rawReminders = json_decode(App\Models\Setting::get('reminder_times', '[
+            {"time":"10:00","message":"Saatnya Micro-Break! \u2014 Minum air putih, peregangan ringan, dan tarik napas 3 kali."},
+            {"time":"13:00","message":"Istirahat Sejenak \u2014 Lakukan teknik STOP: Stop, Take a breath, Observe, Proceed."},
+            {"time":"15:00","message":"Sudahkah Anda Beristirahat? \u2014 Berdiri, tarik napas, dan kembali bekerja dengan lebih segar."}
+        ]'), true);
+        if ($rawReminders && is_array($rawReminders) && isset($rawReminders[0]) && is_string($rawReminders[0])) {
+            $rawReminders = array_map(fn($t) => ['time' => $t, 'message' => 'Waktunya Micro-Break!'], $rawReminders);
+        }
+    @endphp
+    <div x-data="microBreakReminder({{ json_encode($rawReminders) }})" x-init="init()">
         {{-- Test button --}}
         <button @click="showTestMenu = !showTestMenu"
             class="fixed bottom-6 left-6 z-[9999] w-10 h-10 bg-gray-200 hover:bg-gray-300 text-gray-500 rounded-full shadow flex items-center justify-center transition-all"
@@ -846,9 +856,9 @@
         <div x-show="showTestMenu" x-cloak @click.away="showTestMenu = false"
             class="fixed bottom-20 left-6 z-[9999] bg-white border border-gray-100 rounded-xl shadow-xl p-3 space-y-1.5 min-w-[180px]">
             <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Test Reminder</p>
-            <button @click="triggerReminder(0)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">⏰ Jam 10.00</button>
-            <button @click="triggerReminder(1)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">🧠 Jam 13.00</button>
-            <button @click="triggerReminder(2)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">😊 Jam 15.00</button>
+            <template x-for="(r, i) in reminders" :key="i">
+                <button @click="triggerReminder(i)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg" x-text="r.timeLabel || r.time"></button>
+            </template>
         </div>
         <template x-teleport="body">
             <div x-show="activeReminder" x-cloak x-transition:enter="transition ease-out duration-300"
@@ -859,7 +869,6 @@
                 x-transition:leave-end="opacity-0 translate-y-4 translate-x-4"
                 class="fixed bottom-6 right-6 z-[9999] w-80">
                 <div class="bg-white border border-gray-100 rounded-2xl shadow-2xl p-5 h-44 flex flex-col">
-
                     <p class="font-semibold text-gray-900" x-text="activeReminder?.title"></p>
                     <div class="text-gray-600 text-sm leading-relaxed flex-1 flex items-center" x-html="activeReminder?.body"></div>
                     <button @click="dismissReminder()"
@@ -872,39 +881,27 @@
     </div>
 
     <script>
-        function microBreakReminder() {
+        function microBreakReminder(config = []) {
+            const slots = (config || []).map((item, i) => {
+                const [h, m] = item.time.split(':').map(Number);
+                return {
+                    key: String(i),
+                    hour: h,
+                    min: m,
+                    time: item.time,
+                    timeLabel: item.time,
+                    title: 'Micro-Break! ☕',
+                    body: item.message || 'Waktunya Micro-Break!'
+                };
+            });
+
             return {
                 shownSlots: JSON.parse(localStorage.getItem('microbreak_shown') || '[]'),
                 today: localStorage.getItem('microbreak_date') || '',
                 activeReminder: null,
                 showTestMenu: false,
-                reminders: [
-                    {
-                        key: '10',
-                        icon: '⏰',
-                        time: 'Pukul 10.00',
-                        title: 'Saatnya Micro-Break!',
-                        body: 'Minum air putih, peregangan ringan, dan tarik napas 3 kali. (3–5 menit)',
-                        hour: 10,
-                        min: 0
-                    }, {
-                        key: '13',
-                        icon: '🧠',
-                        time: 'Pukul 13.00',
-                        title: 'Istirahat Sejenak',
-                        body: 'Tubuh Anda juga membutuhkan perhatian. Lakukan teknik STOP — Stop, Take a breath, Observe, Proceed.',
-                        hour: 13,
-                        min: 0
-                    }, {
-                        key: '15',
-                        icon: '😊',
-                        time: 'Pukul 15.00',
-                        title: 'Sudahkah Anda Beristirahat?',
-                        body: 'Berdiri, tarik napas, dan kembali bekerja dengan lebih segar.',
-                        hour: 15,
-                        min: 0
-                    }
-                ],
+                reminders: slots,
+
                 init() {
                     const d = new Date().toDateString();
                     if (this.today !== d) {
@@ -918,6 +915,7 @@
                     this.checkTime();
                     setInterval(() => this.checkTime(), 60000);
                 },
+
                 checkTime() {
                     const now = new Date();
                     const h = now.getHours();
@@ -933,9 +931,11 @@
                         }
                     }
                 },
+
                 dismissReminder() {
                     this.activeReminder = null;
                 },
+
                 triggerReminder(index) {
                     this.activeReminder = this.reminders[index];
                     this.showTestMenu = false;

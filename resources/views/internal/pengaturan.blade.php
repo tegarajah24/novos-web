@@ -53,7 +53,7 @@
                                class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Telepon</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">No. Whatsapp</label>
                         <input type="text" x-model="form.company_phone" placeholder="0812-3456-7890"
                                class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
                     </div>
@@ -68,6 +68,34 @@
                     <textarea x-model="form.company_address" rows="3" placeholder="Jl. Contoh No. 1, Kota, Provinsi"
                               class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e] resize-none"></textarea>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Instagram</label>
+                    <input type="text" x-model="form.company_instagram" placeholder="@novosjersey"
+                           class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                </div>
+
+                {{-- Jam Operasional --}}
+                <div class="border-t border-gray-100 pt-5">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4">Jam Operasional</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Sen - Jum</label>
+                            <input type="text" x-model="form.hours_weekday" placeholder="08.00 - 17.00"
+                                   class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Sabtu</label>
+                            <input type="text" x-model="form.hours_saturday" placeholder="08.00 - 13.00"
+                                   class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Minggu</label>
+                            <input type="text" x-model="form.hours_sunday" placeholder="Libur"
+                                   class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-1">
                     <button type="submit" :disabled="saving"
                             class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all active:scale-95 disabled:opacity-50 shadow-md shadow-[#1a237e]/20">
@@ -437,6 +465,10 @@ function settingApp() {
             company_phone: '',
             company_email: '',
             company_address: '',
+            company_instagram: '',
+            hours_weekday: '08.00 - 17.00',
+            hours_saturday: '08.00 - 13.00',
+            hours_sunday: 'Libur',
         },
 
         appearance: { ...DEFAULT_APPEARANCE },
@@ -668,10 +700,14 @@ function settingApp() {
         },
 
         init() {
-            this.form.company_name    = @json($settings['company_name'] ?? '');
-            this.form.company_phone   = @json($settings['company_phone'] ?? '');
-            this.form.company_email   = @json($settings['company_email'] ?? '');
-            this.form.company_address = @json($settings['company_address'] ?? '');
+            this.form.company_name      = @json($settings['company_name'] ?? '');
+            this.form.company_phone     = @json($settings['company_phone'] ?? '');
+            this.form.company_email     = @json($settings['company_email'] ?? '');
+            this.form.company_address   = @json($settings['company_address'] ?? '');
+            this.form.company_instagram = @json($settings['company_instagram'] ?? '');
+            this.form.hours_weekday     = @json($settings['hours_weekday'] ?? '08.00 - 17.00');
+            this.form.hours_saturday    = @json($settings['hours_saturday'] ?? '08.00 - 13.00');
+            this.form.hours_sunday      = @json($settings['hours_sunday'] ?? 'Libur');
 
             const saved = localStorage.getItem('novos_appearance');
             if (saved) {
