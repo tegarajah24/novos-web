@@ -10,6 +10,7 @@ use App\Http\Controllers\Customer\NotificationController;
 use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\ReviewController;
 use App\Http\Controllers\Api\SummaryController;
 use App\Http\Controllers\Api\WilayahController;
 use App\Models\Wilayah;
@@ -79,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/address/{address}', [AddressController::class, 'update'])->name('address.update');
     Route::delete('/address/{address}', [AddressController::class, 'destroy'])->name('address.destroy');
     Route::patch('/profile/contact', [AddressController::class, 'updateProfile'])->name('profile.update.contact');
+    Route::post('/profile/pembelian/review', [ReviewController::class, 'store'])->name('profile.pembelian.review');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');

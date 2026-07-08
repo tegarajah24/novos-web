@@ -345,7 +345,7 @@
                     $stats = [
                         [$totalOrders . '+', 'Pesanan Selesai'],
                         [$totalProducts . '+', 'Desain Tersedia'],
-                        ['4.9★', 'Rating Customer'],
+                        [$formattedRating, 'Rating Customer'],
                         ['3-7 Hari', 'Waktu Pengerjaan'],
                     ];
                 @endphp
@@ -363,94 +363,115 @@
 {{-- ============================================================ --}}
 {{-- 5. TESTIMONI — Bento Grid Asimetris --}}
 {{-- ============================================================ --}}
-<section class="bg-[#f8f9fa] py-20">
+<section class="bg-[#f8f9fa] py-20" x-data="{ showAllModal: false }">
     <div class="max-w-[1200px] mx-auto px-6">
-
+ 
         <h2 class="text-4xl font-bold text-[#1a237e] text-center mb-12" data-aos="fade-up">Apa Kata Mereka?</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
-
-            {{-- Testi 1 — besar, col-span-2 row-span-2 --}}
-            <div class="bento-card md:col-span-2 md:row-span-2 bg-white rounded-2xl p-8 md:p-10 shadow-sm" data-aos="fade-up" data-aos-delay="100">
-                {{-- stars --}}
-                <div class="flex items-center gap-1 mb-5">
-                    @for($s = 0; $s < 5; $s++)
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#00e5ff">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    @endfor
-                </div>
-                {{-- quote besar --}}
-                <p class="text-lg md:text-xl text-[#424242] leading-relaxed mb-6">
-                    &ldquo;Jerseynya bagus banget, bahan adem dan jahitannya rapi. Desain sesuai request. Pasti order lagi!&rdquo;
-                </p>
-                {{-- author --}}
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-[#e0f7fa] flex-shrink-0 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-[#00acc1]" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 8a7 7 0 0 1 14 0H5z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-base font-bold text-[#212121]">Rina A.</p>
-                        <p class="text-sm text-[#9e9e9e]">Customer Novos</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Testi 2 --}}
-            <div class="bento-card bg-white rounded-2xl p-6 shadow-sm" data-aos="fade-up" data-aos-delay="200">
-                {{-- stars --}}
-                <div class="flex items-center gap-0.5 mb-3">
-                    @for($s = 0; $s < 5; $s++)
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#00e5ff">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    @endfor
-                </div>
-                <p class="text-sm text-[#616161] italic leading-relaxed mb-4">
-                    &ldquo;Proses cepat banget, 5 hari jadi. Komunikasi dengan admin juga responsif. Recommended!&rdquo;
-                </p>
-                <div class="border-t border-[#e5e7eb] pt-4 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-[#e8eaf6] flex-shrink-0 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#9fa8da]" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 8a7 7 0 0 1 14 0H5z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-bold text-[#212121]">Dimas P.</p>
-                        <p class="text-xs text-[#9e9e9e]">Customer Novos</p>
-                    </div>
+ 
+        <div x-data="reviewCarousel(@json($allReviews))" x-init="startAutoplay()" class="relative">
+            <div class="overflow-hidden">
+                <div class="flex gap-6 transition-all duration-700 ease-in-out" :style="`transform: translateX(-${activeIndex * (100 / cardsPerView)}%)`" style="width: 100%;">
+                    <template x-for="(review, index) in reviews" :key="index">
+                        <div class="shrink-0 px-3 animate-fade-in" :style="`width: calc(100% / ${cardsPerView});`">
+                            <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 h-64 flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                                <div>
+                                    {{-- stars --}}
+                                    <div class="flex items-center gap-1 mb-4">
+                                        <template x-for="star in Array.from({length: review.rating})">
+                                            <svg class="w-4 h-4 text-[#00e5ff]" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        </template>
+                                    </div>
+                                    <p class="text-sm text-[#424242] leading-relaxed mb-6 font-medium line-clamp-4" x-text="'“' + review.comment + '”'"></p>
+                                </div>
+                                <div class="flex items-center gap-3 pt-4 border-t border-gray-100 mt-auto">
+                                    <div class="w-10 h-10 rounded-full bg-[#e0f7fa] flex-shrink-0 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-[#00acc1]" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 8a7 7 0 0 1 14 0H5z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-[#212121]" x-text="review.user_name"></p>
+                                        <p class="text-xs text-[#9e9e9e]">Customer Novos</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
-
-            {{-- Testi 3 --}}
-            <div class="bento-card bg-white rounded-2xl p-6 shadow-sm" data-aos="fade-up" data-aos-delay="300">
-                {{-- stars --}}
-                <div class="flex items-center gap-0.5 mb-3">
-                    @for($s = 0; $s < 5; $s++)
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#00e5ff">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    @endfor
-                </div>
-                <p class="text-sm text-[#616161] italic leading-relaxed mb-4">
-                    &ldquo;Hasil jahitan rapi, sablon nempel kuat, warna sesuai mockup. Tim Novos profesional banget.&rdquo;
-                </p>
-                <div class="border-t border-[#e5e7eb] pt-4 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-[#e8eaf6] flex-shrink-0 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#9fa8da]" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 8a7 7 0 0 1 14 0H5z"/>
+            
+            {{-- Prev / Next Navigation Buttons --}}
+            <div class="flex justify-center gap-3 mt-8">
+                <button @click="prev(); stopAutoplay(); startAutoplay()" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#1a237e] hover:text-white transition-all shadow-sm cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button @click="next(); stopAutoplay(); startAutoplay()" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#1a237e] hover:text-white transition-all shadow-sm cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+ 
+        {{-- Button "Lihat Semua Ulasan" --}}
+        <div class="flex justify-center mt-8" data-aos="fade-up">
+            <button @click="showAllModal = true" class="inline-flex items-center gap-2 px-6 py-3 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shadow-md cursor-pointer">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                Lihat Semua Ulasan Terbaru
+            </button>
+        </div>
+    </div>
+ 
+    {{-- Modal Semua Ulasan --}}
+    <template x-teleport="body">
+        <div x-show="showAllModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45" x-cloak @keydown.escape.window="showAllModal = false">
+            <div x-show="showAllModal" x-transition.opacity class="fixed inset-0 bg-black/40"></div>
+            <div x-show="showAllModal" x-transition.scale.origin.bottom class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[85vh]">
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#1a237e]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                         </svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-bold text-[#212121]">Sari W.</p>
-                        <p class="text-xs text-[#9e9e9e]">Customer Novos</p>
-                    </div>
+                        Semua Ulasan Customer
+                    </h3>
+                    <button @click="showAllModal = false" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                
+                {{-- Body --}}
+                <div class="px-6 py-5 overflow-y-auto flex-1 space-y-4 bg-gray-50/50">
+                    <template x-for="(review, index) in allReviewsForModal" :key="index">
+                        <div class="p-5 rounded-xl border border-gray-200 bg-white flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-1">
+                                    <template x-for="star in Array.from({length: review.rating})">
+                                        <svg class="w-4 h-4 text-[#00e5ff]" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </template>
+                                </div>
+                                <span class="text-xs text-gray-400" x-text="review.created_at || 'Baru-baru ini'"></span>
+                            </div>
+                            <p class="text-sm text-gray-700 leading-relaxed mb-4 font-medium" x-text="review.comment"></p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-[#e0f7fa] flex items-center justify-center">
+                                    <svg class="w-4.5 h-4.5 text-[#00acc1]" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 8a7 7 0 0 1 14 0H5z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-800" x-text="review.user_name"></p>
+                                    <p class="text-[10px] text-gray-400">Customer Novos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
-    </div>
+    </template>
 </section>
 
 @endsection
@@ -471,5 +492,51 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
 });
+
+function reviewCarousel(allReviews) {
+    return {
+        reviews: allReviews,
+        activeIndex: 0,
+        cardsPerView: 3,
+        autoplayInterval: null,
+        init() {
+            this.updateCardsPerView();
+            window.addEventListener('resize', () => this.updateCardsPerView());
+        },
+        updateCardsPerView() {
+            if (window.innerWidth < 640) {
+                this.cardsPerView = 1;
+            } else if (window.innerWidth < 1024) {
+                this.cardsPerView = 2;
+            } else {
+                this.cardsPerView = 3;
+            }
+        },
+        startAutoplay() {
+            this.autoplayInterval = setInterval(() => {
+                this.next();
+            }, 5000);
+        },
+        stopAutoplay() {
+            if (this.autoplayInterval) clearInterval(this.autoplayInterval);
+        },
+        next() {
+            const maxIndex = this.reviews.length - this.cardsPerView;
+            if (this.activeIndex >= maxIndex) {
+                this.activeIndex = 0;
+            } else {
+                this.activeIndex++;
+            }
+        },
+        prev() {
+            const maxIndex = this.reviews.length - this.cardsPerView;
+            if (this.activeIndex <= 0) {
+                this.activeIndex = maxIndex > 0 ? maxIndex : 0;
+            } else {
+                this.activeIndex--;
+            }
+        }
+    }
+}
 </script>
 @endpush

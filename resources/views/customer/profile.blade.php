@@ -146,6 +146,21 @@
                                     </template>
                                 </div>
                                 <div class="flex gap-2 items-center">
+                                    <template x-if="order.status === 'selesai'">
+                                        <button @click="openReviewModal(order)" 
+                                                title="Berikan Ulasan" 
+                                                class="flex items-center gap-0.5 px-3 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors cursor-pointer mr-1">
+                                            <template x-for="i in 5">
+                                                <svg class="w-3.5 h-3.5" 
+                                                     :class="(order.review && order.review.rating >= i) ? 'text-[#00e5ff] fill-[#00e5ff]' : 'text-gray-300'"
+                                                     viewBox="0 0 24 24" 
+                                                     stroke="currentColor" 
+                                                     stroke-width="2">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                </svg>
+                                            </template>
+                                        </button>
+                                    </template>
                                     <button @click="openDetail(order)" class="px-4 py-2 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors">Lihat Detail Transaksi</button>
 
                                     <div class="relative">
@@ -317,6 +332,72 @@
                                 <button @click="closeDetail()" class="flex-1 py-2.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors">Tutup</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </template>
+ 
+            {{-- 1C. MODAL: BERIKAN ULASAN --}}
+            <template x-teleport="body">
+                <div x-show="showReviewModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45" @keydown.escape.window="showReviewModal = false">
+                    <div x-show="showReviewModal" x-transition.opacity class="fixed inset-0 bg-black/40"></div>
+                    <div x-show="showReviewModal" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden z-10">
+                        {{-- Header --}}
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                            <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-[#1a237e]" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                Berikan Ulasan Pesanan
+                            </h3>
+                            <button @click="showReviewModal = false" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+ 
+                        {{-- Body --}}
+                        <form @submit.prevent="saveReview()" class="p-6 space-y-6">
+                            {{-- Rating Stars --}}
+                            <div class="text-center space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700">Bagaimana kualitas produk kami?</label>
+                                <div class="flex justify-center items-center gap-1.5">
+                                    <template x-for="i in 5">
+                                        <button type="button" 
+                                                @click="reviewForm.rating = i" 
+                                                @mouseenter="hoverRating = i" 
+                                                @mouseleave="hoverRating = 0"
+                                                class="p-1 focus:outline-none transition-transform hover:scale-110 cursor-pointer">
+                                            <svg class="w-10 h-10 transition-colors" 
+                                                 :class="((hoverRating || reviewForm.rating) >= i) ? 'text-[#00e5ff] fill-[#00e5ff]' : 'text-gray-200'"
+                                                 viewBox="0 0 24 24" 
+                                                 stroke="currentColor" 
+                                                 stroke-width="1.5">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+ 
+                            {{-- Textarea Comment --}}
+                            <div class="space-y-1.5">
+                                <label class="block text-sm font-semibold text-gray-700">Tulis Ulasan Anda</label>
+                                <textarea x-model="reviewForm.comment" 
+                                          rows="4" 
+                                          placeholder="Bagikan pengalaman belanja Anda di Novos Jersey..."
+                                          class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900 resize-none"></textarea>
+                            </div>
+ 
+                            {{-- Actions --}}
+                            <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+                                <button type="button" @click="showReviewModal = false" class="flex-1 py-2.5 border border-gray-300 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-50 transition-colors bg-white">
+                                    Batal
+                                </button>
+                                <button type="submit" :disabled="reviewSaving" class="flex-1 py-2.5 bg-[#1a237e] text-white text-xs font-bold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer">
+                                    <svg x-show="reviewSaving" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                    <span x-text="reviewSaving ? 'Menyimpan...' : 'Simpan Ulasan'"></span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </template>
@@ -894,6 +975,11 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
         selectedOrder: null,
         currentPage: 1,
         perPage: 5,
+ 
+        showReviewModal: false,
+        reviewForm: { order_id: null, rating: 5, comment: '' },
+        hoverRating: 0,
+        reviewSaving: false,
 
         // Address management
         addresses: initialAddresses,
@@ -1254,6 +1340,64 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
 
         closeDetail() {
             this.selectedOrder = null;
+        },
+ 
+        openReviewModal(order) {
+            this.reviewForm.order_id = order.id;
+            this.reviewForm.rating = order.review ? order.review.rating : 5;
+            this.reviewForm.comment = order.review ? order.review.comment : '';
+            this.hoverRating = 0;
+            this.showReviewModal = true;
+        },
+ 
+        async saveReview() {
+            if (this.reviewSaving) return;
+            this.reviewSaving = true;
+ 
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+ 
+            try {
+                const res = await fetch('{{ route('profile.pembelian.review') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(this.reviewForm)
+                });
+                const data = await res.json();
+                this.reviewSaving = false;
+ 
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Ulasan Anda berhasil disimpan!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    this.showReviewModal = false;
+                    // Update dynamic review state in list
+                    const orderIdx = this.orders.findIndex(o => o.id === this.reviewForm.order_id);
+                    if (orderIdx !== -1) {
+                        this.orders[orderIdx].review = data.review;
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message
+                    });
+                }
+            } catch (e) {
+                this.reviewSaving = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal terhubung ke server.'
+                });
+            }
         },
 
         getJenisPotongan() {
