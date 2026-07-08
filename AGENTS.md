@@ -139,6 +139,62 @@ Sebuah fitur dianggap selesai jika:
 
 ---
 
+---
+
+## 📦 Aturan FilePond
+
+FilePond sudah terintegrasi sebagai library upload file utama. Detail:
+
+| Item | Keterangan |
+|---|---|
+| File entry | `resources/js/filepond.js` |
+| CSS/JS build | Via Vite, otomatis diinclude di semua layout |
+| Plugins | `image-preview`, `file-validate-type`, `file-validate-size`, `image-exif-orientation` |
+| Mode | Client-side (`instantUpload: false`, `allowProcess: false`) |
+| Komponen Blade | `<x-filepond-input>` |
+
+### Cara pakai
+
+**Paling sederhana** — tambahkan `class="filepond"` ke input file:
+```html
+<input type="file" class="filepond" multiple accept="image/*">
+```
+FilePond otomatis menginisialisasi semua input dengan class `filepond`.
+
+**Via component Blade:**
+```blade
+<x-filepond-input
+    name="logo_files[]"
+    label="Upload Logo"
+    accept="image/png,image/jpeg"
+    :multiple="true"
+    maxFileSize="5MB"
+    hint="PNG/JPG max 5MB"
+/>
+```
+
+**Ambil file dari FilePond saat submit (Alpine.js):**
+```js
+const pond = FilePond.find(document.querySelector('.filepond'))
+const fd = getFilePondFiles(pond, 'logo_files')
+// Gabung ke FormData utama
+const formData = new FormData(document.getElementById('myForm'))
+pond.getFiles().forEach(f => {
+    if (f.file instanceof File) formData.append('logo_files[]', f.file)
+})
+```
+
+**Hancurkan instance:**
+```js
+destroyFilePond('.filepond')
+// atau
+destroyFilePond(pondInstance)
+```
+
+**Akses global:** `window.FilePond`, `window.getFilePondFiles()`, `window.destroyFilePond()`
+
+---
+
 ## 🧪 Testing Status
 
 ### E2E Test: FullOrderFlowTest

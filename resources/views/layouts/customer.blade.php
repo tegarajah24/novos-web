@@ -13,8 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    {{-- Scripts (Vite: Tailwind + Alpine) --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Scripts (Vite: Tailwind + Alpine + FilePond) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/filepond.js'])
 
     {{-- Global styles --}}
     <style>
