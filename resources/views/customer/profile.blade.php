@@ -1020,7 +1020,8 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
                 .filter(item => item.is_selected)
                 .reduce((sum, item) => {
                     if (item.design_data) {
-                        const qty = Object.values(item.design_data.ukuran || {}).reduce((a, b) => a + (parseInt(b) || 0), 0);
+                        const ukuranQty = Object.values(item.design_data.ukuran || {}).reduce((a, b) => a + (parseInt(b) || 0), 0);
+                        const qty = item.design_data.total_qty || ukuranQty || item.qty || 1;
                         const basePrice = item.design_data.base_price_per_pcs || 85000;
                         const biayaPrioritas = item.design_data.biaya_prioritas || 0;
                         return sum + (qty * basePrice) + biayaPrioritas;
@@ -1501,6 +1502,8 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
         // ─── Cart Methods ───
 
         async toggleSelect(item) {
+            // Optimistic update — ubah state dulu agar total langsung reaktif
+            item.is_selected = !item.is_selected;
             try {
                 const res = await fetch('/cart/' + item.id + '/toggle-select', {
                     method: 'POST',
@@ -1510,10 +1513,14 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
                     },
                 });
                 const data = await res.json();
-                if (data.success) {
+                if (!data.success) {
+                    // Revert jika server gagal
                     item.is_selected = !item.is_selected;
                 }
-            } catch (e) {}
+            } catch (e) {
+                // Revert jika network error
+                item.is_selected = !item.is_selected;
+            }
         },
 
         async updateCartQty(item, newQty) {
