@@ -89,6 +89,11 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($product->image);
             }
             $data['image'] = app(ImageService::class)->compressAndStore($request->file('image'), 'products');
+        } elseif ($request->input('image') === '') {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $data['image'] = null;
         }
 
         if ($request->hasFile('image_belakang')) {
@@ -96,6 +101,11 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($product->image_belakang);
             }
             $data['image_belakang'] = app(ImageService::class)->compressAndStore($request->file('image_belakang'), 'products');
+        } elseif ($request->input('image_belakang') === '') {
+            if ($product->image_belakang) {
+                Storage::disk('public')->delete($product->image_belakang);
+            }
+            $data['image_belakang'] = null;
         }
 
         $product->update($data);

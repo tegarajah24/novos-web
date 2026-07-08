@@ -542,6 +542,9 @@ function kelolaProdukApp() {
             lengan_jahitan: ''
         },
 
+        originalImageDepan: null,
+        originalImageBelakang: null,
+
         initApp() {
             this.renderIcons();
             @if(auth()->user()->role->name === 'Super Admin')
@@ -579,6 +582,8 @@ function kelolaProdukApp() {
                 jenis_potongan: '',
                 lengan_jahitan: ''
             };
+            this.originalImageDepan = null;
+            this.originalImageBelakang = null;
             this.clearFilePonds();
             this.showModal = true;
             this.$nextTick(() => this.renderIcons());
@@ -597,6 +602,8 @@ function kelolaProdukApp() {
                 jenis_potongan: product.jenis_potongan || '',
                 lengan_jahitan: product.lengan_jahitan || ''
             };
+            this.originalImageDepan = product.image_depan || null;
+            this.originalImageBelakang = product.image_belakang || null;
             this.clearFilePonds();
             if (product.image_depan) {
                 const p1 = FilePond.find(document.querySelector('#pondDepan'));
@@ -639,12 +646,16 @@ function kelolaProdukApp() {
             if (pondDepan && pondDepan.getFiles().length > 0) {
                 const f = pondDepan.getFiles()[0];
                 if (f.file instanceof File) fd.append('image', f.file, f.file.name);
+            } else if (this.formMode === 'edit' && this.originalImageDepan) {
+                fd.append('image', '');
             }
 
             const pondBelakang = FilePond.find(document.querySelector('#pondBelakang'));
             if (pondBelakang && pondBelakang.getFiles().length > 0) {
                 const f = pondBelakang.getFiles()[0];
                 if (f.file instanceof File) fd.append('image_belakang', f.file, f.file.name);
+            } else if (this.formMode === 'edit' && this.originalImageBelakang) {
+                fd.append('image_belakang', '');
             }
 
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
