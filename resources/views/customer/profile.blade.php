@@ -495,56 +495,239 @@
                                             </button>
                                         </div>
                                     </div>
+                                    {{-- PANEL RINGKASAN DETAIL PESANAN --}}
                                     <div x-show="expandedItemId === item.id" x-cloak
-                                         x-transition:enter="transition ease-out duration-150"
+                                         x-transition:enter="transition ease-out duration-200"
                                          x-transition:enter-start="opacity-0 -translate-y-1"
                                          x-transition:enter-end="opacity-100 translate-y-0"
-                                         class="px-4 pb-4 pt-2 bg-gray-50/50 rounded-b-xl border-b border-gray-100">
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 translate-y-0"
+                                         x-transition:leave-end="opacity-0 -translate-y-1"
+                                         class="mt-2 mb-3 mx-1">
+
+                                        {{-- DESIGN ITEM --}}
                                         <template x-if="item.design_data">
-                                            <div class="space-y-2">
-                                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Ukuran & Jumlah</p>
-                                                <template x-for="(qty, sizeKey) in item.design_data.ukuran" :key="sizeKey">
-                                                    <div class="flex items-center gap-3">
-                                                        <span class="text-sm font-medium text-gray-700 w-16" x-text="sizeKey"></span>
-                                                        <div class="flex items-center gap-1">
-                                                            <button @click="updateDesignSize(item, sizeKey, parseInt(qty) - 1)" 
-                                                                class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
-                                                                :disabled="parseInt(qty) <= 1">
-                                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
-                                                            </button>
-                                                            <span class="w-8 text-center text-xs font-semibold text-gray-700" x-text="qty"></span>
-                                                            <button @click="updateDesignSize(item, sizeKey, parseInt(qty) + 1)"
-                                                                class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
-                                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                                                            </button>
+                                            <div class="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
+                                                <div class="p-5 space-y-4">
+
+                                                    {{-- Header --}}
+                                                    <div class="flex items-center gap-2 pb-3 border-b border-gray-100">
+                                                        <div class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0">
+                                                            <svg class="w-4 h-4 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                                        </div>
+                                                        <span class="font-bold text-sm text-gray-800">Ringkasan Detail Pesanan</span>
+                                                        <span class="ml-auto text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full" x-text="'Custom: ' + (item.design_data.team_name || '-')"></span>
+                                                    </div>
+
+                                                    {{-- SECTION 1: Informasi Pesanan --}}
+                                                    <div>
+                                                        <p class="text-xs font-bold text-[#1a237e] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                                            Informasi Pesanan
+                                                        </p>
+                                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Nama Pemesan</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.nama_pemesan || '-'"></span>
+                                                            </div>
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Nama Tim / Event</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.team_name || '-'"></span>
+                                                            </div>
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Nama Artikel</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.nama_artikel || '-'"></span>
+                                                            </div>
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Detail Sponsor</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.detail_sponsor || '-'"></span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </template>
-                                                <div class="pt-2 border-t border-gray-200 flex items-center gap-3">
-                                                    <button @click="checkoutFromCart(item)" class="px-4 py-1.5 bg-[#1a237e] text-white rounded-lg text-xs font-semibold hover:bg-[#283593] transition-colors">
-                                                        Pesan Sekarang
-                                                    </button>
+
+                                                    {{-- SECTION 2: Spesifikasi Jersey --}}
+                                                    <div class="pt-1">
+                                                        <p class="text-xs font-bold text-[#1a237e] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                                                            Spesifikasi Jersey
+                                                        </p>
+                                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Jenis Kerah</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.kerah || '-'"></span>
+                                                            </div>
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Jenis Potongan</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.jenis_potongan || '-'"></span>
+                                                            </div>
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Bahan Jersey</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.bahan || '-'"></span>
+                                                            </div>
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Model Lengan</span>
+                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.lengan_jahitan || '-'"></span>
+                                                            </div>
+                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Total Quantity</span>
+                                                                <span class="text-xs font-semibold text-[#1a237e]" x-text="(item.design_data.total_qty || item.qty || '-') + ' pcs'"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- SECTION 3: Detail Ukuran (tabel per size) --}}
+                                                    <template x-if="item.design_data.ukuran && Object.keys(item.design_data.ukuran).length > 0">
+                                                        <div class="pt-1">
+                                                            <p class="text-xs font-bold text-[#1a237e] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                                                                Detail Ukuran
+                                                            </p>
+                                                            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                                                                <table class="w-full text-xs">
+                                                                    <thead>
+                                                                        <tr class="bg-gray-50 text-gray-600 text-left">
+                                                                            <th class="px-3 py-2 font-semibold">Size</th>
+                                                                            <th class="px-3 py-2 font-semibold text-center">Qty (pcs)</th>
+                                                                            <th class="px-3 py-2 font-semibold text-right">Subtotal</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <template x-for="(qty, sizeKey) in item.design_data.ukuran" :key="sizeKey">
+                                                                            <tr class="border-t border-gray-100 even:bg-gray-50/50">
+                                                                                <td class="px-3 py-2 font-semibold text-gray-800" x-text="sizeKey"></td>
+                                                                                <td class="px-3 py-2 text-center">
+                                                                                    <div class="flex items-center justify-center gap-1">
+                                                                                        <button @click="updateDesignSize(item, sizeKey, parseInt(qty) - 1)"
+                                                                                            class="w-5 h-5 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
+                                                                                            :disabled="parseInt(qty) <= 1">
+                                                                                            <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
+                                                                                        </button>
+                                                                                        <span class="w-7 text-center font-bold text-gray-800" x-text="qty"></span>
+                                                                                        <button @click="updateDesignSize(item, sizeKey, parseInt(qty) + 1)"
+                                                                                            class="w-5 h-5 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
+                                                                                            <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="px-3 py-2 text-right font-semibold text-[#1a237e]"
+                                                                                    x-text="'Rp ' + (parseInt(qty) * (item.design_data.base_price_per_pcs || 85000)).toLocaleString('id-ID')">
+                                                                                </td>
+                                                                            </tr>
+                                                                        </template>
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                        <tr class="border-t-2 border-gray-200 bg-gray-50 font-bold text-gray-800">
+                                                                            <td class="px-3 py-2">Total</td>
+                                                                            <td class="px-3 py-2 text-center" x-text="(item.design_data.total_qty || item.qty) + ' pcs'"></td>
+                                                                            <td class="px-3 py-2 text-right text-[#1a237e]"
+                                                                                x-text="'Rp ' + parseInt(item.design_data.estimasi_total || 0).toLocaleString('id-ID')">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tfoot>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+
+                                                    {{-- Catatan: tabel detail jersey per pemain --}}
+                                                    <template x-if="item.design_data.catatan">
+                                                        <div class="pt-1">
+                                                            <p class="text-xs font-bold text-[#1a237e] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                                                                Detail Jersey per Pemain
+                                                            </p>
+                                                            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                                                                <table class="w-full text-xs">
+                                                                    <thead>
+                                                                        <tr class="bg-[#1a237e] text-white text-left">
+                                                                            <th class="px-3 py-2 font-semibold whitespace-nowrap">No Punggung</th>
+                                                                            <th class="px-3 py-2 font-semibold whitespace-nowrap">Nama Punggung</th>
+                                                                            <th class="px-3 py-2 font-semibold whitespace-nowrap">Model Lengan</th>
+                                                                            <th class="px-3 py-2 font-semibold">Size</th>
+                                                                            <th class="px-3 py-2 font-semibold">Keterangan</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <template x-for="(row, idx) in parseCatatan(item.design_data.catatan)" :key="idx">
+                                                                            <tr :class="idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'" class="border-t border-gray-100">
+                                                                                <td class="px-3 py-2 font-bold text-[#1a237e]" x-text="row.no"></td>
+                                                                                <td class="px-3 py-2 font-medium text-gray-800" x-text="row.nama"></td>
+                                                                                <td class="px-3 py-2 text-gray-700 whitespace-nowrap" x-text="row.model"></td>
+                                                                                <td class="px-3 py-2 text-center">
+                                                                                    <span class="inline-block bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded" x-text="row.size"></span>
+                                                                                </td>
+                                                                                <td class="px-3 py-2 text-gray-500" x-text="row.ket || '-'"></td>
+                                                                            </tr>
+                                                                        </template>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+
+                                                    {{-- CTA --}}
+                                                    <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-gray-100">
+                                                        <button @click="checkoutFromCart(item)"
+                                                            class="px-5 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#283593] transition-colors flex items-center gap-1.5">
+                                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                                                            Pesan Sekarang
+                                                        </button>
+                                                        <span class="text-xs text-gray-400">atau centang &amp; klik Pesan Sekarang di bawah untuk checkout bersama</span>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         </template>
+
+                                        {{-- CATALOG ITEM --}}
                                         <template x-if="!item.design_data">
-                                            <div class="flex items-center gap-3">
-                                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">Ukuran</p>
-                                                <span class="text-sm font-medium text-gray-700 w-16" x-text="item.size"></span>
-                                                <div class="flex items-center gap-1">
-                                                    <button @click="updateCartQty(item, item.qty - 1)" 
-                                                        class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
-                                                        :disabled="item.qty <= 1">
-                                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
-                                                    </button>
-                                                    <span class="w-8 text-center text-xs font-semibold text-gray-700" x-text="item.qty"></span>
-                                                    <button @click="updateCartQty(item, item.qty + 1)"
-                                                        class="w-6 h-6 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
-                                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                                                    </button>
+                                            <div class="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
+                                                <div class="p-5 space-y-4">
+                                                    <div class="flex items-center gap-2 pb-3 border-b border-gray-100">
+                                                        <div class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0">
+                                                            <svg class="w-4 h-4 text-[#1a237e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                                                        </div>
+                                                        <span class="font-bold text-sm text-gray-800">Detail Produk</span>
+                                                    </div>
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+                                                        <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                            <span class="text-xs text-gray-500 w-28 shrink-0">Nama Produk</span>
+                                                            <span class="text-xs font-medium text-gray-800" x-text="item.product?.name || '-'"></span>
+                                                        </div>
+                                                        <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                            <span class="text-xs text-gray-500 w-28 shrink-0">Kategori</span>
+                                                            <span class="text-xs font-medium text-gray-800" x-text="item.product?.category?.name || '-'"></span>
+                                                        </div>
+                                                        <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                            <span class="text-xs text-gray-500 w-28 shrink-0">Ukuran</span>
+                                                            <span class="text-xs font-medium text-gray-800" x-text="item.size"></span>
+                                                        </div>
+                                                        <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                            <span class="text-xs text-gray-500 w-28 shrink-0">Harga Satuan</span>
+                                                            <span class="text-xs font-semibold text-[#1a237e]" x-text="'Rp ' + parseInt(item.product?.price || 0).toLocaleString('id-ID')"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs text-gray-500 mb-2">Ubah Jumlah</p>
+                                                        <div class="flex items-center gap-2">
+                                                            <button @click="updateCartQty(item, item.qty - 1)"
+                                                                class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors"
+                                                                :disabled="item.qty <= 1">
+                                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+                                                            </button>
+                                                            <span class="w-10 text-center text-sm font-bold text-gray-800" x-text="item.qty"></span>
+                                                            <button @click="updateCartQty(item, item.qty + 1)"
+                                                                class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors">
+                                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                                                            </button>
+                                                            <span class="text-xs text-gray-400 ml-1">pcs</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </template>
+
+                                    </div>
                                     </div>
                                 </div>
                             </template>
@@ -1632,6 +1815,40 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
 
         toggleDetail(item) {
             this.expandedItemId = this.expandedItemId === item.id ? null : item.id;
+        },
+
+        // Parse string catatan CSV menjadi array baris tabel
+        // Format: NoPunggung,NamaPunggung,ModelLengan,Size[,Keterangan] per pemain
+        parseCatatan(catatan) {
+            if (!catatan) return [];
+            const parts = catatan.split(',').map(s => s.trim());
+            const rows = [];
+            // Coba deteksi apakah per 5 field (dengan keterangan) atau 4 field
+            // Heuristik: cek apakah elemen ke-4 (index 4) adalah angka/noPunggung atau teks
+            // Kita coba parse dengan greedy: ambil per 4, field ke-5 jika bukan angka/noPunggung = keterangan
+            let i = 0;
+            while (i < parts.length) {
+                if (!parts[i]) { i++; continue; }
+                const no   = parts[i]   || '-';
+                const nama = parts[i+1] || '-';
+                const model= parts[i+2] || '-';
+                const size = parts[i+3] || '-';
+                // Cek apakah parts[i+4] adalah keterangan atau no punggung berikutnya
+                let ket = '-';
+                let step = 4;
+                if (parts[i+4] !== undefined) {
+                    const next = parts[i+4].trim();
+                    const isNextNo = /^[0-9]/.test(next) || /^(captain|c|gk)/i.test(next);
+                    const isSleeve = /sleeve|polos|custom/i.test(next);
+                    if (!isNextNo && !isSleeve && next !== '') {
+                        ket = next;
+                        step = 5;
+                    }
+                }
+                rows.push({ no, nama, model, size, ket });
+                i += step;
+            }
+            return rows;
         },
 
         async updateDesignSize(item, sizeKey, newQty) {
