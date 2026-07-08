@@ -159,15 +159,16 @@
                                 File & Logo Referensi
                             </h4>
                             <div class="grid grid-cols-4 gap-4">
-                                 <template x-for="img in selectedOrder?.reference_files" :key="img">
-                                    <a :href="img" target="_blank"
-                                       class="aspect-square rounded-xl border border-gray-200 overflow-hidden bg-gray-100 relative group cursor-pointer hover:border-[#1a237e] hover:shadow-md transition-all block">
+                                 <template x-for="(img, idx) in selectedOrder?.reference_files" :key="img">
+                                    <div
+                                       class="aspect-square rounded-xl border border-gray-200 overflow-hidden bg-gray-100 relative group cursor-zoom-in hover:border-[#1a237e] hover:shadow-md transition-all block"
+                                       @click="openPhotoSwipeDesign(selectedOrder.reference_files, idx)">
                                         <img :src="img" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-[#1a237e]/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity gap-2">
                                             <i data-lucide="download" class="w-6 h-6 text-white"></i>
                                             <span class="text-white text-xs font-medium">Download</span>
                                         </div>
-                                    </a>
+                                    </div>
                                 </template>
                             </div>
                         </div>
@@ -403,7 +404,16 @@ function designApp() {
                 xhr.timeout = 120000;
                 xhr.send(formData);
             })
-        }
+        },
+
+        openPhotoSwipeDesign(files, index) {
+            var imageFiles = files.map(function(url) {
+                return { path: url, name: 'Referensi', type: 'image/' };
+            });
+            if (imageFiles.length && window.openPhotoSwipe) {
+                window.openPhotoSwipe(imageFiles, index);
+            }
+        },
     }
 }
 </script>

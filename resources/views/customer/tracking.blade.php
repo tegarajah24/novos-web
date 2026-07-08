@@ -165,8 +165,8 @@
                         <template x-if="order.design_files && order.design_files.length > 0">
                             <div class="grid sm:grid-cols-2 gap-4 h-full">
                                 <template x-for="(file, idx) in order.design_files" :key="idx">
-                                    <div class="relative group cursor-zoom-in rounded-xl overflow-hidden bg-gray-50 border border-gray-200 min-h-[260px]"
-                                         @click="openLightbox(file.url)"
+                                        <div class="relative group cursor-zoom-in rounded-xl overflow-hidden bg-gray-50 border border-gray-200 min-h-[260px]"
+                                             @click="window.openPhotoSwipe(order.design_files, idx)"
                                          :class="{ 'pointer-events-none': false }"
                                          :oncontextmenu="shared ? 'return false' : ''">
                                         <img :src="file.url" :alt="file.name"
@@ -262,23 +262,7 @@
             </div>
         </div>
 
-        {{-- Lightbox Fullscreen --}}
-        <div x-show="lightboxOpen" x-cloak
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @click="closeLightbox"
-             class="fixed inset-0 z-[999] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out">
-            <button @click="closeLightbox" class="absolute top-6 right-6 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-            <img :src="lightboxImage" alt="Preview Desain"
-                 class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
-                 @click.stop>
-        </div>
+        {{-- Lightbox via PhotoSwipe (di-handle oleh openPhotoSwipe) --}}
     </div>
 </div>
 
@@ -303,8 +287,6 @@ function trackingForm() {
         searchQuery: '',
         errorMessage: '',
         animateProgress: false,
-        lightboxOpen: false,
-        lightboxImage: '',
         revisionOpen: false,
         revisionNote: '',
         shared: @json($shared ?? false),
@@ -441,18 +423,6 @@ function trackingForm() {
             } catch (e) {
                 Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' });
             }
-        },
-
-        openLightbox(img) {
-            this.lightboxImage = img;
-            this.lightboxOpen = true;
-            document.body.style.overflow = 'hidden';
-        },
-
-        closeLightbox() {
-            this.lightboxOpen = false;
-            this.lightboxImage = '';
-            document.body.style.overflow = '';
         },
 
         toggleRevision() {

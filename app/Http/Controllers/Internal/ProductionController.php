@@ -109,11 +109,25 @@ class ProductionController extends Controller
                     'reference_files'   => $dr?->logo ? [asset('storage/' . $dr->logo)] : [],
                     'design_files'      => collect($dr?->design_files ?? [])
                         ->reject(fn($f) => isset($f['role'])) // hanya file dari tim design (tanpa role)
-                        ->map(fn($f) => [
-                            'name' => $f['name'] ?? 'File',
-                            'type' => $f['type'] ?? 'application/octet-stream',
-                            'path' => asset('storage/' . $f['path']),
-                        ])->values()->toArray(),
+                        ->map(function ($f) {
+                            $fullPath = storage_path('app/public/' . $f['path']);
+                            $width = null;
+                            $height = null;
+                            if (isset($f['type']) && str_starts_with($f['type'], 'image/') && file_exists($fullPath)) {
+                                $imgSize = @getimagesize($fullPath);
+                                if ($imgSize) {
+                                    $width = $imgSize[0];
+                                    $height = $imgSize[1];
+                                }
+                            }
+                            return [
+                                'name'   => $f['name'] ?? 'File',
+                                'type'   => $f['type'] ?? 'application/octet-stream',
+                                'path'   => asset('storage/' . $f['path']),
+                                'width'  => $width,
+                                'height' => $height,
+                            ];
+                        })->values()->toArray(),
                     'history_notes'     => $historyNotes,
                 ];
             })

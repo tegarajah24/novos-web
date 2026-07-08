@@ -431,10 +431,17 @@ if (!empty($order['item_details'])) {
                 Logo Tim
             </h3>
             <div class="grid grid-cols-4 gap-4 mb-8">
+                @php $logoIdx = 0; @endphp
                 @forelse(collect($order['design_files'])->where('type', 'logo') as $f)
+                @php
+                    $isImg = isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/');
+                    $currentIdx = $logoIdx;
+                    $logoIdx++;
+                @endphp
                 <div class="relative group bg-gray-100 rounded-xl aspect-square border border-gray-200 hover:border-[#1a237e]/40 transition-colors overflow-hidden">
-                    @if(isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
-                        <img src="{{ $f['url'] }}" alt="{{ $f['name'] }}" class="w-full h-full object-cover">
+                    @if($isImg)
+                        <img src="{{ $f['url'] }}" alt="{{ $f['name'] }}" class="w-full h-full object-cover cursor-zoom-in"
+                             onclick="PhotoSwipePreview.open('logos', {{ $currentIdx }})">
                     @else
                         <div class="w-full h-full flex flex-col items-center justify-center gap-2">
                             <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
@@ -461,10 +468,17 @@ if (!empty($order['item_details'])) {
                 Referensi Desain
             </h3>
             <div class="grid grid-cols-4 gap-4">
+                @php $desainIdx = 0; @endphp
                 @forelse(collect($order['design_files'])->where('type', 'design') as $f)
+                @php
+                    $isImg = isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/');
+                    $currentIdx = $desainIdx;
+                    $desainIdx++;
+                @endphp
                 <div class="relative group bg-gray-100 rounded-xl aspect-square border border-gray-200 hover:border-[#1a237e]/40 transition-colors overflow-hidden">
-                    @if(isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
-                        <img src="{{ $f['url'] }}" alt="{{ $f['name'] }}" class="w-full h-full object-cover">
+                    @if($isImg)
+                        <img src="{{ $f['url'] }}" alt="{{ $f['name'] }}" class="w-full h-full object-cover cursor-zoom-in"
+                             onclick="PhotoSwipePreview.open('designs', {{ $currentIdx }})">
                     @else
                         <div class="w-full h-full flex flex-col items-center justify-center gap-2">
                             <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
@@ -485,6 +499,40 @@ if (!empty($order['item_details'])) {
                 @endforelse
             </div>
         </div>
+
+        @php
+            $allImages = collect($order['design_files'])
+                ->filter(fn($f) => isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
+                ->map(fn($f) => ['src' => $f['url'], 'alt' => $f['name'], 'width' => 1200, 'height' => 1200])
+                ->values()
+                ->toArray();
+
+            $logoImages = collect($order['design_files'])
+                ->where('type', 'logo')
+                ->filter(fn($f) => isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
+                ->map(fn($f) => ['src' => $f['url'], 'alt' => $f['name'], 'width' => 1200, 'height' => 1200])
+                ->values()
+                ->toArray();
+
+            $designImages = collect($order['design_files'])
+                ->where('type', 'design')
+                ->filter(fn($f) => isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
+                ->map(fn($f) => ['src' => $f['url'], 'alt' => $f['name'], 'width' => 1200, 'height' => 1200])
+                ->values()
+                ->toArray();
+        @endphp
+        <script>
+        window.PhotoSwipePreview = {
+            logos: @json($logoImages),
+            designs: @json($designImages),
+            open: function(category, index) {
+                var files = this[category];
+                if (files && files.length > 0 && window.openPhotoSwipe) {
+                    window.openPhotoSwipe(files, index);
+                }
+            }
+        };
+        </script>
 
         {{-- History Catatan --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">

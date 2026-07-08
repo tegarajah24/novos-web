@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     {{-- Scripts --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/filepond.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/filepond.js', 'resources/js/photoswipe.js'])
     @notifyCss
     @stack('styles')
     

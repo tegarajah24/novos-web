@@ -25,6 +25,7 @@
         "filepond-plugin-image-preview": "^4.6.12",
         "filepond-plugin-image-resize": "^2.0.10",
         "lucide": "^1.17.0",
+        "photoswipe": "^5.4.4",
         "sweetalert2": "^11.26.25",
         "tailwindcss-animate": "^1.0.7"
     }

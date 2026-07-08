@@ -243,11 +243,20 @@
                                 File Desain & Pola Cetak (Dari Tim Design)
                             </h4>
                             <div class="space-y-2">
-                                <template x-for="file in selectedOrder?.design_files" :key="file.name">
+                                <template x-for="(file, fi) in selectedOrder?.design_files" :key="file.name">
                                     <div class="flex items-center gap-3 p-2.5 bg-blue-50/50 border border-blue-100 rounded-lg">
-                                        <div class="w-8 h-8 rounded bg-white flex items-center justify-center shrink-0 shadow-sm">
-                                            <i data-lucide="file" class="w-4 h-4 text-[#1a237e]"></i>
-                                        </div>
+                                        <!-- Image thumbnail (circular) or generic icon -->
+                                        <template x-if="file.type?.startsWith('image/')">
+                                            <img :src="file.path"
+                                                @click="window.openPhotoSwipe(selectedOrder.design_files, fi)"
+                                                class="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm border-2 border-blue-200 cursor-zoom-in hover:opacity-80 transition-opacity"
+                                                :title="'Lihat ' + file.name">
+                                        </template>
+                                        <template x-if="!file.type?.startsWith('image/')">
+                                            <div class="w-10 h-10 rounded bg-white flex items-center justify-center shrink-0 shadow-sm border border-gray-200">
+                                                <i data-lucide="file" class="w-5 h-5 text-[#1a237e]"></i>
+                                            </div>
+                                        </template>
                                         <div class="flex-1 min-w-0">
                                             <p class="text-xs font-medium text-gray-800 truncate" x-text="file.name"></p>
                                             <p class="text-[10px] text-gray-400" x-text="file.type"></p>
