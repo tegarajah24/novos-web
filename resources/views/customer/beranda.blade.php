@@ -363,12 +363,12 @@
 {{-- ============================================================ --}}
 {{-- 5. TESTIMONI — Bento Grid Asimetris --}}
 {{-- ============================================================ --}}
-<section class="bg-[#f8f9fa] py-20" x-data="{ showAllModal: false }">
+<section class="bg-[#f8f9fa] py-20" x-data="{ showAllModal: false, allReviews: window.berandaAllReviewsForModal }">
     <div class="max-w-[1200px] mx-auto px-6">
  
         <h2 class="text-4xl font-bold text-[#1a237e] text-center mb-12" data-aos="fade-up">Apa Kata Mereka?</h2>
  
-        <div x-data="reviewCarousel(@json($allReviews))" x-init="startAutoplay()" class="relative">
+        <div x-data="reviewCarousel(window.berandaReviews)" x-init="startAutoplay()" class="relative">
             <div class="overflow-hidden">
                 <div class="flex gap-6 transition-all duration-700 ease-in-out" :style="`transform: translateX(-${activeIndex * (100 / cardsPerView)}%)`" style="width: 100%;">
                     <template x-for="(review, index) in reviews" :key="index">
@@ -442,7 +442,7 @@
                 
                 {{-- Body --}}
                 <div class="px-6 py-5 overflow-y-auto flex-1 space-y-4 bg-gray-50/50">
-                    <template x-for="(review, index) in allReviewsForModal" :key="index">
+                    <template x-for="(review, index) in allReviews" :key="index">
                         <div class="p-5 rounded-xl border border-gray-200 bg-white flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-1">
@@ -478,6 +478,9 @@
 
 @push('scripts')
 <script>
+window.berandaReviews = @json($allReviews);
+window.berandaAllReviewsForModal = @json($allReviewsForModal);
+
 document.addEventListener('DOMContentLoaded', function() {
     var observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
