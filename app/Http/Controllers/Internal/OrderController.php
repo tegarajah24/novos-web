@@ -1155,86 +1155,108 @@ class OrderController extends Controller
 
 
         // ── IMAGES BOX SECTION ──
-        $currentRow += 2;
-        $sheet->setCellValue('A' . $currentRow, 'REFERENSI DESAIN & LOGO');
-        $sheet->mergeCells('A' . $currentRow . ':J' . $currentRow);
-        $sheet->getStyle('A' . $currentRow . ':J' . $currentRow)->applyFromArray($styleHeader);
-        $sheet->getRowDimension($currentRow)->setRowHeight(22);
-        $currentRow++;
+        $logoPath = $order->designRequest?->logo;
+        $designFiles = $order->designRequest?->design_files ?? [];
 
-        $logoLabelRow = $currentRow;
-        $sheet->setCellValue('A' . $logoLabelRow, 'Logo Tim');
-        $sheet->mergeCells('A' . $logoLabelRow . ':D' . $logoLabelRow);
-        $sheet->getStyle('A' . $logoLabelRow . ':D' . $logoLabelRow)->applyFromArray($styleSubHeader);
-
-        $sheet->setCellValue('F' . $logoLabelRow, 'Referensi Desain');
-        $sheet->mergeCells('F' . $logoLabelRow . ':J' . $logoLabelRow);
-        $sheet->getStyle('F' . $logoLabelRow . ':J' . $logoLabelRow)->applyFromArray($styleSubHeader);
-        $sheet->getRowDimension($logoLabelRow)->setRowHeight(20);
-        $currentRow++;
-
-        $imageStartRow = $currentRow;
-
-        // Merge image frame cells
-        $sheet->mergeCells('A' . $imageStartRow . ':D' . ($imageStartRow + 10));
-        $sheet->getStyle('A' . $imageStartRow . ':D' . ($imageStartRow + 10))->applyFromArray($borderBox);
-
-        $sheet->mergeCells('F' . $imageStartRow . ':J' . ($imageStartRow + 10));
-        $sheet->getStyle('F' . $imageStartRow . ':J' . ($imageStartRow + 10))->applyFromArray($borderBox);
-
-        for ($r = $imageStartRow; $r <= $imageStartRow + 10; $r++) {
-            $sheet->getRowDimension($r)->setRowHeight(18);
+        $imagesToDraw = [];
+        if ($logoPath) {
+            $imagesToDraw[] = [
+                'type' => 'logo',
+                'label' => 'Logo Tim',
+                'path' => $logoPath
+            ];
         }
 
-        // Draw Images
-        if ($order->designRequest) {
-            $logoPath = $order->designRequest->logo;
-            $designFiles = $order->designRequest->design_files ?? [];
-
-            // Draw Logo Tim
-            if ($logoPath) {
-                $fullLogoPath = storage_path('app/public/' . $logoPath);
-                if (file_exists($fullLogoPath)) {
-                    try {
-                        $drawingLogo = new Drawing();
-                        $drawingLogo->setPath($fullLogoPath);
-                        $drawingLogo->setHeight(160);
-                        $drawingLogo->setCoordinates('B' . ($imageStartRow + 1));
-                        $drawingLogo->setWorksheet($sheet);
-                    } catch (\Exception $e) {
-                        // ignore drawing fail
-                    }
-                }
-            }
-
-            // Draw Referensi Desain
-            $refPath = null;
-            if ($designFiles) {
-                foreach ($designFiles as $f) {
-                    $path = $f['path'] ?? null;
-                    if ($path && $path !== $logoPath) {
-                        $refPath = $path;
-                        break;
-                    }
-                }
-            }
-
-            if ($refPath) {
-                $fullRefPath = storage_path('app/public/' . $refPath);
-                if (file_exists($fullRefPath)) {
-                    try {
-                        $drawingRef = new Drawing();
-                        $drawingRef->setPath($fullRefPath);
-                        $drawingRef->setHeight(160);
-                        $drawingRef->setCoordinates('G' . ($imageStartRow + 1));
-                        $drawingRef->setWorksheet($sheet);
-                    } catch (\Exception $e) {
-                        // ignore drawing fail
-                    }
+        $refIndex = 1;
+        if ($designFiles) {
+            foreach ($designFiles as $f) {
+                $path = $f['path'] ?? null;
+                if ($path && $path !== $logoPath) {
+                    $imagesToDraw[] = [
+                        'type' => 'design',
+                        'label' => 'Referensi Desain ' . $refIndex,
+                        'path' => $path
+                    ];
+                    $refIndex++;
                 }
             }
         }
-        $leftMaxRow = $imageStartRow + 10;
+
+        if (!empty($imagesToDraw)) {
+            $currentRow += 2;
+            $sheet->setCellValue('A' . $currentRow, 'REFERENSI DESAIN & LOGO');
+            $sheet->mergeCells('A' . $currentRow . ':J' . $currentRow);
+            $sheet->getStyle('A' . $currentRow . ':J' . $currentRow)->applyFromArray($styleHeader);
+            $sheet->getRowDimension($currentRow)->setRowHeight(22);
+            $currentRow++;
+
+            // Draw in pairs (2 per row)
+            for ($i = 0; $i < count($imagesToDraw); $i += 2) {
+                $img1 = $imagesToDraw[$i];
+                $img2 = $imagesToDraw[$i + 1] ?? null;
+
+                // Labels Row
+                $labelRow = $currentRow;
+                $sheet->setCellValue('A' . $labelRow, $img1['label']);
+                $sheet->mergeCells('A' . $labelRow . ':D' . $labelRow);
+                $sheet->getStyle('A' . $labelRow . ':D' . $labelRow)->applyFromArray($styleSubHeader);
+
+                if ($img2) {
+                    $sheet->setCellValue('F' . $labelRow, $img2['label']);
+                    $sheet->mergeCells('F' . $labelRow . ':J' . $labelRow);
+                    $sheet->getStyle('F' . $labelRow . ':J' . $labelRow)->applyFromArray($styleSubHeader);
+                }
+                $sheet->getRowDimension($labelRow)->setRowHeight(20);
+                $currentRow++;
+
+                // Image Box Row (11 rows height)
+                $imageStartRow = $currentRow;
+                $sheet->mergeCells('A' . $imageStartRow . ':D' . ($imageStartRow + 10));
+                $sheet->getStyle('A' . $imageStartRow . ':D' . ($imageStartRow + 10))->applyFromArray($borderBox);
+
+                if ($img2) {
+                    $sheet->mergeCells('F' . $imageStartRow . ':J' . ($imageStartRow + 10));
+                    $sheet->getStyle('F' . $imageStartRow . ':J' . ($imageStartRow + 10))->applyFromArray($borderBox);
+                }
+
+                for ($r = $imageStartRow; $r <= $imageStartRow + 10; $r++) {
+                    $sheet->getRowDimension($r)->setRowHeight(18);
+                }
+
+                // Draw Image 1
+                $fullPath1 = storage_path('app/public/' . $img1['path']);
+                if (file_exists($fullPath1)) {
+                    try {
+                        $drawing1 = new Drawing();
+                        $drawing1->setPath($fullPath1);
+                        $drawing1->setHeight(160);
+                        $drawing1->setCoordinates('B' . ($imageStartRow + 1));
+                        $drawing1->setWorksheet($sheet);
+                    } catch (\Exception $e) {
+                        // ignore fail
+                    }
+                }
+
+                // Draw Image 2
+                if ($img2) {
+                    $fullPath2 = storage_path('app/public/' . $img2['path']);
+                    if (file_exists($fullPath2)) {
+                        try {
+                            $drawing2 = new Drawing();
+                            $drawing2->setPath($fullPath2);
+                            $drawing2->setHeight(160);
+                            $drawing2->setCoordinates('G' . ($imageStartRow + 1));
+                            $drawing2->setWorksheet($sheet);
+                        } catch (\Exception $e) {
+                            // ignore fail
+                        }
+                    }
+                }
+
+                $currentRow = $imageStartRow + 11;
+            }
+        }
+        $leftMaxRow = $currentRow;
 
 
         // ── SEKTOR KANAN: DETAIL DATA PESANAN (DAFTAR PEMAIN) ──
