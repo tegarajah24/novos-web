@@ -895,12 +895,10 @@
             {{-- Upload New Poster --}}
             <div class="mb-6 p-4 bg-blue-50/50 rounded-xl border border-blue-200">
                 <p class="text-sm font-semibold text-gray-800 mb-3">Upload Poster Baru</p>
-                <div class="flex items-center gap-3">
-                    <input type="file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
-                        @change="uploadFile = $event.target.files[0]"
-                        class="block w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#1a237e] file:text-white hover:file:bg-[#283593] file:cursor-pointer file:transition-colors">
-                    <button @click="handleUpload()" :disabled="!uploadFile || uploading"
-                        class="shrink-0 px-4 py-1.5 bg-[#1a237e] text-white text-xs font-semibold rounded-lg hover:bg-[#283593] transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
+                <input type="file" class="filepond" id="pondPoster" name="image" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" data-max-file-size="5MB" data-allow-multiple="false">
+                <div class="mt-3">
+                    <button @click="handleUpload()" :disabled="uploading"
+                        class="px-4 py-1.5 bg-[#1a237e] text-white text-xs font-semibold rounded-lg hover:bg-[#283593] transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
                         <template x-if="uploading">
                             <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         </template>
@@ -910,7 +908,6 @@
                         Upload
                     </button>
                 </div>
-                <p class="text-[11px] text-gray-400 mt-1.5">Format: JPEG, PNG, GIF, WebP. Maks 5MB.</p>
             </div>
 
             {{-- Poster List --}}
@@ -1316,7 +1313,6 @@ function dailyMentalCheck(config = {}) {
         // Poster Management
         managePosterOpen: false,
         posterList: [],
-        uploadFile: null,
         uploading: false,
         rotationPeriod: 'daily',
         rotationSaving: false,
@@ -1324,7 +1320,8 @@ function dailyMentalCheck(config = {}) {
         async toggleManagePosters() {
             this.managePosterOpen = !this.managePosterOpen;
             if (!this.managePosterOpen) return;
-            this.uploadFile = null;
+            const pond = FilePond.find(document.querySelector('#pondPoster'));
+            if (pond) pond.removeFiles();
             try {
                 const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                 const res = await fetch('/staf/daily-mental-check/posters', {
@@ -1340,12 +1337,16 @@ function dailyMentalCheck(config = {}) {
         },
 
         async handleUpload() {
-            if (!this.uploadFile || this.uploading) return;
+            if (this.uploading) return;
+            const pond = FilePond.find(document.querySelector('#pondPoster'));
+            if (!pond || pond.getFiles().length === 0) return;
+            const fileItem = pond.getFiles()[0];
+            if (!(fileItem.file instanceof File)) return;
             this.uploading = true;
             try {
                 const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                 const fd = new FormData();
-                fd.append('image', this.uploadFile);
+                fd.append('image', fileItem.file, fileItem.file.name);
                 const res = await fetch('/staf/daily-mental-check/posters', {
                     method: 'POST',
                     headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
@@ -1355,7 +1356,7 @@ function dailyMentalCheck(config = {}) {
                     const data = await res.json();
                     this.posterList.unshift(data.poster);
                     this.posterUrl = data.poster.url;
-                    this.uploadFile = null;
+                    pond.removeFiles();
                     this.$nextTick(() => {
                         try { if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons({ icons: window.lucide.icons }); } catch(e) {}
                     });
