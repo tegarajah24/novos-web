@@ -64,7 +64,7 @@
                     <option value="Produksi">Produksi</option>
                 </select>
             </div>
-            <button onclick="document.getElementById('formTambah').reset(); openModal('modalTambah')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shadow-sm shrink-0">
+                <button onclick="resetTambahForm(); openModal('modalTambah')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors shadow-sm shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
                 Tambah Pengguna
             </button>
@@ -155,16 +155,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Foto Profil</label>
-                    <div class="flex items-center gap-4">
-                        <div id="tambahAvatarPreview" class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs overflow-hidden shrink-0 border border-gray-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        </div>
-                        <label class="px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
-                            Pilih Foto
-                            <input type="file" name="avatar" accept="image/*" class="hidden" onchange="previewAvatar(this, 'tambahAvatarPreview')">
-                        </label>
-                        <span class="text-xs text-gray-400">Maks. 5MB (PNG, JPG)</span>
-                    </div>
+                    <input type="file" class="filepond" name="avatar" accept="image/png,image/jpeg" data-max-file-size="5MB" data-allow-multiple="false">
+                    <p class="text-xs text-gray-400 mt-1">PNG/JPG max 5MB</p>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal(event, 'modalTambah')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
@@ -230,16 +222,14 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Foto Profil</label>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-4 mb-3">
                         <div id="editAvatarPreview" class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs overflow-hidden shrink-0 border border-gray-200">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         </div>
-                        <label class="px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
-                            Pilih Foto
-                            <input type="file" name="avatar" accept="image/*" class="hidden" onchange="previewAvatar(this, 'editAvatarPreview')">
-                        </label>
-                        <span class="text-xs text-gray-400">Maks. 5MB (PNG, JPG)</span>
+                        <span class="text-xs text-gray-400">Foto saat ini</span>
                     </div>
+                    <input type="file" class="filepond" name="avatar" accept="image/png,image/jpeg" data-max-file-size="5MB" data-allow-multiple="false">
+                    <p class="text-xs text-gray-400 mt-1">Upload foto baru untuk mengganti (PNG/JPG max 5MB)</p>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal(event, 'modalEdit')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
@@ -385,6 +375,12 @@
                     spinner.classList.remove('hidden');
                     btnText.textContent = 'Menyimpan...';
                     const formData = new FormData(this);
+                    const pond = FilePond.find(document.querySelector('#formTambah .filepond'));
+                    if (pond) {
+                        pond.getFiles().forEach(f => {
+                            if (f.file instanceof File) formData.append('avatar', f.file, f.file.name);
+                        });
+                    }
                     const result = await submitForm(this.id, '{{ route("staf.kelola-pengguna.store") }}', 'POST', formData);
                     spinner.classList.add('hidden');
                     btn.disabled = false;
@@ -408,6 +404,12 @@
                     btnText.textContent = 'Menyimpan...';
                     const id = document.getElementById('editId').value;
                     const formData = new FormData(this);
+                    const pond = FilePond.find(document.querySelector('#formEdit .filepond'));
+                    if (pond) {
+                        pond.getFiles().forEach(f => {
+                            if (f.file instanceof File) formData.append('avatar', f.file, f.file.name);
+                        });
+                    }
                     formData.set('_method', 'PUT');
                     const result = await submitForm(this.id, `{{ url('staf/kelola-pengguna') }}/${id}`, 'POST', formData);
                     spinner.classList.add('hidden');
@@ -429,6 +431,10 @@
         function closeModal(event, id) {
             document.getElementById(id).classList.remove('active');
             document.body.style.overflow = '';
+            if (id === 'modalEdit') {
+                const pond = FilePond.find(document.querySelector('#formEdit .filepond'));
+                if (pond) pond.removeFiles();
+            }
         }
 
         function openDetail(id) {
@@ -451,17 +457,10 @@
             openModal('modalDetail');
         }
 
-        function previewAvatar(input, previewId) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const el = document.getElementById(previewId);
-                if (file.type.startsWith('image/')) {
-                    el.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
-                }
-            };
-            reader.readAsDataURL(file);
+        function resetTambahForm() {
+            document.getElementById('formTambah').reset();
+            const pond = FilePond.find(document.querySelector('#formTambah .filepond'));
+            if (pond) pond.removeFiles();
         }
 
         function openEdit(id) {
@@ -488,6 +487,8 @@
                 avatarPreview.innerHTML = initials;
                 avatarPreview.className = 'w-14 h-14 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0 border border-gray-200';
             }
+            const editPond = FilePond.find(document.querySelector('#formEdit .filepond'));
+            if (editPond) editPond.removeFiles();
             openModal('modalEdit');
         }
 
