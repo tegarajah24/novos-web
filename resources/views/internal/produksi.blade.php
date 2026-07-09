@@ -326,48 +326,13 @@
 
                             <div class="p-5 space-y-5">
 
-                                {{-- Status Dropdown berdasarkan stage --}}
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">1. Pilih Tindakan</label>
-                                    
-                                    <!-- Printing Stage Actions -->
-                                    <div x-show="selectedOrder?.stage === 'printing'">
-                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                            <option value="proses_printing">Sedang Proses</option>
-                                            <option value="selesai_printing">Selesai</option>
-                                        </select>
-                                    </div>
 
-                                    <!-- Press Stage Actions -->
-                                    <div x-show="selectedOrder?.stage === 'press'">
-                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                            <option value="proses_press">Sedang Proses</option>
-                                            <option value="selesai_press">Selesai</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Jahit Stage Actions -->
-                                    <div x-show="selectedOrder?.stage === 'jahit'">
-                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                            <option value="proses_jahit">Sedang Proses</option>
-                                            <option value="selesai_jahit">Selesai</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- QC Stage Actions -->
-                                    <div x-show="selectedOrder?.stage === 'qc'">
-                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
-                                            <option value="selesai_qc">Selesai (Lolos QC)</option>
-                                            <option value="revisi_qc">Revisi / Pengerjaan Ulang</option>
-                                        </select>
-                                    </div>
-                                </div>
 
                                 {{-- Printing Checklist (hanya tampil di stage printing) --}}
                                 <div x-show="selectedOrder?.stage === 'printing'" x-cloak>
                                     <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
                                         <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
-                                        2. Checklist Printing
+                                        1. Checklist Printing
                                     </label>
                                     <div class="space-y-2.5">
                                         <!-- Item 1: Acc Tes Warna -->
@@ -406,7 +371,7 @@
                                 <div x-show="selectedOrder?.stage === 'press'" x-cloak>
                                     <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
                                         <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-600"></i>
-                                        2. Checklist Press &amp; Cutting
+                                        1. Checklist Press &amp; Cutting
                                     </label>
                                     <div class="space-y-2.5">
                                         <!-- Item 1: Cek Kualitas Press Warna -->
@@ -463,7 +428,7 @@
                                 <div x-show="selectedOrder?.stage === 'qc'" x-cloak>
                                     <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
                                         <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-emerald-600"></i>
-                                        2. Checklist Quality Control
+                                        1. Checklist Quality Control
                                     </label>
                                     <div class="space-y-2.5">
                                         <!-- Item 1: Kualitas Jahitan -->
@@ -529,7 +494,7 @@
                                 <div x-show="selectedOrder?.stage === 'qc' && updateStatus === 'revisi_qc'" x-cloak>
                                     <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
                                         <i data-lucide="corner-down-right" class="w-3.5 h-3.5 text-amber-600"></i>
-                                        2b. Kirim Revisi ke Bagian
+                                        1b. Kirim Revisi ke Bagian
                                     </label>
                                     <div class="grid grid-cols-3 gap-3">
                                         <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
@@ -565,10 +530,48 @@
                                 {{-- Catatan Opsional --}}
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
-                                        x-text="['printing', 'press', 'qc'].includes(selectedOrder?.stage) ? (selectedOrder?.stage === 'qc' ? '3. Catatan QC (Opsional)' : '3. Catatan (Opsional)') : '2. Catatan (Opsional)'"></label>
+                                        x-text="['printing', 'press', 'qc'].includes(selectedOrder?.stage) ? (selectedOrder?.stage === 'qc' ? '2. Catatan QC (Opsional)' : '2. Catatan (Opsional)') : '1. Catatan (Opsional)'"></label>
                                     <textarea x-model="productionNote" rows="3"
                                         class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm resize-none"
                                         :placeholder="selectedOrder?.stage === 'qc' ? 'Misal: jahitan bagian bahu kanan perlu dirapikan, ukuran XL ada 1 pcs cacat...' : 'Misal: ada kelebihan 1 pcs size L, warna sedikit lebih tua...'"></textarea>
+                                </div>
+
+                                {{-- Status Dropdown berdasarkan stage --}}
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                                         x-text="['printing', 'press', 'qc'].includes(selectedOrder?.stage) ? '3. Pilih Tindakan' : '2. Pilih Tindakan'"></label>
+                                    
+                                    <!-- Printing Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'printing'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="proses_printing">Sedang Proses</option>
+                                            <option value="selesai_printing">Selesai</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Press Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'press'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="proses_press">Sedang Proses</option>
+                                            <option value="selesai_press">Selesai</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Jahit Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'jahit'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="proses_jahit">Sedang Proses</option>
+                                            <option value="selesai_jahit">Selesai</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- QC Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'qc'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="selesai_qc">Selesai (Lolos QC)</option>
+                                            <option value="revisi_qc">Revisi / Pengerjaan Ulang</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 {{-- Tombol Submit --}}
