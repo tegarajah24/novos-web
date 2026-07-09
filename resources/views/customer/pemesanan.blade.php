@@ -781,81 +781,13 @@
             {{-- Upload Logo Tim --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Upload Logo Tim</label>
-                <div
-                    @dragover.prevent="dragOver = true"
-                    @dragleave.prevent="dragOver = false"
-                    @drop.prevent="handleDrop($event)"
-                    @click="document.getElementById('logoInput').click()"
-                    :class="dragOver ? 'border-[#1a237e] bg-blue-50' : 'border-gray-300'"
-                    class="border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer min-h-[180px] flex items-center justify-center"
-                >
-                    <template x-if="uploads.length === 0">
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-300 mb-3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            <p class="text-gray-500 text-sm font-medium">Drag & drop atau klik untuk upload</p>
-                            <p class="text-gray-400 text-xs mt-1">PNG, JPG, AI (max. 5MB)</p>
-                        </div>
-                    </template>
-                    <template x-if="uploads.length > 0">
-                        <div class="w-full">
-                            <div class="grid grid-cols-2 gap-3">
-                                <template x-for="(file, i) in uploads" :key="i">
-                                    <div class="relative group">
-                                        <img :src="file.url" class="w-full h-24 object-cover rounded-lg shadow-sm border border-gray-200">
-                                        <button
-                                            @click.stop="uploads.splice(i, 1)"
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-all"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                        </button>
-                                    </div>
-                                </template>
-                            </div>
-                            <p class="text-sm text-blue-900 font-medium mt-2 hover:underline">Tambah file lagi</p>
-                        </div>
-                    </template>
-                </div>
-                <input type="file" id="logoInput" accept="image/png,image/jpeg,image/jpg,image/svg+xml" class="hidden" @change="handleFileSelect($event)">
+                <input type="file" class="filepond" id="pondLogo" name="logo_files[]" accept="image/png,image/jpeg,image/jpg,image/svg+xml" data-max-file-size="5MB" data-allow-multiple="true">
             </div>
 
             {{-- Referensi Desain --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Referensi Desain</label>
-                <div
-                    @dragover.prevent="dragOverRef = true"
-                    @dragleave.prevent="dragOverRef = false"
-                    @drop.prevent="handleDropRef($event)"
-                    @click="document.getElementById('refInput').click()"
-                    :class="dragOverRef ? 'border-[#1a237e] bg-blue-50' : 'border-gray-300'"
-                    class="border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer min-h-[180px] flex items-center justify-center"
-                >
-                    <template x-if="refUploads.length === 0">
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-300 mb-3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            <p class="text-gray-500 text-sm font-medium">Drag & drop atau klik untuk upload</p>
-                            <p class="text-gray-400 text-xs mt-1">Multiple files (diperbolehkan)</p>
-                        </div>
-                    </template>
-                    <template x-if="refUploads.length > 0">
-                        <div class="w-full">
-                            <div class="grid grid-cols-2 gap-3">
-                                <template x-for="(file, i) in refUploads" :key="i">
-                                    <div class="relative group">
-                                        <img :src="file.url" class="w-full h-24 object-cover rounded-lg shadow-sm border border-gray-200">
-                                        <button
-                                            @click.stop="refUploads.splice(i, 1)"
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-all"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                        </button>
-                                    </div>
-                                </template>
-                            </div>
-                            <p class="text-sm text-blue-900 font-medium mt-2 hover:underline">Tambah file lagi</p>
-                        </div>
-                    </template>
-                </div>
-                <input type="file" id="refInput" accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp" multiple class="hidden" @change="handleFileSelectRef($event)">
+                <input type="file" class="filepond" id="pondRef" name="design_files[]" accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp" data-max-file-size="10MB" data-allow-multiple="true">
             </div>
         </div>
 
@@ -1628,12 +1560,10 @@
                 <p class="text-xs text-gray-500 mb-3">Setelah transfer, upload bukti pembayaran di sini atau kirim melalui chat.</p>
                 <template x-if="!buktiBayarFile">
                     <div class="flex items-center gap-3">
-                        <label class="flex-1 flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#1a237e] transition-colors text-xs text-gray-500 hover:text-[#1a237e]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            <span>Pilih File Bukti</span>
-                            <input type="file" accept="image/*,.pdf" class="hidden" @change="uploadPaymentProof(orderNumber, $event)">
-                        </label>
-                        <a :href="'/chat?order=' + orderNumber" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap">
+                        <div class="flex-1">
+                            <input type="file" class="filepond" id="pondBuktiBayar" name="payment_proof" accept="image/*,.pdf" data-max-file-size="5MB" data-allow-multiple="false">
+                        </div>
+                        <a :href="'/chat?order=' + orderNumber" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap shrink-0">
                             Kirim via Chat
                         </a>
                     </div>
@@ -1767,12 +1697,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
         prioritas: 'normal',
         showUkuranRef: false,
-        uploads: [],
-        refUploads: [],
         orderNumber: null,
         buktiBayarFile: null,
-        dragOver: false,
-        dragOverRef: false,
         loading: false,
         hasOrders: hasOrders,
         prioritasOptions: [
@@ -1828,6 +1754,19 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             } else {
                 this.addressMode = 'create';
             }
+
+            this.setupBuktiBayarPond();
+        },
+
+        setupBuktiBayarPond() {
+            const el = document.querySelector('#pondBuktiBayar');
+            if (!el) return;
+            const pond = FilePond.find(el) || FilePond.create(el);
+            pond.on('addfile', (err, fileItem) => {
+                if (!err && this.orderNumber && fileItem.file instanceof File) {
+                    this.uploadPaymentProof(this.orderNumber, fileItem.file);
+                }
+            });
         },
 
         saveCheckoutState() {
@@ -2049,52 +1988,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             return 'Rp ' + amount.toLocaleString('id-ID');
         },
 
-        handleDrop(event) {
-            this.dragOver = false;
-            this.processFiles(event.dataTransfer.files);
-        },
-
-        handleFileSelect(event) {
-            this.processFiles(event.target.files);
-            event.target.value = '';
-        },
-
-        handleDropRef(event) {
-            this.dragOverRef = false;
-            this.processRefFiles(event.dataTransfer.files);
-        },
-
-        handleFileSelectRef(event) {
-            this.processRefFiles(event.target.files);
-            event.target.value = '';
-        },
-
-        processRefFiles(files) {
-            Array.from(files).forEach(file => {
-                if (!file.type.match('image.*')) return;
-                if (file.size > 10 * 1024 * 1024) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.refUploads.push({ file, url: e.target.result, name: file.name });
-                };
-                reader.readAsDataURL(file);
-            });
-        },
-
-        processFiles(files) {
-            Array.from(files).forEach(file => {
-                if (!file.type.match('image.*')) return;
-                if (file.size > 5 * 1024 * 1024) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.uploads.push({ file, url: e.target.result, name: file.name });
-                };
-                reader.readAsDataURL(file);
-            });
-        },
-
-        uploadPaymentProof(orderNumber, event) {
-            const file = event.target.files[0];
+        uploadPaymentProof(orderNumber, file) {
             if (!file) return;
 
             const formData = new FormData();
@@ -2156,15 +2050,17 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 formData.append('address_id', this.selectedAddressId);
             }
 
-            // Logo tim (logo_files) & Referensi Desain (design_files) terpisah
-            if (this.uploads.length > 0) {
-                this.uploads.forEach(u => {
-                    formData.append('logo_files[]', u.file);
+            // Logo tim (logo_files) & Referensi Desain (design_files) dari FilePond
+            const pondLogo = FilePond.find(document.querySelector('#pondLogo'));
+            if (pondLogo) {
+                pondLogo.getFiles().forEach(f => {
+                    if (f.file instanceof File) formData.append('logo_files[]', f.file, f.file.name);
                 });
             }
-            if (this.refUploads.length > 0) {
-                this.refUploads.forEach(ref => {
-                    formData.append('design_files[]', ref.file);
+            const pondRef = FilePond.find(document.querySelector('#pondRef'));
+            if (pondRef) {
+                pondRef.getFiles().forEach(f => {
+                    if (f.file instanceof File) formData.append('design_files[]', f.file, f.file.name);
                 });
             }
 
@@ -2184,6 +2080,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.orderNumber = data.orderNumber;
                 this.step = 4;
                 this.loading = false;
+                this.$nextTick(() => this.setupBuktiBayarPond());
             })
             .catch(err => {
                 Swal.fire({ icon: 'error', title: 'Oops...', text: err.message || 'Terjadi kesalahan' });
@@ -2221,6 +2118,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.orderNumber = data.orderNumber;
                 this.step = 4;
                 this.loading = false;
+                this.$nextTick(() => this.setupBuktiBayarPond());
                 const store = window.Alpine.store('summary');
                 if (store) store.fetch();
             })
@@ -2247,7 +2145,11 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             this.loading = true;
 
             const getFirstImage = () => {
-                if (this.uploads.length > 0) return this.uploads[0].name;
+                const pond = FilePond.find(document.querySelector('#pondLogo'));
+                if (pond && pond.getFiles().length > 0) {
+                    const f = pond.getFiles()[0];
+                    return f.file instanceof File ? f.file.name : null;
+                }
                 return null;
             };
 
@@ -2332,8 +2234,10 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 catatan: '',
                 total_qty: 1,
             };
-            this.uploads = [];
-            this.refUploads = [];
+            ['pondLogo', 'pondRef'].forEach(id => {
+                const pond = FilePond.find(document.querySelector('#' + id));
+                if (pond) pond.removeFiles();
+            });
             this.prioritas = 'normal';
             this.selectedAddressId = null;
         },

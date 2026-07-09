@@ -58,126 +58,7 @@ if (!empty($order['item_details'])) {
 }
 @endphp
 
-<div x-data="{
-    activeTab: 'detail',
-    designFiles: @json($order['design_files'] ?? []),
-    spkNotes: @json($order['product']['notes'] ?? ''),
-    isSavingNotes: false,
-    uploadingSlot: null,
-    
-    get mockupDepan() {
-        return this.designFiles.find(f => f.role === 'mockup_depan') || null;
-    },
-    get mockupBelakang() {
-        return this.designFiles.find(f => f.role === 'mockup_belakang') || null;
-    },
-    get detailDepan() {
-        return this.designFiles.find(f => f.role === 'detail_depan') || null;
-    },
-    get detailBelakang() {
-        return this.designFiles.find(f => f.role === 'detail_belakang') || null;
-    },
-    get sponsorFiles() {
-        return this.designFiles.filter(f => f.role === 'sponsor');
-    },
-
-    async uploadFile(e, role) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        this.uploadingSlot = role;
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('role', role);
-
-        try {
-            const res = await fetch('{{ route("staf.pesanan.upload-spk-file", $order["order_id"]) }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: formData
-            });
-            const data = await res.json();
-            if (data.success) {
-                if (['mockup_depan', 'mockup_belakang', 'detail_depan', 'detail_belakang'].includes(role)) {
-                    this.designFiles = this.designFiles.filter(f => f.role !== role);
-                }
-                this.designFiles.push(data.file);
-                Notify.success(data.message, 'Berhasil!');
-            } else {
-                Notify.error(data.message || 'Terjadi kesalahan saat upload.');
-            }
-        } catch (err) {
-            Notify.error('Gagal mengupload file.');
-        } finally {
-            this.uploadingSlot = null;
-            e.target.value = '';
-        }
-    },
-
-    async deleteFile(path) {
-        const result = await Swal.fire({
-            title: 'Hapus File?',
-            text: 'Apakah Anda yakin ingin menghapus file ini dari SPK?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc2626',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal'
-        });
-
-        if (!result.isConfirmed) return;
-
-        try {
-            const res = await fetch('{{ route("staf.pesanan.delete-spk-file", $order["order_id"]) }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ path: path })
-            });
-            const data = await res.json();
-            if (data.success) {
-                this.designFiles = this.designFiles.filter(f => f.path !== path);
-                Notify.success(data.message, 'Dihapus!');
-            } else {
-                Notify.error(data.message || 'Gagal menghapus file.');
-            }
-        } catch (err) {
-            Notify.error('Gagal menghapus file.');
-        }
-    },
-
-    async saveNotes() {
-        this.isSavingNotes = true;
-        try {
-            const res = await fetch('{{ route("staf.pesanan.update-spk-notes", $order["order_id"]) }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ notes: this.spkNotes })
-            });
-            const data = await res.json();
-            if (data.success) {
-                Notify.success(data.message, 'Tersimpan!');
-            } else {
-                Notify.error(data.message || 'Gagal menyimpan catatan.');
-            }
-        } catch (err) {
-            Notify.error('Gagal menyimpan catatan.');
-        } finally {
-            this.isSavingNotes = false;
-        }
-    }
-}">
+<div x-data="detailPesananApp()">
 {{-- Kembali --}}
 <div class="mb-5">
     <a href="{{ route('staf.daftar-pesanan') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1a237e] transition-colors">
@@ -187,12 +68,16 @@ if (!empty($order['item_details'])) {
 </div>
 
 {{-- Tabs Navigation --}}
-<div class="flex border-b border-gray-200 mb-6 gap-2">
-    <button @click="activeTab = 'detail'" :class="activeTab === 'detail' ? 'border-[#1a237e] text-[#1a237e] font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700'" class="px-5 py-3 border-b-2 text-sm font-medium transition-all flex items-center gap-2">
+<div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+    <button @click="activeTab = 'detail'"
+        :class="activeTab === 'detail' ? 'bg-[#1a237e] text-white shadow-sm font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-semibold'"
+        class="flex-1 px-5 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
         Detail Pesanan
     </button>
-    <button @click="activeTab = 'spk'" :class="activeTab === 'spk' ? 'border-[#1a237e] text-[#1a237e] font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700'" class="px-5 py-3 border-b-2 text-sm font-medium transition-all flex items-center gap-2">
+    <button @click="activeTab = 'spk'"
+        :class="activeTab === 'spk' ? 'bg-[#1a237e] text-white shadow-sm font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-semibold'"
+        class="flex-1 px-5 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         Surat Perintah Kerja (SPK)
     </button>
@@ -595,6 +480,7 @@ if (!empty($order['item_details'])) {
                         @endforelse
                     </tbody>
                 </table>
+            </div>
         </div>
         </div>
 
@@ -970,9 +856,135 @@ if (!empty($order['item_details'])) {
     </div>{{-- end kolom kanan --}}
 
 </div>{{-- end flex --}}
+
+</div>{{-- end x-data wrapper --}}
+
 @endsection
 
 <script>
+function detailPesananApp() {
+    return {
+        activeTab: 'detail',
+        designFiles: @json($order['design_files'] ?? []),
+        spkNotes: @json($order['product']['notes'] ?? ''),
+        isSavingNotes: false,
+        uploadingSlot: null,
+        
+        get mockupDepan() {
+            return this.designFiles.find(f => f.role === 'mockup_depan') || null;
+        },
+        get mockupBelakang() {
+            return this.designFiles.find(f => f.role === 'mockup_belakang') || null;
+        },
+        get detailDepan() {
+            return this.designFiles.find(f => f.role === 'detail_depan') || null;
+        },
+        get detailBelakang() {
+            return this.designFiles.find(f => f.role === 'detail_belakang') || null;
+        },
+        get sponsorFiles() {
+            return this.designFiles.filter(f => f.role === 'sponsor');
+        },
+
+        async uploadFile(e, role) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            this.uploadingSlot = role;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('role', role);
+
+            try {
+                const res = await fetch('{{ route("staf.pesanan.upload-spk-file", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (['mockup_depan', 'mockup_belakang', 'detail_depan', 'detail_belakang'].includes(role)) {
+                        this.designFiles = this.designFiles.filter(f => f.role !== role);
+                    }
+                    this.designFiles.push(data.file);
+                    Notify.success(data.message, 'Berhasil!');
+                } else {
+                    Notify.error(data.message || 'Terjadi kesalahan saat upload.');
+                }
+            } catch (err) {
+                Notify.error('Gagal mengupload file.');
+            } finally {
+                this.uploadingSlot = null;
+                e.target.value = '';
+            }
+        },
+
+        async deleteFile(path) {
+            const result = await Swal.fire({
+                title: 'Hapus File?',
+                text: 'Apakah Anda yakin ingin menghapus file ini dari SPK?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch('{{ route("staf.pesanan.delete-spk-file", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ path: path })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.designFiles = this.designFiles.filter(f => f.path !== path);
+                    Notify.success(data.message, 'Dihapus!');
+                } else {
+                    Notify.error(data.message || 'Gagal menghapus file.');
+                }
+            } catch (err) {
+                Notify.error('Gagal menghapus file.');
+            }
+        },
+
+        async saveNotes() {
+            this.isSavingNotes = true;
+            try {
+                const res = await fetch('{{ route("staf.pesanan.update-spk-notes", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ notes: this.spkNotes })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Notify.success(data.message, 'Tersimpan!');
+                } else {
+                    Notify.error(data.message || 'Gagal menyimpan catatan.');
+                }
+            } catch (err) {
+                Notify.error('Gagal menyimpan catatan.');
+            } finally {
+                this.isSavingNotes = false;
+            }
+        }
+    };
+}
+
 function paymentSection() {
     return {
         loading: false,

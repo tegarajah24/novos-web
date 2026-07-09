@@ -770,41 +770,25 @@
                     <h3 class="font-bold text-gray-900 text-lg mb-1">Pengaturan Profil</h3>
                     <p class="text-sm text-gray-500 mb-6">Kelola biodata diri, kontak utama, dan foto profil Anda.</p>
 
-                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+                    <form id="profileForm" @submit.prevent="submitProfile" enctype="multipart/form-data">
                         @csrf
                         @method('patch')
 
                         {{-- Foto Profil Section --}}
-                        <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-gray-100 mb-6" x-data="{ 
-                            imagePreview: user.avatar ? '/storage/' + user.avatar : null,
-                            handleFileChange(e) {
-                                const file = e.target.files[0];
-                                if (file) {
-                                    const reader = new FileReader();
-                                    reader.onload = (event) => {
-                                        this.imagePreview = event.target.result;
-                                    };
-                                    reader.readAsDataURL(file);
-                                }
-                            }
-                        }">
+                        <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-gray-100 mb-6">
                             <div class="w-24 h-24 rounded-full overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 profile-avatar-glow">
-                                <template x-if="imagePreview">
-                                    <img :src="imagePreview" alt="Preview Avatar" class="w-full h-full object-cover">
-                                </template>
-                                <template x-if="!imagePreview">
-                                    <div class="w-full h-full bg-[#1a237e] text-white flex items-center justify-center text-3xl font-bold">
-                                        <span x-text="getUserInitials()"></span>
-                                    </div>
-                                </template>
+                                <img :src="avatarPreview ?? (user.avatar ? '/storage/' + user.avatar : undefined)"
+                                     alt="Preview Avatar" class="w-full h-full object-cover"
+                                     x-show="avatarPreview || user.avatar">
+                                <div x-show="!avatarPreview && !user.avatar"
+                                     class="w-full h-full bg-[#1a237e] text-white flex items-center justify-center text-3xl font-bold">
+                                    <span x-text="getUserInitials()"></span>
+                                </div>
                             </div>
                             <div class="text-center sm:text-left space-y-2">
                                 <h4 class="font-bold text-sm text-gray-900">Foto Profil</h4>
                                 <p class="text-xs text-gray-500">Mendukung PNG, JPG atau JPEG (Maksimal 5MB).</p>
-                                <label class="inline-block px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
-                                    Pilih Foto
-                                    <input type="file" name="avatar" class="hidden" accept="image/*" @change="handleFileChange($event)">
-                                </label>
+                                <input type="file" class="filepond" id="pondAvatar" name="avatar" accept="image/png,image/jpeg,image/jpg" data-max-file-size="5MB" data-allow-multiple="false">
                             </div>
                         </div>
 
@@ -1169,6 +1153,57 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
         currentPage: 1,
         perPage: 5,
  
+        avatarPreview: null,
+
+        init() {
+            this.$watch('orderFilter', () => this.currentPage = 1);
+            const pondEl = document.querySelector('#pondAvatar');
+            if (pondEl) {
+                const pond = FilePond.find(pondEl);
+                if (pond) {
+                    if (this.user.avatar) {
+                        pond.addFile('/storage/' + this.user.avatar);
+                    }
+                    pond.on('addfile', (err, fileItem) => {
+                        if (!err && fileItem.file instanceof File) {
+                            this.avatarPreview = URL.createObjectURL(fileItem.file);
+                        }
+                    });
+                    pond.on('removefile', () => {
+                        this.avatarPreview = null;
+                    });
+                }
+            }
+        },
+
+        submitProfile() {
+            const form = document.querySelector('#profileForm');
+            const fd = new FormData(form);
+            fd.append('_method', 'patch');
+            const pond = FilePond.find(document.querySelector('#pondAvatar'));
+            if (pond && pond.getFiles().length > 0) {
+                const f = pond.getFiles()[0];
+                if (f.file instanceof File) fd.append('avatar', f.file, f.file.name);
+            } else if (!this.user.avatar) {
+                fd.append('avatar', '');
+            }
+            fetch('{{ route('profile.update') }}', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: fd
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Profil berhasil diperbarui!', timer: 1500, showConfirmButton: false });
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Gagal memperbarui profil' });
+                }
+            })
+            .catch(() => Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem' }));
+        },
+
         showReviewModal: false,
         reviewForm: { order_id: null, rating: 5, comment: '' },
         hoverRating: 0,
@@ -1225,10 +1260,6 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
                 this.addressForm.district &&
                 this.addressForm.detail_address &&
                 this.addressForm.postal_code;
-        },
-
-        init() {
-            this.$watch('orderFilter', () => this.currentPage = 1);
         },
 
         // ─── Address Methods ───
