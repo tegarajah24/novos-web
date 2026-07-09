@@ -136,10 +136,15 @@
                                     <div class="font-medium text-gray-900" x-text="selectedOrder?.jenis_potongan || '-'"></div>
                                 </div>
                                 <div>
-                                    <span class="text-gray-500 text-xs block mb-0.5">Lengan & Jahitan</span>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Lengan &amp; Jahitan</span>
                                     <div class="font-medium text-gray-900" x-text="selectedOrder?.lengan_jahitan || '-'"></div>
                                 </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Total Qty</span>
+                                    <div class="font-medium text-[#1a237e] font-bold" x-text="selectedOrder?.total_qty + ' pcs'"></div>
+                                </div>
                             </div>
+
                             <div x-show="selectedOrder?.revision_note" class="mt-5 pt-4 border-t border-gray-100">
                                 <span class="text-orange-600 block mb-2 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Revisi Terakhir dari Customer
