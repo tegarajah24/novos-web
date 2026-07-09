@@ -2031,7 +2031,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'file' => 'required|file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
-            'role' => 'required|string|in:mockup_depan,mockup_belakang,detail_depan,detail_belakang,sponsor',
+            'role' => 'required|string|in:mockup_depan,mockup_belakang,detail_depan,detail_belakang,sponsor,pola',
         ]);
 
         $file = $request->file('file');

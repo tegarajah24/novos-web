@@ -19,7 +19,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 
 @section('internal-content')
 @php
-$spkRoles = ['mockup_depan','mockup_belakang','detail_depan','detail_belakang','sponsor'];
+$spkRoles = ['mockup_depan','mockup_belakang','detail_depan','detail_belakang','sponsor','pola'];
 $dewasaSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '6XL'];
 $anakSizes   = ['KIDS_S', 'KIDS_M', 'KIDS_L', 'KIDS_XL', 'KIDS_XXL'];
 

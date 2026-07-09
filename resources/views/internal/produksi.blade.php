@@ -64,7 +64,7 @@
                         </tr>
                     </template>
                     <template x-for="order in filteredOrders()" :key="order.id">
-                        <tr class="hover:bg-indigo-50/30 transition-colors group">
+                        <tr class="hover:bg-indigo-50/30 transition-colors cursor-pointer group" @click="openDetail(order)">
                             <td class="px-6 py-4">
                                 <span class="font-bold text-[#1a237e] group-hover:underline" x-text="order.order_id"></span>
                             </td>
@@ -88,7 +88,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button @click="openDetail(order)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
+                                <button @click.stop="openDetail(order)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
                                     Lihat Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
                             </td>
@@ -106,7 +106,7 @@
 
             <div x-show="isDetailOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" aria-hidden="true"></div>
 
-            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-5xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
+            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-7xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
 
                 {{-- Header Modal --}}
                 <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
@@ -137,55 +137,58 @@
                                 <i data-lucide="shirt" class="w-4 h-4 text-[#1a237e]"></i>
                                 Spesifikasi Produk
                             </h4>
-                            <div class="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                                <div>
-                                    <span class="text-gray-500 block mb-1 text-xs font-medium uppercase tracking-wider">Nama Tim / Instansi</span>
-                                    <span class="font-semibold text-gray-900 text-base" x-text="selectedOrder?.team_name"></span>
+                            <div class="grid grid-cols-3 gap-x-8 gap-y-4 text-sm">
+                                <div class="col-span-2">
+                                    <span class="text-gray-500 text-xs block mb-0.5">Nama Tim / Instansi</span>
+                                    <div class="font-medium text-gray-900 text-base" x-text="selectedOrder?.team_name"></div>
                                 </div>
                                 <div>
-                                    <span class="text-gray-500 block mb-1 text-xs font-medium uppercase tracking-wider">Deadline</span>
-                                    <span class="font-semibold text-red-600" x-text="selectedOrder?.deadline"></span>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Deadline</span>
+                                    <div class="font-medium text-red-600 text-base" x-text="selectedOrder?.deadline"></div>
                                 </div>
-                                <div class="col-span-2 grid grid-cols-2 sm:grid-cols-5 gap-4 pt-2">
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Bahan</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.material"></span>
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Kerah</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.collar"></span>
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Pola Jahitan</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.pattern"></span>
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Jenis Potongan</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.jenis_potongan"></span>
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Model Lengan &amp; Jahitan</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.model_lengan_jahitan"></span>
-                                    </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Bahan</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.material || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Kerah</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.collar || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Jenis Potongan</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.jenis_potongan || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Model Lengan &amp; Jahitan</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.model_lengan_jahitan || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Total Qty</span>
+                                    <div class="font-medium text-[#1a237e] font-bold" x-text="selectedOrder?.total_qty + ' pcs'"></div>
                                 </div>
                             </div>
-                            <div class="mt-5 pt-4 border-t border-gray-100">
-                                <span class="text-gray-500 block mb-2 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
-                                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Catatan Produksi
-                                </span>
-                                <div class="text-gray-700 bg-amber-50/50 p-4 rounded-xl border border-amber-200/60 leading-relaxed text-sm" x-html="selectedOrder?.notes"></div>
-                            </div>
+
+
+
                         </div>
 
                         {{-- Detail Item Pesanan --}}
                         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-                            <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
-                                <i data-lucide="list" class="w-4 h-4 text-[#1a237e]"></i>
-                                Detail Item Pesanan
-                            </h4>
-                            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                                <h4 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
+                                    <i data-lucide="list" class="w-4 h-4 text-[#1a237e]"></i>
+                                    Detail Item Pesanan
+                                </h4>
+                                <button x-show="selectedOrder?.item_details?.length > 5"
+                                        @click="isItemsExpanded = !isItemsExpanded"
+                                        class="text-xs font-semibold text-[#1a237e] hover:underline focus:outline-none flex items-center gap-1">
+                                    <span x-text="isItemsExpanded ? 'Sembunyikan' : 'Lihat Semua (' + selectedOrder?.item_details?.length + ')'"></span>
+                                    <svg class="w-3 h-3 transition-transform duration-300" :class="isItemsExpanded ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                            </div>
+                            <div :style="isItemsExpanded ? 'max-height: 10000px;' : 'max-height: 250px;'" class="overflow-y-auto rounded-lg border border-gray-200 transition-all duration-300 ease-in-out relative">
                                 <table class="w-full text-sm">
-                                    <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+                                    <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide sticky top-0 z-10">
                                         <tr>
                                             <th class="px-3 py-2 text-left font-semibold">No Punggung</th>
                                             <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
@@ -194,7 +197,7 @@
                                             <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-100">
+                                    <tbody class="divide-y divide-gray-100 bg-white">
                                         <template x-if="!selectedOrder?.item_details || selectedOrder.item_details.length === 0">
                                             <tr>
                                                 <td colspan="5" class="px-3 py-6 text-center text-gray-400 text-sm">Tidak ada detail item.</td>
@@ -211,61 +214,70 @@
                                         </template>
                                     </tbody>
                                 </table>
+                                
+                                {{-- Fade overlay when collapsed --}}
+                                <div x-show="selectedOrder?.item_details?.length > 5 && !isItemsExpanded" 
+                                     class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none z-10"></div>
                             </div>
                         </div>
 
-                        {{-- Rekap Ukuran --}}
-                        <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-                            <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
-                                <i data-lucide="table" class="w-4 h-4 text-[#1a237e]"></i>
-                                Rekap Ukuran & Kuantitas
-                            </h4>
-                            <div class="grid grid-cols-6 gap-2 text-center mb-3">
-                                <template x-for="(qty, size) in selectedOrder?.sizes" :key="size">
-                                    <div class="bg-purple-50 rounded-lg py-3 border border-purple-100">
-                                        <div class="text-xs text-purple-500 font-medium mb-1" x-text="size"></div>
-                                        <div class="text-xl font-bold text-gray-900" x-text="qty"></div>
-                                        <div class="text-[10px] text-gray-400">pcs</div>
-                                    </div>
-                                </template>
-                            </div>
-                            <div class="flex justify-end pt-3 border-t border-gray-100">
-                                <p class="text-sm text-gray-600 font-medium">
-                                    Total: <span class="text-xl font-extrabold text-[#1a237e] ml-1" x-text="selectedOrder?.total_qty + ' pcs'"></span>
-                                </p>
-                            </div>
-                        </div>
 
                         {{-- File Desain dari Tim Design --}}
                         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
                             <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
                                 <i data-lucide="file-check-2" class="w-4 h-4 text-[#1a237e]"></i>
-                                File Desain & Pola Cetak (Dari Tim Design)
+                                File Desain &amp; Pola Cetak (Dari Tim Design)
                             </h4>
-                            <div class="space-y-2">
-                                <template x-for="(file, fi) in selectedOrder?.design_files" :key="file.name">
-                                    <div class="flex items-center gap-3 p-2.5 bg-blue-50/50 border border-blue-100 rounded-lg">
-                                        <!-- Image thumbnail (circular) or generic icon -->
-                                        <template x-if="file.type?.startsWith('image/')">
-                                            <img :src="file.path"
-                                                @click="window.openPhotoSwipe(selectedOrder.design_files, fi)"
-                                                class="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm border-2 border-blue-200 cursor-zoom-in hover:opacity-80 transition-opacity"
-                                                :title="'Lihat ' + file.name">
-                                        </template>
-                                        <template x-if="!file.type?.startsWith('image/')">
-                                            <div class="w-10 h-10 rounded bg-white flex items-center justify-center shrink-0 shadow-sm border border-gray-200">
-                                                <i data-lucide="file" class="w-5 h-5 text-[#1a237e]"></i>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {{-- Kategori 1: Gambar Desain (Kiri) --}}
+                                <div class="space-y-2">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Gambar Desain (Mockup &amp; Detail Tampak)</span>
+                                    <div class="space-y-2">
+                                        <template x-for="(file, fi) in (selectedOrder?.design_files || []).filter(f => f.type?.startsWith('image/'))" :key="file.name">
+                                            <div class="flex items-center gap-3 p-2.5 bg-blue-50/50 border border-blue-100 rounded-lg">
+                                                <img :src="file.path"
+                                                     @click="window.openPhotoSwipe(selectedOrder.design_files, selectedOrder.design_files.indexOf(file))"
+                                                     class="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm border-2 border-blue-200 cursor-zoom-in hover:opacity-80 transition-opacity"
+                                                     :title="'Lihat ' + file.name">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-xs font-medium text-gray-800 truncate" x-text="file.name"></p>
+                                                    <p class="text-[10px] text-gray-400">GAMBAR DESAIN</p>
+                                                </div>
+                                                <a :href="file.path" :download="file.name" class="text-[#1a237e] bg-white border border-blue-100 hover:bg-[#1a237e] hover:text-white p-1.5 rounded-md transition-colors shrink-0 flex items-center justify-center" title="Download">
+                                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                                </a>
                                             </div>
                                         </template>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs font-medium text-gray-800 truncate" x-text="file.name"></p>
-                                            <p class="text-[10px] text-gray-400" x-text="file.type"></p>
-                                        </div>
-                                        <button @click="window.open(file.path, '_blank')" class="text-[#1a237e] bg-white border border-blue-100 hover:bg-[#1a237e] hover:text-white p-1.5 rounded-md transition-colors shrink-0" title="Download">
-                                            <i data-lucide="download" class="w-4 h-4"></i>
-                                        </button>
+                                        <template x-if="!(selectedOrder?.design_files || []).filter(f => f.type?.startsWith('image/')).length">
+                                            <p class="text-xs text-gray-400 italic p-2 bg-gray-50 rounded-lg border border-gray-100">Belum ada file gambar desain.</p>
+                                        </template>
                                     </div>
-                                </template>
+                                </div>
+
+                                {{-- Kategori 2: File Pola (Kanan) --}}
+                                <div class="space-y-2">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">File Pola (CDR / Vector)</span>
+                                    <div class="space-y-2">
+                                        <template x-for="(file, fi) in (selectedOrder?.design_files || []).filter(f => !f.type?.startsWith('image/'))" :key="file.name">
+                                            <div class="flex items-center gap-3 p-2.5 bg-purple-50/50 border border-purple-100 rounded-lg">
+                                                <div class="w-10 h-10 rounded bg-white flex items-center justify-center shrink-0 shadow-sm border border-purple-200">
+                                                    <i data-lucide="file-type" class="w-5 h-5 text-purple-600"></i>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-xs font-medium text-gray-800 truncate" x-text="file.name"></p>
+                                                    <p class="text-[10px] text-purple-400">VECTOR PATTERN (CDR)</p>
+                                                </div>
+                                                <a :href="file.path" :download="file.name" class="text-purple-600 bg-white border border-purple-100 hover:bg-purple-600 hover:text-white p-1.5 rounded-md transition-colors shrink-0 flex items-center justify-center" title="Download">
+                                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                                </a>
+                                            </div>
+                                        </template>
+                                        <template x-if="!(selectedOrder?.design_files || []).filter(f => !f.type?.startsWith('image/')).length">
+                                            <p class="text-xs text-gray-400 italic p-2 bg-gray-50 rounded-lg border border-gray-100">Belum ada file pola (CDR).</p>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -484,6 +496,7 @@ function produksiApp() {
     return {
         isDetailOpen: false,
         selectedOrder: null,
+        isItemsExpanded: false,
         updateStatus: '',
         productionNote: '',
         activeTab: 'printing',
@@ -540,6 +553,7 @@ function produksiApp() {
             }
             this.productionNote = '';
             this.targetStage = 'jahit';
+            this.isItemsExpanded = false;
             // Reset checklist QC setiap buka modal
             this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, perluRevisi: false };
             this.isDetailOpen = true;

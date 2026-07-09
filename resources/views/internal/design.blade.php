@@ -114,41 +114,86 @@
                                 <i data-lucide="shirt" class="w-4 h-4 text-[#1a237e]"></i>
                                 Spesifikasi Produk
                             </h4>
-                            <div class="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                                <div>
-                                    <span class="text-gray-500 block mb-1 text-xs font-medium uppercase tracking-wider">Nama Tim / Instansi</span>
-                                    <span class="font-semibold text-gray-900 text-base" x-text="selectedOrder?.team_name"></span>
+                            <div class="grid grid-cols-3 gap-x-8 gap-y-4 text-sm">
+                                <div class="col-span-2">
+                                    <span class="text-gray-500 text-xs block mb-0.5">Nama Tim / Instansi</span>
+                                    <div class="font-medium text-gray-900 text-base" x-text="selectedOrder?.team_name"></div>
                                 </div>
                                 <div>
-                                    <span class="text-gray-500 block mb-1 text-xs font-medium uppercase tracking-wider">Deadline</span>
-                                    <span class="font-semibold text-red-600" x-text="selectedOrder?.deadline"></span>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Deadline</span>
+                                    <div class="font-medium text-red-600 text-base" x-text="selectedOrder?.deadline"></div>
                                 </div>
-                                <div class="col-span-2 grid grid-cols-3 gap-4 pt-2">
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Bahan</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.material"></span>
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Kerah</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.collar"></span>
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                        <span class="text-gray-400 block mb-0.5 text-xs">Pola</span>
-                                        <span class="font-medium text-gray-900" x-text="selectedOrder?.pattern"></span>
-                                    </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Bahan</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.material || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Kerah</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.collar || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Jenis Potongan</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.jenis_potongan || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Lengan &amp; Jahitan</span>
+                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.lengan_jahitan || '-'"></div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs block mb-0.5">Total Qty</span>
+                                    <div class="font-medium text-[#1a237e] font-bold" x-text="selectedOrder?.total_qty + ' pcs'"></div>
                                 </div>
                             </div>
+
                             <div x-show="selectedOrder?.revision_note" class="mt-5 pt-4 border-t border-gray-100">
                                 <span class="text-orange-600 block mb-2 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Revisi Terakhir dari Customer
                                 </span>
                                 <div class="text-gray-700 bg-orange-50 p-4 rounded-xl border border-orange-200/60 leading-relaxed text-sm" x-text="selectedOrder?.revision_note"></div>
                             </div>
-                            <div class="mt-5 pt-4 border-t border-gray-100">
-                                <span class="text-gray-500 block mb-2 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
-                                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Catatan Customer / Admin
-                                </span>
-                                <div class="text-gray-700 bg-amber-50/50 p-4 rounded-xl border border-amber-200/60 leading-relaxed text-sm" x-html="selectedOrder?.notes"></div>
+                             <div class="mt-5 pt-4 border-t border-gray-100">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-gray-500 block text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
+                                        <i data-lucide="list" class="w-3.5 h-3.5"></i> Detail Item Pesanan
+                                    </span>
+                                    <button x-show="selectedOrder?.item_details?.length > 5"
+                                            @click="isItemsExpanded = !isItemsExpanded"
+                                            class="text-xs font-semibold text-[#1a237e] hover:underline focus:outline-none flex items-center gap-1">
+                                        <span x-text="isItemsExpanded ? 'Sembunyikan' : 'Lihat Semua (' + selectedOrder?.item_details?.length + ')'"></span>
+                                        <svg class="w-3 h-3 transition-transform duration-300" :class="isItemsExpanded ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                </div>
+                                <div :style="isItemsExpanded ? 'max-height: 10000px;' : 'max-height: 250px;'" class="overflow-y-auto rounded-lg border border-gray-200 transition-all duration-300 ease-in-out relative">
+                                    <table class="w-full text-sm" x-show="selectedOrder?.item_details?.length">
+                                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide sticky top-0 z-10">
+                                            <tr>
+                                                <th class="px-3 py-2 text-left font-semibold">No Punggung</th>
+                                                <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
+                                                <th class="px-3 py-2 text-left font-semibold">Model Lengan</th>
+                                                <th class="px-3 py-2 text-left font-semibold">Size</th>
+                                                <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100 bg-white">
+                                            <template x-for="(d, i) in selectedOrder?.item_details || []" :key="i">
+                                                <tr class="hover:bg-gray-50 transition-colors">
+                                                    <td class="px-3 py-2 text-gray-800 font-medium" x-text="d.no_punggung"></td>
+                                                    <td class="px-3 py-2 text-gray-700" x-text="d.nama_punggung"></td>
+                                                    <td class="px-3 py-2 text-gray-700" x-text="d.model_lengan"></td>
+                                                    <td class="px-3 py-2 text-gray-700" x-text="d.size"></td>
+                                                    <td class="px-3 py-2 text-gray-700" x-text="d.keterangan"></td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                    <div class="text-sm text-gray-400 text-center py-4" x-show="!selectedOrder?.item_details?.length">
+                                        Belum ada item detail pesanan.
+                                    </div>
+                                    
+                                    {{-- Fade overlay when collapsed --}}
+                                    <div x-show="selectedOrder?.item_details?.length > 5 && !isItemsExpanded" 
+                                         class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none z-10"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -245,6 +290,13 @@
                                     <p class="text-xs text-gray-400 mt-1">Upload semua gambar sponsor (multi upload)</p>
                                 </div>
 
+                                {{-- Pola --}}
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">5. Pola (CDR)</label>
+                                    <input type="file" class="filepond" id="pola-pond" name="pola_files[]" multiple accept=".cdr" data-max-file-size="50MB">
+                                    <p class="text-xs text-gray-400 mt-1">Upload pola jersey/bawahan/jaket format CorelDRAW (CDR)</p>
+                                </div>
+
                                 {{-- Status Dropdown --}}
                                 <div class="border-t border-gray-100 pt-5">
                                     <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">2. Update Status</label>
@@ -279,6 +331,7 @@ function designApp() {
     return {
         isDetailOpen: false,
         selectedOrder: null,
+        isItemsExpanded: false,
         updateStatus: '',
         pondRefs: {},
 
@@ -287,6 +340,7 @@ function designApp() {
         openDetail(order) {
             this.selectedOrder = order;
             this.updateStatus = '';
+            this.isItemsExpanded = false;
             this.isDetailOpen = true;
 
             setTimeout(() => {
@@ -301,18 +355,24 @@ function designApp() {
             if (!window.FilePond) return;
             this.destroyFilePond();
 
-            const ids = ['mockup-pond', 'detail-depan-pond', 'nama-punggung-pond', 'detail-sponsor-pond'];
+            const ids = ['mockup-pond', 'detail-depan-pond', 'nama-punggung-pond', 'detail-sponsor-pond', 'pola-pond'];
             ids.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
-                    const pond = FilePond.create(el, {
+                    const opts = {
                         allowMultiple: true,
                         instantUpload: false,
                         allowProcess: false,
                         credits: false,
                         stylePanelLayout: 'compact',
                         imagePreviewHeight: 80,
-                    });
+                    };
+                    if (id === 'pola-pond') {
+                        opts.acceptedFileTypes = ['.cdr'];
+                        opts.fileValidateTypeLabelExpectedTypes = 'Hanya file .cdr yang diperbolehkan';
+                        opts.allowImagePreview = false;
+                    }
+                    const pond = FilePond.create(el, opts);
 
                     pond.on('activatefile', (fileItem) => {
                         const file = fileItem.file;
@@ -346,8 +406,8 @@ function designApp() {
         submitDesign() {
             if(!this.updateStatus) return;
 
-            const pondIds = ['mockup-pond', 'detail-depan-pond', 'nama-punggung-pond', 'detail-sponsor-pond'];
-            const fieldNames = ['mockup_files', 'detail_depan_files', 'nama_punggung_files', 'detail_sponsor_files'];
+            const pondIds = ['mockup-pond', 'detail-depan-pond', 'nama-punggung-pond', 'detail-sponsor-pond', 'pola-pond'];
+            const fieldNames = ['mockup_files', 'detail_depan_files', 'nama_punggung_files', 'detail_sponsor_files', 'pola_files'];
 
             let totalFiles = 0;
             pondIds.forEach((id, idx) => {
