@@ -19,6 +19,7 @@ function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
 
 @section('internal-content')
 @php
+$spkRoles = ['mockup_depan','mockup_belakang','detail_depan','detail_belakang','sponsor'];
 $dewasaSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '6XL'];
 $anakSizes   = ['KIDS_S', 'KIDS_M', 'KIDS_L', 'KIDS_XL', 'KIDS_XXL'];
 
@@ -323,7 +324,7 @@ if (!empty($order['item_details'])) {
             </h3>
             <div class="grid grid-cols-4 gap-4 mb-8">
                 @php $logoIdx = 0; @endphp
-                @forelse(collect($order['design_files'])->where('type', 'logo') as $f)
+                @forelse(collect($order['design_files'])->where('type', 'logo')->reject(fn($f) => in_array($f['role'] ?? '', $spkRoles)) as $f)
                 @php
                     $isImg = isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/');
                     $currentIdx = $logoIdx;
@@ -360,7 +361,8 @@ if (!empty($order['item_details'])) {
             </h3>
             <div class="grid grid-cols-4 gap-4">
                 @php $desainIdx = 0; @endphp
-                @forelse(collect($order['design_files'])->where('type', 'design') as $f)
+                @forelse(collect($order['design_files'])->where('type', 'design')->reject(fn($f) => in_array($f['role'] ?? '', $spkRoles)) as $f)
+
                 @php
                     $isImg = isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/');
                     $currentIdx = $desainIdx;
@@ -393,6 +395,7 @@ if (!empty($order['item_details'])) {
 
         @php
             $allImages = collect($order['design_files'])
+                ->reject(fn($f) => in_array($f['role'] ?? '', $spkRoles))
                 ->filter(fn($f) => isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
                 ->map(fn($f) => ['src' => $f['url'], 'alt' => $f['name'], 'width' => 1200, 'height' => 1200])
                 ->values()
@@ -400,6 +403,7 @@ if (!empty($order['item_details'])) {
 
             $logoImages = collect($order['design_files'])
                 ->where('type', 'logo')
+                ->reject(fn($f) => in_array($f['role'] ?? '', $spkRoles))
                 ->filter(fn($f) => isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
                 ->map(fn($f) => ['src' => $f['url'], 'alt' => $f['name'], 'width' => 1200, 'height' => 1200])
                 ->values()
@@ -407,6 +411,7 @@ if (!empty($order['item_details'])) {
 
             $designImages = collect($order['design_files'])
                 ->where('type', 'design')
+                ->reject(fn($f) => in_array($f['role'] ?? '', $spkRoles))
                 ->filter(fn($f) => isset($f['url']) && ($f['mime'] ?? '') && str_starts_with($f['mime'], 'image/'))
                 ->map(fn($f) => ['src' => $f['url'], 'alt' => $f['name'], 'width' => 1200, 'height' => 1200])
                 ->values()
@@ -569,11 +574,12 @@ if (!empty($order['item_details'])) {
                     {{-- Tampak Depan Box --}}
                     <div>
                         <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Tampak Depan (Portrait)</span>
-                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                        <div class="relative rounded-xl overflow-hidden transition-all">
                             
                             <template x-if="mockupDepan">
-                                <div class="w-full h-full relative">
-                                    <img :src="mockupDepan.url" class="w-full h-full object-cover">
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden relative group">
+                                    <img :src="mockupDepan.url" class="w-full h-full object-cover cursor-zoom-in"
+                                     @click="window.openPhotoSwipe?.([{path: mockupDepan.url, name: 'Mockup Depan'}], 0)">
                                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
                                         <button @click="deleteFile(mockupDepan.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
@@ -583,16 +589,12 @@ if (!empty($order['item_details'])) {
                             </template>
                             
                             <template x-if="!mockupDepan">
-                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
-                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'mockup_depan')">
-                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                                    </div>
-                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Mockup Depan</span>
-                                </label>
+                                <div data-pond-role="mockup_depan">
+                                    <input type="file" accept="image/*">
+                                </div>
                             </template>
                             
-                            <div x-show="uploadingSlot === 'mockup_depan'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                            <div x-show="uploadingSlot === 'mockup_depan'" class="absolute inset-0 bg-white/85 flex items-center justify-center z-10">
                                 <span class="loading loading-spinner text-[#1a237e]"></span>
                             </div>
                         </div>
@@ -601,11 +603,12 @@ if (!empty($order['item_details'])) {
                     {{-- Tampak Belakang Box --}}
                     <div>
                         <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Tampak Belakang (Landscape)</span>
-                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[4/3] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                        <div class="relative rounded-xl overflow-hidden transition-all">
                             
                             <template x-if="mockupBelakang">
-                                <div class="w-full h-full relative">
-                                    <img :src="mockupBelakang.url" class="w-full h-full object-cover">
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[4/3] flex flex-col items-center justify-center overflow-hidden relative group">
+                                    <img :src="mockupBelakang.url" class="w-full h-full object-cover cursor-zoom-in"
+                                         @click="window.openPhotoSwipe?.([{path: mockupBelakang.url, name: 'Mockup Belakang'}], 0)">
                                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
                                         <button @click="deleteFile(mockupBelakang.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
@@ -615,16 +618,12 @@ if (!empty($order['item_details'])) {
                             </template>
                             
                             <template x-if="!mockupBelakang">
-                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
-                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'mockup_belakang')">
-                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                                    </div>
-                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Mockup Belakang</span>
-                                </label>
+                                <div data-pond-role="mockup_belakang">
+                                    <input type="file" accept="image/*">
+                                </div>
                             </template>
                             
-                            <div x-show="uploadingSlot === 'mockup_belakang'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                            <div x-show="uploadingSlot === 'mockup_belakang'" class="absolute inset-0 bg-white/85 flex items-center justify-center z-10">
                                 <span class="loading loading-spinner text-[#1a237e]"></span>
                             </div>
                         </div>
@@ -643,11 +642,12 @@ if (!empty($order['item_details'])) {
                     {{-- Detail Depan Box --}}
                     <div>
                         <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Detail Tampak Depan</span>
-                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                        <div class="relative rounded-xl overflow-hidden transition-all">
                             
                             <template x-if="detailDepan">
-                                <div class="w-full h-full relative">
-                                    <img :src="detailDepan.url" class="w-full h-full object-cover">
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden relative group">
+                                    <img :src="detailDepan.url" class="w-full h-full object-cover cursor-zoom-in"
+                                         @click="window.openPhotoSwipe?.([{path: detailDepan.url, name: 'Detail Depan'}], 0)">
                                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
                                         <button @click="deleteFile(detailDepan.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
@@ -657,16 +657,12 @@ if (!empty($order['item_details'])) {
                             </template>
                             
                             <template x-if="!detailDepan">
-                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
-                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'detail_depan')">
-                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                                    </div>
-                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Detail Depan</span>
-                                </label>
+                                <div data-pond-role="detail_depan">
+                                    <input type="file" accept="image/*">
+                                </div>
                             </template>
                             
-                            <div x-show="uploadingSlot === 'detail_depan'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                            <div x-show="uploadingSlot === 'detail_depan'" class="absolute inset-0 bg-white/85 flex items-center justify-center z-10">
                                 <span class="loading loading-spinner text-[#1a237e]"></span>
                             </div>
                         </div>
@@ -675,11 +671,12 @@ if (!empty($order['item_details'])) {
                     {{-- Detail Belakang Box --}}
                     <div>
                         <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Detail Tampak Belakang</span>
-                        <div class="relative bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden transition-all group">
+                        <div class="relative rounded-xl overflow-hidden transition-all">
                             
                             <template x-if="detailBelakang">
-                                <div class="w-full h-full relative">
-                                    <img :src="detailBelakang.url" class="w-full h-full object-cover">
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[3/4] flex flex-col items-center justify-center overflow-hidden relative group">
+                                    <img :src="detailBelakang.url" class="w-full h-full object-cover cursor-zoom-in"
+                                         @click="window.openPhotoSwipe?.([{path: detailBelakang.url, name: 'Detail Belakang'}], 0)">
                                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all gap-2">
                                         <button @click="deleteFile(detailBelakang.path)" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1.5">
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Hapus
@@ -689,16 +686,12 @@ if (!empty($order['item_details'])) {
                             </template>
                             
                             <template x-if="!detailBelakang">
-                                <label class="cursor-pointer text-center p-4 flex flex-col items-center gap-2 w-full h-full justify-center">
-                                    <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'detail_belakang')">
-                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e]">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                                    </div>
-                                    <span class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Pilih Detail Belakang</span>
-                                </label>
+                                <div data-pond-role="detail_belakang">
+                                    <input type="file" accept="image/*">
+                                </div>
                             </template>
                             
-                            <div x-show="uploadingSlot === 'detail_belakang'" class="absolute inset-0 bg-white/85 flex items-center justify-center">
+                            <div x-show="uploadingSlot === 'detail_belakang'" class="absolute inset-0 bg-white/85 flex items-center justify-center z-10">
                                 <span class="loading loading-spinner text-[#1a237e]"></span>
                             </div>
                         </div>
@@ -707,16 +700,17 @@ if (!empty($order['item_details'])) {
             </div>
 
             {{-- Sponsor & Logo Final --}}
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 class="font-semibold text-gray-900 mb-6 text-sm flex items-center gap-2">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
+                <h3 class="font-semibold text-gray-900 mb-2 text-sm flex items-center gap-2">
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                     Sponsor & Patch Final
                 </h3>
                 
-                <div class="grid grid-cols-4 gap-4">
-                    <template x-for="file in sponsorFiles" :key="file.path">
+                <div class="grid grid-cols-4 gap-4" x-show="sponsorFiles.length > 0">
+                    <template x-for="(file, idx) in sponsorFiles" :key="file.path">
                         <div class="relative bg-gray-50 border border-gray-200 rounded-xl aspect-square flex items-center justify-center overflow-hidden group">
-                            <img :src="file.url" class="w-full h-full object-cover">
+                            <img :src="file.url" class="w-full h-full object-cover cursor-zoom-in"
+                                 @click="window.openPhotoSwipe?.(sponsorFiles, idx)">
                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
                                 <button @click="deleteFile(file.path)" class="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -724,15 +718,10 @@ if (!empty($order['item_details'])) {
                             </div>
                         </div>
                     </template>
-                    
-                    {{-- Upload Sponsor Button --}}
-                    <label class="cursor-pointer bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#1a237e]/40 rounded-xl aspect-square flex flex-col items-center justify-center overflow-hidden transition-all group">
-                        <input type="file" class="hidden" accept="image/*" @change="uploadFile($event, 'sponsor')">
-                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#1a237e] mb-1">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                        </div>
-                        <span class="text-[10px] font-semibold text-gray-500 group-hover:text-gray-700">Tambah Sponsor</span>
-                    </label>
+                </div>
+                
+                <div data-pond-role="sponsor">
+                    <input type="file" accept="image/*">
                 </div>
             </div>
 
@@ -838,73 +827,6 @@ if (!empty($order['item_details'])) {
             </template>
         </div>
 
-        {{-- File Hasil Desain (Dari Tim Design) — muncul di SPK --}}
-        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-sm shadow-[#1a237e]/5 p-5"
-             x-show="designFiles.filter(f => ['mockup_depan','mockup_belakang','detail_depan','detail_belakang','sponsor'].includes(f.role)).length > 0">
-            <h3 class="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
-                <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Hasil Desain (Dari Tim Design)
-            </h3>
-            <div class="space-y-4">
-                {{-- Mockup --}}
-                <template x-if="designFiles.filter(f => ['mockup_depan','mockup_belakang'].includes(f.role)).length > 0">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mockup</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <template x-for="f in designFiles.filter(f => ['mockup_depan','mockup_belakang'].includes(f.role))" :key="f.path">
-                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
-                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-                {{-- Detail Depan --}}
-                <template x-if="designFiles.filter(f => f.role === 'detail_depan').length > 0">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Detail Depan</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <template x-for="f in designFiles.filter(f => f.role === 'detail_depan')" :key="f.path">
-                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
-                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-                {{-- Nama & No Punggung --}}
-                <template x-if="designFiles.filter(f => f.role === 'detail_belakang').length > 0">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Nama &amp; No Punggung</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <template x-for="f in designFiles.filter(f => f.role === 'detail_belakang')" :key="f.path">
-                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
-                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-                {{-- Sponsor --}}
-                <template x-if="designFiles.filter(f => f.role === 'sponsor').length > 0">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Detail Sponsor</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <template x-for="f in designFiles.filter(f => f.role === 'sponsor')" :key="f.path">
-                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
-                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </div>
-
     </div>{{-- end kolom kanan --}}
 
 </div>{{-- end flex --}}
@@ -921,7 +843,7 @@ function detailPesananApp() {
         spkNotes: @json($order['product']['notes'] ?? ''),
         isSavingNotes: false,
         uploadingSlot: null,
-        
+        pondRefs: {},
         get mockupDepan() {
             return this.designFiles.find(f => f.role === 'mockup_depan') || null;
         },
@@ -937,11 +859,63 @@ function detailPesananApp() {
         get sponsorFiles() {
             return this.designFiles.filter(f => f.role === 'sponsor');
         },
+        init() {
+            if (this.activeTab === 'spk') {
+                this.$nextTick(() => this.initPonds());
+            }
+            this.$watch('activeTab', value => {
+                if (value === 'spk') {
+                    this.$nextTick(() => this.initPonds());
+                }
+            });
+        },
 
-        async uploadFile(e, role) {
-            const file = e.target.files[0];
-            if (!file) return;
+        initPonds() {
+            if (this.activeTab !== 'spk') return;
+            setTimeout(() => {
+                const containers = document.querySelectorAll('[data-pond-role]');
+                containers.forEach(container => {
+                    const role = container.getAttribute('data-pond-role');
+                    this.initPond(container, role);
+                });
+            }, 50);
+        },
 
+        initPond(containerEl, role) {
+            if (!window.FilePond) {
+                setTimeout(() => this.initPond(containerEl, role), 50);
+                return;
+            }
+            if (this.pondRefs[role]) return;
+            const input = containerEl.querySelector('input[type="file"]');
+            if (!input) return;
+            if (window.FilePond.find(input)) return;
+
+            const pond = FilePond.create(input, {
+                allowMultiple: role === 'sponsor',
+                instantUpload: false,
+                allowProcess: false,
+                credits: false,
+                labelIdle: role === 'sponsor'
+                    ? 'Drag & drop atau <span class="filepond--label-action">Cari</span>'
+                    : 'Drag & drop atau <span class="filepond--label-action">Cari</span>',
+                stylePanelLayout: 'compact',
+                imagePreviewHeight: 80,
+            });
+
+            pond.on('addfile', async (error, fileItem) => {
+                if (error) return;
+                if (fileItem.origin === FilePond.FileOrigin.LOCAL) return;
+                const file = fileItem.file;
+                if (file instanceof File) {
+                    await this.uploadFileDirectly(file, role, pond);
+                }
+            });
+
+            this.pondRefs[role] = pond;
+        },
+
+        async uploadFileDirectly(file, role, pond) {
             this.uploadingSlot = role;
             const formData = new FormData();
             formData.append('file', file);
@@ -960,17 +934,22 @@ function detailPesananApp() {
                 if (data.success) {
                     if (['mockup_depan', 'mockup_belakang', 'detail_depan', 'detail_belakang'].includes(role)) {
                         this.designFiles = this.designFiles.filter(f => f.role !== role);
+                        delete this.pondRefs[role];
                     }
-                    this.designFiles.push(data.file);
+                    this.designFiles = [...this.designFiles, data.file];
                     Notify.success(data.message, 'Berhasil!');
                 } else {
                     Notify.error(data.message || 'Terjadi kesalahan saat upload.');
+                    try { pond.removeFile(file); } catch(e) {}
                 }
             } catch (err) {
                 Notify.error('Gagal mengupload file.');
+                try { pond.removeFile(file); } catch(e) {}
             } finally {
                 this.uploadingSlot = null;
-                e.target.value = '';
+                if (role === 'sponsor') {
+                    try { pond.removeFiles(); } catch(e) {}
+                }
             }
         },
 
@@ -1001,6 +980,7 @@ function detailPesananApp() {
                 const data = await res.json();
                 if (data.success) {
                     this.designFiles = this.designFiles.filter(f => f.path !== path);
+                    this.$nextTick(() => this.initPonds());
                     Notify.success(data.message, 'Dihapus!');
                 } else {
                     Notify.error(data.message || 'Gagal menghapus file.');
