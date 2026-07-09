@@ -152,11 +152,17 @@ if (!empty($order['item_details'])) {
                     Info Customer
                 </h3>
                 <div class="flex items-center gap-2">
-                    {{-- Tombol Chat (sinkron ke halaman chat internal) --}}
-                    <a href="{{ route('staf.chat') }}" title="Chat dengan Customer" class="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-medium hover:underline">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                        Chat
+                    {{-- Tombol WA ke customer --}}
+                    @php
+                        $custPhone = preg_replace('/[^0-9]/', '', $order['customer']['phone'] ?? '');
+                        if (str_starts_with($custPhone, '0')) { $custPhone = '62' . substr($custPhone, 1); }
+                    @endphp
+                    @if($custPhone)
+                    <a href="https://wa.me/{{ $custPhone }}?text={{ urlencode('Halo, ini dari tim Novos mengenai pesanan ' . $order['order_id']) }}" target="_blank" rel="noopener" title="Chat via WhatsApp" class="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-medium hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                        WhatsApp
                     </a>
+                    @endif
                 </div>
             </div>
             {{-- Grid 2 kolom: label fixed-width, value rapat di sebelahnya --}}
@@ -465,8 +471,8 @@ if (!empty($order['item_details'])) {
                     <tbody class="divide-y divide-gray-100">
                         @forelse($order['status_history'] as $sh)
                         @php
-                        $st = match($sh['status']) { 'menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','tahap_produksi'=>'purple','selesai'=>'green',default=>'gray' };
-                        $sl = match($sh['status']) { 'menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','tahap_produksi'=>'Produksi','selesai'=>'Selesai',default=>$sh['status'] };
+                        $st = match($sh['status']) { 'menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','siap_cetak'=>'indigo','menunggu_spk'=>'yellow','tahap_produksi'=>'purple','selesai'=>'green','dibatalkan'=>'red',default=>'gray' };
+                        $sl = match($sh['status']) { 'menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','siap_cetak'=>'Siap Cetak','menunggu_spk'=>'Menunggu SPK','tahap_produksi'=>'Produksi','selesai'=>'Selesai','dibatalkan'=>'Dibatalkan',default=>$sh['status'] };
                         @endphp
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-3.5 text-gray-700">{{ $sh['date'] }}</td>
@@ -796,13 +802,19 @@ if (!empty($order['item_details'])) {
             </div>
             @endif
 
-            {{-- Link ke chat --}}
+            {{-- Link ke WA customer --}}
             @if($order['payment']['payment_proof'])
             <div class="mt-3 pt-3 border-t border-gray-100">
-                <a href="{{ route('staf.chat') }}" class="text-xs text-[#1a237e] hover:underline font-medium inline-flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                    Lihat bukti pembayaran di Chat
+                @php
+                    $custPhoneWa = preg_replace('/[^0-9]/', '', $order['customer']['phone'] ?? '');
+                    if (str_starts_with($custPhoneWa, '0')) { $custPhoneWa = '62' . substr($custPhoneWa, 1); }
+                @endphp
+                @if($custPhoneWa)
+                <a href="https://wa.me/{{ $custPhoneWa }}?text={{ urlencode('Halo, bukti pembayaran pesanan ' . $order['order_id'] . ' sudah kami terima. Terima kasih!') }}" target="_blank" rel="noopener" class="text-xs text-green-600 hover:underline font-medium inline-flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                    Konfirmasi via WhatsApp ke Customer
                 </a>
+                @endif
             </div>
             @endif
         </div>

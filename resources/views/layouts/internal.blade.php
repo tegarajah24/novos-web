@@ -662,7 +662,7 @@
                 <div class="flex items-center gap-5">
                 <!-- Chat & Notifikasi -->
                 <div class="flex items-center gap-4">
-                    <div x-data="staffChatBadge()" x-init="init()" class="relative">
+                    <div x-data="staffChatBadge()" x-init="init()" class="relative hidden">
                         <div class="bg-white rounded-full shadow-sm">
                             <a href="{{ route('staf.chat') }}" class="relative p-2 text-gray-500 hover:text-[#1a237e] flex items-center justify-center">
                                 <i data-lucide="message-circle" class="w-5 h-5"></i>
