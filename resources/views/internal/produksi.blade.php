@@ -64,7 +64,7 @@
                         </tr>
                     </template>
                     <template x-for="order in filteredOrders()" :key="order.id">
-                        <tr class="hover:bg-indigo-50/30 transition-colors group">
+                        <tr class="hover:bg-indigo-50/30 transition-colors cursor-pointer group" @click="openDetail(order)">
                             <td class="px-6 py-4">
                                 <span class="font-bold text-[#1a237e] group-hover:underline" x-text="order.order_id"></span>
                             </td>
@@ -88,7 +88,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button @click="openDetail(order)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
+                                <button @click.stop="openDetail(order)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
                                     Lihat Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
                             </td>
