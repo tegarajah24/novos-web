@@ -476,7 +476,16 @@
                                                 <p class="text-[11px] text-gray-400 mt-0.5">Warna, posisi, dan kualitas sablon/bordir sesuai file desain.</p>
                                             </div>
                                         </label>
-                                        <!-- Item 5: Perlu Revisi -->
+                                        <!-- Item 5: Setrika & Lipat -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-emerald-50 hover:border-emerald-200 transition-colors group">
+                                            <input type="checkbox" x-model="qcChecklist.setrika"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-emerald-800">Setrika &amp; Pelipatan</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Jersey disetrika rapi, bebas kusut, dilipat, dan siap dikemas.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 6: Perlu Revisi -->
                                         <label class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200 cursor-pointer hover:bg-red-100 hover:border-red-300 transition-colors group">
                                             <input type="checkbox" x-model="qcChecklist.perluRevisi"
                                                 class="mt-0.5 w-4 h-4 rounded border-gray-300 text-red-500 focus:ring-red-500 cursor-pointer shrink-0">
@@ -490,11 +499,11 @@
                                     <div class="mt-3 pt-3 border-t border-gray-100">
                                         <div class="flex justify-between items-center mb-1.5">
                                             <span class="text-[11px] text-gray-500">Progress QC</span>
-                                            <span class="text-[11px] font-bold text-emerald-600" x-text="qcProgress() + '/' + '4 item'"></span>
+                                            <span class="text-[11px] font-bold text-emerald-600" x-text="qcProgress() + '/5 item'"></span>
                                         </div>
                                         <div class="w-full bg-gray-200 rounded-full h-1.5">
                                             <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
-                                                :style="'width:' + (qcProgress() / 4 * 100) + '%'"></div>
+                                                :style="'width:' + (qcProgress() / 5 * 100) + '%'"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -643,6 +652,7 @@ function produksiApp() {
             cacat: false,
             ukuran: false,
             desain: false,
+            setrika: false,
             perluRevisi: false
         },
         printingChecklist: {
@@ -680,6 +690,7 @@ function produksiApp() {
             if (this.qcChecklist.cacat) count++;
             if (this.qcChecklist.ukuran) count++;
             if (this.qcChecklist.desain) count++;
+            if (this.qcChecklist.setrika) count++;
             return count;
         },
 
@@ -717,7 +728,7 @@ function produksiApp() {
             this.targetStage = 'jahit';
             this.isItemsExpanded = false;
             // Reset checklist QC setiap buka modal
-            this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, perluRevisi: false };
+            this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, setrika: false, perluRevisi: false };
             this.printingChecklist = { tesWarna: false, kelengkapanPola: false, potongKertas: false };
             this.pressChecklist = { kualitasPress: false, potongKain: false, hitungPola: false, persiapanDetailJahit: false };
             this.isDetailOpen = true;
@@ -735,7 +746,7 @@ function produksiApp() {
                 return this.pressChecklist.kualitasPress && this.pressChecklist.potongKain && this.pressChecklist.hitungPola && this.pressChecklist.persiapanDetailJahit;
             }
             if (this.selectedOrder?.stage === 'qc') {
-                if (this.updateStatus === 'selesai_qc') return this.qcProgress() === 4 && !this.qcChecklist.perluRevisi;
+                if (this.updateStatus === 'selesai_qc') return this.qcProgress() === 5 && !this.qcChecklist.perluRevisi;
                 if (this.updateStatus === 'revisi_qc') return this.qcChecklist.perluRevisi && !!this.targetStage;
             }
             return true;
@@ -798,8 +809,8 @@ function produksiApp() {
                 }
             } else if (currentStage === 'qc') {
                 if (targetStatus === 'selesai_qc') {
-                    if (!this.qcChecklist.jahitan || !this.qcChecklist.cacat || !this.qcChecklist.ukuran || !this.qcChecklist.desain) {
-                        Notify.warning('Semua item checklist (Kualitas Jahitan, Bebas Cacat, Ukuran & Kuantitas, Desain & Sablon) wajib dicentang untuk menyelesaikan QC.', 'Checklist Belum Lengkap');
+                    if (!this.qcChecklist.jahitan || !this.qcChecklist.cacat || !this.qcChecklist.ukuran || !this.qcChecklist.desain || !this.qcChecklist.setrika) {
+                        Notify.warning('Semua item checklist (Kualitas Jahitan, Bebas Cacat, Ukuran & Kuantitas, Desain & Sablon, serta Setrika) wajib dicentang untuk menyelesaikan QC.', 'Checklist Belum Lengkap');
                         return;
                     }
                     if (this.qcChecklist.perluRevisi) {
@@ -811,7 +822,7 @@ function produksiApp() {
                     confirmButtonText = 'Ya, Selesaikan!';
                     successText = 'Quality Control selesai. Pesanan dinyatakan selesai diproduksi.';
                 } else if (targetStatus === 'revisi_qc') {
-                    if (this.qcChecklist.jahitan || this.qcChecklist.cacat || this.qcChecklist.ukuran || this.qcChecklist.desain) {
+                    if (this.qcChecklist.jahitan || this.qcChecklist.cacat || this.qcChecklist.ukuran || this.qcChecklist.desain || this.qcChecklist.setrika) {
                         Notify.warning('Untuk revisi, hanya checklist "Perlu Revisi / Pengerjaan Ulang" yang boleh dicentang. Checklist lainnya harus dikosongkan.', 'Checklist Tidak Sesuai');
                         return;
                     }
