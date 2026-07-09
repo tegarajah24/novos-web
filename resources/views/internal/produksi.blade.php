@@ -353,16 +353,25 @@
                                                 <p class="text-[11px] text-gray-400 mt-0.5">Memastikan pola badan depan/belakang, lengan kiri/kanan, & kerah lengkap di file.</p>
                                             </div>
                                         </label>
+                                        <!-- Item 3: Potong Kertas Print -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-colors group">
+                                            <input type="checkbox" x-model="printingChecklist.potongKertas"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-blue-800">Potong Kertas Print</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Memotong gulungan kertas hasil print sesuai bagian agar siap di-press.</p>
+                                            </div>
+                                        </label>
                                     </div>
                                     <!-- Progress Bar Checklist -->
                                     <div class="mt-3 pt-3 border-t border-gray-100">
                                         <div class="flex justify-between items-center mb-1.5">
                                             <span class="text-[11px] text-gray-500">Progress Printing</span>
-                                            <span class="text-[11px] font-bold text-blue-600" x-text="printingProgress() + '/2 item'"></span>
+                                            <span class="text-[11px] font-bold text-blue-600" x-text="printingProgress() + '/3 item'"></span>
                                         </div>
                                         <div class="w-full bg-gray-200 rounded-full h-1.5">
                                             <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
-                                                :style="'width:' + (printingProgress() / 2 * 100) + '%'"></div>
+                                                :style="'width:' + (printingProgress() / 3 * 100) + '%'"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -638,7 +647,8 @@ function produksiApp() {
         },
         printingChecklist: {
             tesWarna: false,
-            kelengkapanPola: false
+            kelengkapanPola: false,
+            potongKertas: false
         },
         pressChecklist: {
             kualitasPress: false,
@@ -677,6 +687,7 @@ function produksiApp() {
             let count = 0;
             if (this.printingChecklist.tesWarna) count++;
             if (this.printingChecklist.kelengkapanPola) count++;
+            if (this.printingChecklist.potongKertas) count++;
             return count;
         },
 
@@ -707,7 +718,7 @@ function produksiApp() {
             this.isItemsExpanded = false;
             // Reset checklist QC setiap buka modal
             this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, perluRevisi: false };
-            this.printingChecklist = { tesWarna: false, kelengkapanPola: false };
+            this.printingChecklist = { tesWarna: false, kelengkapanPola: false, potongKertas: false };
             this.pressChecklist = { kualitasPress: false, potongKain: false, hitungPola: false, persiapanDetailJahit: false };
             this.isDetailOpen = true;
             setTimeout(() => {
@@ -718,7 +729,7 @@ function produksiApp() {
         canSubmit() {
             if (!this.updateStatus) return false;
             if (this.selectedOrder?.stage === 'printing' && this.updateStatus === 'selesai_printing') {
-                return this.printingChecklist.tesWarna && this.printingChecklist.kelengkapanPola;
+                return this.printingChecklist.tesWarna && this.printingChecklist.kelengkapanPola && this.printingChecklist.potongKertas;
             }
             if (this.selectedOrder?.stage === 'press' && this.updateStatus === 'selesai_press') {
                 return this.pressChecklist.kualitasPress && this.pressChecklist.potongKain && this.pressChecklist.hitungPola && this.pressChecklist.persiapanDetailJahit;
@@ -748,7 +759,7 @@ function produksiApp() {
                     confirmButtonText = 'Ya, Update!';
                     successText = 'Status pesanan berhasil diperbarui.';
                 } else {
-                    if (!this.printingChecklist.tesWarna || !this.printingChecklist.kelengkapanPola) {
+                    if (!this.printingChecklist.tesWarna || !this.printingChecklist.kelengkapanPola || !this.printingChecklist.potongKertas) {
                         Notify.warning('Semua checklist printing wajib dicentang untuk menyelesaikan printing.', 'Checklist Belum Lengkap');
                         return;
                     }
