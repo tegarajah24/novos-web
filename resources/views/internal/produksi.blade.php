@@ -363,6 +363,102 @@
                                     </div>
                                 </div>
 
+                                {{-- Printing Checklist (hanya tampil di stage printing) --}}
+                                <div x-show="selectedOrder?.stage === 'printing'" x-cloak>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
+                                        2. Checklist Printing
+                                    </label>
+                                    <div class="space-y-2.5">
+                                        <!-- Item 1: Acc Tes Warna -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-colors group">
+                                            <input type="checkbox" x-model="printingChecklist.tesWarna"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-blue-800">Acc Tes Warna (Sample Print)</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Mesin cetak sedikit sampel warna dulu untuk memastikan kecerahan & kesesuaian warna.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 2: Validasi Kelengkapan Pola Desain -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-colors group">
+                                            <input type="checkbox" x-model="printingChecklist.kelengkapanPola"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-blue-800">Validasi Kelengkapan Pola Desain</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Memastikan pola badan depan/belakang, lengan kiri/kanan, & kerah lengkap di file.</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <!-- Progress Bar Checklist -->
+                                    <div class="mt-3 pt-3 border-t border-gray-100">
+                                        <div class="flex justify-between items-center mb-1.5">
+                                            <span class="text-[11px] text-gray-500">Progress Printing</span>
+                                            <span class="text-[11px] font-bold text-blue-600" x-text="printingProgress() + '/2 item'"></span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                            <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
+                                                :style="'width:' + (printingProgress() / 2 * 100) + '%'"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Press Checklist (hanya tampil di stage press) --}}
+                                <div x-show="selectedOrder?.stage === 'press'" x-cloak>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-600"></i>
+                                        2. Checklist Press &amp; Cutting
+                                    </label>
+                                    <div class="space-y-2.5">
+                                        <!-- Item 1: Cek Kualitas Press Warna -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                                            <input type="checkbox" x-model="pressChecklist.kualitasPress"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-orange-800">Cek Kualitas Press Warna</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Gambar menempel sempurna di kain, warna matang, tidak luntur/berbayang.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 2: Proses Potong Kain (Cutting) -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                                            <input type="checkbox" x-model="pressChecklist.potongKain"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-orange-800">Proses Potong Kain (Cutting)</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Memotong kain yang sudah selesai di-press mengikuti garis polanya.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 3: Cek Warna & Hitung Kelengkapan Pola -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                                            <input type="checkbox" x-model="pressChecklist.hitungPola"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-orange-800">Cek Warna &amp; Hitung Kelengkapan Pola</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Warna konsisten dan jumlah potongan kain pas per baju sesuai total pesanan.</p>
+                                            </div>
+                                        </label>
+                                        <!-- Item 4: Persiapan Detail Jahit (Sewing Prep) -->
+                                        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                                            <input type="checkbox" x-model="pressChecklist.persiapanDetailJahit"
+                                                class="mt-0.5 w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer shrink-0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gray-800 group-hover:text-orange-800">Persiapan Detail Jahit (Sewing Prep)</p>
+                                                <p class="text-[11px] text-gray-400 mt-0.5">Menyiapkan aksesoris, resleting, label leher, atau benang warna tertentu.</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <!-- Progress Bar Checklist -->
+                                    <div class="mt-3 pt-3 border-t border-gray-100">
+                                        <div class="flex justify-between items-center mb-1.5">
+                                            <span class="text-[11px] text-gray-500">Progress Press &amp; Cutting</span>
+                                            <span class="text-[11px] font-bold text-orange-600" x-text="pressProgress() + '/4 item'"></span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500"
+                                                :style="'width:' + (pressProgress() / 4 * 100) + '%'"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {{-- QC Checklist (hanya tampil di stage QC) --}}
                                 <div x-show="selectedOrder?.stage === 'qc'" x-cloak>
                                     <label class="block text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
@@ -469,7 +565,7 @@
                                 {{-- Catatan Opsional --}}
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
-                                        x-text="selectedOrder?.stage === 'qc' ? '3. Catatan QC (Opsional)' : '2. Catatan (Opsional)'"></label>
+                                        x-text="['printing', 'press', 'qc'].includes(selectedOrder?.stage) ? (selectedOrder?.stage === 'qc' ? '3. Catatan QC (Opsional)' : '3. Catatan (Opsional)') : '2. Catatan (Opsional)'"></label>
                                     <textarea x-model="productionNote" rows="3"
                                         class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm resize-none"
                                         :placeholder="selectedOrder?.stage === 'qc' ? 'Misal: jahitan bagian bahu kanan perlu dirapikan, ukuran XL ada 1 pcs cacat...' : 'Misal: ada kelebihan 1 pcs size L, warna sedikit lebih tua...'"></textarea>
@@ -527,6 +623,8 @@ function produksiApp() {
             { key: 'jahit', label: 'Jahit (Sewing)' },
             { key: 'qc', label: 'Quality Control (QC)' },
         ],
+
+
         targetStage: 'jahit',
         qcChecklist: {
             jahitan: false,
@@ -534,6 +632,16 @@ function produksiApp() {
             ukuran: false,
             desain: false,
             perluRevisi: false
+        },
+        printingChecklist: {
+            tesWarna: false,
+            kelengkapanPola: false
+        },
+        pressChecklist: {
+            kualitasPress: false,
+            potongKain: false,
+            hitungPola: false,
+            persiapanDetailJahit: false
         },
 
         orders: @json($orders).map(order => ({
@@ -562,6 +670,22 @@ function produksiApp() {
             return count;
         },
 
+        printingProgress() {
+            let count = 0;
+            if (this.printingChecklist.tesWarna) count++;
+            if (this.printingChecklist.kelengkapanPola) count++;
+            return count;
+        },
+
+        pressProgress() {
+            let count = 0;
+            if (this.pressChecklist.kualitasPress) count++;
+            if (this.pressChecklist.potongKain) count++;
+            if (this.pressChecklist.hitungPola) count++;
+            if (this.pressChecklist.persiapanDetailJahit) count++;
+            return count;
+        },
+
         openDetail(order) {
             this.selectedOrder = order;
             if (order.stage === 'printing') {
@@ -580,6 +704,8 @@ function produksiApp() {
             this.isItemsExpanded = false;
             // Reset checklist QC setiap buka modal
             this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, perluRevisi: false };
+            this.printingChecklist = { tesWarna: false, kelengkapanPola: false };
+            this.pressChecklist = { kualitasPress: false, potongKain: false, hitungPola: false, persiapanDetailJahit: false };
             this.isDetailOpen = true;
             setTimeout(() => {
                 if (window.lucide) window.lucide.createIcons({ icons: window.lucide.icons });
@@ -588,6 +714,12 @@ function produksiApp() {
 
         canSubmit() {
             if (!this.updateStatus) return false;
+            if (this.selectedOrder?.stage === 'printing' && this.updateStatus === 'selesai_printing') {
+                return this.printingChecklist.tesWarna && this.printingChecklist.kelengkapanPola;
+            }
+            if (this.selectedOrder?.stage === 'press' && this.updateStatus === 'selesai_press') {
+                return this.pressChecklist.kualitasPress && this.pressChecklist.potongKain && this.pressChecklist.hitungPola && this.pressChecklist.persiapanDetailJahit;
+            }
             if (this.selectedOrder?.stage === 'qc') {
                 if (this.updateStatus === 'selesai_qc') return this.qcProgress() === 4 && !this.qcChecklist.perluRevisi;
                 if (this.updateStatus === 'revisi_qc') return this.qcChecklist.perluRevisi && !!this.targetStage;
@@ -613,6 +745,10 @@ function produksiApp() {
                     confirmButtonText = 'Ya, Update!';
                     successText = 'Status pesanan berhasil diperbarui.';
                 } else {
+                    if (!this.printingChecklist.tesWarna || !this.printingChecklist.kelengkapanPola) {
+                        Notify.warning('Semua checklist printing wajib dicentang untuk menyelesaikan printing.', 'Checklist Belum Lengkap');
+                        return;
+                    }
                     title = 'Selesaikan Printing?';
                     text = 'Proses printing selesai dan pesanan akan dikirim ke divisi Press (Heat Press).';
                     confirmButtonText = 'Ya, Kirim!';
@@ -625,6 +761,10 @@ function produksiApp() {
                     confirmButtonText = 'Ya, Update!';
                     successText = 'Status pesanan berhasil diperbarui.';
                 } else {
+                    if (!this.pressChecklist.kualitasPress || !this.pressChecklist.potongKain || !this.pressChecklist.hitungPola || !this.pressChecklist.persiapanDetailJahit) {
+                        Notify.warning('Semua checklist press wajib dicentang untuk menyelesaikan tahap press.', 'Checklist Belum Lengkap');
+                        return;
+                    }
                     title = 'Selesaikan Press (Heat Press)?';
                     text = 'Proses press selesai dan pesanan akan dikirim ke divisi Jahit.';
                     confirmButtonText = 'Ya, Kirim!';
