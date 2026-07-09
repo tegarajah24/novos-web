@@ -194,7 +194,7 @@
                 {{-- Kiri: Nama Pemesan --}}
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Pemesan</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Pemesan <span class="text-red-500">*</span></label>
                         <input
                             type="text"
                             x-model="form.nama_pemesan"
@@ -216,7 +216,7 @@
                 {{-- Kanan: Nama Tim --}}
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Tim / Event</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Tim / Event <span class="text-red-500">*</span></label>
                         <input
                             type="text"
                             x-model="form.team_name"
