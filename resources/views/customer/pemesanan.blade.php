@@ -683,7 +683,7 @@
                                 class="px-4 py-3 text-sm font-semibold border-b-2 transition-colors"
                                 :class="ukuranTab === 'potongan' ? 'border-[#1a237e] text-[#1a237e]' : 'border-transparent text-gray-500 hover:text-gray-700'"
                             >
-                                Ukuran Potongan
+                                Atasan
                             </button>
                             <button
                                 type="button"
@@ -691,7 +691,7 @@
                                 class="px-4 py-3 text-sm font-semibold border-b-2 transition-colors"
                                 :class="ukuranTab === 'training' ? 'border-[#1a237e] text-[#1a237e]' : 'border-transparent text-gray-500 hover:text-gray-700'"
                             >
-                                Training
+                                Bawahan
                             </button>
                         </div>
 
@@ -730,25 +730,25 @@
                             {{-- Tab: Training --}}
                             <template x-if="ukuranTab === 'training'">
                                 <div>
-                                    <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk tipe <strong class="text-[#1a237e]">Training</strong>.</p>
+                                    <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk tipe <strong class="text-[#1a237e]">Bawahan</strong>.</p>
                                     <div class="space-y-6">
                                         <div>
-                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Training Long Sleeve</h4>
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Celana Panjang / Rok</h4>
                                             <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
                                                 <img
                                                     src="/images/referensi-ukuran/TRAININGLONG.png"
                                                     class="w-full h-auto object-contain"
-                                                    alt="Training Long Sleeve"
+                                                    alt="Celana Panjang / Rok"
                                                 >
                                             </div>
                                         </div>
                                         <div>
-                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Training Short Sleeve</h4>
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Celana Pendek</h4>
                                             <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
                                                 <img
                                                     src="/images/referensi-ukuran/TRAININGSHORT.png"
                                                     class="w-full h-auto object-contain"
-                                                    alt="Training Short Sleeve"
+                                                    alt="Celana Pendek"
                                                 >
                                             </div>
                                         </div>
