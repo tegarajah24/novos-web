@@ -185,7 +185,7 @@
                                     <svg class="w-3 h-3 transition-transform duration-300" :class="isItemsExpanded ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                 </button>
                             </div>
-                            <div :class="isItemsExpanded ? 'max-h-[10000px]' : 'max-h-[250px]'" class="overflow-y-auto rounded-lg border border-gray-200 transition-all duration-300 ease-in-out relative">
+                            <div :style="isItemsExpanded ? 'max-height: 10000px;' : 'max-height: 250px;'" class="overflow-y-auto rounded-lg border border-gray-200 transition-all duration-300 ease-in-out relative">
                                 <table class="w-full text-sm">
                                     <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide sticky top-0 z-10">
                                         <tr>
