@@ -646,10 +646,12 @@ class OrderController extends Controller
         $payment = $order->payment;
 
         if (!$payment) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Belum ada data pembayaran.',
-            ], 422);
+            $payment = $order->payment()->create([
+                'amount'         => $order->total_price ?? 0,
+                'status'         => 'pending',
+                'payment_method' => 'manual_transfer',
+                'notes'          => 'Pembayaran dicatat manual oleh admin.',
+            ]);
         }
 
         if ($payment->status === 'success') {
