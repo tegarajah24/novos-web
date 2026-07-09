@@ -1651,34 +1651,6 @@ class OrderController extends Controller
             $sheet->getRowDimension($r)->setRowHeight(18);
         }
 
-        // Embed mockup images in rows 12-21
-        $mockupDepan   = null;
-        $mockupBelakang = null;
-        foreach ($designFiles as $f) {
-            $role = $f['role'] ?? null;
-            if ($role === 'mockup_depan')  $mockupDepan   = $f['path'];
-            if ($role === 'mockup_belakang') $mockupBelakang = $f['path'];
-        }
-        $imgRow = 14;
-        if ($mockupDepan) {
-            $p = storage_path('app/public/' . $mockupDepan);
-            if (file_exists($p)) {
-                try {
-                    $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $d->setPath($p)->setHeight(130)->setCoordinates('B' . $imgRow)->setWorksheet($sheet);
-                } catch (\Exception $e) {}
-            }
-        }
-        if ($mockupBelakang) {
-            $p = storage_path('app/public/' . $mockupBelakang);
-            if (file_exists($p)) {
-                try {
-                    $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $d->setPath($p)->setHeight(130)->setCoordinates('G' . $imgRow)->setWorksheet($sheet);
-                } catch (\Exception $e) {}
-            }
-        }
-
         // ── Row 22: spacer ──
         $sheet->mergeCells('A22:J22');
         $sheet->getStyle('A22:J22')->applyFromArray($bdrLeftOnly);
@@ -1895,14 +1867,18 @@ class OrderController extends Controller
         // Thin border grid di semua sel sebagai base
         $sheet2->getStyle('A1:N33')->applyFromArray($bdrThinAll);
 
+        $mockupDepan    = null;
+        $mockupBelakang = null;
         $detailDepan    = null;
         $detailBelakang = null;
         $sponsorPaths   = [];
         foreach ($designFiles as $f) {
             $role = $f['role'] ?? null;
-            if ($role === 'detail_depan')     $detailDepan    = $f['path'];
+            if ($role === 'mockup_depan')       $mockupDepan    = $f['path'];
+            elseif ($role === 'mockup_belakang')  $mockupBelakang = $f['path'];
+            elseif ($role === 'detail_depan')     $detailDepan    = $f['path'];
             elseif ($role === 'detail_belakang') $detailBelakang = $f['path'];
-            elseif ($role === 'sponsor')       $sponsorPaths[] = $f['path'];
+            elseif ($role === 'sponsor')         $sponsorPaths[] = $f['path'];
         }
 
         // ── Row 1: RINCIAN header ──
@@ -1923,14 +1899,23 @@ class OrderController extends Controller
         $sheet2->getStyle('A2:N22')->applyFromArray(['borders' => ['left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]]]);
         $sheet2->getRowDimension(22)->setRowHeight(15);
 
-        // Embed detail depan image in the large area
+        // Embed mockup & detail images in the large area
         $bigImgRow = 4;
-        if ($detailDepan) {
-            $p = storage_path('app/public/' . $detailDepan);
+        if ($mockupDepan) {
+            $p = storage_path('app/public/' . $mockupDepan);
             if (file_exists($p)) {
                 try {
                     $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $d->setPath($p)->setHeight(300)->setCoordinates('B' . $bigImgRow)->setWorksheet($sheet2);
+                    $d->setPath($p)->setHeight(250)->setCoordinates('B' . $bigImgRow)->setWorksheet($sheet2);
+                } catch (\Exception $e) {}
+            }
+        }
+        if ($mockupBelakang) {
+            $p = storage_path('app/public/' . $mockupBelakang);
+            if (file_exists($p)) {
+                try {
+                    $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                    $d->setPath($p)->setHeight(250)->setCoordinates('H' . $bigImgRow)->setWorksheet($sheet2);
                 } catch (\Exception $e) {}
             }
         }

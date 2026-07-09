@@ -543,42 +543,36 @@ if (!empty($order['item_details'])) {
                 </div>
             </div>
 
-            {{-- Mockup Desain Final --}}
+            {{-- Mockup Jersey Final --}}
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 class="font-semibold text-gray-900 mb-6 text-sm flex items-center gap-2">
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     Mockup Jersey Final (Untuk SPK)
                 </h3>
-                
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Tampak Depan (Portrait)</span>
-                        <template x-if="mockupDepan">
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[3/4] overflow-hidden cursor-zoom-in"
-                                 @click="window.openPhotoSwipe?.([{path: mockupDepan.url, name: 'Mockup Depan'}], 0)">
-                                <img :src="mockupDepan.url" class="w-full h-full object-cover">
-                            </div>
-                        </template>
-                        <template x-if="!mockupDepan">
-                            <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[3/4] flex items-center justify-center">
-                                <p class="text-xs text-gray-400">Belum ada mockup depan</p>
-                            </div>
-                        </template>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Tampak Belakang (Landscape)</span>
-                        <template x-if="mockupBelakang">
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[4/3] overflow-hidden cursor-zoom-in"
-                                 @click="window.openPhotoSwipe?.([{path: mockupBelakang.url, name: 'Mockup Belakang'}], 0)">
-                                <img :src="mockupBelakang.url" class="w-full h-full object-cover">
-                            </div>
-                        </template>
-                        <template x-if="!mockupBelakang">
-                            <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[4/3] flex items-center justify-center">
-                                <p class="text-xs text-gray-400">Belum ada mockup belakang</p>
-                            </div>
-                        </template>
-                    </div>
+
+                <div class="flex flex-wrap gap-4">
+                    <template x-if="mockupDepan">
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                             @click="window.openPhotoSwipe?.([{path: mockupDepan.url, name: 'Mockup Depan'}], 0)">
+                            <img :src="mockupDepan.url" class="w-full h-full object-cover">
+                        </div>
+                    </template>
+                    <template x-if="!mockupDepan">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                            <p class="text-xs text-gray-400">Belum ada mockup depan</p>
+                        </div>
+                    </template>
+                    <template x-if="mockupBelakang">
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                             @click="window.openPhotoSwipe?.([{path: mockupBelakang.url, name: 'Mockup Belakang'}], 0)">
+                            <img :src="mockupBelakang.url" class="w-full h-full object-cover">
+                        </div>
+                    </template>
+                    <template x-if="!mockupBelakang">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                            <p class="text-xs text-gray-400">Belum ada mockup belakang</p>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -588,36 +582,30 @@ if (!empty($order['item_details'])) {
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     Detail Tampak Depan & Tampak Belakang Zoom
                 </h3>
-                
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Detail Tampak Depan</span>
-                        <template x-if="detailDepan">
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[3/4] overflow-hidden cursor-zoom-in"
-                                 @click="window.openPhotoSwipe?.([{path: detailDepan.url, name: 'Detail Depan'}], 0)">
-                                <img :src="detailDepan.url" class="w-full h-full object-cover">
-                            </div>
-                        </template>
-                        <template x-if="!detailDepan">
-                            <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[3/4] flex items-center justify-center">
-                                <p class="text-xs text-gray-400">Belum ada detail depan</p>
-                            </div>
-                        </template>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Detail Tampak Belakang</span>
-                        <template x-if="detailBelakang">
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-[3/4] overflow-hidden cursor-zoom-in"
-                                 @click="window.openPhotoSwipe?.([{path: detailBelakang.url, name: 'Detail Belakang'}], 0)">
-                                <img :src="detailBelakang.url" class="w-full h-full object-cover">
-                            </div>
-                        </template>
-                        <template x-if="!detailBelakang">
-                            <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[3/4] flex items-center justify-center">
-                                <p class="text-xs text-gray-400">Belum ada detail belakang</p>
-                            </div>
-                        </template>
-                    </div>
+
+                <div class="flex flex-wrap gap-4">
+                    <template x-if="detailDepan">
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                             @click="window.openPhotoSwipe?.([{path: detailDepan.url, name: 'Detail Depan'}], 0)">
+                            <img :src="detailDepan.url" class="w-full h-full object-cover">
+                        </div>
+                    </template>
+                    <template x-if="!detailDepan">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                            <p class="text-xs text-gray-400">Belum ada detail depan</p>
+                        </div>
+                    </template>
+                    <template x-if="detailBelakang">
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                             @click="window.openPhotoSwipe?.([{path: detailBelakang.url, name: 'Detail Belakang'}], 0)">
+                            <img :src="detailBelakang.url" class="w-full h-full object-cover">
+                        </div>
+                    </template>
+                    <template x-if="!detailBelakang">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                            <p class="text-xs text-gray-400">Belum ada detail belakang</p>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -645,23 +633,7 @@ if (!empty($order['item_details'])) {
                 </template>
             </div>
 
-            {{-- Catatan Desain (Editable) --}}
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 class="font-semibold text-gray-900 mb-4 text-sm flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                    Catatan Desain / Detail Kerja SPK
-                </h3>
-                <div class="space-y-4">
-                    <textarea x-model="spkNotes" rows="5" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 resize-none bg-white" placeholder="Tuliskan spesifikasi detail printing, jenis bahan kerah, nama font, dll..."></textarea>
-                    
-                    <div class="flex justify-end">
-                        <button @click="saveNotes()" :disabled="isSavingNotes" class="px-5 py-2.5 bg-[#1a237e] hover:bg-[#1a237e]/90 text-white rounded-lg text-sm font-semibold flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer">
-                            <svg x-show="isSavingNotes" class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                            <span x-text="isSavingNotes ? 'Menyimpan...' : 'Simpan Catatan SPK'"></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 
@@ -760,8 +732,6 @@ function detailPesananApp() {
     return {
         activeTab: 'detail',
         designFiles: @json($order['design_files'] ?? []),
-        spkNotes: @json($order['product']['notes'] ?? ''),
-        isSavingNotes: false,
         get mockupDepan() {
             return this.designFiles.find(f => f.role === 'mockup_depan') || null;
         },
@@ -777,31 +747,6 @@ function detailPesananApp() {
         get sponsorFiles() {
             return this.designFiles.filter(f => f.role === 'sponsor');
         },
-
-        async saveNotes() {
-            this.isSavingNotes = true;
-            try {
-                const res = await fetch('{{ route("staf.pesanan.update-spk-notes", $order["order_id"]) }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ notes: this.spkNotes })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    Notify.success(data.message, 'Tersimpan!');
-                } else {
-                    Notify.error(data.message || 'Gagal menyimpan catatan.');
-                }
-            } catch (err) {
-                Notify.error('Gagal menyimpan catatan.');
-            } finally {
-                this.isSavingNotes = false;
-            }
-        }
     };
 }
 
