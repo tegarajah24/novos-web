@@ -194,13 +194,22 @@
                 {{-- Kiri: Nama Pemesan --}}
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Pemesan</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Nama Pemesan
+                            <span class="text-red-500">*</span>
+                            <span class="text-[10px] text-red-500 font-normal ml-1">(wajib)</span>
+                        </label>
                         <input
                             type="text"
                             x-model="form.nama_pemesan"
+                            @blur="touched.nama_pemesan = true"
                             placeholder="Contoh: John Doe"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                            :class="touched.nama_pemesan && !form.nama_pemesan.trim() ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-gray-300 focus:ring-[#1a237e] focus:border-[#1a237e]'"
+                            class="w-full px-4 py-2.5 border rounded-lg outline-none transition-shadow"
                         >
+                        <template x-if="touched.nama_pemesan && !form.nama_pemesan.trim()">
+                            <p class="text-xs text-red-500 mt-1">Nama pemesan wajib diisi</p>
+                        </template>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Artikel</label>
@@ -216,13 +225,22 @@
                 {{-- Kanan: Nama Tim --}}
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Tim / Event</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Nama Tim / Event
+                            <span class="text-red-500">*</span>
+                            <span class="text-[10px] text-red-500 font-normal ml-1">(wajib)</span>
+                        </label>
                         <input
                             type="text"
                             x-model="form.team_name"
+                            @blur="touched.team_name = true"
                             placeholder="Contoh: FC Harapan Jaya"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                            :class="touched.team_name && !form.team_name.trim() ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-gray-300 focus:ring-[#1a237e] focus:border-[#1a237e]'"
+                            class="w-full px-4 py-2.5 border rounded-lg outline-none transition-shadow"
                         >
+                        <template x-if="touched.team_name && !form.team_name.trim()">
+                            <p class="text-xs text-red-500 mt-1">Nama tim / event wajib diisi</p>
+                        </template>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Sponsor</label>
@@ -683,7 +701,7 @@
                                 class="px-4 py-3 text-sm font-semibold border-b-2 transition-colors"
                                 :class="ukuranTab === 'potongan' ? 'border-[#1a237e] text-[#1a237e]' : 'border-transparent text-gray-500 hover:text-gray-700'"
                             >
-                                Ukuran Potongan
+                                Atasan
                             </button>
                             <button
                                 type="button"
@@ -691,7 +709,7 @@
                                 class="px-4 py-3 text-sm font-semibold border-b-2 transition-colors"
                                 :class="ukuranTab === 'training' ? 'border-[#1a237e] text-[#1a237e]' : 'border-transparent text-gray-500 hover:text-gray-700'"
                             >
-                                Training
+                                Bawahan
                             </button>
                         </div>
 
@@ -714,13 +732,16 @@
                                     </template>
                                     <template x-if="form.jenis_potongan">
                                         <div>
-                                            <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk potongan <strong class="text-[#1a237e]" x-text="form.jenis_potongan"></strong>.</p>
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <img
-                                                    :src="activeSizePdf"
-                                                    class="w-full h-auto object-contain"
-                                                    alt="Referensi Ukuran"
-                                                >
+                                            <p class="text-xs text-gray-500 mb-4">Klik gambar untuk melihat ukuran <strong class="text-[#1a237e]" x-text="form.jenis_potongan"></strong> secara penuh.</p>
+                                            <div @click="openAtasanGallery" class="cursor-pointer group">
+                                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
+                                                    <img
+                                                        :src="activeSizePdf"
+                                                        class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                                        alt="Referensi Ukuran"
+                                                    >
+                                                </div>
+                                                <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Klik untuk perbesar</p>
                                             </div>
                                         </div>
                                     </template>
@@ -730,27 +751,26 @@
                             {{-- Tab: Training --}}
                             <template x-if="ukuranTab === 'training'">
                                 <div>
-                                    <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk tipe <strong class="text-[#1a237e]">Training</strong>.</p>
-                                    <div class="space-y-6">
-                                        <div>
-                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Training Long Sleeve</h4>
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <img
-                                                    src="/images/referensi-ukuran/TRAININGLONG.png"
-                                                    class="w-full h-auto object-contain"
-                                                    alt="Training Long Sleeve"
-                                                >
+                                    <p class="text-xs text-gray-500 mb-4">Klik gambar untuk melihat ukuran <strong class="text-[#1a237e]">Bawahan</strong> secara penuh. Gunakan scroll / pinch untuk zoom, atau klik tombol fullscreen.</p>
+                                    <div class="space-y-5">
+                                        <div @click="openBawahanGallery(0)" class="cursor-pointer group">
+                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
+                                                <img src="/images/referensi-ukuran/TRAININGLONG.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Celana Panjang">
                                             </div>
+                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Celana Panjang — klik untuk perbesar</p>
                                         </div>
-                                        <div>
-                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Training Short Sleeve</h4>
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <img
-                                                    src="/images/referensi-ukuran/TRAININGSHORT.png"
-                                                    class="w-full h-auto object-contain"
-                                                    alt="Training Short Sleeve"
-                                                >
+                                        <div @click="openBawahanGallery(1)" class="cursor-pointer group">
+                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
+                                                <img src="/images/referensi-ukuran/TRAININGSHORT.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Celana Pendek">
                                             </div>
+                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Celana Pendek — klik untuk perbesar</p>
+                                        </div>
+                                        <div @click="openBawahanGallery(2)" class="cursor-pointer group">
+                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7] relative">
+                                                <img src="/images/referensi-ukuran/TRAININGLONG.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Rok">
+                                                <span class="absolute top-2 right-2 px-2 py-0.5 bg-yellow-400 text-[11px] font-bold text-yellow-900 rounded">Sementara</span>
+                                            </div>
+                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Rok — klik untuk perbesar</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1670,6 +1690,10 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             postal_code: '',
             address_type: 'rumah'
         },
+        touched: {
+            nama_pemesan: false,
+            team_name: false,
+        },
         form: {
             team_name: '',
             nama_artikel: '',
@@ -1824,7 +1848,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         get validateStep2() {
-            return this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '' && this.form.lengan_jahitan !== '' && this.totalQty >= 1;
+            return this.form.nama_pemesan.trim() !== '' && this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '' && this.form.lengan_jahitan !== '' && this.totalQty >= 1;
         },
 
         get validateStep3() {
@@ -2286,7 +2310,41 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 document.body.removeChild(el);
                 return ok;
             }
-        }
+        },
+
+        openBawahanGallery(index) {
+            window.openPhotoSwipe([
+                {
+                    src: '/images/referensi-ukuran/TRAININGLONG.png',
+                    width: 2345,
+                    height: 1660,
+                    alt: 'Celana Panjang'
+                },
+                {
+                    src: '/images/referensi-ukuran/TRAININGSHORT.png',
+                    width: 2345,
+                    height: 1660,
+                    alt: 'Celana Pendek'
+                },
+                {
+                    src: '/images/referensi-ukuran/TRAININGLONG.png',
+                    width: 2345,
+                    height: 1660,
+                    alt: 'Rok'
+                },
+            ], index)
+        },
+
+        openAtasanGallery() {
+            window.openPhotoSwipe([
+                {
+                    src: this.activeSizePdf,
+                    width: 2345,
+                    height: 1660,
+                    alt: this.form.jenis_potongan || 'Referensi Ukuran'
+                },
+            ], 0)
+        },
     }
 }
 </script>
