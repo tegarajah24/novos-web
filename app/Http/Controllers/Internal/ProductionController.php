@@ -108,7 +108,7 @@ class ProductionController extends Controller
                     'sizes'             => $sizes,
                     'reference_files'   => $dr?->logo ? [asset('storage/' . $dr->logo)] : [],
                     'design_files'      => collect($dr?->design_files ?? [])
-                        ->reject(fn($f) => isset($f['role'])) // hanya file dari tim design (tanpa role)
+                        ->reject(fn($f) => isset($f['role']) && $f['role'] !== 'pola')
                         ->map(function ($f) {
                             $fullPath = storage_path('app/public/' . $f['path']);
                             $width = null;
