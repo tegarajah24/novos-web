@@ -163,6 +163,27 @@
                                     <div class="font-medium text-gray-900" x-text="selectedOrder?.model_lengan_jahitan || '-'"></div>
                                 </div>
                             </div>
+                            
+                            <div class="mt-5 pt-4 border-t border-gray-100">
+                                <span class="text-gray-500 block mb-3 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
+                                    <i data-lucide="table" class="w-3.5 h-3.5"></i> Rekap Ukuran & Kuantitas
+                                </span>
+                                <div class="grid grid-cols-6 gap-2 text-center mb-3">
+                                    <template x-for="(qty, size) in selectedOrder?.sizes" :key="size">
+                                        <div class="bg-purple-50 rounded-lg py-2 border border-purple-100">
+                                            <div class="text-[10px] text-purple-500 font-medium mb-0.5" x-text="size"></div>
+                                            <div class="text-base font-bold text-gray-900" x-text="qty"></div>
+                                            <div class="text-[9px] text-gray-400">pcs</div>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="flex justify-end items-center mb-1">
+                                    <p class="text-xs text-gray-600 font-medium">
+                                        Total: <span class="text-base font-extrabold text-[#1a237e] ml-1" x-text="selectedOrder?.total_qty + ' pcs'"></span>
+                                    </p>
+                                </div>
+                            </div>
+
                             <div class="mt-5 pt-4 border-t border-gray-100">
                                 <span class="text-gray-500 block mb-2 text-xs font-medium uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Catatan Produksi
@@ -220,27 +241,6 @@
                             </div>
                         </div>
 
-                        {{-- Rekap Ukuran --}}
-                        <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-                            <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
-                                <i data-lucide="table" class="w-4 h-4 text-[#1a237e]"></i>
-                                Rekap Ukuran & Kuantitas
-                            </h4>
-                            <div class="grid grid-cols-6 gap-2 text-center mb-3">
-                                <template x-for="(qty, size) in selectedOrder?.sizes" :key="size">
-                                    <div class="bg-purple-50 rounded-lg py-3 border border-purple-100">
-                                        <div class="text-xs text-purple-500 font-medium mb-1" x-text="size"></div>
-                                        <div class="text-xl font-bold text-gray-900" x-text="qty"></div>
-                                        <div class="text-[10px] text-gray-400">pcs</div>
-                                    </div>
-                                </template>
-                            </div>
-                            <div class="flex justify-end pt-3 border-t border-gray-100">
-                                <p class="text-sm text-gray-600 font-medium">
-                                    Total: <span class="text-xl font-extrabold text-[#1a237e] ml-1" x-text="selectedOrder?.total_qty + ' pcs'"></span>
-                                </p>
-                            </div>
-                        </div>
 
                         {{-- File Desain dari Tim Design --}}
                         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
