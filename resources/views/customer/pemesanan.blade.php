@@ -730,27 +730,26 @@
                             {{-- Tab: Training --}}
                             <template x-if="ukuranTab === 'training'">
                                 <div>
-                                    <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk tipe <strong class="text-[#1a237e]">Bawahan</strong>.</p>
-                                    <div class="space-y-6">
-                                        <div>
-                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Celana Panjang / Rok</h4>
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <img
-                                                    src="/images/referensi-ukuran/TRAININGLONG.png"
-                                                    class="w-full h-auto object-contain"
-                                                    alt="Celana Panjang / Rok"
-                                                >
+                                    <p class="text-xs text-gray-500 mb-4">Klik gambar untuk melihat ukuran <strong class="text-[#1a237e]">Bawahan</strong> secara penuh. Gunakan scroll / pinch untuk zoom, atau klik tombol fullscreen.</p>
+                                    <div class="space-y-5">
+                                        <div @click="openBawahanGallery(0)" class="cursor-pointer group">
+                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
+                                                <img src="/images/referensi-ukuran/TRAININGLONG.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Celana Panjang">
                                             </div>
+                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Celana Panjang — klik untuk perbesar</p>
                                         </div>
-                                        <div>
-                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Celana Pendek</h4>
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <img
-                                                    src="/images/referensi-ukuran/TRAININGSHORT.png"
-                                                    class="w-full h-auto object-contain"
-                                                    alt="Celana Pendek"
-                                                >
+                                        <div @click="openBawahanGallery(1)" class="cursor-pointer group">
+                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
+                                                <img src="/images/referensi-ukuran/TRAININGSHORT.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Celana Pendek">
                                             </div>
+                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Celana Pendek — klik untuk perbesar</p>
+                                        </div>
+                                        <div @click="openBawahanGallery(2)" class="cursor-pointer group">
+                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7] relative">
+                                                <img src="/images/referensi-ukuran/TRAININGLONG.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Rok">
+                                                <span class="absolute top-2 right-2 px-2 py-0.5 bg-yellow-400 text-[11px] font-bold text-yellow-900 rounded">Sementara</span>
+                                            </div>
+                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Rok — klik untuk perbesar</p>
                                         </div>
                                     </div>
                                 </div>
@@ -2286,7 +2285,30 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 document.body.removeChild(el);
                 return ok;
             }
-        }
+        },
+
+        openBawahanGallery(index) {
+            window.openPhotoSwipe([
+                {
+                    src: '/images/referensi-ukuran/TRAININGLONG.png',
+                    width: 2345,
+                    height: 1660,
+                    alt: 'Celana Panjang'
+                },
+                {
+                    src: '/images/referensi-ukuran/TRAININGSHORT.png',
+                    width: 2345,
+                    height: 1660,
+                    alt: 'Celana Pendek'
+                },
+                {
+                    src: '/images/referensi-ukuran/TRAININGLONG.png',
+                    width: 2345,
+                    height: 1660,
+                    alt: 'Rok'
+                },
+            ], index)
+        },
     }
 }
 </script>
