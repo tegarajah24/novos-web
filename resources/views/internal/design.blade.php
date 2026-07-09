@@ -132,10 +132,6 @@
                                     <div class="font-medium text-gray-900" x-text="selectedOrder?.collar || '-'"></div>
                                 </div>
                                 <div>
-                                    <span class="text-gray-500 text-xs block mb-0.5">Pola</span>
-                                    <div class="font-medium text-gray-900" x-text="selectedOrder?.pattern || '-'"></div>
-                                </div>
-                                <div>
                                     <span class="text-gray-500 text-xs block mb-0.5">Jenis Potongan</span>
                                     <div class="font-medium text-gray-900" x-text="selectedOrder?.jenis_potongan || '-'"></div>
                                 </div>
