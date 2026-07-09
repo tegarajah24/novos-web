@@ -158,7 +158,7 @@ class FullOrderFlowTest extends DuskTestCase
 
             $d->script('
                 let fd = new FormData();
-                fd.append("status", "siap_cetak");
+                fd.append("status", "menunggu_spk");
                 fetch("/staf/design/update/' . $this->orderNumber . '", {
                     method: "POST",
                     headers: {
@@ -177,16 +177,46 @@ class FullOrderFlowTest extends DuskTestCase
             ');
             $d->pause(3000);
 
-            echo "\n[✓] DESIGN: Upload desain selesai\n";
+            echo "\n[✓] DESIGN: Upload desain selesai -> menunggu_spk\n";
             $d->screenshot('04-design-done');
 
             // ══════════════════════════════════════════════
-            // 5. PRODUKSI — Proses tiap tahap produksi
+            // 5. ADMIN — Setujui SPK (menunggu_spk → siap_cetak)
+            // ══════════════════════════════════════════════
+            $a->visit('/staf/detail-pesanan/' . $this->orderNumber);
+            $a->waitForText('Update Status', 10);
+            $a->pause(2000);
+
+            $a->script('
+                fetch("/staf/pesanan/' . $this->orderNumber . '/update-status", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector(\'meta[name="csrf-token"]\').getAttribute("content"),
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({ status: "tahap_produksi", notes: "SPK disetujui (Dusk)" })
+                })
+                .then(r => r.json())
+                .then(d => {
+                    console.log("ADMIN->SPK:", JSON.stringify(d));
+                    if (d.success) location.reload();
+                })
+                .catch(e => console.error("ADMIN->SPK ERROR:", e));
+            ');
+            $a->pause(2000);
+
+            $order->refresh();
+            echo "\n[✓] ADMIN: SPK disetujui -> {$order->status}\n";
+            $a->screenshot('05-admin-approve-spk');
+
+            // ══════════════════════════════════════════════
+            // 6. PRODUKSI — Proses tiap tahap produksi
             // ══════════════════════════════════════════════
             $p->loginAs($produksi);
             $p->visit('/staf/produksi');
             $p->waitForText($this->orderNumber, 10);
-            $p->screenshot('05-produksi-start');
+            $p->screenshot('06-produksi-start');
 
             $prodStages = [
                 'proses_printing',
@@ -224,7 +254,7 @@ class FullOrderFlowTest extends DuskTestCase
                 echo "\n[→] PRODUKSI: " . str_replace('_', ' ', $stage);
             }
 
-            $p->screenshot('05-produksi-selesai');
+            $p->screenshot('06-produksi-selesai');
             $order->refresh();
 
             // Assertions

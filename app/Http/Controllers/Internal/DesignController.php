@@ -101,26 +101,29 @@ class DesignController extends Controller
             ], 403);
         }
 
-        // Simpan file upload per kategori
+        // Simpan file upload dengan role SPK
         $uploadedFiles = [];
-        $categories = [
-            'mockup_files'         => 'mockup',
-            'detail_depan_files'   => 'detail_depan',
-            'nama_punggung_files'  => 'nama_punggung',
-            'detail_sponsor_files' => 'detail_sponsor',
+        $roleMapping = [
+            'mockup_files'         => ['mockup_depan', 'mockup_belakang'],
+            'detail_depan_files'   => ['detail_depan'],
+            'nama_punggung_files'  => ['detail_belakang'],
+            'detail_sponsor_files' => ['sponsor'],
         ];
 
-        foreach ($categories as $fieldName => $category) {
+        foreach ($roleMapping as $fieldName => $roles) {
             if ($request->hasFile($fieldName)) {
+                $fileIdx = 0;
                 foreach ($request->file($fieldName) as $file) {
+                    $role = $roles[min($fileIdx, count($roles) - 1)];
                     $path = $file->store('design-files/' . $order->order_number, 'public');
                     $uploadedFiles[] = [
                         'name'     => $file->getClientOriginalName(),
                         'path'     => $path,
                         'size'     => $file->getSize(),
                         'type'     => $file->getMimeType(),
-                        'category' => $category,
+                        'role'     => $role,
                     ];
+                    $fileIdx++;
                 }
             }
         }
@@ -135,7 +138,7 @@ class DesignController extends Controller
                 ]);
             }
 
-            $notes = 'Design selesai dikerjakan';
+            $notes = 'Design selesai, menunggu SPK';
             if (!empty($uploadedFiles)) {
                 $notes .= '. File: ' . implode(', ', array_column($uploadedFiles, 'name'));
             }
@@ -151,8 +154,8 @@ class DesignController extends Controller
 
         Notification::sendToAllStaff(
             'design_upload',
-            'Desain Siap Cetak',
-            "Desain untuk <strong>{$order->order_number}</strong> telah selesai dan siap diproduksi.",
+            'Desain Siap — Menunggu SPK',
+            "Desain untuk <strong>{$order->order_number}</strong> telah selesai dan menunggu persetujuan SPK oleh Admin.",
             [
                 'initials' => collect(explode(' ', $user->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode(''),
                 'role' => $user->role->name,
@@ -166,7 +169,7 @@ class DesignController extends Controller
             $order->user_id,
             'design_ready',
             'Desain Selesai',
-            'Desain untuk pesanan ' . $order->order_number . ' telah selesai dan siap untuk tahap produksi.',
+            'Desain untuk pesanan ' . $order->order_number . ' telah selesai dan menunggu persiapan SPK oleh Admin.',
             [
                 'order_number' => $order->order_number,
             ]
@@ -174,7 +177,7 @@ class DesignController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Desain berhasil diselesaikan dan diteruskan ke produksi.',
+            'message' => 'Desain berhasil diselesaikan. File telah dikirim ke SPK untuk ditinjau Admin.',
         ]);
     }
 }

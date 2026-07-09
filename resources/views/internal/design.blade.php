@@ -250,7 +250,7 @@
                                     <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">2. Update Status</label>
                                     <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
                                         <option value="">-- Pilih status selanjutnya --</option>
-                                        <option value="siap_cetak">Selesai Design</option>
+                                        <option value="menunggu_spk">Kirim ke SPK</option>
                                     </select>
                                 </div>
 

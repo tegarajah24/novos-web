@@ -14,7 +14,7 @@ class UpdateDesignStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'                => 'required|in:siap_cetak',
+            'status'                => 'required|in:menunggu_spk',
             'mockup_files'          => 'nullable|array',
             'mockup_files.*'        => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
             'detail_depan_files'    => 'nullable|array',

@@ -856,13 +856,71 @@ if (!empty($order['item_details'])) {
             </template>
         </div>
 
-        {{-- File Hasil Desain (Dari Tim Design) --}}
-        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-sm shadow-[#1a237e]/5 p-5">
+        {{-- File Hasil Desain (Dari Tim Design) — muncul di SPK --}}
+        <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-sm shadow-[#1a237e]/5 p-5"
+             x-show="designFiles.filter(f => ['mockup_depan','mockup_belakang','detail_depan','detail_belakang','sponsor'].includes(f.role)).length > 0">
             <h3 class="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Hasil Desain (Siap ACC)
+                Hasil Desain (Dari Tim Design)
             </h3>
-            <p class="text-sm text-gray-400 text-center py-6">Belum ada file desain</p>
+            <div class="space-y-4">
+                {{-- Mockup --}}
+                <template x-if="designFiles.filter(f => ['mockup_depan','mockup_belakang'].includes(f.role)).length > 0">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mockup</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <template x-for="f in designFiles.filter(f => ['mockup_depan','mockup_belakang'].includes(f.role))" :key="f.path">
+                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
+                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                {{-- Detail Depan --}}
+                <template x-if="designFiles.filter(f => f.role === 'detail_depan').length > 0">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Detail Depan</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <template x-for="f in designFiles.filter(f => f.role === 'detail_depan')" :key="f.path">
+                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
+                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                {{-- Nama & No Punggung --}}
+                <template x-if="designFiles.filter(f => f.role === 'detail_belakang').length > 0">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Nama &amp; No Punggung</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <template x-for="f in designFiles.filter(f => f.role === 'detail_belakang')" :key="f.path">
+                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
+                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                {{-- Sponsor --}}
+                <template x-if="designFiles.filter(f => f.role === 'sponsor').length > 0">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Detail Sponsor</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <template x-for="f in designFiles.filter(f => f.role === 'sponsor')" :key="f.path">
+                                <div class="aspect-square bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                    <img :src="f.url" :alt="f.name" class="w-full h-full object-cover cursor-zoom-in"
+                                         @click="window.openPhotoSwipe?.([{src:f.url,width:1200,height:1200,alt:f.name}],0)">
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
 
     </div>{{-- end kolom kanan --}}
