@@ -313,26 +313,7 @@
                                     </div>
                                 </div>
                             </template>
-                            <template x-if="selectedOrder?.design_request?.all_design_files?.length">
-                                <div class="pt-3 border-t border-gray-100">
-                                    <p class="text-xs text-gray-500 font-medium mb-3">File Desain</p>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <template x-for="(file, idx) in selectedOrder.design_request.all_design_files" :key="idx">
-                                            <div
-                                               class="group relative aspect-square rounded-xl overflow-hidden bg-gray-50 border border-gray-200 cursor-zoom-in"
-                                               @click="openPhotoSwipeProfile(selectedOrder.design_request.all_design_files, idx)">
-                                                <img :src="'/storage/' + file.path" :alt="file.name"
-                                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                <span class="absolute top-2 left-2 px-1.5 py-0.5 bg-white text-[10px] font-semibold text-gray-600 rounded truncate max-w-[100px]" x-text="file.name"></span>
-                                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                                    <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/></svg>
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </div>
-                            </template>
-                            <div class="flex gap-3 pt-2">
+                             <div class="flex gap-3 pt-2">
                                 <a :href="'/tracking?q=' + selectedOrder?.order_number" class="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5">
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                     Lacak Pesanan
