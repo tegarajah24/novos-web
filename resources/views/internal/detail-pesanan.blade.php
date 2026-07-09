@@ -776,44 +776,26 @@ if (!empty($order['item_details'])) {
                 @endif
             </div>
 
-            <div class="flex justify-between text-sm mb-1">
-                <span class="text-gray-500">Metode</span>
-                <span class="font-medium text-gray-900">{{ $order['payment']['method'] ?: '-' }}</span>
-            </div>
             <div class="flex justify-between text-sm">
                 <span class="text-gray-500">Total</span>
                 <span class="font-bold text-gray-900">{{ rh($order['payment']['total']) }}</span>
             </div>
 
             {{-- Tombol Validasi Pembayaran --}}
-            @if($canValidate && $order['payment']['status'] !== 'lunas' && $order['payment']['payment_proof'])
+            @if($canValidate && $order['payment']['status'] !== 'lunas')
             <div class="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                @if($rawStatus === 'menunggu_pembayaran')
+                <button @click="validateDp()" :disabled="loading"
+                    class="w-full py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white cursor-pointer">
+                    <svg x-show="loading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    Validasi Pembayaran (DP)
+                </button>
+                @else
                 <button @click="validatePayment('success')" :disabled="loading"
-                    class="w-full py-2 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
-                    :class="loading ? 'bg-gray-300 text-white cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'">
+                    class="w-full py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white cursor-pointer">
                     <svg x-show="loading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                     Validasi Pembayaran (Lunas)
                 </button>
-                <button @click="validatePayment('rejected')" :disabled="loading"
-                    class="w-full py-2 rounded-lg text-xs font-semibold transition-colors"
-                    :class="loading ? 'bg-gray-300 text-white cursor-not-allowed' : 'bg-red-100 hover:bg-red-200 text-red-700 cursor-pointer'">
-                    Tolak Pembayaran
-                </button>
-            </div>
-            @endif
-
-            {{-- Link ke WA customer --}}
-            @if($order['payment']['payment_proof'])
-            <div class="mt-3 pt-3 border-t border-gray-100">
-                @php
-                    $custPhoneWa = preg_replace('/[^0-9]/', '', $order['customer']['phone'] ?? '');
-                    if (str_starts_with($custPhoneWa, '0')) { $custPhoneWa = '62' . substr($custPhoneWa, 1); }
-                @endphp
-                @if($custPhoneWa)
-                <a href="https://wa.me/{{ $custPhoneWa }}?text={{ urlencode('Halo, bukti pembayaran pesanan ' . $order['order_id'] . ' sudah kami terima. Terima kasih!') }}" target="_blank" rel="noopener" class="text-xs text-green-600 hover:underline font-medium inline-flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-                    Konfirmasi via WhatsApp ke Customer
-                </a>
                 @endif
             </div>
             @endif
@@ -1058,29 +1040,61 @@ function detailPesananApp() {
 function paymentSection() {
     return {
         loading: false,
+        async validateDp() {
+            if (this.loading) return;
+
+            const result = await Swal.fire({
+                title: 'Validasi Pembayaran DP?',
+                text: 'Status pesanan akan diubah menjadi Dikonfirmasi.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#16a34a',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Validasi DP!',
+                cancelButtonText: 'Batal'
+            });
+
+            if (!result.isConfirmed) return;
+
+            this.loading = true;
+            try {
+                const res = await fetch('{{ route("staf.pesanan.update-status", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'dikonfirmasi',
+                        notes: 'Pembayaran DP divalidasi'
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Notify.success('Pembayaran DP berhasil divalidasi!', 'Berhasil!');
+                    setTimeout(() => location.reload(), 1200);
+                } else {
+                    Notify.error(data.message || 'Terjadi kesalahan.');
+                }
+            } catch (e) {
+                Notify.error('Terjadi kesalahan sistem.');
+            } finally {
+                this.loading = false;
+            }
+        },
         async validatePayment(status) {
             if (this.loading) return;
 
-            const actionLabel = status === 'success' ? 'Validasi Pembayaran' : 'Tolak Pembayaran';
             const result = await Swal.fire({
-                title: actionLabel + '?',
-                html: status === 'success'
-                    ? 'Pembayaran akan ditandai sebagai <strong>Lunas</strong>.'
-                    : 'Pembayaran akan ditolak. Silakan beri alasan di kotak bawah.',
+                title: 'Validasi Pembayaran Lunas?',
+                text: 'Pembayaran akan ditandai sebagai Lunas.',
                 icon: 'question',
-                input: status === 'rejected' ? 'textarea' : undefined,
-                inputPlaceholder: 'Alasan penolakan...',
                 showCancelButton: true,
-                confirmButtonColor: status === 'success' ? '#16a34a' : '#dc2626',
+                confirmButtonColor: '#16a34a',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, ' + (status === 'success' ? 'Validasi!' : 'Tolak!'),
-                cancelButtonText: 'Batal',
-                preConfirm: (value) => {
-                    if (status === 'rejected' && !value) {
-                        Swal.showValidationMessage('Alasan penolakan wajib diisi');
-                    }
-                    return value;
-                }
+                confirmButtonText: 'Ya, Validasi Lunas!',
+                cancelButtonText: 'Batal'
             });
 
             if (!result.isConfirmed) return;
@@ -1096,12 +1110,12 @@ function paymentSection() {
                     },
                     body: JSON.stringify({
                         status: status,
-                        notes: result.value || ''
+                        notes: ''
                     })
                 });
                 const data = await res.json();
                 if (data.success) {
-                    Notify.success(data.message, 'Berhasil!');
+                    Notify.success('Pembayaran Lunas berhasil divalidasi!', 'Berhasil!');
                     setTimeout(() => location.reload(), 1200);
                 } else {
                     Notify.error(data.message || 'Terjadi kesalahan.');
