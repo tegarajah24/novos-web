@@ -95,14 +95,14 @@
           
           {{-- Title, Rating, Wishlist, and Share Row --}}
           <div>
-            {{-- Category badge with hover activation state --}}
+            {{-- Category label --}}
             @if($product->category)
               <a href="{{ route('katalog', ['kategori' => Str::slug($product->category->name)]) }}" 
-                 class="text-xs font-bold text-[#1a237e] uppercase tracking-wider inline-block border border-[#1a237e]/20 bg-[#1a237e]/5 px-2.5 py-1 transition-all duration-200 hover:bg-[#1a237e] hover:text-white mb-2">
+                 class="text-xs font-bold text-black uppercase tracking-wider inline-block mb-2 hover:underline">
                 {{ $product->category->name }}
               </a>
             @else
-              <span class="text-xs font-bold text-[#1a237e] uppercase tracking-wider inline-block border border-[#1a237e]/20 bg-[#1a237e]/5 px-2.5 py-1 mb-2">
+              <span class="text-xs font-bold text-black uppercase tracking-wider inline-block mb-2">
                 Katalog
               </span>
             @endif
