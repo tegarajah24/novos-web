@@ -226,32 +226,65 @@
                         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
                             <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm border-b border-gray-100 pb-3">
                                 <i data-lucide="file-check-2" class="w-4 h-4 text-[#1a237e]"></i>
-                                File Desain & Pola Cetak (Dari Tim Design)
+                                File Desain &amp; Pola Cetak (Dari Tim Design)
                             </h4>
-                            <div class="space-y-2">
-                                <template x-for="(file, fi) in selectedOrder?.design_files" :key="file.name">
-                                    <div class="flex items-center gap-3 p-2.5 bg-blue-50/50 border border-blue-100 rounded-lg">
-                                        <!-- Image thumbnail (circular) or generic icon -->
-                                        <template x-if="file.type?.startsWith('image/')">
-                                            <img :src="file.path"
-                                                @click="window.openPhotoSwipe(selectedOrder.design_files, fi)"
-                                                class="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm border-2 border-blue-200 cursor-zoom-in hover:opacity-80 transition-opacity"
-                                                :title="'Lihat ' + file.name">
-                                        </template>
-                                        <template x-if="!file.type?.startsWith('image/')">
-                                            <div class="w-10 h-10 rounded bg-white flex items-center justify-center shrink-0 shadow-sm border border-gray-200">
-                                                <i data-lucide="file" class="w-5 h-5 text-[#1a237e]"></i>
+                            
+                            <div class="space-y-4">
+                                {{-- Kategori 1: Gambar Desain --}}
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Gambar Desain (Mockup &amp; Detail Tampak)</span>
+                                    <div class="space-y-2">
+                                        <template x-for="(file, fi) in (selectedOrder?.design_files || []).filter(f => f.role !== 'pola' && (!f.name || !f.name.toLowerCase().endsWith('.cdr')))" :key="file.name">
+                                            <div class="flex items-center gap-3 p-2.5 bg-blue-50/50 border border-blue-100 rounded-lg">
+                                                <template x-if="file.mime?.startsWith('image/')">
+                                                    <img :src="file.url"
+                                                         @click="window.openPhotoSwipe(selectedOrder.design_files, selectedOrder.design_files.indexOf(file))"
+                                                         class="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm border-2 border-blue-200 cursor-zoom-in hover:opacity-80 transition-opacity"
+                                                         :title="'Lihat ' + file.name">
+                                                </template>
+                                                <template x-if="!file.mime?.startsWith('image/')">
+                                                    <div class="w-10 h-10 rounded bg-white flex items-center justify-center shrink-0 shadow-sm border border-gray-200">
+                                                        <i data-lucide="image" class="w-5 h-5 text-[#1a237e]"></i>
+                                                    </div>
+                                                </template>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-xs font-medium text-gray-800 truncate" x-text="file.name"></p>
+                                                    <p class="text-[10px] text-gray-400" x-text="file.role ? file.role.replace('_', ' ').toUpperCase() : 'GAMBAR'"></p>
+                                                </div>
+                                                <a :href="file.url" :download="file.name" class="text-[#1a237e] bg-white border border-blue-100 hover:bg-[#1a237e] hover:text-white p-1.5 rounded-md transition-colors shrink-0 flex items-center justify-center" title="Download">
+                                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                                </a>
                                             </div>
                                         </template>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs font-medium text-gray-800 truncate" x-text="file.name"></p>
-                                            <p class="text-[10px] text-gray-400" x-text="file.type"></p>
-                                        </div>
-                                        <button @click="window.open(file.path, '_blank')" class="text-[#1a237e] bg-white border border-blue-100 hover:bg-[#1a237e] hover:text-white p-1.5 rounded-md transition-colors shrink-0" title="Download">
-                                            <i data-lucide="download" class="w-4 h-4"></i>
-                                        </button>
+                                        <template x-if="!(selectedOrder?.design_files || []).filter(f => f.role !== 'pola' && (!f.name || !f.name.toLowerCase().endsWith('.cdr'))).length">
+                                            <p class="text-xs text-gray-400 italic p-2">Belum ada file gambar desain.</p>
+                                        </template>
                                     </div>
-                                </template>
+                                </div>
+
+                                {{-- Kategori 2: File Pola --}}
+                                <div class="pt-2">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">File Pola (CDR / Vector)</span>
+                                    <div class="space-y-2">
+                                        <template x-for="(file, fi) in (selectedOrder?.design_files || []).filter(f => f.role === 'pola' || (f.name && f.name.toLowerCase().endsWith('.cdr')))" :key="file.name">
+                                            <div class="flex items-center gap-3 p-2.5 bg-purple-50/50 border border-purple-100 rounded-lg">
+                                                <div class="w-10 h-10 rounded bg-white flex items-center justify-center shrink-0 shadow-sm border border-purple-200">
+                                                    <i data-lucide="file-type" class="w-5 h-5 text-purple-600"></i>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-xs font-medium text-gray-800 truncate" x-text="file.name"></p>
+                                                    <p class="text-[10px] text-purple-400">VECTOR PATTERN (CDR)</p>
+                                                </div>
+                                                <a :href="file.url" :download="file.name" class="text-purple-600 bg-white border border-purple-100 hover:bg-purple-600 hover:text-white p-1.5 rounded-md transition-colors shrink-0 flex items-center justify-center" title="Download">
+                                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                                </a>
+                                            </div>
+                                        </template>
+                                        <template x-if="!(selectedOrder?.design_files || []).filter(f => f.role === 'pola' || (f.name && f.name.toLowerCase().endsWith('.cdr'))).length">
+                                            <p class="text-xs text-gray-400 italic p-2">Belum ada file pola (CDR).</p>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
