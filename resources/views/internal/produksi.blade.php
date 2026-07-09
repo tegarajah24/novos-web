@@ -11,7 +11,7 @@
 
 
     {{-- Tabs Navigation --}}
-    <div class="flex max-w-3xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+    <div class="flex max-w-5xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="tab in tabs" :key="tab.key">
             <button @click="activeTab = tab.key"
                 :class="activeTab === tab.key ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
