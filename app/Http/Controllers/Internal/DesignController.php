@@ -101,17 +101,27 @@ class DesignController extends Controller
             ], 403);
         }
 
-        // Simpan file upload
+        // Simpan file upload per kategori
         $uploadedFiles = [];
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                $path = $file->store('design-files/' . $order->order_number, 'public');
-                $uploadedFiles[] = [
-                    'name' => $file->getClientOriginalName(),
-                    'path' => $path,
-                    'size' => $file->getSize(),
-                    'type' => $file->getMimeType(),
-                ];
+        $categories = [
+            'mockup_files'         => 'mockup',
+            'detail_depan_files'   => 'detail_depan',
+            'nama_punggung_files'  => 'nama_punggung',
+            'detail_sponsor_files' => 'detail_sponsor',
+        ];
+
+        foreach ($categories as $fieldName => $category) {
+            if ($request->hasFile($fieldName)) {
+                foreach ($request->file($fieldName) as $file) {
+                    $path = $file->store('design-files/' . $order->order_number, 'public');
+                    $uploadedFiles[] = [
+                        'name'     => $file->getClientOriginalName(),
+                        'path'     => $path,
+                        'size'     => $file->getSize(),
+                        'type'     => $file->getMimeType(),
+                        'category' => $category,
+                    ];
+                }
             }
         }
 

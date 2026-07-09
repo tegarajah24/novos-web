@@ -84,7 +84,7 @@
             
             <div x-show="isDetailOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" aria-hidden="true"></div>
 
-            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-5xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
+            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-7xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
                 
                 {{-- Header Modal --}}
                 <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
@@ -98,7 +98,7 @@
                             &bull; <i data-lucide="phone" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer_contact"></span>
                         </p>
                     </div>
-                    <button @click="isDetailOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                    <button @click="closeModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                 </div>
@@ -217,33 +217,32 @@
                             </div>
                             
                             <div class="p-5 space-y-5">
-                                {{-- Dropzone Upload --}}
+                                {{-- Mockup Depan & Belakang --}}
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">1. Upload Hasil Design</label>
-                                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-[#1a237e] hover:bg-blue-50/50 transition-colors cursor-pointer"
-                                         @click="$refs.fileInput.click()">
-                                        <input type="file" x-ref="fileInput" class="hidden" multiple accept="image/*,.pdf,.zip,.rar" @change="handleFileUpload">
-                                        <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3 text-[#1a237e]">
-                                            <i data-lucide="cloud-upload" class="w-6 h-6"></i>
-                                        </div>
-                                        <p class="text-sm font-semibold text-[#1a237e]">Klik untuk upload</p>
-                                        <p class="text-xs text-gray-500 mt-1">Mockup / Pola (Max 20MB)</p>
-                                    </div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">1. Mockup Depan & Belakang</label>
+                                    <input type="file" class="filepond" id="mockup-pond" name="mockup_files[]" multiple accept="image/*" data-max-file-size="20MB">
+                                    <p class="text-xs text-gray-400 mt-1">Upload gambar mockup depan & belakang (1 gambar atau pisah)</p>
+                                </div>
 
-                                    {{-- List Uploaded Files --}}
-                                    <div class="mt-3 space-y-2" x-show="uploadedFiles.length > 0">
-                                        <template x-for="(file, index) in uploadedFiles" :key="index">
-                                            <div class="flex items-center gap-3 p-2 bg-blue-50/50 border border-blue-100 rounded-lg">
-                                                <div class="w-8 h-8 rounded bg-white flex items-center justify-center shrink-0 shadow-sm">
-                                                    <i data-lucide="file" class="w-4 h-4 text-[#1a237e]"></i>
-                                                </div>
-                                                <p class="text-xs font-medium text-gray-700 truncate flex-1" x-text="file.name"></p>
-                                                <button @click="removeFile(index)" class="text-red-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-md transition-colors">
-                                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                                                </button>
-                                            </div>
-                                        </template>
-                                    </div>
+                                {{-- Detail Depan --}}
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">2. Detail Depan</label>
+                                    <input type="file" class="filepond" id="detail-depan-pond" name="detail_depan_files[]" multiple accept="image/*" data-max-file-size="20MB">
+                                    <p class="text-xs text-gray-400 mt-1">Detail desain bagian depan (multi upload)</p>
+                                </div>
+
+                                {{-- Nama & No Punggung --}}
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">3. Nama & No Punggung</label>
+                                    <input type="file" class="filepond" id="nama-punggung-pond" name="nama_punggung_files[]" multiple accept="image/*" data-max-file-size="20MB">
+                                    <p class="text-xs text-gray-400 mt-1">Upload nama & nomor punggung (multi upload)</p>
+                                </div>
+
+                                {{-- Detail Sponsor --}}
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">4. Detail Sponsor</label>
+                                    <input type="file" class="filepond" id="detail-sponsor-pond" name="detail_sponsor_files[]" multiple accept="image/*" data-max-file-size="20MB">
+                                    <p class="text-xs text-gray-400 mt-1">Upload semua gambar sponsor (multi upload)</p>
                                 </div>
 
                                 {{-- Status Dropdown --}}
@@ -257,7 +256,7 @@
 
                                 {{-- Submit Button --}}
                                 <div class="pt-2">
-                                    <button @click="submitDesign" :disabled="!updateStatus || uploadedFiles.length === 0" 
+                                    <button @click="submitDesign" :disabled="!updateStatus" 
                                             class="w-full py-3 px-4 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-[#1a237e]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
                                         <i data-lucide="send" class="w-4 h-4"></i>
                                         Simpan & Teruskan
@@ -280,47 +279,88 @@ function designApp() {
     return {
         isDetailOpen: false,
         selectedOrder: null,
-        uploadedFiles: [],
         updateStatus: '',
-        
+        pondRefs: {},
+
         orders: @json($orders),
 
         openDetail(order) {
             this.selectedOrder = order;
-            this.uploadedFiles = [];
             this.updateStatus = '';
             this.isDetailOpen = true;
-            
-            // Re-initialize Lucide icons when modal opens
-            setTimeout(() => { 
+
+            setTimeout(() => {
                 if(window.lucide) {
-                    window.lucide.createIcons({ icons: window.lucide.icons }); 
+                    window.lucide.createIcons({ icons: window.lucide.icons });
                 }
-            }, 50);
+                this.initFilePond();
+            }, 100);
         },
 
-        handleFileUpload(e) {
-            const files = Array.from(e.target.files);
-            files.forEach(file => {
-                // Validasi ukuran file (Max 20MB)
-                if(file.size <= 20 * 1024 * 1024) {
-                    this.uploadedFiles.push(file);
-                } else {
-                    Notify.error(`Ukuran file ${file.name} melebihi 20MB.`, 'File Terlalu Besar');
+        initFilePond() {
+            if (!window.FilePond) return;
+            this.destroyFilePond();
+
+            const ids = ['mockup-pond', 'detail-depan-pond', 'nama-punggung-pond', 'detail-sponsor-pond'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const pond = FilePond.create(el, {
+                        allowMultiple: true,
+                        instantUpload: false,
+                        allowProcess: false,
+                        credits: false,
+                        stylePanelLayout: 'compact',
+                        imagePreviewHeight: 80,
+                    });
+
+                    pond.on('activatefile', (fileItem) => {
+                        const file = fileItem.file;
+                        if (file instanceof File && file.type.startsWith('image/')) {
+                            const url = URL.createObjectURL(file);
+                            window.openPhotoSwipe([{
+                                path: url,
+                                name: file.name,
+                                type: 'image/',
+                            }], 0);
+                        }
+                    });
+
+                    this.pondRefs[id] = pond;
                 }
             });
-            e.target.value = ''; // reset input
-            
-            // Re-initialize Lucide for newly added file icons
-            setTimeout(() => { if(window.lucide) window.lucide.createIcons({ icons: window.lucide.icons }); }, 50);
         },
 
-        removeFile(index) {
-            this.uploadedFiles.splice(index, 1);
+        destroyFilePond() {
+            Object.values(this.pondRefs).forEach(pond => {
+                try { pond.destroy(); } catch(e) {}
+            });
+            this.pondRefs = {};
+        },
+
+        closeModal() {
+            this.destroyFilePond();
+            this.isDetailOpen = false;
         },
 
         submitDesign() {
             if(!this.updateStatus) return;
+
+            const pondIds = ['mockup-pond', 'detail-depan-pond', 'nama-punggung-pond', 'detail-sponsor-pond'];
+            const fieldNames = ['mockup_files', 'detail_depan_files', 'nama_punggung_files', 'detail_sponsor_files'];
+
+            let totalFiles = 0;
+            pondIds.forEach((id, idx) => {
+                const pond = this.pondRefs[id];
+                if (pond) {
+                    totalFiles += pond.getFiles().filter(f => f.file instanceof File).length;
+                }
+            });
+
+            if (totalFiles === 0) {
+                Notify.error('Silakan upload minimal 1 file desain.', 'Tidak Ada File');
+                return;
+            }
 
             Swal.fire({
                 title: 'Konfirmasi',
@@ -338,7 +378,19 @@ function designApp() {
                 const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                 const formData = new FormData();
                 formData.append('status', this.updateStatus);
-                this.uploadedFiles.forEach(file => formData.append('files[]', file));
+
+                pondIds.forEach((id, idx) => {
+                    const pond = this.pondRefs[id];
+                    if (pond) {
+                        pond.getFiles().forEach(fileItem => {
+                            if (fileItem.file instanceof File) {
+                                formData.append(fieldNames[idx] + '[]', fileItem.file);
+                            }
+                        });
+                    }
+                });
+
+                this.destroyFilePond();
 
                 let progress = 0;
                 let loadingEl = document.createElement('div');

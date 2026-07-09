@@ -14,9 +14,15 @@ class UpdateDesignStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|in:siap_cetak',
-            'files'  => 'nullable|array',
-            'files.*' => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
+            'status'                => 'required|in:siap_cetak',
+            'mockup_files'          => 'nullable|array',
+            'mockup_files.*'        => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
+            'detail_depan_files'    => 'nullable|array',
+            'detail_depan_files.*'  => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
+            'nama_punggung_files'   => 'nullable|array',
+            'nama_punggung_files.*' => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
+            'detail_sponsor_files'  => 'nullable|array',
+            'detail_sponsor_files.*' => 'file|mimes:jpg,jpeg,png,pdf,zip,rar,ai,eps,psd|max:20480',
         ];
     }
 }
