@@ -714,13 +714,16 @@
                                     </template>
                                     <template x-if="form.jenis_potongan">
                                         <div>
-                                            <p class="text-xs text-gray-500 mb-4">Referensi ukuran untuk potongan <strong class="text-[#1a237e]" x-text="form.jenis_potongan"></strong>.</p>
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                                                <img
-                                                    :src="activeSizePdf"
-                                                    class="w-full h-auto object-contain"
-                                                    alt="Referensi Ukuran"
-                                                >
+                                            <p class="text-xs text-gray-500 mb-4">Klik gambar untuk melihat ukuran <strong class="text-[#1a237e]" x-text="form.jenis_potongan"></strong> secara penuh.</p>
+                                            <div @click="openAtasanGallery" class="cursor-pointer group">
+                                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
+                                                    <img
+                                                        :src="activeSizePdf"
+                                                        class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                                        alt="Referensi Ukuran"
+                                                    >
+                                                </div>
+                                                <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Klik untuk perbesar</p>
                                             </div>
                                         </div>
                                     </template>
@@ -2308,6 +2311,17 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     alt: 'Rok'
                 },
             ], index)
+        },
+
+        openAtasanGallery() {
+            window.openPhotoSwipe([
+                {
+                    src: this.activeSizePdf,
+                    width: 2345,
+                    height: 1660,
+                    alt: this.form.jenis_potongan || 'Referensi Ukuran'
+                },
+            ], 0)
         },
     }
 }
