@@ -29,12 +29,13 @@
         <div class="p-5 border-b border-gray-200 bg-gray-50/50 flex justify-between items-center">
             <h2 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
                 <i x-show="activeTab === 'printing'" data-lucide="printer" class="w-4 h-4 text-[#1a237e]"></i>
+                <i x-show="activeTab === 'press'" data-lucide="flame" class="w-4 h-4 text-[#1a237e]"></i>
                 <i x-show="activeTab === 'jahit'" data-lucide="scissors" class="w-4 h-4 text-[#1a237e]"></i>
                 <i x-show="activeTab === 'qc'" data-lucide="shield-check" class="w-4 h-4 text-[#1a237e]"></i>
-                <span x-text="activeTab === 'printing' ? 'Daftar Antrean Cetak (Printing)' : (activeTab === 'jahit' ? 'Daftar Antrean Jahit' : 'Daftar Antrean QC & Finishing')"></span>
+                <span x-text="activeTab === 'printing' ? 'Daftar Antrean Cetak (Printing)' : (activeTab === 'press' ? 'Daftar Antrean Press (Heat Press)' : (activeTab === 'jahit' ? 'Daftar Antrean Jahit' : 'Daftar Antrean QC & Finishing'))"></span>
             </h2>
             <div class="flex gap-2">
-                <span :class="activeTab === 'printing' ? 'bg-blue-100 text-blue-700' : (activeTab === 'jahit' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700')"
+                <span :class="activeTab === 'printing' ? 'bg-blue-100 text-blue-700' : (activeTab === 'press' ? 'bg-orange-100 text-orange-700' : (activeTab === 'jahit' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'))"
                     class="px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1 transition-all duration-300">
                     <span x-text="filteredOrders().length"></span> Antrean
                 </span>
@@ -59,7 +60,7 @@
                             <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                                 <i data-lucide="check-circle-2" class="w-10 h-10 mx-auto text-green-400 mb-2"></i>
                                 <p class="font-medium text-gray-800">Tidak ada antrean di divisi ini.</p>
-                                <p class="text-xs mt-1 text-gray-400" x-text="activeTab === 'printing' ? 'Semua pesanan selesai diprint!' : (activeTab === 'jahit' ? 'Semua pesanan selesai dijahit!' : 'Semua pesanan lolos QC!')"></p>
+                                <p class="text-xs mt-1 text-gray-400" x-text="activeTab === 'printing' ? 'Semua pesanan selesai diprint!' : (activeTab === 'press' ? 'Semua pesanan selesai dipress!' : (activeTab === 'jahit' ? 'Semua pesanan selesai dijahit!' : 'Semua pesanan lolos QC!'))"></p>
                             </td>
                         </tr>
                     </template>
@@ -337,6 +338,14 @@
                                         </select>
                                     </div>
 
+                                    <!-- Press Stage Actions -->
+                                    <div x-show="selectedOrder?.stage === 'press'">
+                                        <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
+                                            <option value="proses_press">Sedang Proses</option>
+                                            <option value="selesai_press">Selesai</option>
+                                        </select>
+                                    </div>
+
                                     <!-- Jahit Stage Actions -->
                                     <div x-show="selectedOrder?.stage === 'jahit'">
                                         <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
@@ -426,22 +435,31 @@
                                         <i data-lucide="corner-down-right" class="w-3.5 h-3.5 text-amber-600"></i>
                                         2b. Kirim Revisi ke Bagian
                                     </label>
-                                    <div class="flex gap-3">
-                                        <label class="flex-1 flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
                                             :class="targetStage === 'printing' ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-200 hover:bg-blue-50/50 hover:border-blue-200'">
                                             <input type="radio" value="printing" x-model="targetStage"
                                                 class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
                                             <div>
                                                 <p class="text-xs font-semibold" :class="targetStage === 'printing' ? 'text-blue-700' : 'text-gray-700'">Printing</p>
-                                                <p class="text-[11px] text-gray-400">Cetak ulang desain/sablon</p>
+                                                <p class="text-[11px] text-gray-400">Cetak ulang</p>
                                             </div>
                                         </label>
-                                        <label class="flex-1 flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
+                                        <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
+                                            :class="targetStage === 'press' ? 'bg-orange-50 border-orange-300' : 'bg-gray-50 border-gray-200 hover:bg-orange-50/50 hover:border-orange-200'">
+                                            <input type="radio" value="press" x-model="targetStage"
+                                                class="w-4 h-4 text-orange-600 focus:ring-orange-500 cursor-pointer">
+                                            <div>
+                                                <p class="text-xs font-semibold" :class="targetStage === 'press' ? 'text-orange-700' : 'text-gray-700'">Press</p>
+                                                <p class="text-[11px] text-gray-400">Heat press ulang</p>
+                                            </div>
+                                        </label>
+                                        <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
                                             :class="targetStage === 'jahit' ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-200 hover:bg-amber-50/50 hover:border-amber-200'">
                                             <input type="radio" value="jahit" x-model="targetStage"
                                                 class="w-4 h-4 text-amber-600 focus:ring-amber-500 cursor-pointer">
                                             <div>
-                                                <p class="text-xs font-semibold" :class="targetStage === 'jahit' ? 'text-amber-700' : 'text-gray-700'">Jahit (Sewing)</p>
+                                                <p class="text-xs font-semibold" :class="targetStage === 'jahit' ? 'text-amber-700' : 'text-gray-700'">Jahit</p>
                                                 <p class="text-[11px] text-gray-400">Perbaikan jahitan</p>
                                             </div>
                                         </label>
@@ -469,6 +487,9 @@
 
                                 <div class="pt-2 border-t border-gray-100">
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'printing'">
+                                        Pilih <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke divisi Press (Heat Press).
+                                    </p>
+                                    <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'press'">
                                         Pilih <strong class="text-gray-600">Selesai</strong> untuk mengirim pesanan ke divisi Jahit.
                                     </p>
                                     <p class="text-[11px] text-gray-400 text-center leading-relaxed" x-show="selectedOrder?.stage === 'jahit'">
@@ -502,6 +523,7 @@ function produksiApp() {
         activeTab: 'printing',
         tabs: [
             { key: 'printing', label: 'Printing' },
+            { key: 'press', label: 'Press (Heat Press)' },
             { key: 'jahit', label: 'Jahit (Sewing)' },
             { key: 'qc', label: 'Quality Control (QC)' },
         ],
@@ -544,6 +566,8 @@ function produksiApp() {
             this.selectedOrder = order;
             if (order.stage === 'printing') {
                 this.updateStatus = 'selesai_printing';
+            } else if (order.stage === 'press') {
+                this.updateStatus = 'selesai_press';
             } else if (order.stage === 'jahit') {
                 this.updateStatus = 'selesai_jahit';
             } else if (order.stage === 'qc') {
@@ -590,9 +614,21 @@ function produksiApp() {
                     successText = 'Status pesanan berhasil diperbarui.';
                 } else {
                     title = 'Selesaikan Printing?';
-                    text = 'Proses printing selesai dan pesanan akan dikirim ke divisi Jahit.';
+                    text = 'Proses printing selesai dan pesanan akan dikirim ke divisi Press (Heat Press).';
                     confirmButtonText = 'Ya, Kirim!';
-                    successText = 'Proses printing selesai. Pesanan dikirim ke divisi Jahit.';
+                    successText = 'Proses printing selesai. Pesanan dikirim ke divisi Press.';
+                }
+            } else if (currentStage === 'press') {
+                if (targetStatus === 'proses_press') {
+                    title = 'Update Status Press?';
+                    text = 'Status pesanan akan diperbarui menjadi Sedang Proses.';
+                    confirmButtonText = 'Ya, Update!';
+                    successText = 'Status pesanan berhasil diperbarui.';
+                } else {
+                    title = 'Selesaikan Press (Heat Press)?';
+                    text = 'Proses press selesai dan pesanan akan dikirim ke divisi Jahit.';
+                    confirmButtonText = 'Ya, Kirim!';
+                    successText = 'Proses press selesai. Pesanan dikirim ke divisi Jahit.';
                 }
             } else if (currentStage === 'jahit') {
                 if (targetStatus === 'proses_jahit') {
@@ -633,7 +669,7 @@ function produksiApp() {
                         Notify.warning('Harap isi catatan QC dengan detail bagian yang perlu diperbaiki sebelum mengirim revisi.', 'Catatan Revisi Wajib Diisi');
                         return;
                     }
-                    const targetLabel = this.targetStage === 'printing' ? 'Printing' : 'Jahit';
+                    const targetLabel = this.targetStage === 'printing' ? 'Printing' : (this.targetStage === 'press' ? 'Press' : 'Jahit');
                     title = `Kirim Revisi ke ${targetLabel}?`;
                     text = `Pesanan akan dikembalikan ke bagian ${targetLabel} untuk pengerjaan ulang sesuai catatan QC.`;
                     confirmButtonText = 'Ya, Kirim Revisi!';
@@ -646,7 +682,7 @@ function produksiApp() {
                 text: text,
                 icon: isSelesai ? 'success' : 'question',
                 showCancelButton: true,
-                confirmButtonColor: isSelesai ? '#16a34a' : (targetStatus === 'revisi_qc' ? '#d97706' : (targetStatus === 'proses_printing' || targetStatus === 'proses_jahit' ? '#0891b2' : '#1a237e')),
+                confirmButtonColor: isSelesai ? '#16a34a' : (targetStatus === 'revisi_qc' ? '#d97706' : (targetStatus === 'proses_printing' || targetStatus === 'proses_press' || targetStatus === 'proses_jahit' ? '#0891b2' : '#1a237e')),
                 cancelButtonColor: '#6b7280',
                 confirmButtonText: confirmButtonText,
                 cancelButtonText: 'Batal',
