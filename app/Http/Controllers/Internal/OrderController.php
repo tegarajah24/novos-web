@@ -299,19 +299,30 @@ class OrderController extends Controller
         }
 
         // Stepper
-        $stepOrder = ['menunggu_pembayaran', 'dikonfirmasi', 'disetujui', 'di_design', 'siap_cetak', 'menunggu_spk', 'diproduksi', 'selesai'];
+        $stepOrder = ['menunggu_pembayaran', 'dikonfirmasi', 'di_design', 'menunggu_spk', 'siap_cetak', 'diproduksi', 'selesai'];
         $stepLabels = [
             'menunggu_pembayaran' => 'Menunggu Pembayaran',
             'dikonfirmasi'       => 'Dikonfirmasi',
-            'disetujui'          => 'Tahap Desain',
-            'di_design'          => 'Proses Desain',
-            'siap_cetak'         => 'Siap Cetak',
+            'di_design'          => 'Tahap Desain',
             'menunggu_spk'       => 'Menunggu SPK',
+            'siap_cetak'         => 'Siap Cetak',
             'diproduksi'         => 'Produksi',
             'selesai'            => 'Selesai',
         ];
 
-        $currentIdx = array_search($order->status, $stepOrder);
+        $statusToStepMap = [
+            'menunggu_pembayaran' => 'menunggu_pembayaran',
+            'dikonfirmasi'        => 'dikonfirmasi',
+            'disetujui'           => 'dikonfirmasi',
+            'di_design'           => 'di_design',
+            'menunggu_spk'        => 'menunggu_spk',
+            'siap_cetak'          => 'siap_cetak',
+            'diproduksi'          => 'diproduksi',
+            'selesai'             => 'selesai',
+        ];
+
+        $currentStepKey = $statusToStepMap[$order->status] ?? $order->status;
+        $currentIdx = array_search($currentStepKey, $stepOrder);
 
         if ($currentIdx === false && $order->status === 'dibatalkan') {
             $lastNonCancel = null;
@@ -320,9 +331,8 @@ class OrderController extends Controller
                     $lastNonCancel = $h;
                 }
             }
-            $currentIdx = $lastNonCancel
-                ? array_search($lastNonCancel->status, $stepOrder)
-                : 0;
+            $lastStatusKey = $lastNonCancel ? ($statusToStepMap[$lastNonCancel->status] ?? $lastNonCancel->status) : 'menunggu_pembayaran';
+            $currentIdx = array_search($lastStatusKey, $stepOrder);
             if ($currentIdx === false) $currentIdx = -1;
         } elseif ($currentIdx === false) {
             $currentIdx = -1;
@@ -330,8 +340,9 @@ class OrderController extends Controller
 
         $stepDates = [];
         foreach ($order->statusHistories as $h) {
-            if (!isset($stepDates[$h->status])) {
-                $stepDates[$h->status] = $h->created_at->format('j M Y');
+            $mappedStatus = $statusToStepMap[$h->status] ?? $h->status;
+            if (!isset($stepDates[$mappedStatus])) {
+                $stepDates[$mappedStatus] = $h->created_at->format('j M Y');
             }
         }
 
@@ -455,17 +466,15 @@ class OrderController extends Controller
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
             ],
             'di_design' => [
-                'siap_cetak'  => ['Design'],
-                'menunggu_spk' => ['Design'],
-                'dibatalkan'  => ['Admin', 'Manager', 'Super Admin'],
-            ],
-            'siap_cetak' => [
-                'menunggu_spk' => ['Admin', 'Manager', 'Super Admin'],
+                'menunggu_spk' => ['Design', 'Admin', 'Manager', 'Super Admin'],
                 'dibatalkan'   => ['Admin', 'Manager', 'Super Admin'],
             ],
             'menunggu_spk' => [
                 'siap_cetak' => ['Admin', 'Manager', 'Super Admin'],
                 'dibatalkan' => ['Admin', 'Manager', 'Super Admin'],
+            ],
+            'siap_cetak' => [
+                'dibatalkan'   => ['Admin', 'Manager', 'Super Admin'],
             ],
             'diproduksi' => [
                 'selesai'    => ['Produksi'],
