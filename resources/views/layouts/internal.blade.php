@@ -179,8 +179,8 @@
         
         /* ── Entrance Animation ── */
         @keyframes slideUpEntrance {
-            0%   { opacity: 0; margin-top: 15px; }
-            100% { opacity: 1; margin-top: 0; }
+            0%   { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         .animate-entrance {
@@ -663,7 +663,10 @@
         <header class="py-4 px-8 flex items-center justify-between shrink-0 relative z-30">
             <div class="flex items-center gap-3">
                 <button @click="$dispatch('sidebar-toggle')" class="text-gray-500 hover:text-[#1a237e]">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 xl:hidden">
+                        <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+                    </svg>
+                    <i data-lucide="menu" class="w-6 h-6 hidden xl:inline"></i>
                 </button>
                 <div>
                     @yield('topbar-left')
@@ -677,7 +680,10 @@
                     <div x-data="staffChatBadge()" x-init="init()" class="relative hidden">
                         <div class="bg-white rounded-full shadow-sm">
                             <a href="{{ route('staf.chat') }}" class="relative p-2 text-gray-500 hover:text-[#1a237e] flex items-center justify-center">
-                                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 xl:hidden">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                <i data-lucide="message-circle" class="w-5 h-5 hidden xl:inline"></i>
                                 <span x-show="unreadCount > 0" x-cloak
                                       x-text="unreadCount > 9 ? '9+' : unreadCount"
                                       class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">
@@ -689,7 +695,10 @@
                     <div x-data="notifBadge()" x-init="init()" class="relative">
                         <div class="bg-white rounded-full shadow-sm">
                             <a href="{{ route('staf.notifikasi') }}" class="relative p-2 text-gray-500 hover:text-[#1a237e] transition-colors flex items-center justify-center">
-                                <i data-lucide="bell" class="w-5 h-5"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 xl:hidden">
+                                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                                </svg>
+                                <i data-lucide="bell" class="w-5 h-5 hidden xl:inline"></i>
                                 <span x-show="unreadCount > 0" x-cloak
                                       x-text="unreadCount > 9 ? '9+' : unreadCount"
                                       class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">
