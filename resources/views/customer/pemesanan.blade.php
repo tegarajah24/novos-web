@@ -252,11 +252,9 @@
                         >
                     </div>
                 </div>
-            </div>
-
-            <div class="grid lg:grid-cols-2 gap-6 bg-white border border-gray-200 p-5 rounded-xl">
+            </div>            <div class="bg-white border border-gray-200 p-5 rounded-xl">
                 {{-- Kategori Produk --}}
-                <div class="col-span-full">
+                <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Kategori Produk <span class="text-red-500">*</span>
                     </label>
@@ -273,88 +271,22 @@
                     </select>
                 </div>
 
-                {{-- Dynamic Attributes Schema Renderer --}}
-                <template x-for="attr in activeSchema" :key="attr.id">
-                    <div x-show="shouldShowAttr(attr)" class="space-y-1.5 col-span-1" x-data="{ showGuide: false }">
-                        <div class="flex items-center justify-between mb-1">
-                            <label class="block text-sm font-medium text-gray-700">
-                                <span x-text="attr.name"></span>
-                                <template x-if="attr.required"><span class="text-red-500">*</span></template>
-                            </label>
-                            <template x-if="attr.reference_image">
-                                <button
-                                    type="button"
-                                    @click="showGuide = true"
-                                    class="underline p-0 text-gray-600 hover:text-[#1a237e] rounded-lg text-xs font-bold transition-colors"
-                                >
-                                    Detail <span x-text="attr.name"></span>
-                                </button>
-                            </template>
-                        </div>
-
-                        {{-- Select Input --}}
-                        <template x-if="attr.type === 'select'">
-                            <select
-                                x-model="form.customizations[attr.id]"
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none bg-white text-gray-950"
-                            >
-                                <option value="" x-text="'Pilih ' + attr.name"></option>
-                                <template x-for="opt in attr.options" :key="opt.value">
-                                    <option :value="opt.value" x-text="opt.value"></option>
-                                </template>
-                            </select>
-                        </template>
-
-                        {{-- Radio Input --}}
-                        <template x-if="attr.type === 'radio'">
-                            <div class="flex flex-wrap gap-4 p-2 bg-gray-50/50 border border-gray-200 rounded-lg">
-                                <template x-for="opt in attr.options" :key="opt.value">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" :name="attr.id" :value="opt.value" x-model="form.customizations[attr.id]" class="text-[#1a237e] focus:ring-[#1a237e] border-gray-300">
-                                        <span class="text-sm text-gray-700 font-medium" x-text="opt.value"></span>
-                                    </label>
-                                </template>
-                            </div>
-                        </template>
-
-                        {{-- Text Input --}}
-                        <template x-if="attr.type === 'text'">
-                            <input
-                                type="text"
-                                x-model="form.customizations[attr.id]"
-                                :placeholder="'Masukkan ' + attr.name"
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none bg-white text-gray-900"
-                            >
-                        </template>
-
-                        {{-- Guide Modal --}}
+                {{-- Panduan Atribut Buttons --}}
+                <div class="flex flex-wrap gap-2 mt-4" x-show="activeSchema.some(a => a.reference_image)">
+                    <span class="text-xs text-gray-500 flex items-center font-medium">Lihat Panduan:</span>
+                    <template x-for="attr in activeSchema" :key="attr.id">
                         <template x-if="attr.reference_image">
-                            <template x-teleport="body">
-                                <div
-                                    x-show="showGuide"
-                                    x-cloak
-                                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
-                                    @click.self="showGuide = false"
-                                >
-                                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden" @click.stop>
-                                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                            <h3 class="text-base font-bold text-gray-900" x-text="'Panduan: ' + attr.name"></h3>
-                                            <button @click="showGuide = false" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-650 flex items-center justify-center transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                            </button>
-                                        </div>
-                                        <div class="px-6 py-5 overflow-y-auto max-h-[70vh] flex items-center justify-center bg-gray-50/50">
-                                            <img :src="attr.reference_image.startsWith('http') || attr.reference_image.startsWith('images/') ? '/' + attr.reference_image.replace(/^\//, '') : '/storage/' + attr.reference_image" class="max-h-[60vh] w-auto object-contain rounded-xl border border-gray-200 shadow-sm">
-                                        </div>
-                                        <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
-                                            <button @click="showGuide = false" class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg">Mengerti</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
+                            <button
+                                type="button"
+                                @click="showAttrGuide(attr)"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-605 hover:text-[#1a237e] hover:bg-blue-50 border border-gray-200 rounded-lg text-xs font-bold transition-colors"
+                            >
+                                <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                <span x-text="attr.name"></span>
+                            </button>
                         </template>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
 
             {{-- Total Quantity --}}
@@ -541,13 +473,138 @@
                 </div>
                 </template>
 
-                <textarea
-                    x-model="form.catatan"
-                    rows="6"
-                    placeholder="Isi detail per-item dengan format: NoPunggung, Nama Punggung, Model Lengan, Size, Keterangan&#10;&#10;Contoh:&#10;10, Jhon Doe, SHORT SLEVE, L,&#10;7, Jane Doe, LONG SLEVE, M,&#10;9, Alex, SHORT SLEVE, XL, Catatan khusus"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow resize-none"
-                ></textarea>
-                <p class="text-xs text-gray-400 mt-1">Pisahkan setiap item dengan baris baru. Format: NoPunggung, Nama Punggung, Model Lengan, Size, Keterangan</p>
+                {{-- Tabel Data Produksi Dinamis --}}
+                <div class="mt-4 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
+                        <h4 class="text-sm font-bold text-gray-800">Tabel Rincian Pemain & Spesifikasi</h4>
+                        <div class="text-xs text-gray-500 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                            <span class="flex h-1.5 w-1.5 rounded-full bg-blue-600"></span>
+                            <span><strong>Tips:</strong> Klik kolom / centang massal untuk ubah sekaligus dengan cepat.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs min-w-[800px]">
+                            <thead class="bg-gray-800 text-white select-none">
+                                <tr>
+                                    <th class="p-3 w-12 text-center">
+                                        <input type="checkbox" x-model="selectAll" @change="toggleSelectAll()" class="w-4 h-4 rounded cursor-pointer accent-[#1a237e] bg-gray-700 border-gray-600">
+                                    </th>
+                                    <th class="p-3 w-12 text-center">No</th>
+                                    <th class="p-3 w-28">No Punggung</th>
+                                    <th class="p-3">Nama Punggung</th>
+                                    <th class="p-3 w-28">Size</th>
+                                    <template x-for="attr in activeSchema" :key="attr.id">
+                                        <th class="p-3 min-w-[150px]" x-text="attr.name"></th>
+                                    </template>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                <template x-for="(item, index) in items" :key="index">
+                                    <tr class="transition-colors hover:bg-gray-50/50" :class="item.selected ? 'bg-blue-50/50' : ''">
+                                        <!-- Checkbox -->
+                                        <td class="p-3 text-center">
+                                            <input type="checkbox" :checked="item.selected" @change="handleCheck($event, index)" class="w-4 h-4 rounded cursor-pointer accent-[#1a237e]">
+                                        </td>
+                                        
+                                        <!-- Row Number -->
+                                        <td class="p-3 text-center text-gray-400 font-semibold" x-text="index + 1"></td>
+                                        
+                                        <!-- No Punggung -->
+                                        <td class="p-3">
+                                            <input type="text" x-model="item.no" placeholder="Contoh: 10"
+                                                   class="w-full border border-gray-300 p-1.5 rounded text-center font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white">
+                                        </td>
+                                        
+                                        <!-- Nama Punggung -->
+                                        <td class="p-3">
+                                            <input type="text" x-model="item.nama" placeholder="NAMA PEMAIN"
+                                                   class="w-full border border-gray-300 p-1.5 rounded font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white uppercase">
+                                        </td>
+                                        
+                                        <!-- Size -->
+                                        <td class="p-3">
+                                            <select x-model="item.size" class="w-full border border-gray-300 p-1.5 rounded bg-white outline-none focus:ring-1 focus:ring-[#1a237e]">
+                                                <option value="S">S</option>
+                                                <option value="M">M</option>
+                                                <option value="L">L</option>
+                                                <option value="XL">XL</option>
+                                                <option value="XXL">XXL</option>
+                                                <option value="3XL">3XL</option>
+                                                <option value="4XL">4XL</option>
+                                            </select>
+                                        </td>
+                                        
+                                        <!-- Dynamic Attribute Columns -->
+                                        <template x-for="attr in activeSchema" :key="attr.id">
+                                            <td class="p-3">
+                                                <!-- Select/Radio type -> render select dropdown inside cell -->
+                                                <template x-if="attr.type === 'select' || attr.type === 'radio'">
+                                                    <select
+                                                        x-model="item.customizations[attr.id]"
+                                                        :disabled="!isAttrActive(attr, item)"
+                                                        :class="!isAttrActive(attr, item) ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-gray-300 text-gray-900 focus:ring-[#1a237e]'"
+                                                        class="w-full border p-1.5 rounded outline-none focus:ring-1 focus:border-[#1a237e]"
+                                                    >
+                                                        <option value="" x-text="'- Pilih -'"></option>
+                                                        <template x-for="opt in attr.options" :key="opt.value">
+                                                            <option :value="opt.value" x-text="opt.value"></option>
+                                                        </template>
+                                                    </select>
+                                                </template>
+                                                
+                                                <!-- Text type -> render text input inside cell -->
+                                                <template x-if="attr.type === 'text'">
+                                                    <input
+                                                        type="text"
+                                                        x-model="item.customizations[attr.id]"
+                                                        :disabled="!isAttrActive(attr, item)"
+                                                        :class="!isAttrActive(attr, item) ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-gray-300 text-gray-900 focus:ring-[#1a237e]'"
+                                                        class="w-full border p-1.5 rounded outline-none focus:ring-1 focus:border-[#1a237e]"
+                                                        :placeholder="attr.name"
+                                                    >
+                                                </template>
+                                            </td>
+                                        </template>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- FLOATING BULK BAR (EDIT MASAL UNTUK CUSTOMER) -->
+                <div x-show="countSelected() > 0" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl border border-gray-800 flex items-center gap-6 z-50">
+                    <div class="border-r border-gray-800 pr-4">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Terpilih</p>
+                        <p class="text-base font-bold text-orange-400" x-text="countSelected() + ' Baris'"></p>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs">
+                        <span class="font-semibold text-gray-300">Set Massal:</span>
+                        <select x-model="bulkForm.size" class="bg-gray-800 border border-gray-700 text-white rounded p-1.5 text-xs outline-none">
+                            <option value="">-- Size --</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="3XL">3XL</option>
+                            <option value="4XL">4XL</option>
+                        </select>
+                        <template x-for="attr in activeSchema" :key="attr.id">
+                            <template x-if="attr.type === 'select' || attr.type === 'radio'">
+                                <select x-model="bulkForm[attr.id]" class="bg-gray-800 border border-gray-700 text-white rounded p-1.5 text-xs outline-none">
+                                    <option value="" x-text="'-- ' + attr.name + ' --'"></option>
+                                    <template x-for="opt in attr.options" :key="opt.value">
+                                        <option :value="opt.value" x-text="opt.value"></option>
+                                    </template>
+                                </select>
+                            </template>
+                        </template>
+                        <button type="button" @click="applyBulkAction()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-1.5 rounded transition-colors shadow">Terapkan</button>
+                        <button type="button" @click="clearSelection()" class="text-xs text-gray-400 hover:text-white underline ml-1">Batal</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1475,6 +1532,13 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             catatan: '',
             total_qty: 1,
         },
+        items: [],
+        selectAll: false,
+        selectionMode: 'single',
+        lastCheckedIndex: null,
+        bulkForm: {},
+        showGuideAttr: null,
+        showGuideModal: false,
         prioritas: 'normal',
         showUkuranRef: false,
         orderNumber: null,
@@ -1515,31 +1579,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         if (cat) {
                             this.selectedCategoryId = cat.id;
                             this.onCategoryChange();
-                            if (item.kerah) this.form.customizations['kerah'] = item.kerah;
-                            if (item.bahan) this.form.customizations['bahan'] = item.bahan;
-                            if (item.jenis_potongan) this.form.customizations['jenis_potongan'] = item.jenis_potongan;
-                            if (item.lengan_jahitan) this.form.customizations['lengan_jahitan'] = item.lengan_jahitan;
                         }
-                        
-                        let num = '-';
-                        let name = '-';
-                        if (state.notes) {
-                            const nameMatch = state.notes.match(/Nameset:\s*(.*?)\s*\(No\./i);
-                            const numMatch = state.notes.match(/\(No\.\s*(.*?)\)/i);
-                            if (nameMatch) name = nameMatch[1].trim();
-                            if (numMatch) num = numMatch[1].trim();
-                        }
-                        
-                        let lines = [];
-                        for (let i = 0; i < this.form.total_qty; i++) {
-                            lines.push(`${num}, ${name}, ${this.form.customizations['lengan_jahitan'] || '-'}, ${item.size || '-'}, Katalog`);
-                        }
-                        this.form.catatan = lines.join('\n');
                     } else {
                         this.jenis = state.jenis;
                         this.form = state.form || this.form;
                         if (state.selectedCategoryId) {
                             this.selectedCategoryId = state.selectedCategoryId;
+                        }
+                        if (state.items) {
+                            this.items = state.items;
                         }
                     }
                     
@@ -1576,6 +1624,17 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.addressMode = 'create';
             }
 
+            // Watch total_qty to update items table rows
+            this.$watch('form.total_qty', (val) => {
+                this.updateItemsRows(val);
+            });
+            // Watch category change to reset and align schemas on all item rows
+            this.$watch('selectedCategoryId', () => {
+                this.updateItemsRows(this.form.total_qty);
+            });
+
+            this.updateItemsRows(this.form.total_qty);
+
             this.setupBuktiBayarPond();
         },
 
@@ -1598,17 +1657,89 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     this.form.customizations[attr.id] = '';
                 });
             }
+            this.updateItemsRows(this.form.total_qty);
+        },
+
+        updateItemsRows(val) {
+            const count = parseInt(val) || 1;
+            const schema = this.activeSchema;
+            
+            if (this.items.length > count) {
+                this.items = this.items.slice(0, count);
+            } else {
+                const diff = count - this.items.length;
+                for (let i = 0; i < diff; i++) {
+                    const rowCustom = {};
+                    schema.forEach(attr => {
+                        rowCustom[attr.id] = '';
+                    });
+                    this.items.push({
+                        selected: false,
+                        no: '',
+                        nama: '',
+                        size: 'M',
+                        customizations: rowCustom
+                    });
+                }
+            }
+        },
+
+        isAttrActive(attr, item) {
+            if (!attr.depends_on || !attr.depends_on.attribute_id) return true;
+            const parentVal = item.customizations[attr.depends_on.attribute_id];
+            return parentVal === attr.depends_on.value;
+        },
+
+        toggleSelectAll() {
+            this.items.forEach(item => item.selected = this.selectAll);
+            this.lastCheckedIndex = null;
+        },
+
+        handleCheck(event, index) {
+            let isChecked = event.target.checked;
+            if (this.selectionMode === 'range' || event.shiftKey) {
+                if (this.lastCheckedIndex !== null) {
+                    let start = Math.min(this.lastCheckedIndex, index);
+                    let fontEnd = Math.max(this.lastCheckedIndex, index);
+                    for (let i = start; i <= fontEnd; i++) { this.items[i].selected = isChecked; }
+                } else { this.items[index].selected = isChecked; }
+            } else { this.items[index].selected = isChecked; }
+            this.lastCheckedIndex = index;
+        },
+
+        countSelected() { 
+            return this.items.filter(item => item.selected).length; 
+        },
+
+        clearSelection() { 
+            this.items.forEach(item => item.selected = false); 
+            this.selectAll = false; 
+            this.lastCheckedIndex = null; 
+        },
+
+        applyBulkAction() {
+            this.items.forEach(item => {
+                if (item.selected) {
+                    if (this.bulkForm.size) item.size = this.bulkForm.size;
+                    this.activeSchema.forEach(attr => {
+                        if (this.bulkForm[attr.id] !== undefined && this.bulkForm[attr.id] !== '') {
+                            item.customizations[attr.id] = this.bulkForm[attr.id];
+                        }
+                    });
+                }
+            });
+            this.clearSelection();
+            this.bulkForm = {};
+        },
+
+        showAttrGuide(attr) {
+            this.showGuideAttr = attr;
+            this.showGuideModal = true;
         },
 
         get activeSchema() {
             const cat = this.categories.find(c => c.id == this.selectedCategoryId);
             return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
-        },
-
-        shouldShowAttr(attr) {
-            if (!attr.depends_on || !attr.depends_on.attribute_id) return true;
-            const parentVal = this.form.customizations[attr.depends_on.attribute_id];
-            return parentVal === attr.depends_on.value;
         },
 
         saveCheckoutState() {
@@ -1678,7 +1809,19 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         get validateStep2() {
-            return this.form.nama_pemesan.trim() !== '' && this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '' && this.form.lengan_jahitan !== '' && this.totalQty >= 1;
+            const basic = this.form.nama_pemesan.trim() !== '' && this.form.team_name.trim() !== '' && this.selectedCategoryId !== '' && this.totalQty >= 1;
+            if (!basic) return false;
+            
+            const schema = this.activeSchema;
+            return this.items.every(item => {
+                if (!item.size) return false;
+                return schema.every(attr => {
+                    if (!attr.required) return true;
+                    if (!this.isAttrActive(attr, item)) return true;
+                    const val = item.customizations[attr.id];
+                    return val !== undefined && val !== null && val.toString().trim() !== '';
+                });
+            });
         },
 
         get validateStep3() {
@@ -1875,6 +2018,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.loading) return;
             this.loading = true;
 
+            // Generate catatan legacy from items array
+            this.form.catatan = this.items.map(item => {
+                const customParts = Object.entries(item.customizations || {})
+                    .filter(([k, v]) => v !== undefined && v !== null && v !== '')
+                    .map(([k, v]) => v)
+                    .join(', ');
+                return `${item.no || '-'}, ${item.nama || '-'}, ${item.size || 'M'}${customParts ? ', ' + customParts : ''}`;
+            }).join('\n');
+
             const formData = new FormData();
             formData.append('team_name', this.form.team_name);
             formData.append('nama_artikel', this.form.nama_artikel);
@@ -1882,11 +2034,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             formData.append('detail_sponsor', this.form.detail_sponsor);
             // Dynamic customizations JSON
             formData.append('customizations', JSON.stringify(this.form.customizations || {}));
-            // Legacy fallbacks (optional backend compatibility)
-            formData.append('kerah', this.form.customizations['kerah'] || '');
-            formData.append('bahan', this.form.customizations['bahan'] || '');
-            formData.append('jenis_potongan', this.form.customizations['jenis_potongan'] || '');
-            formData.append('lengan_jahitan', this.form.customizations['lengan_jahitan'] || '');
             formData.append('catatan', this.form.catatan);
             formData.append('total_qty', this.form.total_qty || 1);
             formData.append('prioritas', this.prioritas);
@@ -1894,6 +2041,14 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.selectedAddressId) {
                 formData.append('address_id', this.selectedAddressId);
             }
+
+            // Append structured items array
+            this.items.forEach((item, index) => {
+                formData.append(`items[${index}][no]`, item.no || '');
+                formData.append(`items[${index}][nama]`, item.nama || '');
+                formData.append(`items[${index}][size]`, item.size || 'M');
+                formData.append(`items[${index}][customizations]`, JSON.stringify(item.customizations || {}));
+            });
 
             // Logo tim (logo_files) & Referensi Desain (design_files) dari FilePond
             const pondLogo = FilePond.find(document.querySelector('#pondLogo'));
@@ -1989,6 +2144,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.loading) return;
             this.loading = true;
 
+            // Generate catatan legacy from items array
+            this.form.catatan = this.items.map(item => {
+                const customParts = Object.entries(item.customizations || {})
+                    .filter(([k, v]) => v !== undefined && v !== null && v !== '')
+                    .map(([k, v]) => v)
+                    .join(', ');
+                return `${item.no || '-'}, ${item.nama || '-'}, ${item.size || 'M'}${customParts ? ', ' + customParts : ''}`;
+            }).join('\n');
+
             const getFirstImage = () => {
                 const pond = FilePond.find(document.querySelector('#pondLogo'));
                 if (pond && pond.getFiles().length > 0) {
@@ -2007,11 +2171,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     nama_artikel: this.form.nama_artikel,
                     nama_pemesan: this.form.nama_pemesan,
                     detail_sponsor: this.form.detail_sponsor,
-                    kerah: this.form.customizations['kerah'] || '',
-                    bahan: this.form.customizations['bahan'] || '',
-                    jenis_potongan: this.form.customizations['jenis_potongan'] || '',
-                    lengan_jahitan: this.form.customizations['lengan_jahitan'] || '',
                     customizations: this.form.customizations || {},
+                    items: this.items,
                     catatan: this.form.catatan,
                     total_qty: this.form.total_qty,
                     prioritas: this.prioritas,
@@ -2184,6 +2345,33 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
     }
 }
 </script>
+
+<template x-teleport="body">
+    <div
+        x-show="showGuideModal"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
+        @click.self="showGuideModal = false"
+    >
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden" @click.stop>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="text-base font-bold text-gray-900" x-text="showGuideAttr ? 'Panduan: ' + showGuideAttr.name : 'Panduan'"></h3>
+                <button @click="showGuideModal = false" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 flex items-center justify-center transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="px-6 py-5 overflow-y-auto max-h-[70vh] flex items-center justify-center bg-gray-50/50">
+                <template x-if="showGuideAttr && showGuideAttr.reference_image">
+                    <img :src="showGuideAttr.reference_image.startsWith('http') || showGuideAttr.reference_image.startsWith('images/') ? '/' + showGuideAttr.reference_image.replace(/^\//, '') : '/storage/' + showGuideAttr.reference_image" class="max-h-[60vh] w-auto object-contain rounded-xl border border-gray-200 shadow-sm">
+                </template>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                <button @click="showGuideModal = false" class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg">Mengerti</button>
+            </div>
+        </div>
+    </div>
+</template>
+
 @else
 <div class="max-w-5xl mx-auto px-4 py-16">
     <div class="text-center">
