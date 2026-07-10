@@ -4,13 +4,8 @@
 $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] === 'false');
 ?>
 
-{{-- Backdrop for mobile sidebar --}}
-<div x-show="sidebarOpen" x-cloak
-     @click="$dispatch('sidebar-toggle')"
-     class="fixed inset-0 z-40 bg-black/50 xl:hidden">
-</div>
-
-<aside
+{{-- Sidebar wrapper: shared Alpine scope for backdrop + aside --}}
+<div
     x-data="{
         sidebarOpen: {{ $isSidebarOpen ? 'true' : 'false' }},
         toggle() {
@@ -19,11 +14,20 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
         }
     }"
     @sidebar-toggle.window="toggle()"
-    :class="sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 xl:w-20 xl:translate-x-0'"
-    class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0 z-50
-           fixed inset-y-0 left-0 transition-all duration-300 ease-in-out
-           xl:relative xl:z-auto xl:block xl:translate-x-0
-           {{ $isSidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 xl:w-20 xl:translate-x-0' }}">
+    class="contents">
+
+    {{-- Backdrop for mobile sidebar --}}
+    <div x-show="sidebarOpen" x-cloak
+         @click="toggle()"
+         class="fixed inset-0 z-40 bg-black/50 xl:hidden">
+    </div>
+
+    <aside
+        :class="sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 xl:w-20 xl:translate-x-0'"
+        class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0 z-50
+               fixed inset-y-0 left-0 transition-all duration-300 ease-in-out
+               xl:relative xl:z-auto xl:block xl:translate-x-0
+               {{ $isSidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 xl:w-20 xl:translate-x-0' }}">
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 overflow-hidden">
@@ -148,3 +152,4 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 
     {{-- (Footer profile removed) --}}
 </aside>
+</div>{{-- end sidebar wrapper --}}
