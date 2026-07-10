@@ -19,7 +19,7 @@
             class="flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-all">Bawahan</button>
         </div>
 
-        {{-- Atasan --}}
+        {{-- Atasan --}} 
         <div x-show="tab === 'atasan'" class="space-y-4">
           <div class="overflow-x-auto">
             <table class="table table-compact w-full text-xs text-gray-700">

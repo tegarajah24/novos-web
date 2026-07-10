@@ -28,6 +28,33 @@ function openPhotoSwipe(files, startIndex = 0) {
         maxZoomLevel: 8,
         clickToCloseNonZoomable: false,
         tapAction: 'toggle-zoom',
+        initialZoomLevel: (zoomLevelObject) => {
+            const panAreaWidth = zoomLevelObject.panAreaSize.x;
+            const panAreaHeight = zoomLevelObject.panAreaSize.y;
+            const imageWidth = zoomLevelObject.elementSize.x;
+            const imageHeight = zoomLevelObject.elementSize.y;
+            
+            if (imageWidth > 0 && imageHeight > 0) {
+                const scaleX = panAreaWidth / imageWidth;
+                const scaleY = panAreaHeight / imageHeight;
+                return Math.min(scaleX, scaleY);
+            }
+            return 'fit';
+        },
+        secondaryZoomLevel: (zoomLevelObject) => {
+            const panAreaWidth = zoomLevelObject.panAreaSize.x;
+            const panAreaHeight = zoomLevelObject.panAreaSize.y;
+            const imageWidth = zoomLevelObject.elementSize.x;
+            const imageHeight = zoomLevelObject.elementSize.y;
+            
+            if (imageWidth > 0 && imageHeight > 0) {
+                const scaleX = panAreaWidth / imageWidth;
+                const scaleY = panAreaHeight / imageHeight;
+                const fitScale = Math.min(scaleX, scaleY);
+                return Math.max(fitScale * 2, 2.5);
+            }
+            return 2.5;
+        },
     })
 
     lightbox.on('uiRegister', function () {
