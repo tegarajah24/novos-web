@@ -70,7 +70,7 @@
 </div>
 
     @include('notify::components.notify')
-    @notifyJs
     @stack('scripts')
+    @notifyJs
 </body>
 </html>
