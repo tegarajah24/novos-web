@@ -398,6 +398,7 @@ class OrderController extends Controller
                 'jenis_potongan' => $order->designRequest?->jenis_potongan ?? '-',
                 'lengan_jahitan' => $order->designRequest?->lengan_jahitan ?? '-',
                 'priority'       => $order->designRequest?->priority ?? 'normal',
+                'customizations' => $order->designRequest?->customizations ?? [],
             ],
             'sizes'         => $sizes,
             'item_details'  => $itemDetails,
@@ -732,6 +733,7 @@ class OrderController extends Controller
             'lengan_jahitan' => 'nullable|string|max:255',
             'additional_notes' => 'nullable|string|max:5000',
             'priority'       => 'nullable|string|in:normal,express,super_express',
+            'customizations' => 'nullable|array',
         ]);
 
         if (!$order->designRequest) {
@@ -744,7 +746,7 @@ class OrderController extends Controller
         $order->designRequest->update($request->only([
             'team_name', 'nama_artikel', 'nama_pemesan', 'detail_sponsor',
             'material', 'collar_style', 'jenis_potongan', 'lengan_jahitan',
-            'additional_notes', 'priority',
+            'additional_notes', 'priority', 'customizations',
         ]));
 
         return response()->json([

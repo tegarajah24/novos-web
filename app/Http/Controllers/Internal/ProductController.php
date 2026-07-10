@@ -39,6 +39,7 @@ class ProductController extends Controller
                     'bahan'          => $product->bahan,
                     'jenis_potongan' => $product->jenis_potongan,
                     'lengan_jahitan' => $product->lengan_jahitan,
+                    'product_attributes' => $product->product_attributes ?? [],
                 ];
             })
             ->values()
@@ -76,6 +77,7 @@ class ProductController extends Controller
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
                 'lengan_jahitan' => $product->lengan_jahitan,
+                'product_attributes' => $product->product_attributes ?? [],
             ],
         ]);
     }
@@ -125,6 +127,7 @@ class ProductController extends Controller
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
                 'lengan_jahitan' => $product->lengan_jahitan,
+                'product_attributes' => $product->product_attributes ?? [],
             ],
         ]);
     }

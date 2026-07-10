@@ -16,9 +16,10 @@ class CategoryController extends Controller
             ->orderBy('name')
             ->get()
             ->map(fn($cat) => [
-                'id'             => $cat->id,
-                'name'           => $cat->name,
-                'products_count' => $cat->products_count,
+                'id'               => $cat->id,
+                'name'             => $cat->name,
+                'attributes_schema' => $cat->attributes_schema ?? [],
+                'products_count'   => $cat->products_count,
             ]);
 
         return view('internal.kelola-kategori', compact('categories'));
@@ -30,9 +31,10 @@ class CategoryController extends Controller
             ->orderBy('name')
             ->get()
             ->map(fn($cat) => [
-                'id'             => $cat->id,
-                'name'           => $cat->name,
-                'products_count' => $cat->products_count,
+                'id'               => $cat->id,
+                'name'             => $cat->name,
+                'attributes_schema' => $cat->attributes_schema ?? [],
+                'products_count'   => $cat->products_count,
             ]);
 
         return response()->json($categories);

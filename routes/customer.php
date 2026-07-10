@@ -45,7 +45,14 @@ Route::get('/pesan', function () {
             $adminPhone = '62' . substr($adminPhone, 1);
         }
 
-        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone'));
+        // Ambil semua kategori untuk form pemesanan dinamis
+        $categories = \App\Models\Category::all()->map(fn($c) => [
+            'id' => $c->id,
+            'name' => $c->name,
+            'attributes_schema' => $c->attributes_schema ?? []
+        ]);
+
+        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone', 'categories'));
     })->name('pemesanan');
 
 // Public routes for wilayah data

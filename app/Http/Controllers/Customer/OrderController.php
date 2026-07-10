@@ -55,7 +55,18 @@ class OrderController extends Controller
                 default         => 'Normal',
             };
 
-            $catatanText = "Jenis Potongan: " . $data['jenis_potongan'] . "\nModel Lengan & Jahitan: " . $data['lengan_jahitan'] . ($data['catatan'] ? "\n=== Detail Pesanan ===\n" . $data['catatan'] : "");
+            $catatanText = $data['catatan'] ? "=== Detail Pesanan ===\n" . $data['catatan'] : '';
+
+            // Bangun ringkasan atribut dari customizations untuk disimpan di notes
+            $customizations = is_array($data['customizations'] ?? null)
+                ? $data['customizations']
+                : (json_decode($data['customizations'] ?? '{}', true) ?? []);
+            if (!empty($customizations)) {
+                $attrSummary = collect($customizations)
+                    ->map(fn($v, $k) => ucwords(str_replace('_', ' ', $k)) . ': ' . $v)
+                    ->implode("\n");
+                $catatanText = $attrSummary . ($catatanText ? "\n" . $catatanText : '');
+            }
 
             $order = Order::create([
                 'user_id'     => auth()->id(),
@@ -151,20 +162,28 @@ class OrderController extends Controller
                 }
             }
 
+            // Bangun backward-compat fields dari customizations (jika ada) untuk pesanan Jersey lama
+            $customizationsArr = is_array($data['customizations'] ?? null)
+                ? $data['customizations']
+                : (json_decode($data['customizations'] ?? '{}', true) ?? []);
+
             DesignRequest::create([
                 'order_id'         => $order->id,
                 'team_name'        => $data['team_name'],
                 'nama_artikel'     => $data['nama_artikel'] ?? null,
                 'nama_pemesan'     => $data['nama_pemesan'] ?? null,
                 'detail_sponsor'   => $data['detail_sponsor'] ?? null,
-                'jenis_potongan'   => $data['jenis_potongan'],
-                'lengan_jahitan'   => $data['lengan_jahitan'],
-                'material'         => $data['bahan'],
-                'collar_style'     => $data['kerah'],
+                // Kolom lama diisi dari customizations jika ada (backward compat)
+                'jenis_potongan'   => $customizationsArr['jenis_potongan'] ?? ($data['jenis_potongan'] ?? null),
+                'lengan_jahitan'   => $customizationsArr['lengan_jahitan'] ?? ($data['lengan_jahitan'] ?? null),
+                'material'         => $customizationsArr['bahan'] ?? ($data['bahan'] ?? null),
+                'collar_style'     => $customizationsArr['kerah'] ?? ($data['kerah'] ?? null),
                 'priority'         => $data['prioritas'] ?? 'normal',
                 'logo'             => $logoPath,
                 'design_files'     => $designFiles,
                 'additional_notes' => $catatanText,
+                // Kolom baru dinamis — inti dari sistem atribut dinamis
+                'customizations'   => !empty($customizationsArr) ? $customizationsArr : null,
             ]);
 
             if (!empty($data['phone'])) {

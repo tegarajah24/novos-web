@@ -12,6 +12,7 @@ use App\Http\Controllers\Internal\ChatController;
 use App\Http\Controllers\Internal\DailyMentalCheckController;
 use App\Http\Controllers\Internal\NotificationController;
 use App\Http\Controllers\Internal\CategoryController;
+use App\Http\Controllers\Internal\CategoryAttributeController;
 use App\Http\Controllers\Internal\SettingController;
 
 Route::prefix('staf')
@@ -90,6 +91,9 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::post('/kategori', [CategoryController::class, 'store'])->name('kategori.store');
         Route::put('/kategori/{category}', [CategoryController::class, 'update'])->name('kategori.update');
         Route::delete('/kategori/{category}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
+        // Route atribut dinamis per kategori
+        Route::get('/kategori/{category}/attributes', [CategoryAttributeController::class, 'getSchema'])->name('kategori.attributes');
+        Route::put('/kategori/{category}/attributes', [CategoryAttributeController::class, 'updateSchema'])->name('kategori.attributes.update');
 
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
         Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
