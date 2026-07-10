@@ -450,43 +450,7 @@
   </div>
 </template>
 
-{{-- Full Photo Swipe Lightbox with zoom and swipe --}}
-<template x-teleport="body">
-  <div x-show="lightboxOpen" x-cloak @click="lightboxOpen = false"
-    class="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4 select-none"
-    x-transition:enter="transition ease-out duration-250" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-    
-    {{-- Close Btn --}}
-    <button @click.stop="lightboxOpen = false" class="absolute top-4 right-4 text-white/70 hover:text-white p-2 focus:outline-none transition-colors">
-      <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-    </button>
-
-    {{-- Main Lightbox Gallery --}}
-    <div class="relative max-h-[85vh] max-w-[90vw] flex items-center justify-center" @click.stop>
-      <img :src="lightboxSrc" :class="zoomed ? 'scale-150 cursor-zoom-out' : 'scale-100 cursor-zoom-in'" 
-           class="max-h-[85vh] max-w-[90vw] object-contain transition-transform duration-300 ease-out shadow-2xl rounded"
-           @click="zoomed = !zoomed">
-    </div>
-
-    {{-- Prev/Next Lightbox Controls --}}
-    @if($imageUrl && $imageBelakangUrl)
-      <button type="button" @click.stop="prevSlide(); lightboxSrc = images[activeImg]"
-        class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all focus:outline-none">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <button type="button" @click.stop="nextSlide(); lightboxSrc = images[activeImg]"
-        class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all focus:outline-none">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      </button>
-    @endif
-
-    {{-- Zoom Hint bottom --}}
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-xs tracking-wider uppercase font-medium bg-black/40 px-3 py-1.5 rounded-full">
-      Klik gambar untuk zoom masuk/keluar
-    </div>
-  </div>
-</template>
+{{-- PhotoSwipe digunakan via openPhotoSwipe() di window --}}
 
 {{-- Referensi Produk Modal --}}
 <template x-teleport="body">
@@ -527,9 +491,7 @@
 function produkDetail() {
     return {
         activeImg: 0,
-        lightboxOpen: false,
-        lightboxSrc: '',
-        zoomed: false,
+
         sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
         selectedSize: null,
         qty: {{ $minQty }},
@@ -585,11 +547,17 @@ function produkDetail() {
             }
         },
 
-        openLightbox(idx) {
-            this.activeImg = idx;
-            this.lightboxSrc = this.images[idx] || '';
-            this.zoomed = false;
-            if (this.lightboxSrc) this.lightboxOpen = true;
+        async openLightbox(idx) {
+            if (typeof window.openPhotoSwipe === 'function') {
+                const items = [];
+                for (const src of this.images) {
+                    const img = new Image();
+                    img.src = src;
+                    await new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+                    items.push({ src, width: img.naturalWidth || 1200, height: img.naturalHeight || 1200 });
+                }
+                window.openPhotoSwipe(items, idx);
+            }
         },
 
         openReferensiPhotoSwipe() {
