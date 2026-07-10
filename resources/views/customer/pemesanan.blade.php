@@ -45,7 +45,7 @@
 @section('content')
 @auth
 
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }})">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }}, {{ json_encode($categories) }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
@@ -254,355 +254,107 @@
                 </div>
             </div>
 
-            <div class="grid lg:grid-cols-2 gap-6">
-                {{-- Jenis Kerah --}}
-                <div x-data="{ showCollarGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Jenis Kerah <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showCollarGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Kerah
-                        </button>
-                    </div>
+            <div class="grid lg:grid-cols-2 gap-6 bg-white border border-gray-200 p-5 rounded-xl">
+                {{-- Kategori Produk --}}
+                <div class="col-span-full">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                        Kategori Produk <span class="text-red-500">*</span>
+                    </label>
                     <select
-                        x-model="form.kerah"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
+                        x-model="selectedCategoryId"
+                        @change="onCategoryChange()"
+                        :disabled="catalogProduct !== null"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none bg-white text-gray-900"
                     >
-                        <option value="">Pilih Jenis Kerah</option>
-                        @foreach($collarOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
+                        <option value="">Pilih Kategori</option>
+                        <template x-for="cat in categories" :key="cat.id">
+                            <option :value="cat.id" x-text="cat.name" :selected="selectedCategoryId == cat.id"></option>
+                        </template>
                     </select>
- 
-                    {{-- Modal Detail Kerah --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showCollarGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
-                        @click.self="showCollarGuide = false"
-                    >
-                        <div
-                            x-show="showCollarGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden"
-                            @click.stop
-                        >
-                            {{-- Modal Header --}}
-                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-base font-bold text-gray-900">Detail Jenis Kerah Jersey</h3>
-                                </div>
-                                <button
-                                    @click="showCollarGuide = false"
-                                    class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
- 
-                            {{-- Modal Body --}}
-                            <div class="px-6 py-5 overflow-y-auto max-h-[75vh]">
-                                <p class="text-xs text-gray-500 mb-4">Panduan referensi variasi desain kerah jersey. Pilih jenis kerah yang sesuai dengan selera Anda.</p>
- 
-                                {{-- Gambar Panduan Kerah --}}
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img
-                                        src="{{ $collarImageUrl }}"
-                                        alt="Panduan Desain Kerah Jersey"
-                                        class="w-full h-auto object-contain"
-                                    >
-                                </div>
-
-
-
-                                <p class="text-xs text-gray-400 mt-3">* Detail variasi spesifik dapat dikonsultasikan lebih lanjut dengan tim desain kami.</p>
-                            </div>
-
-                            {{-- Modal Footer --}}
-                            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
-                                <button
-                                    @click="showCollarGuide = false"
-                                    class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
-                                >
-                                    Mengerti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    </template>
-                </div>
-                <div x-data="{ showBahanGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Bahan Jersey <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showBahanGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Bahan
-                        </button>
-                    </div>
-                    <select
-                        x-model="form.bahan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
-                    >
-                        <option value="">Pilih Bahan Jersey</option>
-                        @foreach($bahanOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                    </select>
- 
-                    {{-- Modal Detail Bahan --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showBahanGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45"
-                    >
-                        <div
-                            x-show="showBahanGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
-                        >
-                            {{-- Modal Header --}}
-                            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <path d="M12 16v-4"/>
-                                            <path d="M12 8h.01"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-gray-900">Jenis Bahan Jersey</h3>
-                                </div>
-                                <button
-                                    @click="showBahanGuide = false"
-                                    class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
- 
-                            {{-- Modal Body --}}
-                            <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
-                                <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis bahan jersey yang tersedia. Pilih bahan yang sesuai dengan kebutuhan Anda.</p>
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img
-                                        src="{{ $bahanImageUrl }}"
-                                        alt="Jenis Bahan Jersey"
-                                        class="w-full h-auto object-contain"
-                                    >
-                                </div>
-                                <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan bahan dengan tim kami jika butuh informasi lebih lanjut.</p>
-                            </div>
-
-                            {{-- Modal Footer --}}
-                            <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
-                                <button
-                                    @click="showBahanGuide = false"
-                                    class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
-                                >
-                                    Mengerti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    </template>
                 </div>
 
-                {{-- Jenis Potongan --}}
-                <div x-data="{ showPotonganGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Jenis Potongan <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showPotonganGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Potongan
-                        </button>
-                    </div>
-                    <select
-                        x-model="form.jenis_potongan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
-                    >
-                        <option value="">Pilih Jenis Potongan</option>
-                        @foreach($potonganOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                    </select>
-
-                    {{-- Modal Detail Potongan --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showPotonganGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45"
-                    >
-                        <div
-                            x-show="showPotonganGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
-                        >
-                            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-gray-900">Jenis Potongan Jersey</h3>
-                                </div>
-                                <button @click="showPotonganGuide = false" class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
-                            <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
-                                <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis-jenis potongan jersey yang tersedia.</p>
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img src="{{ $potonganImageUrl }}" alt="Jenis Potongan Jersey" class="w-full h-auto object-contain">
-                                </div>
-                                <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan potongan dengan tim kami jika Anda membutuhkan penyesuaian khusus.</p>
-                            </div>
-                            <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
-                                <button @click="showPotonganGuide = false" class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors">
-                                    Mengerti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    </template>
-                </div>
-
-                {{-- Model Lengan & Jahitan --}}
-                <div x-data="{ showLenganGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Model Lengan & Jahitan <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showLenganGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Model Lengan & Jahitan
-                        </button>
-                    </div>
-                    <select
-                        x-model="form.lengan_jahitan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
-                    >
-                        <option value="">Pilih Model Lengan & Jahitan</option>
-                        @foreach($lenganOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                    </select>
-
-                    {{-- Modal Detail Lengan & Jahitan --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showLenganGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45"
-                    >
-                        <div
-                            x-show="showLenganGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
-                        >
-                            {{-- Modal Header --}}
-                            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-gray-900">Model Lengan & Jahitan Jersey</h3>
-                                </div>
-                                <button @click="showLenganGuide = false" class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
-
-                            {{-- Modal Body --}}
-                            <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
-                                <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis model lengan & jahitan jersey yang tersedia.</p>
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img
-                                        src="{{ $lenganImageUrl }}"
-                                        alt="Model Lengan & Jahitan Jersey"
-                                        class="w-full h-auto object-contain"
-                                    >
-                                </div>
-                                <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan model lengan dengan tim kami jika Anda membutuhkan penyesuaian khusus.</p>
-                            </div>
-
-                            {{-- Modal Footer --}}
-                            <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
+                {{-- Dynamic Attributes Schema Renderer --}}
+                <template x-for="attr in activeSchema" :key="attr.id">
+                    <div x-show="shouldShowAttr(attr)" class="space-y-1.5 col-span-1" x-data="{ showGuide: false }">
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-sm font-medium text-gray-700">
+                                <span x-text="attr.name"></span>
+                                <template x-if="attr.required"><span class="text-red-500">*</span></template>
+                            </label>
+                            <template x-if="attr.reference_image">
                                 <button
-                                    @click="showLenganGuide = false"
-                                    class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
+                                    type="button"
+                                    @click="showGuide = true"
+                                    class="underline p-0 text-gray-600 hover:text-[#1a237e] rounded-lg text-xs font-bold transition-colors"
                                 >
-                                    Mengerti
+                                    Detail <span x-text="attr.name"></span>
                                 </button>
-                            </div>
+                            </template>
                         </div>
+
+                        {{-- Select Input --}}
+                        <template x-if="attr.type === 'select'">
+                            <select
+                                x-model="form.customizations[attr.id]"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none bg-white text-gray-950"
+                            >
+                                <option value="" x-text="'Pilih ' + attr.name"></option>
+                                <template x-for="opt in attr.options" :key="opt.value">
+                                    <option :value="opt.value" x-text="opt.value"></option>
+                                </template>
+                            </select>
+                        </template>
+
+                        {{-- Radio Input --}}
+                        <template x-if="attr.type === 'radio'">
+                            <div class="flex flex-wrap gap-4 p-2 bg-gray-50/50 border border-gray-200 rounded-lg">
+                                <template x-for="opt in attr.options" :key="opt.value">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" :name="attr.id" :value="opt.value" x-model="form.customizations[attr.id]" class="text-[#1a237e] focus:ring-[#1a237e] border-gray-300">
+                                        <span class="text-sm text-gray-700 font-medium" x-text="opt.value"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </template>
+
+                        {{-- Text Input --}}
+                        <template x-if="attr.type === 'text'">
+                            <input
+                                type="text"
+                                x-model="form.customizations[attr.id]"
+                                :placeholder="'Masukkan ' + attr.name"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none bg-white text-gray-900"
+                            >
+                        </template>
+
+                        {{-- Guide Modal --}}
+                        <template x-if="attr.reference_image">
+                            <template x-teleport="body">
+                                <div
+                                    x-show="showGuide"
+                                    x-cloak
+                                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
+                                    @click.self="showGuide = false"
+                                >
+                                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden" @click.stop>
+                                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                            <h3 class="text-base font-bold text-gray-900" x-text="'Panduan: ' + attr.name"></h3>
+                                            <button @click="showGuide = false" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-650 flex items-center justify-center transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                            </button>
+                                        </div>
+                                        <div class="px-6 py-5 overflow-y-auto max-h-[70vh] flex items-center justify-center bg-gray-50/50">
+                                            <img :src="attr.reference_image.startsWith('http') || attr.reference_image.startsWith('images/') ? '/' + attr.reference_image.replace(/^\//, '') : '/storage/' + attr.reference_image" class="max-h-[60vh] w-auto object-contain rounded-xl border border-gray-200 shadow-sm">
+                                        </div>
+                                        <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                                            <button @click="showGuide = false" class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg">Mengerti</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
                     </div>
-                    </template>
-                </div>
+                </template>
             </div>
 
             {{-- Total Quantity --}}
@@ -1488,22 +1240,36 @@
                             <span class="text-gray-500">Sponsor</span>
                             <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Kerah</span>
-                            <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Bahan</span>
-                            <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Jenis Potongan</span>
-                            <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Lengan & Jahitan</span>
-                            <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
-                        </div>
+                        <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                            <div class="contents">
+                                <template x-for="keyName in Object.keys(form.customizations)" :key="keyName">
+                                    <div class="flex justify-between" x-show="form.customizations[keyName]">
+                                        <span class="text-gray-500" x-text="keyName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                                        <span class="font-medium text-gray-900" x-text="form.customizations[keyName] || '-'"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template x-if="!form.customizations || Object.keys(form.customizations).length === 0">
+                            <div class="contents">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Kerah</span>
+                                    <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Bahan</span>
+                                    <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Jenis Potongan</span>
+                                    <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Lengan & Jahitan</span>
+                                    <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
+                                </div>
+                            </div>
+                        </template>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Jumlah</span>
                             <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
@@ -1634,7 +1400,7 @@
 </style>
 
 <script>
-function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = []) {
+function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = [], categories = []) {
     return {
         step: 1,
         mode: 'single',
@@ -1642,6 +1408,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         steps: ['Pilih Jenis', 'Detail & Upload', 'Prioritas & Bayar', 'Konfirmasi'],
         jenis: null,
         catalogProduct: catalogProduct,
+        categories: categories,
+        selectedCategoryId: '',
         subStep: 1,
         addresses: userAddresses,
         addressMode: 'select',
@@ -1703,7 +1471,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             bahan: '',
             jenis_potongan: '',
             lengan_jahitan: '',
-
+            customizations: {}, // dynamic fields
             catatan: '',
             total_qty: 1,
         },
@@ -1739,13 +1507,19 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         this.jenis = 'katalog';
                         this.basePricePerPcs = parseInt(item.price) || 85000;
                         this.form.total_qty = item.qty || 1;
-                        this.form.kerah = item.kerah || '';
-                        this.form.bahan = item.bahan || '';
-                        this.form.jenis_potongan = item.jenis_potongan || '';
-                        this.form.lengan_jahitan = item.lengan_jahitan || '';
                         this.form.team_name = item.name || '';
                         this.form.nama_artikel = item.category || 'Katalog';
                         this.form.nama_pemesan = '{{ auth()->user()->name }}';
+                        
+                        const cat = this.categories.find(c => c.name.toLowerCase() === (item.category || '').toLowerCase());
+                        if (cat) {
+                            this.selectedCategoryId = cat.id;
+                            this.onCategoryChange();
+                            if (item.kerah) this.form.customizations['kerah'] = item.kerah;
+                            if (item.bahan) this.form.customizations['bahan'] = item.bahan;
+                            if (item.jenis_potongan) this.form.customizations['jenis_potongan'] = item.jenis_potongan;
+                            if (item.lengan_jahitan) this.form.customizations['lengan_jahitan'] = item.lengan_jahitan;
+                        }
                         
                         let num = '-';
                         let name = '-';
@@ -1758,12 +1532,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         
                         let lines = [];
                         for (let i = 0; i < this.form.total_qty; i++) {
-                            lines.push(`${num}, ${name}, ${this.form.lengan_jahitan || '-'}, ${item.size || '-'}, Katalog`);
+                            lines.push(`${num}, ${name}, ${this.form.customizations['lengan_jahitan'] || '-'}, ${item.size || '-'}, Katalog`);
                         }
                         this.form.catatan = lines.join('\n');
                     } else {
                         this.jenis = state.jenis;
                         this.form = state.form || this.form;
+                        if (state.selectedCategoryId) {
+                            this.selectedCategoryId = state.selectedCategoryId;
+                        }
                     }
                     
                     localStorage.removeItem('checkout_state');
@@ -1776,10 +1553,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     if (this.catalogProduct.harga) {
                         this.basePricePerPcs = parseInt(this.catalogProduct.harga);
                     }
-                    if (this.catalogProduct.kerah) this.form.kerah = this.catalogProduct.kerah;
-                    if (this.catalogProduct.bahan) this.form.bahan = this.catalogProduct.bahan;
-                    if (this.catalogProduct.jenis_potongan) this.form.jenis_potongan = this.catalogProduct.jenis_potongan;
-                    if (this.catalogProduct.lengan_jahitan) this.form.lengan_jahitan = this.catalogProduct.lengan_jahitan;
+                    const cat = this.categories.find(c => c.name.toLowerCase() === (this.catalogProduct.kategori || '').toLowerCase());
+                    if (cat) {
+                        this.selectedCategoryId = cat.id;
+                        this.onCategoryChange();
+                        if (this.catalogProduct.kerah) this.form.customizations['kerah'] = this.catalogProduct.kerah;
+                        if (this.catalogProduct.bahan) this.form.customizations['bahan'] = this.catalogProduct.bahan;
+                        if (this.catalogProduct.jenis_potongan) this.form.customizations['jenis_potongan'] = this.catalogProduct.jenis_potongan;
+                        if (this.catalogProduct.lengan_jahitan) this.form.customizations['lengan_jahitan'] = this.catalogProduct.lengan_jahitan;
+                    }
                     this.step = 2;
                 }
             }
@@ -1806,6 +1588,27 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     this.uploadPaymentProof(this.orderNumber, fileItem.file);
                 }
             });
+        },
+
+        onCategoryChange() {
+            this.form.customizations = {};
+            const cat = this.categories.find(c => c.id == this.selectedCategoryId);
+            if (cat && cat.attributes_schema) {
+                cat.attributes_schema.forEach(attr => {
+                    this.form.customizations[attr.id] = '';
+                });
+            }
+        },
+
+        get activeSchema() {
+            const cat = this.categories.find(c => c.id == this.selectedCategoryId);
+            return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
+        },
+
+        shouldShowAttr(attr) {
+            if (!attr.depends_on || !attr.depends_on.attribute_id) return true;
+            const parentVal = this.form.customizations[attr.depends_on.attribute_id];
+            return parentVal === attr.depends_on.value;
         },
 
         saveCheckoutState() {
@@ -2077,10 +1880,13 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             formData.append('nama_artikel', this.form.nama_artikel);
             formData.append('nama_pemesan', this.form.nama_pemesan);
             formData.append('detail_sponsor', this.form.detail_sponsor);
-            formData.append('kerah', this.form.kerah);
-            formData.append('bahan', this.form.bahan);
-            formData.append('jenis_potongan', this.form.jenis_potongan);
-            formData.append('lengan_jahitan', this.form.lengan_jahitan);
+            // Dynamic customizations JSON
+            formData.append('customizations', JSON.stringify(this.form.customizations || {}));
+            // Legacy fallbacks (optional backend compatibility)
+            formData.append('kerah', this.form.customizations['kerah'] || '');
+            formData.append('bahan', this.form.customizations['bahan'] || '');
+            formData.append('jenis_potongan', this.form.customizations['jenis_potongan'] || '');
+            formData.append('lengan_jahitan', this.form.customizations['lengan_jahitan'] || '');
             formData.append('catatan', this.form.catatan);
             formData.append('total_qty', this.form.total_qty || 1);
             formData.append('prioritas', this.prioritas);
@@ -2201,10 +2007,11 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     nama_artikel: this.form.nama_artikel,
                     nama_pemesan: this.form.nama_pemesan,
                     detail_sponsor: this.form.detail_sponsor,
-                    kerah: this.form.kerah,
-                    bahan: this.form.bahan,
-                    jenis_potongan: this.form.jenis_potongan,
-                    lengan_jahitan: this.form.lengan_jahitan,
+                    kerah: this.form.customizations['kerah'] || '',
+                    bahan: this.form.customizations['bahan'] || '',
+                    jenis_potongan: this.form.customizations['jenis_potongan'] || '',
+                    lengan_jahitan: this.form.customizations['lengan_jahitan'] || '',
+                    customizations: this.form.customizations || {},
                     catatan: this.form.catatan,
                     total_qty: this.form.total_qty,
                     prioritas: this.prioritas,
@@ -2261,6 +2068,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         resetForm() {
             this.jenis = null;
+            this.selectedCategoryId = '';
             this.form = {
                 team_name: '',
                 nama_artikel: '',
@@ -2270,6 +2078,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 bahan: '',
                 jenis_potongan: '',
                 lengan_jahitan: '',
+                customizations: {},
                 catatan: '',
                 total_qty: 1,
             };

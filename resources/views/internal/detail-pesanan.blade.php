@@ -209,10 +209,22 @@ if (!empty($order['item_details'])) {
                 <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-medium text-gray-900" :class="{ 'text-gray-400 italic': !form.nama_artikel }" x-text="form.nama_artikel || 'Belum diisi'">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Pemesan</span><div class="font-medium text-gray-900" x-text="form.nama_pemesan || '-'">{{ $order['product']['nama_pemesan'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Detail Sponsor</span><div class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'">{{ $order['product']['detail_sponsor'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Bahan</span><div class="font-medium text-gray-900" x-text="form.material || '-'">{{ $order['product']['material'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Kerah</span><div class="font-medium text-gray-900" x-text="form.collar_style || '-'">{{ $order['product']['collar_style'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
+                <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                    <template x-for="(val, key) in form.customizations" :key="key">
+                        <div>
+                            <span class="text-gray-500 text-xs" x-text="key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                            <div class="font-medium text-gray-900" x-text="val || '-'"></div>
+                        </div>
+                    </template>
+                </template>
+                <template x-if="!form.customizations || Object.keys(form.customizations).length === 0">
+                    <div class="contents">
+                        <div><span class="text-gray-500 text-xs">Bahan</span><div class="font-medium text-gray-900" x-text="form.material || '-'">{{ $order['product']['material'] ?? '-' }}</div></div>
+                        <div><span class="text-gray-500 text-xs">Kerah</span><div class="font-medium text-gray-900" x-text="form.collar_style || '-'">{{ $order['product']['collar_style'] ?? '-' }}</div></div>
+                        <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
+                        <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
+                    </div>
+                </template>
                 <div><span class="text-gray-500 text-xs">Prioritas</span><div class="font-medium" :class="{'text-green-600 font-semibold': form.priority === 'normal', 'text-orange-600 font-semibold': form.priority === 'express', 'text-red-600 font-bold': form.priority === 'super_express'}" x-text="form.priority === 'express' ? 'Express' : form.priority === 'super_express' ? 'Super Express' : 'Normal'">{{ $order['product']['priority'] ?? 'normal' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Tanggal Masuk</span><div class="font-medium text-gray-900">{{ $order['tanggal_masuk'] }}</div></div>
                 <div><span class="text-gray-500 text-xs">Deadline</span><div class="font-medium text-red-600">{{ $order['deadline'] }}</div></div>
@@ -276,22 +288,36 @@ if (!empty($order['item_details'])) {
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Detail Sponsor</label>
                                 <input type="text" x-model="form.detail_sponsor" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
                             </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Bahan</label>
-                                <input type="text" x-model="form.material" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Kerah</label>
-                                <input type="text" x-model="form.collar_style" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Potongan</label>
-                                <input type="text" x-model="form.jenis_potongan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Lengan & Jahitan</label>
-                                <input type="text" x-model="form.lengan_jahitan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
+                            <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                                <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <template x-for="keyName in Object.keys(form.customizations)" :key="keyName">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1" x-text="keyName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></label>
+                                            <input type="text" x-model="form.customizations[keyName]" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template x-if="!form.customizations || Object.keys(form.customizations).length === 0">
+                                <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bahan</label>
+                                        <input type="text" x-model="form.material" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Kerah</label>
+                                        <input type="text" x-model="form.collar_style" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Potongan</label>
+                                        <input type="text" x-model="form.jenis_potongan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Lengan & Jahitan</label>
+                                        <input type="text" x-model="form.lengan_jahitan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                </div>
+                            </template>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Prioritas</label>
                                 <select x-model="form.priority" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all bg-white">
@@ -930,6 +956,7 @@ function updateStatusSection() {
                 lengan_jahitan: '',
                 priority: 'normal',
                 additional_notes: '',
+                customizations: {},
             },
             openModal() {
                 const p = __product;
@@ -943,6 +970,7 @@ function updateStatusSection() {
                 this.form.lengan_jahitan = p.lengan_jahitan || '';
                 this.form.priority = p.priority || 'normal';
                 this.form.additional_notes = p.notes || '';
+                this.form.customizations = p.customizations ? JSON.parse(JSON.stringify(p.customizations)) : {};
                 this.editModalOpen = true;
             },
             async save() {

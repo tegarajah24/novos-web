@@ -368,80 +368,40 @@
                             <textarea x-model="formData.description" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" rows="3" placeholder="Detail bahan, printing, dsb..." style="resize:none;"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Jenis Kerah</label>
-                            <select x-model="formData.kerah" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="O-NECK V.1">O-NECK V.1</option>
-                                <option value="O-NECK V.2">O-NECK V.2</option>
-                                <option value="O-NECK V.3">O-NECK V.3</option>
-                                <option value="O-NECK V.4">O-NECK V.4</option>
-                                <option value="V-NECK V.5">V-NECK V.5</option>
-                                <option value="V-NECK V.1">V-NECK V.1</option>
-                                <option value="V-NECK V.2">V-NECK V.2</option>
-                                <option value="V-NECK V.3">V-NECK V.3</option>
-                                <option value="V-NECK V.4">V-NECK V.4</option>
-                                <option value="V-NECK V.5">V-NECK V.5</option>
-                                <option value="CLASSIC V.1">CLASSIC V.1</option>
-                                <option value="CLASSIC V.2">CLASSIC V.2</option>
-                                <option value="CLASSIC V.3">CLASSIC V.3</option>
-                                <option value="CLASSIC V.4">CLASSIC V.4</option>
-                                <option value="CLASSIC V.5">CLASSIC V.5</option>
-                                <option value="V-NECK V3 TUMPUK">V-NECK V3 TUMPUK</option>
-                                <option value="TIMNAS">TIMNAS</option>
-                            </select>
+                    {{-- Atribut Dinamis — Render dari schema kategori yang dipilih --}}
+                    <template x-if="selectedCategorySchema.length > 0">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Atribut Default Produk</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <template x-for="attr in selectedCategorySchema" :key="attr.id">
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide" x-text="attr.name"></label>
+                                        <template x-if="attr.type === 'select' || attr.type === 'radio'">
+                                            <select :name="'product_attributes[' + attr.id + ']'"
+                                                x-model="formData.product_attributes[attr.id]"
+                                                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                                                <option value="">Pilih (opsional)</option>
+                                                <template x-for="opt in (attr.options || [])" :key="opt.value">
+                                                    <option :value="opt.value" x-text="opt.value"></option>
+                                                </template>
+                                            </select>
+                                        </template>
+                                        <template x-if="attr.type === 'text'">
+                                            <input type="text" :name="'product_attributes[' + attr.id + ']'"
+                                                x-model="formData.product_attributes[attr.id]"
+                                                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25"
+                                                :placeholder="'Isi ' + attr.name">
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Bahan Jersey</label>
-                            <select x-model="formData.bahan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="BINTIK JARUM GRADE B">BINTIK JARUM GRADE B</option>
-                                <option value="MILANO GRADE B">MILANO GRADE B</option>
-                                <option value="BINTIK JARUM PREMIUM">BINTIK JARUM PREMIUM</option>
-                                <option value="MILANO PREMIUM">MILANO PREMIUM</option>
-                                <option value="RABBIT">RABBIT</option>
-                                <option value="DROPPEDDLE">DROPPEDDLE</option>
-                                <option value="SMASH">SMASH</option>
-                                <option value="WAFFLE">WAFFLE</option>
-                                <option value="EMBOSH">EMBOSH</option>
-                                <option value="MICROCOOL">MICROCOOL</option>
-                                <option value="JAQUARD AERO">JAQUARD AERO</option>
-                                <option value="COTTON 24S">COTTON 24S</option>
-                                <option value="COTTON 30S">COTTON 30S</option>
-                                <option value="LOTTO">LOTTO</option>
-                                <option value="PARASUT">PARASUT</option>
-                                <option value="PUMA">PUMA</option>
-                                <option value="ULTRALIGHT A">ULTRALIGHT A</option>
-                                <option value="ULTRALIGHT B">ULTRALIGHT B</option>
-                            </select>
+                    </template>
+                    <template x-if="formData.category_id && selectedCategorySchema.length === 0">
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-700">
+                            <strong>Info:</strong> Kategori ini belum punya atribut. Tambahkan dulu di menu <strong>Kelola Kategori → Kelola Atribut</strong>.
                         </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Jenis Potongan</label>
-                            <select x-model="formData.jenis_potongan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="REGULER">REGULER</option>
-                                <option value="SLIMFIT CEWE">SLIMFIT CEWE</option>
-                                <option value="OVERSIZE">OVERSIZE</option>
-                                <option value="TUNIK">TUNIK</option>
-                                <option value="SLIM FIT UNISEX">SLIM FIT UNISEX</option>
-                                <option value="BOXY CUT">BOXY CUT</option>
-                                <option value="KIDS">KIDS</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Model Lengan & Jahitan</label>
-                            <select x-model="formData.lengan_jahitan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="REGULER OVERDECK">REGULER OVERDECK</option>
-                                <option value="REGULER PAKAI MANSET">REGULER PAKAI MANSET</option>
-                                <option value="RAGLAN A OVERDECK">RAGLAN A OVERDECK</option>
-                                <option value="RAGLAN A PAKAI MANSET">RAGLAN A PAKAI MANSET</option>
-                                <option value="RAGLAN B OVERDECK">RAGLAN B OVERDECK</option>
-                                <option value="RAGLAN B PAKAI MANSET">RAGLAN B PAKAI MANSET</option>
-                            </select>
-                        </div>
-                    </div>
+                    </template>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
@@ -503,10 +463,13 @@ function kelolaProdukApp() {
             category_id: '',
             price: '',
             description: '',
-            kerah: '',
-            bahan: '',
-            jenis_potongan: '',
-            lengan_jahitan: ''
+            product_attributes: {}, // Object dinamis {attr_id: value}
+        },
+
+        get selectedCategorySchema() {
+            if (!this.formData.category_id) return [];
+            const cat = this.categories.find(c => c.id == this.formData.category_id);
+            return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
         },
 
         originalImageDepan: null,
@@ -544,10 +507,7 @@ function kelolaProdukApp() {
                 category_id: '',
                 price: '',
                 description: '',
-                kerah: '',
-                bahan: '',
-                jenis_potongan: '',
-                lengan_jahitan: ''
+                product_attributes: {},
             };
             this.originalImageDepan = null;
             this.originalImageBelakang = null;
@@ -564,10 +524,7 @@ function kelolaProdukApp() {
                 category_id: product.category_id,
                 price: product.price,
                 description: product.description,
-                kerah: product.kerah || '',
-                bahan: product.bahan || '',
-                jenis_potongan: product.jenis_potongan || '',
-                lengan_jahitan: product.lengan_jahitan || ''
+                product_attributes: product.product_attributes || {},
             };
             this.originalImageDepan = product.image_depan || null;
             this.originalImageBelakang = product.image_belakang || null;
@@ -604,10 +561,8 @@ function kelolaProdukApp() {
             fd.append('category_id', this.formData.category_id);
             fd.append('price', this.formData.price);
             fd.append('description', this.formData.description || '');
-            fd.append('kerah', this.formData.kerah || '');
-            fd.append('bahan', this.formData.bahan || '');
-            fd.append('jenis_potongan', this.formData.jenis_potongan || '');
-            fd.append('lengan_jahitan', this.formData.lengan_jahitan || '');
+            // Kirim product_attributes sebagai JSON string
+            fd.append('product_attributes', JSON.stringify(this.formData.product_attributes || {}));
 
             const pondDepan = FilePond.find(document.querySelector('#pondDepan'));
             if (pondDepan && pondDepan.getFiles().length > 0) {
