@@ -67,8 +67,9 @@ class ProductionController extends Controller
                         'Design'   => 'Design',
                         'Customer' => 'Customer',
                         'Produksi' => str_contains($note, 'printing') ? 'Produksi (Printing)'
+                                    : (str_contains($note, 'press')      ? 'Produksi (Press)'
                                     : (str_contains($note, 'jahit')    ? 'Produksi (Jahit)'
-                                    : (str_contains($note, 'qc') || str_contains($note, 'QC') ? 'Produksi (QC)' : 'Produksi')),
+                                    : (str_contains($note, 'qc') || str_contains($note, 'QC') ? 'Produksi (QC)' : 'Produksi'))),
                         null       => 'Sistem',
                         default    => $roleName,
                     };
@@ -154,7 +155,9 @@ class ProductionController extends Controller
 
         $statusMap = [
             'proses_printing'  => ['stage' => 'printing', 'order_status' => 'siap_cetak'],
-            'selesai_printing' => ['stage' => 'jahit',    'order_status' => 'diproduksi'],
+            'selesai_printing' => ['stage' => 'press',    'order_status' => 'diproduksi'],
+            'proses_press'     => ['stage' => 'press',    'order_status' => 'diproduksi'],
+            'selesai_press'    => ['stage' => 'jahit',    'order_status' => 'diproduksi'],
             'proses_jahit'     => ['stage' => 'jahit',    'order_status' => 'diproduksi'],
             'selesai_jahit'    => ['stage' => 'qc',       'order_status' => 'diproduksi'],
             'proses_qc'        => ['stage' => 'qc',       'order_status' => 'diproduksi'],

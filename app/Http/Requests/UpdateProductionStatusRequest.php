@@ -14,9 +14,9 @@ class UpdateProductionStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'action'       => 'required|in:proses_printing,selesai_printing,proses_jahit,selesai_jahit,proses_qc,selesai_qc,revisi_qc',
+            'action'       => 'required|in:proses_printing,selesai_printing,proses_press,selesai_press,proses_jahit,selesai_jahit,proses_qc,selesai_qc,revisi_qc',
             'notes'        => 'nullable|string|max:2000',
-            'target_stage' => 'nullable|required_if:action,revisi_qc|in:jahit,printing',
+            'target_stage' => 'nullable|required_if:action,revisi_qc|in:jahit,press,printing',
         ];
     }
 }
