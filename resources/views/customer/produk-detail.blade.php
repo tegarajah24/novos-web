@@ -238,7 +238,7 @@
           @if($product->description)
             <div>
               <h3 class="text-xs font-bold text-[#1a237e] uppercase tracking-wider mb-2">Deskripsi</h3>
-              <div class="text-sm text-black leading-relaxed max-h-40 overflow-y-auto pr-3 scrollbar-thin scrollbar-thumb-gray-200">
+              <div class="text-sm text-black leading-relaxed max-h-40 overflow-y-auto pr-3 scrollbar-thin scrollbar-thumb-gray-200 text-justify">
                 {!! nl2br(e($product->description)) !!}
               </div>
             </div>
