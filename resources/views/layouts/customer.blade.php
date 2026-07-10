@@ -27,6 +27,7 @@
         }
     </style>
 
+    @notifyCss
     @stack('styles')
 </head>
 <body class="bg-[#f5f5f5] text-[#212121] antialiased">
@@ -68,6 +69,8 @@
 
 </div>
 
-@stack('scripts')
+    @include('notify::components.notify')
+    @stack('scripts')
+    @notifyJs
 </body>
 </html>

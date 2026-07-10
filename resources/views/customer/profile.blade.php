@@ -13,7 +13,7 @@
 @endpush
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser, window.profileAddresses, window.profileCart, window.profileProvinces)">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="profileDashboard(window.profileOrders, window.profileUser, window.profileAddresses, window.profileCart, window.profileProvinces, window.profileWishlist)">
     {{-- Alerts --}}
     @if (session('status') === 'profile-updated')
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
@@ -71,6 +71,13 @@
                         class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all">
                         <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                         Keranjang
+                    </button>
+                    {{-- Tab: Produk Favorit --}}
+                    <button @click="setActiveTab('favorit')"
+                        :class="activeTab === 'favorit' ? 'bg-[#1a237e] text-white' : 'text-gray-700 hover:bg-gray-50'"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all">
+                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        Produk Favorit
                     </button>
                     {{-- Tab: Alamat --}}
                     <button @click="setActiveTab('alamat')"
@@ -745,6 +752,61 @@
                 </div>
             </div>
 
+            {{-- 1C. TAB: PRODUK FAVORIT --}}
+            <div x-show="activeTab === 'favorit'" x-cloak class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900">Produk Favorit</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">Produk yang kamu sukai dan simpan untuk nanti.</p>
+                    </div>
+                    <span class="text-xs text-gray-400 font-medium" x-text="wishlist.length + ' produk'"></span>
+                </div>
+
+                <template x-if="wishlist.length === 0">
+                    <div class="bg-white rounded-2xl shadow-sm py-16 px-6 text-center shadow-sm border border-gray-100 flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-base mb-1">Belum Ada Produk Favorit</h4>
+                        <p class="text-sm text-gray-400 max-w-sm mx-auto">Jelajahi katalog dan sukai produk untuk menyimpannya di sini.</p>
+                        <a href="{{ route('katalog') }}" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a237e] text-white text-xs font-bold rounded-lg hover:bg-[#283593] transition-colors">
+                            Jelajahi Katalog
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    </div>
+                </template>
+
+                <template x-if="wishlist.length > 0">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <template x-for="(item, index) in wishlist" :key="item.id">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
+                                <a :href="'/katalog/' + item.id" class="block">
+                                    <div class="relative bg-gray-50" style="aspect-ratio: 3/4">
+                                        <img :src="item.image" :alt="item.name"
+                                            class="w-full h-full object-cover"
+                                            x-show="item.image"
+                                            x-on:error="$el.style.display = 'none'">
+                                        <div x-show="!item.image" class="w-full h-full flex items-center justify-center text-gray-300">
+                                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z"/></svg>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="p-3">
+                                    <p class="text-[10px] font-bold text-black uppercase tracking-wider mb-0.5" x-text="item.category"></p>
+                                    <a :href="'/katalog/' + item.id" class="block text-sm font-bold text-[#1a237e] leading-tight hover:underline truncate" x-text="item.name"></a>
+                                    <p class="text-sm font-extrabold text-gray-900 mt-1.5" x-show="item.price" x-text="'Rp ' + Number(item.price).toLocaleString('id-ID')"></p>
+                                    <button @click.prevent="removeWishlist(item.id)"
+                                        class="mt-2 w-full py-1.5 text-xs font-bold text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-1">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                        Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+
             {{-- 2. TAB: PENGATURAN PROFIL --}}
             <div x-show="activeTab === 'pengaturan'" x-cloak class="space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm p-6 shadow-sm border border-gray-100">
@@ -1123,8 +1185,9 @@ window.profileUser = @json($user);
 window.profileAddresses = @json($addresses);
 window.profileCart = @json($cartItems);
 window.profileProvinces = @json($provinces);
+window.profileWishlist = @json($wishlistItems);
 
-function profileDashboard(orders = [], user = {}, initialAddresses = [], initialCart = [], provinces = []) {
+function profileDashboard(orders = [], user = {}, initialAddresses = [], initialCart = [], provinces = [], initialWishlist = []) {
     return {
         activeTab: (new URLSearchParams(window.location.search)).get('tab') || 'pengaturan',
         orderFilter: 'menunggu_pembayaran',
@@ -1135,6 +1198,8 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
         perPage: 5,
  
         avatarPreview: null,
+
+        wishlist: initialWishlist,
 
         init() {
             this.$watch('orderFilter', () => this.currentPage = 1);
@@ -1925,6 +1990,46 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
             });
             if (imageFiles.length && window.openPhotoSwipe) {
                 window.openPhotoSwipe(imageFiles, index);
+            }
+        },
+
+        async removeWishlist(productId) {
+            if (!window.Swal) return;
+            const result = await Swal.fire({
+                title: 'Hapus dari Favorit?',
+                text: 'Produk akan dihapus dari daftar favorit Anda.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const res = await fetch('{{ route("api.wishlist.toggle") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({ product_id: productId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.wishlist = this.wishlist.filter(item => item.id !== productId);
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Produk dihapus dari favorit',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            } catch(e) {
+                console.error(e);
             }
         },
 

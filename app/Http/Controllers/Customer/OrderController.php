@@ -297,13 +297,46 @@ class OrderController extends Controller
                         ]);
                     }
                 } else {
-                    OrderItem::create([
+                    $orderItem = OrderItem::create([
                         'order_id'       => $order->id,
                         'size'           => $item->size . ' (' . ($item->product->name ?? 'Katalog') . ')',
                         'qty'            => $item->qty,
                         'price_per_item' => $item->product->price ?? 0,
                         'subtotal'       => $item->qty * ($item->product->price ?? 0),
                     ]);
+
+                    if (!empty($item->notes)) {
+                        $num = null;
+                        $nama = null;
+                        if (preg_match('/Nameset:\s*(.*?)\s*\(No\.\s*(.*?)\)/i', $item->notes, $matches)) {
+                            $nama = trim($matches[1]);
+                            $num = trim($matches[2]);
+                            if ($nama === '-') $nama = null;
+                            if ($num === '-') $num = null;
+                        }
+
+                        for ($i = 0; $i < $item->qty; $i++) {
+                            OrderItemDetail::create([
+                                'order_id'      => $order->id,
+                                'no_punggung'   => $num,
+                                'nama_punggung' => $nama,
+                                'model_lengan'  => $item->product->lengan_jahitan ?? '-',
+                                'size'          => $item->size,
+                                'keterangan'    => 'Katalog: ' . ($item->product->name ?? ''),
+                            ]);
+                        }
+                    } else {
+                        for ($i = 0; $i < $item->qty; $i++) {
+                            OrderItemDetail::create([
+                                'order_id'      => $order->id,
+                                'no_punggung'   => null,
+                                'nama_punggung' => null,
+                                'model_lengan'  => $item->product->lengan_jahitan ?? '-',
+                                'size'          => $item->size,
+                                'keterangan'    => 'Katalog: ' . ($item->product->name ?? ''),
+                            ]);
+                        }
+                    }
                 }
             }
 

@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\CustomerAddress;
 use App\Models\Cart;
 use App\Models\Wilayah;
+use App\Models\Wishlist;
 
 class ProfileController extends Controller
 {
@@ -50,12 +51,27 @@ class ProfileController extends Controller
 
         $provinces = Wilayah::whereRaw('CHAR_LENGTH(kode) = 2')->orderBy('nama')->get()->map(fn($i) => ['id' => $i->kode, 'name' => $i->nama]);
 
+        $wishlistItems = Wishlist::with('product.category')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get()
+            ->map(fn($w) => [
+                'id' => $w->product->id,
+                'name' => $w->product->name,
+                'price' => $w->product->price,
+                'image' => $w->product->image ? asset('storage/' . $w->product->image) : null,
+                'category' => $w->product->category?->name,
+                'slug' => $w->product->slug ?? $w->product->id,
+                'wishlist_id' => $w->id,
+            ]);
+
         return view('customer.profile', [
             'user' => $user,
             'orders' => $orders,
             'addresses' => $addresses,
             'cartItems' => $cartItems,
             'provinces' => $provinces,
+            'wishlistItems' => $wishlistItems,
         ]);
     }
 

@@ -110,7 +110,7 @@
             </h1>
 
             {{-- deskripsi --}}
-            <p class="text-base md:text-lg text-[#c8d6e0] max-w-xl mb-10 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+            <p class="text-base md:text-lg text-[#c8d6e0] max-w-xl mb-10 leading-relaxed text-justify" data-aos="fade-up" data-aos-delay="200">
                 Desain bebas, kualitas premium, pengerjaan cepat dan tepat waktu
             </p>
 

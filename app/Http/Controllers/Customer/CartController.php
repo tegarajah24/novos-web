@@ -56,10 +56,13 @@ class CartController extends Controller
             [
                 'qty' => $request->qty,
                 'is_selected' => true,
+                'notes' => $request->notes,
             ]
         );
 
         $count = Cart::where('user_id', auth()->id())->sum('qty');
+
+        notify()->success('Produk berhasil ditambahkan ke keranjang');
 
         return response()->json([
             'success' => true,

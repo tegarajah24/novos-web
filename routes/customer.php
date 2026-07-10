@@ -11,6 +11,7 @@ use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\ReviewController;
+use App\Http\Controllers\Customer\ProductInteractionController;
 use App\Http\Controllers\Api\SummaryController;
 use App\Http\Controllers\Api\WilayahController;
 use App\Models\Wilayah;
@@ -19,6 +20,11 @@ use App\Models\Wilayah;
 Route::get('/tentang-kami', [HomeController::class, 'tentang'])->name('tentang');
 
 Route::get('/katalog', [ProductController::class, 'index'])->name('katalog');
+Route::get('/katalog/{product}', [ProductController::class, 'show'])->name('katalog.show');
+Route::get('/panduan-ukuran', function () {
+    return view('customer.panduan-ukuran');
+})->name('panduan-ukuran');
+
 
 Route::get('/pesan', function () {
         $produk = request('produk');
@@ -54,6 +60,9 @@ Route::get('/tracking/shared/{token}', [TrackingController::class, 'shared'])->n
 Route::middleware('auth')->group(function () {
 
     Route::get('/api/user-summary', [SummaryController::class, 'index'])->name('api.user-summary');
+
+    Route::post('/api/rating', [ProductInteractionController::class, 'storeRating'])->name('api.rating.store');
+    Route::post('/api/wishlist/toggle', [ProductInteractionController::class, 'toggleWishlist'])->name('api.wishlist.toggle');
 
     Route::post('/pesan', [OrderController::class, 'store'])->name('pesan.store');
     Route::post('/pesan/cart', [OrderController::class, 'storeCart'])->name('pesan.store-cart');

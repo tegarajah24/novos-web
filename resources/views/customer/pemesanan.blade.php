@@ -1734,6 +1734,33 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     if (this.mode === 'cart_checkout') {
                         this.cartItemsToCheckout = state.cartItems || [];
                         this.jenis = 'custom'; // For cart it handles both, but step 1 is skipped
+                    } else if (this.mode === 'katalog_direct' && state.katalogItem) {
+                        const item = state.katalogItem;
+                        this.jenis = 'katalog';
+                        this.basePricePerPcs = parseInt(item.price) || 85000;
+                        this.form.total_qty = item.qty || 1;
+                        this.form.kerah = item.kerah || '';
+                        this.form.bahan = item.bahan || '';
+                        this.form.jenis_potongan = item.jenis_potongan || '';
+                        this.form.lengan_jahitan = item.lengan_jahitan || '';
+                        this.form.team_name = item.name || '';
+                        this.form.nama_artikel = item.category || 'Katalog';
+                        this.form.nama_pemesan = '{{ auth()->user()->name }}';
+                        
+                        let num = '-';
+                        let name = '-';
+                        if (state.notes) {
+                            const nameMatch = state.notes.match(/Nameset:\s*(.*?)\s*\(No\./i);
+                            const numMatch = state.notes.match(/\(No\.\s*(.*?)\)/i);
+                            if (nameMatch) name = nameMatch[1].trim();
+                            if (numMatch) num = numMatch[1].trim();
+                        }
+                        
+                        let lines = [];
+                        for (let i = 0; i < this.form.total_qty; i++) {
+                            lines.push(`${num}, ${name}, ${this.form.lengan_jahitan || '-'}, ${item.size || '-'}, Katalog`);
+                        }
+                        this.form.catatan = lines.join('\n');
                     } else {
                         this.jenis = state.jenis;
                         this.form = state.form || this.form;
