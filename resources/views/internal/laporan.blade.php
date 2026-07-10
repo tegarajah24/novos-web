@@ -11,14 +11,14 @@
     {{-- Filter Bar --}}
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
         <div class="flex flex-wrap items-center gap-2">
-            <div class="flex gap-1.5">
-                <template x-for="[key, label] in Object.entries({today:'Hari Ini',week:'Minggu Ini',month:'Bulan Ini',custom:'Custom'})" :key="key">
-                    <button @click="applyFilter(key)"
-                            :class="filter === key ? 'bg-[#1a237e] text-white border-[#1a237e]' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'"
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
-                            x-text="label">
-                    </button>
-                </template>
+            <div class="relative w-36">
+                <select x-model="filter" @change="applyFilter($event.target.value)"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
+                    <option value="today">Hari Ini</option>
+                    <option value="week">Minggu Ini</option>
+                    <option value="month">Bulan Ini</option>
+                    <option value="custom">Custom</option>
+                </select>
             </div>
 
             <div x-show="filter === 'custom'" class="flex items-center gap-1.5" x-cloak>
