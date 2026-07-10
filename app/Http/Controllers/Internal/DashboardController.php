@@ -207,10 +207,11 @@ class DashboardController extends Controller
         ];
 
         $employees = User::with('role')
+            ->withCount('orders')
             ->whereHas('role', fn($q) => $q->whereNot('name', 'Customer'))
             ->get()
             ->map(function ($user) {
-                $orderCount = $user->orders()->count();
+                $orderCount = $user->orders_count;
                 return [
                     'name' => $user->name,
                     'role' => $user->role->name,

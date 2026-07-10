@@ -7,7 +7,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 {{-- Sidebar wrapper: shared Alpine scope for backdrop + aside --}}
 <div
     x-data="{
-        sidebarOpen: {{ $isSidebarOpen ? 'true' : 'false' }},
+        sidebarOpen: window.innerWidth >= 1280 ? {{ $isSidebarOpen ? 'true' : 'false' }} : false,
         toggle() {
             this.sidebarOpen = !this.sidebarOpen;
             document.cookie = 'sidebar_open=' + this.sidebarOpen + '; path=/; SameSite=Lax; max-age=' + (60 * 60 * 24 * 365);
@@ -23,15 +23,16 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     </div>
 
     <aside
-        :class="sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 xl:w-20 xl:translate-x-0'"
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        :style="window.innerWidth >= 1280 ? 'width: ' + (sidebarOpen ? '16rem' : '5rem') : ''"
+        style="width: {{ $isSidebarOpen ? '16rem' : '5rem' }}; transition: all 0.3s ease;"
         class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0 z-50
-               fixed inset-y-0 left-0 transition-all duration-300 ease-in-out
-               xl:relative xl:z-auto xl:block xl:translate-x-0
-               {{ $isSidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 xl:w-20 xl:translate-x-0' }}">
+               fixed inset-y-0 left-0 w-64 -translate-x-full
+               xl:relative xl:z-auto xl:block xl:translate-x-0">
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 overflow-hidden">
-        <a href="{{ route('staf.dashboard') }}" class="flex items-center gap-1">
+        <a href="{{ route('staf.dashboard') }}" @click="if(window.innerWidth < 1280) sidebarOpen = false" class="flex items-center gap-1">
 <div class="w-10 h-10 shrink-0 flex items-center justify-center">
     <img src="{{ asset('images/logo.png') }}" alt="Novos Logo" class="w-10 h-10 object-contain">
 </div>
@@ -51,7 +52,7 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
     </div>
 
     {{-- Menu Items --}}
-    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+    <nav @click="if(window.innerWidth < 1280) sidebarOpen = false" class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @canAccess('dashboard')
         <a href="{{ route('staf.dashboard') }}"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
