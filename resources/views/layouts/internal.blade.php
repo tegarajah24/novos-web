@@ -179,8 +179,8 @@
         
         /* ── Entrance Animation ── */
         @keyframes slideUpEntrance {
-            0%   { opacity: 0; margin-top: 15px; }
-            100% { opacity: 1; margin-top: 0; }
+            0%   { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         .animate-entrance {
@@ -528,6 +528,18 @@
         html.theme-dark-pending body.internal-body {
             background: linear-gradient(135deg, #0e111a 0%, #121422 50%, #0e121d 100%) !important;
         }
+        /* ── Notification dropdown mobile fix ── */
+        @media (max-width: 640px) {
+            .notif-dropdown-panel {
+                position: fixed !important;
+                top: 60px !important;
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) !important;
+                width: calc(100vw - 1.5rem) !important;
+                max-width: 360px !important;
+            }
+        }
     </style>
 
     {{-- Apply saved appearance BEFORE first paint to avoid flash --}}
@@ -648,10 +660,13 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Topbar -->
-        <header class="py-4 px-8 flex items-center justify-between shrink-0">
+        <header class="py-4 px-8 flex items-center justify-between shrink-0 relative z-30">
             <div class="flex items-center gap-3">
                 <button @click="$dispatch('sidebar-toggle')" class="text-gray-500 hover:text-[#1a237e]">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 xl:hidden">
+                        <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+                    </svg>
+                    <i data-lucide="menu" class="w-6 h-6 hidden xl:inline"></i>
                 </button>
                 <div>
                     @yield('topbar-left')
@@ -665,7 +680,10 @@
                     <div x-data="staffChatBadge()" x-init="init()" class="relative hidden">
                         <div class="bg-white rounded-full shadow-sm">
                             <a href="{{ route('staf.chat') }}" class="relative p-2 text-gray-500 hover:text-[#1a237e] flex items-center justify-center">
-                                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 xl:hidden">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                <i data-lucide="message-circle" class="w-5 h-5 hidden xl:inline"></i>
                                 <span x-show="unreadCount > 0" x-cloak
                                       x-text="unreadCount > 9 ? '9+' : unreadCount"
                                       class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">
@@ -673,88 +691,19 @@
                             </a>
                         </div>
                     </div>
-                    {{-- Notifikasi Dropdown --}}
-                    <div x-data="notifDropdown()" x-init="init()" class="relative" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
+                    {{-- Notifikasi --}}
+                    <div x-data="notifBadge()" x-init="init()" class="relative">
                         <div class="bg-white rounded-full shadow-sm">
-                            <button @click="open = !open" class="relative p-2 text-gray-500 hover:text-[#1a237e] transition-colors flex items-center justify-center">
-                                <i data-lucide="bell" class="w-5 h-5"></i>
+                            <a href="{{ route('staf.notifikasi') }}" class="relative p-2 text-gray-500 hover:text-[#1a237e] transition-colors flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 xl:hidden">
+                                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                                </svg>
+                                <i data-lucide="bell" class="w-5 h-5 hidden xl:inline"></i>
                                 <span x-show="unreadCount > 0" x-cloak
                                       x-text="unreadCount > 9 ? '9+' : unreadCount"
                                       class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-[#1a237e] rounded-full min-w-[18px] h-[18px]">
                                 </span>
-                            </button>
-                        </div>
-
-                        {{-- Dropdown Panel --}}
-                        <div x-show="open" x-cloak
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 scale-95 translate-y-1"
-                             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 scale-95 translate-y-1"
-                             class="absolute right-0 w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden"
-                             style="top: 100%;">
-
-                            {{-- Header Dropdown --}}
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-gray-900">Notifikasi</span>
-                                    <span x-show="unreadCount > 0" x-text="unreadCount"
-                                          class="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-[#1a237e] rounded-full min-w-[18px]">
-                                    </span>
-                                </div>
-                                <button @click="markAllRead()" class="text-xs font-medium text-[#1a237e] hover:underline">Tandai semua dibaca</button>
-                            </div>
-
-                            {{-- Notif List --}}
-                            <div class="max-h-80 overflow-y-auto divide-y divide-gray-50">
-                                <template x-if="loading">
-                                    <div class="px-4 py-8 text-center">
-                                        <svg class="w-6 h-6 mx-auto text-gray-300 mb-2 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                                        </svg>
-                                        <p class="text-xs text-gray-400">Memuat notifikasi...</p>
-                                    </div>
-                                </template>
-                                <template x-if="!loading">
-                                    <div>
-                                        <template x-for="notif in previewNotifs" :key="notif.id">
-                                            <div @click="markRead(notif.id)"
-                                                 :class="notif.read ? 'bg-white' : 'bg-blue-50/50'"
-                                                 class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
-                                                <div class="relative shrink-0">
-                                                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                                                         :style="`background: ${notif.color}`"
-                                                         x-text="notif.initials">
-                                                    </div>
-                                                    <span x-show="!notif.read"
-                                                          class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full">
-                                                    </span>
-                                                </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <p class="text-xs text-gray-800 leading-relaxed" x-html="notif.message"></p>
-                                                    <div class="flex items-center gap-2 mt-1">
-                                                        <span class="text-[10px] text-gray-400" x-text="notif.time"></span>
-                                                        <span class="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
-                                                              :class="notif.badgeClass" x-text="notif.badge"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </template>
-                                        <div x-show="!loading && previewNotifs.length === 0" class="px-4 py-8 text-center">
-                                            <p class="text-xs text-gray-400">Tidak ada notifikasi baru</p>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-
-                            {{-- Footer --}}
-                            <div class="border-t border-gray-100 px-4 py-2.5 bg-gray-50/50">
-                                <a :href="'{{ route('staf.notifikasi') }}'" class="block text-center text-xs font-semibold text-[#1a237e] hover:underline">
-                                    Lihat semua notifikasi
-                                </a>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 <div x-data="{ open: false, profileOpen: false }" class="relative ml-5">
@@ -766,8 +715,8 @@
                                 <span class="text-white font-bold text-xs">{{ collect(explode(' ', auth()->user()->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('') }}</span>
                             </div>
                         @endif
-                        <span class="text-gray-700 font-medium text-sm">{{ auth()->user()->role->name ?? auth()->user()->name }}</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
+                        <span class="text-gray-700 font-medium text-sm hidden xl:inline">{{ auth()->user()->role->name ?? auth()->user()->name }}</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden xl:inline"></i>
                     </button>
                     <div x-show="open" x-cloak x-transition class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                         <div class="py-1">
@@ -1127,57 +1076,21 @@ function staffChatBadge() {
     }
 }
 
-function notifDropdown() {
+function notifBadge() {
     return {
-        open: false,
-        loading: true,
-        notifications: [],
-        get unreadCount() {
-            return this.notifications.filter(n => !n.read).length;
-        },
-        get previewNotifs() {
-            return this.notifications.slice(0, 5);
-        },
+        unreadCount: 0,
         init() {
-            this.loadNotifications();
-            setInterval(() => this.loadNotifications(), 60000);
+            this.fetchCount();
+            setInterval(() => this.fetchCount(), 60000);
         },
-        async loadNotifications() {
-            this.loading = true;
+        async fetchCount() {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             try {
                 const res = await fetch('{{ route("staf.notifikasi.preview") }}', {
                     headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf }
                 });
                 const data = await res.json();
-                this.notifications = data.notifications;
-            } catch (e) {} finally {
-                this.loading = false;
-            }
-        },
-        async markRead(id) {
-            const n = this.notifications.find(n => n.id === id);
-            if (!n || n.read) return;
-            n.read = true;
-            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            try {
-                await fetch('{{ url("staf/notifikasi") }}/' + id + '/read', {
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
-                });
-            } catch (e) {}
-        },
-        async markAllRead() {
-            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            try {
-                const res = await fetch('{{ route("staf.notifikasi.read-all") }}', {
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    this.notifications.forEach(n => n.read = true);
-                }
+                this.unreadCount = (data.notifications || []).filter(n => !n.read).length;
             } catch (e) {}
         }
     }
