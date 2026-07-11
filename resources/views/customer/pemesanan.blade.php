@@ -324,6 +324,27 @@
                     Spesifikasi Utama (Berlaku untuk Semua Jersey)
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {{-- Ukuran Jersey Utama (Global Size) --}}
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-gray-600">Ukuran Jersey Utama <span class="text-red-500">*</span></span>
+                        </div>
+                        <select
+                            x-model="form.size"
+                            @change="onGlobalSizeChange()"
+                            class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                        >
+                            <option value="">- Pilih Ukuran -</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="3XL">3XL</option>
+                            <option value="4XL">4XL</option>
+                        </select>
+                    </div>
+
                     <template x-for="attr in activeSchema" :key="attr.id">
                         <div class="space-y-1.5">
                             <div class="flex items-center justify-between">
@@ -534,9 +555,7 @@
                                     <th class="p-3 w-12 text-center">No</th>
                                     <th class="p-3 w-28">No Punggung</th>
                                     <th class="p-3">Nama Punggung</th>
-                                    <th class="p-3 w-28">Size</th>
-                                    <th class="p-3 w-64">Status Spesifikasi</th>
-                                    <th class="p-3 w-28 text-center">Aksi</th>
+                                    <th class="p-3">Atribut Jersey</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
@@ -552,60 +571,43 @@
                                         
                                         <!-- No Punggung -->
                                         <td class="p-3">
-                                            <input type="text" x-model="item.no" placeholder="Contoh: 10"
-                                                   class="w-full border border-gray-300 p-1.5 rounded text-center font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white">
+                                            <input type="text" x-model="item.no" placeholder="Contoh: 1"
+                                                   class="w-full border border-gray-300 p-1.5 rounded text-center text-xs font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[11px]">
                                         </td>
                                         
                                         <!-- Nama Punggung -->
                                         <td class="p-3">
-                                            <input type="text" x-model="item.nama" placeholder="NAMA PEMAIN"
-                                                   class="w-full border border-gray-300 p-1.5 rounded font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white uppercase">
+                                            <input type="text" x-model="item.nama" @input="item.nama = item.nama.toUpperCase()" placeholder="Contoh: Tegar"
+                                                   class="w-full border border-gray-300 p-1.5 rounded text-xs font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white uppercase placeholder-gray-400 placeholder:font-normal placeholder:text-[11px]">
                                         </td>
                                         
-                                        <!-- Size -->
+                                        <!-- Status Spesifikasi (Applied Attributes & Warnings) -->
                                         <td class="p-3">
-                                            <select x-model="item.size" class="w-full border border-gray-300 p-1.5 rounded bg-white outline-none focus:ring-1 focus:ring-[#1a237e]">
-                                                <option value="S">S</option>
-                                                <option value="M">M</option>
-                                                <option value="L">L</option>
-                                                <option value="XL">XL</option>
-                                                <option value="XXL">XXL</option>
-                                                <option value="3XL">3XL</option>
-                                                <option value="4XL">4XL</option>
-                                            </select>
-                                        </td>
-                                        
-                                        <!-- Status Spesifikasi (Overrides) -->
-                                        <td class="p-3">
-                                            <template x-if="getOverrideCount(item) === 0">
-                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold text-gray-500 bg-gray-100 border border-gray-200">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                                                    Mengikuti Spesifikasi Utama
-                                                </span>
-                                            </template>
-                                            <template x-if="getOverrideCount(item) > 0">
-                                                <div class="space-y-1">
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold text-orange-700 bg-orange-50 border border-orange-200">
-                                                        <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                                                        Kustom (<span x-text="getOverrideCount(item)"></span> atribut berbeda)
+                                            <div class="flex flex-wrap items-center gap-1.5">
+                                                <!-- Size Badge -->
+                                                <template x-if="item.size">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold border border-slate-200">
+                                                        Size <span x-text="item.size"></span>
                                                     </span>
-                                                    <div class="flex flex-wrap gap-1">
-                                                        <template x-for="(val, key) in item.customizations" :key="key">
-                                                            <template x-if="val !== ''">
-                                                                <span class="text-[9px] bg-blue-50 text-blue-900 border border-blue-100 px-1 py-0.5 rounded" x-text="key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) + ': ' + val"></span>
-                                                            </template>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </td>
-                                        
-                                        <!-- Actions -->
-                                        <td class="p-3 text-center">
-                                            <button type="button" @click="openOverrideModal(index)" class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-bold text-[#1a237e] bg-[#1a237e]/5 hover:bg-[#1a237e]/10 border border-transparent rounded-lg transition-colors cursor-pointer">
-                                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                                                Kustomisasi
-                                            </button>
+                                                </template>
+                                                
+                                                <!-- Other customizations/specifications -->
+                                                <template x-for="attr in getCompiledCustomizations(item)" :key="attr.key">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-[#1a237e] text-[10px] font-medium border border-blue-100">
+                                                        <span x-text="attr.value"></span>
+                                                    </span>
+                                                </template>
+
+                                                <!-- Status Belum Lengkap Warning Badge -->
+                                                <template x-if="!isRowComplete(item)">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
+                                                        <svg class="w-3 h-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                        </svg>
+                                                        Belum lengkap
+                                                    </span>
+                                                </template>
+                                            </div>
                                         </td>
                                     </tr>
                                 </template>
@@ -1575,7 +1577,9 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             customizations: {}, // dynamic fields
             catatan: '',
             total_qty: 1,
+            size: '',
         },
+        oldGlobalSize: '',
         items: [],
         selectAll: false,
         selectionMode: 'single',
@@ -1696,6 +1700,17 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             });
         },
 
+        onGlobalSizeChange() {
+            const newSize = this.form.size;
+            const oldSize = this.oldGlobalSize;
+            this.items.forEach(item => {
+                if (item.size === oldSize) {
+                    item.size = newSize;
+                }
+            });
+            this.oldGlobalSize = newSize;
+        },
+
         onCategoryChange() {
             this.form.customizations = {};
             const cat = this.categories.find(c => c.id == this.selectedCategoryId);
@@ -1724,7 +1739,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         selected: false,
                         no: '',
                         nama: '',
-                        size: 'M',
+                        size: this.form.size || '',
                         customizations: rowCustom
                     });
                 }
@@ -1770,6 +1785,32 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 const val = item.customizations[k];
                 return val !== undefined && val !== null && val.toString().trim() !== '';
             }).length;
+        },
+
+        isRowComplete(item) {
+            const schema = this.activeSchema;
+            const compiled = Object.assign({}, this.form.customizations, item.customizations);
+            return schema.every(attr => {
+                if (!attr.required) return true;
+                if (attr.depends_on && attr.depends_on.attribute_id) {
+                    const parentVal = compiled[attr.depends_on.attribute_id];
+                    if (parentVal !== attr.depends_on.value) return true;
+                }
+                const val = compiled[attr.id];
+                return val !== undefined && val !== null && val.toString().trim() !== '';
+            });
+        },
+
+        getCompiledCustomizations(item) {
+            const compiled = Object.assign({}, this.form.customizations, item.customizations);
+            return Object.entries(compiled)
+                .filter(([k, v]) => v !== undefined && v !== null && v.toString().trim() !== '')
+                .map(([k, v]) => {
+                    return {
+                        key: k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                        value: v
+                    };
+                });
         },
 
         openOverrideModal(index = null) {
