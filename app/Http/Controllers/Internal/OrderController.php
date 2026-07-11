@@ -137,7 +137,7 @@ class OrderController extends Controller
 
         $order->load([
             'user',
-            'orderItems.product.category',
+            'orderItems',
             'itemDetails',
             'designRequest',
             'payment',
@@ -378,6 +378,25 @@ class OrderController extends Controller
             default         => 14,
         };
 
+        $attributesSchema = [];
+        $categoryName = null;
+        if ($order->designRequest) {
+            $customizations = $order->designRequest->customizations ?? [];
+            if (isset($customizations['model_jaket']) || isset($customizations['bahan_jaket'])) {
+                $categoryName = 'Jaket';
+            } elseif (isset($customizations['model_bawahan']) || isset($customizations['bahan_bawahan'])) {
+                $categoryName = 'Bawahan';
+            } else {
+                $categoryName = 'Jersey';
+            }
+        }
+        if ($categoryName) {
+            $category = \App\Models\Category::where('name', $categoryName)->first();
+            if ($category) {
+                $attributesSchema = $category->attributes_schema ?? [];
+            }
+        }
+
         $order = [
             'order_id'      => $order->order_number,
             'last_update'   => $order->updated_at->format('j M Y, H:i'),
@@ -419,11 +438,7 @@ class OrderController extends Controller
             ],
         ];
 
-        $attributesSchema = [];
-        $firstItem = $order->orderItems->first();
-        if ($firstItem && $firstItem->product && $firstItem->product->category) {
-            $attributesSchema = $firstItem->product->category->attributes_schema ?? [];
-        }
+
 
         return view('internal.detail-pesanan', compact('order', 'badgeType', 'badgeLabel', 'steps') + [
             'rawStatus' => $rawStatus,

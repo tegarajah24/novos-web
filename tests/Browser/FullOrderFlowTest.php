@@ -51,14 +51,32 @@ class FullOrderFlowTest extends DuskTestCase
             // Step 2: Isi detail desain
             $c->script('
                 let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
-                if (r && r.form) {
-                    r.form.team_name = "Test Tim Dusk";
-                    r.form.kerah = "O-NECK V.1";
-                    r.form.bahan = "MILANO PREMIUM";
-                    r.form.jenis_potongan = "REGULER";
-                    r.form.lengan_jahitan = "REGULER OVERDECK";
+                if (r) {
+                    const jerseyCat = r.categories.find(c => c.name.toLowerCase() === "jersey");
+                    if (jerseyCat) {
+                        r.selectedCategoryId = jerseyCat.id;
+                        r.onCategoryChange();
+                    }
+                    if (r.form) {
+                        r.form.nama_pemesan = "Dusk Tester";
+                        r.form.team_name = "Test Tim Dusk";
+                        r.form.size = "M";
+                        r.onGlobalSizeChange();
+                        r.form.total_qty = 1;
+                    }
+                    r.updateItemsRows(1);
+                    if (r.items && r.items.length > 0) {
+                        r.items[0].no = "10";
+                        r.items[0].nama = "DUSK PLAYER";
+                        r.items[0].size = "M";
+                    }
+                    if (r.form && r.form.customizations) {
+                        r.form.customizations["kerah"] = "O-NECK V.1";
+                        r.form.customizations["bahan"] = "MILANO PREMIUM";
+                        r.form.customizations["jenis_potongan"] = "REGULER";
+                        r.form.customizations["lengan_jahitan"] = "REGULER OVERDECK";
+                    }
                 }
-                if (r) { r.tmpSize = "M"; r.tmpQty = 1; if (typeof r.addSize === "function") r.addSize(); }
             ');
             $c->pause(500);
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Pesan Langsung')) { b.click(); break; } }");
@@ -77,14 +95,9 @@ class FullOrderFlowTest extends DuskTestCase
             // Step 4: Set prioritas & konfirmasi
             $c->script('let r = document.querySelector(".max-w-6xl")._x_dataStack[0]; if (r) r.prioritas = "normal";');
             $c->pause(500);
-            $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Konfirmasi') || (b.textContent.includes('Bayar'))) { b.click(); break; } }");
-            $c->pause(3000);
-
-            $orderNum = $c->script('return document.querySelector(".max-w-6xl")._x_dataStack[0].orderNumber || ""')[0];
-            if (empty($orderNum)) {
-                $orderNum = Order::latest()->first()?->order_number ?? '';
-            }
-            $this->orderNumber = $orderNum;
+            $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Konfirmasi') || b.textContent.includes('Bayar') || b.textContent.includes('Buat Pesanan')) { b.click(); break; } }");
+            $c->waitFor('#orderNumber', 15);
+            $this->orderNumber = trim($c->text('#orderNumber'));
             echo "\n[✓] CUSTOMER: Pesanan {$this->orderNumber} berhasil dibuat\n";
             $c->screenshot('01-customer-order-created');
 
@@ -118,6 +131,7 @@ class FullOrderFlowTest extends DuskTestCase
             // ══════════════════════════════════════════════
             // 3. ADMIN — Teruskan ke Design
             // ══════════════════════════════════════════════
+            $a->loginAs($admin);
             $a->visit('/staf/detail-pesanan/' . $this->orderNumber);
             $a->waitForText('Update Status', 10);
             $a->pause(2000);
@@ -131,7 +145,7 @@ class FullOrderFlowTest extends DuskTestCase
                         "X-CSRF-TOKEN": document.querySelector(\'meta[name="csrf-token"]\').getAttribute("content"),
                         "Accept": "application/json"
                     },
-                    body: JSON.stringify({ status: "tahap_desain", notes: "Diteruskan ke Design (Dusk)" })
+                    body: JSON.stringify({ status: "disetujui", notes: "Diteruskan ke Design (Dusk)" })
                 })
                 .then(r => r.json())
                 .then(d => {

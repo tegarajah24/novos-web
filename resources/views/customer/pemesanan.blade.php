@@ -252,42 +252,69 @@
                         >
                     </div>
                 </div>
-            </div>            <div class="bg-white border border-gray-200 p-5 rounded-xl">
-                {{-- Kategori Produk --}}
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                        Kategori Produk <span class="text-red-500">*</span>
-                    </label>
-                    <select
-                        x-model="selectedCategoryId"
-                        @change="onCategoryChange()"
-                        :disabled="catalogProduct !== null"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none bg-white text-gray-900"
-                    >
-                        <option value="">Pilih Kategori</option>
-                        <template x-for="cat in categories" :key="cat.id">
-                            <option :value="cat.id" x-text="cat.name" :selected="selectedCategoryId == cat.id"></option>
-                        </template>
-                    </select>
-                </div>
+            </div>
 
-                {{-- Panduan Atribut Buttons --}}
-                <div class="flex flex-wrap gap-2 mt-4" x-show="activeSchema.some(a => a.reference_image)">
-                    <span class="text-xs text-gray-500 flex items-center font-medium">Lihat Panduan:</span>
-                    <template x-for="attr in activeSchema" :key="attr.id">
-                        <template x-if="attr.reference_image">
-                            <button
-                                type="button"
-                                @click="showAttrGuide(attr)"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-605 hover:text-[#1a237e] hover:bg-blue-50 border border-gray-200 rounded-lg text-xs font-bold transition-colors"
-                            >
-                                <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                                <span x-text="attr.name"></span>
-                            </button>
-                        </template>
-                    </template>
+            {{-- Pilihan Kategori Kustom (Visual Cards) --}}
+            <div x-show="!catalogProduct" class="space-y-4">
+                <label class="block text-sm font-semibold text-gray-700">
+                    Pilih Kategori Produk Custom <span class="text-red-500">*</span>
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {{-- Jersey / Atasan Card --}}
+                    <div
+                        @click="selectCategoryByName('Jersey')"
+                        :class="selectedCategoryId == getCategoryIdByName('Jersey') ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e] shadow-md scale-[1.02]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'"
+                        class="border-2 rounded-xl p-5 cursor-pointer transition-all duration-300 flex flex-col items-center text-center relative group"
+                    >
+                        <div :class="selectedCategoryId == getCategoryIdByName('Jersey') ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-sm mt-4 text-gray-800">Jersey / Atasan</h3>
+                        <p class="text-gray-400 text-[11px] mt-1.5 leading-relaxed max-w-[200px]">Jersey olahraga running, sepak bola, futsal, basket, badminton, kaos polos, dll.</p>
+                        
+                        <div x-show="selectedCategoryId == getCategoryIdByName('Jersey')" class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-[#1a237e]"></div>
+                    </div>
+
+                    {{-- Bawahan Card --}}
+                    <div
+                        @click="selectCategoryByName('Bawahan')"
+                        :class="selectedCategoryId == getCategoryIdByName('Bawahan') ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e] shadow-md scale-[1.02]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'"
+                        class="border-2 rounded-xl p-5 cursor-pointer transition-all duration-300 flex flex-col items-center text-center relative group"
+                    >
+                        <div :class="selectedCategoryId == getCategoryIdByName('Bawahan') ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21V9.75M3.284 14.253a8.97 8.97 0 004.966-2.503m11.498 2.503a8.97 8.97 0 01-4.966-2.503m0 0A8.97 8.97 0 0112 9.75M15.748 9.25a8.97 8.97 0 00-3.748.5m0 0V3.75m0 0L8.25 6m3.75-2.25l3.75 2.25"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-sm mt-4 text-gray-800">Bawahan (Celana / Rok)</h3>
+                        <p class="text-gray-400 text-[11px] mt-1.5 leading-relaxed max-w-[200px]">Celana pendek olahraga, celana panjang training, rok tenis, rok badminton, dll.</p>
+                        
+                        <div x-show="selectedCategoryId == getCategoryIdByName('Bawahan')" class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-[#1a237e]"></div>
+                    </div>
+
+                    {{-- Jaket Card --}}
+                    <div
+                        @click="selectCategoryByName('Jaket')"
+                        :class="selectedCategoryId == getCategoryIdByName('Jaket') ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e] shadow-md scale-[1.02]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'"
+                        class="border-2 rounded-xl p-5 cursor-pointer transition-all duration-300 flex flex-col items-center text-center relative group"
+                    >
+                        <div :class="selectedCategoryId == getCategoryIdByName('Jaket') ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m3.813-5.096L15 21m-7.5-6h9a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5h-9A1.5 1.5 0 006 6v7.5A1.5 1.5 0 007.5 13.5z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-sm mt-4 text-gray-800">Jaket & Outerwear</h3>
+                        <p class="text-gray-400 text-[11px] mt-1.5 leading-relaxed max-w-[200px]">Jaket track, hoodie olahraga, pullover zipper, sweater tim, dll.</p>
+                        
+                        <div x-show="selectedCategoryId == getCategoryIdByName('Jaket')" class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-[#1a237e]"></div>
+                    </div>
                 </div>
             </div>
+
+            {{-- Dynamic details wrapped by selectedCategory --}}
+            <div x-show="selectedCategoryId" x-cloak class="space-y-6">
 
             {{-- Total Quantity --}}
             <div class="grid lg:grid-cols-2 gap-6">
@@ -651,8 +678,6 @@
                         <button type="button" @click="clearSelection()" class="text-xs text-gray-400 hover:text-white underline ml-1">Batal</button>
                     </div>
                 </div>    </div>
-            </div>
-        </div>
 
         {{-- Upload Section --}}
         <div class="grid lg:grid-cols-2 gap-6 mt-8">
@@ -705,6 +730,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </button>
             </div>
+        </div>
+        </div>
         </div>
             </div>
 
@@ -1785,6 +1812,20 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 const val = item.customizations[k];
                 return val !== undefined && val !== null && val.toString().trim() !== '';
             }).length;
+        },
+
+        selectCategoryByName(name) {
+            if (this.catalogProduct) return;
+            const cat = this.categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+            if (cat) {
+                this.selectedCategoryId = cat.id;
+                this.onCategoryChange();
+            }
+        },
+
+        getCategoryIdByName(name) {
+            const cat = this.categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+            return cat ? cat.id : null;
         },
 
         isRowComplete(item) {

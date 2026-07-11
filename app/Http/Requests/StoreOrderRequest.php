@@ -11,6 +11,21 @@ class StoreOrderRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('items')) {
+            $items = $this->input('items');
+            if (is_array($items)) {
+                foreach ($items as $index => $item) {
+                    if (isset($item['customizations']) && is_string($item['customizations'])) {
+                        $items[$index]['customizations'] = json_decode($item['customizations'], true);
+                    }
+                }
+                $this->merge(['items' => $items]);
+            }
+        }
+    }
+
     public function rules(): array
     {
         return [

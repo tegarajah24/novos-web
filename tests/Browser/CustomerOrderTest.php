@@ -41,6 +41,19 @@ class CustomerOrderTest extends DuskTestCase
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Selanjutnya')) { b.click(); break; } }");
             $c->pause(1000);
 
+            // Select category so the detail form is shown
+            $c->script('
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
+                if (r) {
+                    const jerseyCat = r.categories.find(c => c.name.toLowerCase() === "jersey");
+                    if (jerseyCat) {
+                        r.selectedCategoryId = jerseyCat.id;
+                        r.onCategoryChange();
+                    }
+                }
+            ');
+            $c->pause(1000);
+
             // Wait for step 2
             $c->waitForTextIn('body', 'Detail', 8)
                ->waitForTextIn('body', 'Upload', 5);

@@ -3,6 +3,8 @@
 @php
 $noteColors = ['bg-green-500','bg-yellow-500','bg-blue-500','bg-purple-500'];
 function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
+$role = auth()->user()->role->name;
+$canValidate = in_array($role, ['Admin', 'Manager', 'Super Admin']);
 @endphp
 
 @section('title', 'Detail Pesanan')
@@ -327,7 +329,8 @@ if (!empty($order['item_details'])) {
                                                                 <select x-model="item.customizations['{{ $attr['id'] }}']" class="w-full px-1.5 py-0.5 text-xs border border-gray-200 rounded bg-white">
                                                                     <option value="">-</option>
                                                                     @foreach($attr['options'] as $opt)
-                                                                        <option value="{{ $opt }}">{{ $opt }}</option>
+                                                                        @php $val = is_array($opt) ? ($opt['value'] ?? '') : $opt; @endphp
+                                                                        <option value="{{ $val }}">{{ $val }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             @else
