@@ -30,7 +30,7 @@ function statusBadgeType($status) {
 }
 @endphp
     <!-- Stats Row -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
 
         @if($isDesign)
 
@@ -258,11 +258,13 @@ function statusBadgeType($status) {
         <div class="bg-white shadow-sm rounded-xl p-6">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="font-bold text-gray-900 text-lg">Pesanan</h3>
-                <div class="flex gap-1 bg-gray-100 rounded-lg p-1" id="chartFilters">
-                    <button data-filter="day" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700">Harian</button>
-                    <button data-filter="week" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-white shadow-sm text-[#1a237e]">Mingguan</button>
-                    <button data-filter="month" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700">Bulanan</button>
-                    <button data-filter="year" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700">Tahunan</button>
+                <div class="relative">
+                    <select id="chartFilterSelect" class="block w-28 px-3 py-1.5 text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
+                        <option value="day">Harian</option>
+                        <option value="week" selected>Mingguan</option>
+                        <option value="month">Bulanan</option>
+                        <option value="year">Tahunan</option>
+                    </select>
                 </div>
             </div>
             <div class="h-64">
@@ -397,25 +399,20 @@ function statusBadgeType($status) {
                 .catch(function() {});
             }
 
-            // Filter button handler
-            var filterContainer = document.getElementById('chartFilters');
-            if (filterContainer) {
-                filterContainer.addEventListener('click', function(e) {
-                    var btn = e.target.closest('button[data-filter]');
-                    if (!btn) return;
-
-                    filterContainer.querySelectorAll('button[data-filter]').forEach(function(b) {
-                        b.classList.remove('bg-white', 'shadow-sm', 'text-[#1a237e]');
-                        b.classList.add('text-gray-500', 'hover:text-gray-700');
-                    });
-                    btn.classList.remove('text-gray-500', 'hover:text-gray-700');
-                    btn.classList.add('bg-white', 'shadow-sm', 'text-[#1a237e]');
-
-                    loadChart(btn.getAttribute('data-filter'));
+            // Filter dropdown select handler
+            var filterSelect = document.getElementById('chartFilterSelect');
+            if (filterSelect) {
+                filterSelect.addEventListener('change', function(e) {
+                    loadChart(this.value);
                 });
             }
 
-            loadChart('week');
+            // Default ke Harian di mobile
+            if (window.innerWidth < 1024) {
+                filterSelect.value = 'day';
+            }
+
+            loadChart(filterSelect.value);
 
             // ==================== DOUGHNUT CHART ====================
             var ctxDonut = document.getElementById('donutChart');

@@ -4,22 +4,35 @@
 $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] === 'false');
 ?>
 
-<aside
+{{-- Sidebar wrapper: shared Alpine scope for backdrop + aside --}}
+<div
     x-data="{
-        sidebarOpen: {{ $isSidebarOpen ? 'true' : 'false' }},
+        sidebarOpen: window.innerWidth >= 1280 ? {{ $isSidebarOpen ? 'true' : 'false' }} : false,
         toggle() {
             this.sidebarOpen = !this.sidebarOpen;
             document.cookie = 'sidebar_open=' + this.sidebarOpen + '; path=/; SameSite=Lax; max-age=' + (60 * 60 * 24 * 365);
         }
     }"
     @sidebar-toggle.window="toggle()"
-    :style="{ width: sidebarOpen ? '16rem' : '5rem' }"
-    style="width: {{ $isSidebarOpen ? '16rem' : '5rem' }}; transition: width 0.3s ease;"
-    class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0">
+    class="contents">
+
+    {{-- Backdrop for mobile sidebar --}}
+    <div x-show="sidebarOpen" x-cloak
+         @click="toggle()"
+         class="fixed inset-0 z-40 bg-black/50 xl:hidden">
+    </div>
+
+    <aside
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        :style="window.innerWidth >= 1280 ? 'width: ' + (sidebarOpen ? '16rem' : '5rem') : ''"
+        style="width: {{ $isSidebarOpen ? '16rem' : '5rem' }}; transition: all 0.3s ease;"
+        class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0 z-50
+               fixed inset-y-0 left-0 w-64 -translate-x-full
+               xl:relative xl:z-auto xl:block xl:translate-x-0">
 
     {{-- Logo Area --}}
-    <div class="h-16 flex items-center px-6 border-b border-gray-200 overflow-hidden">
-        <a href="{{ route('staf.dashboard') }}" class="flex items-center gap-1">
+    <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 overflow-hidden">
+        <a href="{{ route('staf.dashboard') }}" @click="if(window.innerWidth < 1280) sidebarOpen = false" class="flex items-center gap-1">
 <div class="w-10 h-10 shrink-0 flex items-center justify-center">
     <img src="{{ asset('images/logo.png') }}" alt="Novos Logo" class="w-10 h-10 object-contain">
 </div>
@@ -30,10 +43,16 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
                 Novos
             </span>
         </a>
+
+        {{-- Close button for mobile --}}
+        <button @click="toggle()"
+                class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors xl:hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
     </div>
 
     {{-- Menu Items --}}
-    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+    <nav @click="if(window.innerWidth < 1280) sidebarOpen = false" class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @canAccess('dashboard')
         <a href="{{ route('staf.dashboard') }}"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
@@ -134,3 +153,4 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 
     {{-- (Footer profile removed) --}}
 </aside>
+</div>{{-- end sidebar wrapper --}}

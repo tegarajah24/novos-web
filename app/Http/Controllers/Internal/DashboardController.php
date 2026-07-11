@@ -207,10 +207,11 @@ class DashboardController extends Controller
         ];
 
         $employees = User::with('role')
+            ->withCount('orders')
             ->whereHas('role', fn($q) => $q->whereNot('name', 'Customer'))
             ->get()
             ->map(function ($user) {
-                $orderCount = $user->orders()->count();
+                $orderCount = $user->orders_count;
                 return [
                     'name' => $user->name,
                     'role' => $user->role->name,
@@ -291,45 +292,68 @@ class DashboardController extends Controller
 
     public function chartData(Request $request): JsonResponse
     {
-        $filter = $request->query('filter', 'week');
+        $filter = $request->query('filter', 'day');
 
         $labels = [];
         $data = [];
 
         switch ($filter) {
             case 'day':
+                $start = now()->subDays(13)->startOfDay();
+                $results = Order::where('created_at', '>=', $start)
+                    ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                    ->groupByRaw('DATE(created_at)')
+                    ->pluck('count', 'date');
+
                 for ($i = 13; $i >= 0; $i--) {
                     $date = now()->subDays($i);
+                    $key = $date->format('Y-m-d');
                     $labels[] = $date->format('j/n');
-                    $data[] = Order::whereDate('created_at', $date)->count();
+                    $data[] = (int) ($results[$key] ?? 0);
                 }
                 break;
 
             case 'week':
+                $start = now()->subWeeks(7)->startOfWeek();
+                $results = Order::where('created_at', '>=', $start)
+                    ->selectRaw('YEARWEEK(created_at, 1) as week_num, COUNT(*) as count')
+                    ->groupByRaw('YEARWEEK(created_at, 1)')
+                    ->pluck('count', 'week_num');
+
                 for ($i = 7; $i >= 0; $i--) {
                     $weekStart = now()->subWeeks($i)->startOfWeek();
-                    $weekEnd = now()->subWeeks($i)->endOfWeek();
+                    $weekKey = (int) $weekStart->format('oW');
                     $labels[] = 'W' . (8 - $i);
-                    $data[] = Order::whereBetween('created_at', [$weekStart, $weekEnd])->count();
+                    $data[] = (int) ($results[$weekKey] ?? 0);
                 }
                 break;
 
             case 'month':
+                $start = now()->subMonths(11)->startOfMonth();
+                $results = Order::where('created_at', '>=', $start)
+                    ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+                    ->groupByRaw('DATE_FORMAT(created_at, "%Y-%m")')
+                    ->pluck('count', 'month');
+
                 for ($i = 11; $i >= 0; $i--) {
                     $date = now()->subMonths($i);
+                    $key = $date->format('Y-m');
                     $labels[] = $date->format('M Y');
-                    $data[] = Order::whereYear('created_at', $date->year)
-                        ->whereMonth('created_at', $date->month)
-                        ->count();
+                    $data[] = (int) ($results[$key] ?? 0);
                 }
                 break;
 
             case 'year':
                 $currentYear = now()->year;
+                $results = Order::whereYear('created_at', '>=', $currentYear - 4)
+                    ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+                    ->groupByRaw('YEAR(created_at)')
+                    ->pluck('count', 'year');
+
                 for ($i = 4; $i >= 0; $i--) {
                     $year = $currentYear - $i;
                     $labels[] = (string) $year;
-                    $data[] = Order::whereYear('created_at', $year)->count();
+                    $data[] = (int) ($results[$year] ?? 0);
                 }
                 break;
         }

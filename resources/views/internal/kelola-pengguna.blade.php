@@ -8,7 +8,7 @@
 
 @section('internal-content')
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
             <div class="flex justify-between items-start mb-4">
                 <div class="w-11 h-11 rounded-xl bg-[#1a237e] flex items-center justify-center">
@@ -419,6 +419,15 @@
                         Notify.success(result.message);
                         refreshTable();
                     }
+                });
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-wrapper.active').forEach(el => {
+                    el.classList.remove('active');
+                    document.body.style.overflow = '';
                 });
             }
         });
