@@ -13,6 +13,30 @@
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
+    .stats-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: -1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    @media (min-width: 1024px) {
+        .stats-dots {
+            display: none;
+        }
+    }
+    .stats-dots .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background-color: #d1d5db;
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+    .stats-dots .dot.active {
+        width: 20px;
+        background-color: #1a237e;
+    }
 </style>
 @endpush
 
@@ -46,6 +70,7 @@ function statusBadgeType($status) {
 
     <!-- Stats Row -->
     @if($isDesign)
+    <div class="relative" id="stats-scroll-design">
     <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
 
             <!-- Card D1: Menunggu Desain -->
@@ -101,7 +126,13 @@ function statusBadgeType($status) {
             </a>
 
         </div>
+        <div class="stats-dots" id="stats-dots-design">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
     @elseif($isProduction)
+    <div class="relative" id="stats-scroll-production">
     <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
 
             <!-- Card P1: Total Pesanan -->
@@ -174,7 +205,13 @@ function statusBadgeType($status) {
             </a>
 
         </div>
+        <div class="stats-dots" id="stats-dots-production">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
     @else
+    <div class="relative" id="stats-scroll-default">
     <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
 
             <!-- Card 1: Total Pesanan -->
@@ -267,6 +304,11 @@ function statusBadgeType($status) {
             </a>
 
         </div>
+        <div class="stats-dots" id="stats-dots-default">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
     @endif
 
     <!-- Charts Row -->
@@ -545,6 +587,49 @@ function statusBadgeType($status) {
             }
 
         });
+
+        // Stats page indicator dots (2 dots = 2 groups of 2 cards each)
+        function initStatsDots(containerId, dotsId) {
+            var container = document.getElementById(containerId);
+            var dotsContainer = document.getElementById(dotsId);
+            if (!container || !dotsContainer) return;
+            var dots = dotsContainer.querySelectorAll('.dot');
+            if (!dots.length) return;
+
+            // Only run on mobile
+            if (window.innerWidth >= 1024) return;
+
+            function update() {
+                var scrollEl = container.querySelector('.grid');
+                if (!scrollEl) return;
+                var cards = scrollEl.querySelectorAll('.snap-start');
+                if (!cards.length) return;
+                var containerLeft = scrollEl.getBoundingClientRect().left;
+                var closestCard = 0;
+                var minDist = Infinity;
+                cards.forEach(function(card, i) {
+                    var dist = Math.abs(card.getBoundingClientRect().left - containerLeft);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closestCard = i;
+                    }
+                });
+                // Map card index to group index (2 cards per group)
+                var activeGroup = Math.floor(closestCard / 2);
+                dots.forEach(function(d, i) {
+                    d.classList.toggle('active', i === activeGroup);
+                });
+            }
+
+            var scrollEl = container.querySelector('.grid');
+            if (scrollEl) scrollEl.addEventListener('scroll', update);
+            window.addEventListener('resize', update);
+            update();
+        }
+
+        initStatsDots('stats-scroll-design', 'stats-dots-design');
+        initStatsDots('stats-scroll-production', 'stats-dots-production');
+        initStatsDots('stats-scroll-default', 'stats-dots-default');
     </script>
 
 @endsection
