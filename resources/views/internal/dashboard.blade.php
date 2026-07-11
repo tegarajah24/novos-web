@@ -281,14 +281,20 @@ function statusBadgeType($status) {
         <div class="bg-white shadow-sm rounded-xl p-6">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="font-bold text-gray-900 text-lg">Pesanan</h3>
-                <div class="relative">
-                    <select id="chartFilterSelect" class="block w-28 px-3 py-1.5 text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
-                        <option value="day">Harian</option>
-                        <option value="week" selected>Mingguan</option>
-                        <option value="month">Bulanan</option>
-                        <option value="year">Tahunan</option>
-                    </select>
+                {{-- Desktop: pill tab buttons --}}
+                <div class="hidden lg:flex gap-1 bg-gray-100 rounded-lg p-1" id="chartFilters">
+                    <button data-filter="day" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700">Harian</button>
+                    <button data-filter="week" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-white shadow-sm text-[#1a237e]">Mingguan</button>
+                    <button data-filter="month" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700">Bulanan</button>
+                    <button data-filter="year" class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700">Tahunan</button>
                 </div>
+                {{-- Mobile: select dropdown --}}
+                <select id="chartFilterSelect" class="lg:hidden block w-28 px-3 py-1.5 text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-all">
+                    <option value="day">Harian</option>
+                    <option value="week" selected>Mingguan</option>
+                    <option value="month">Bulanan</option>
+                    <option value="year">Tahunan</option>
+                </select>
             </div>
             <div class="h-64">
                 <canvas id="lineChart"></canvas>
@@ -422,20 +428,33 @@ function statusBadgeType($status) {
                 .catch(function() {});
             }
 
-            // Filter dropdown select handler
+            // Filter: pill tab buttons (desktop)
+            var filterBtns = document.querySelectorAll('#chartFilters button');
+            filterBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(function(b) {
+                        b.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700';
+                    });
+                    this.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-white shadow-sm text-[#1a237e]';
+                    var sel = document.getElementById('chartFilterSelect');
+                    if (sel) sel.value = this.dataset.filter;
+                    loadChart(this.dataset.filter);
+                });
+            });
+
+            // Filter: select dropdown (mobile)
             var filterSelect = document.getElementById('chartFilterSelect');
             if (filterSelect) {
-                filterSelect.addEventListener('change', function(e) {
+                filterSelect.addEventListener('change', function() {
                     loadChart(this.value);
                 });
             }
 
-            // Default ke Harian di mobile
-            if (window.innerWidth < 1024) {
-                filterSelect.value = 'day';
-            }
+            // Default ke Harian di mobile, Mingguan di desktop
+            var initialFilter = window.innerWidth < 1024 ? 'day' : 'week';
+            if (filterSelect) filterSelect.value = initialFilter;
 
-            loadChart(filterSelect.value);
+            loadChart(initialFilter);
 
             // ==================== DOUGHNUT CHART ====================
             var ctxDonut = document.getElementById('donutChart');
