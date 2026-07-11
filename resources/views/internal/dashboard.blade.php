@@ -295,10 +295,20 @@ function statusBadgeType($status) {
             </div>
         </div>
         <!-- Donut Chart -->
-        <div class="bg-white shadow-sm rounded-xl p-6">
-            <h3 class="font-bold text-gray-900 mb-6 text-lg">Status Pesanan Saat Ini</h3>
-            <div class="h-64 flex justify-center">
-                <canvas id="donutChart"></canvas>
+        <div class="bg-white shadow-sm rounded-xl p-4 sm:p-6 overflow-hidden">
+            <h3 class="font-bold text-gray-900 mb-4 text-lg">Status Pesanan Saat Ini</h3>
+            <div class="flex items-center gap-3 lg:block overflow-hidden">
+                <div class="w-28 h-28 lg:w-full lg:h-64 flex justify-center flex-shrink-0">
+                    <canvas id="donutChart"></canvas>
+                </div>
+                <div class="lg:hidden flex-1 min-w-0 overflow-hidden space-y-1.5 pl-3 border-l border-gray-100">
+                    @foreach($statusLabels as $i => $label)
+                    <div class="flex items-center py-0.5 min-w-0">
+                        <span class="w-2 h-2 rounded-full flex-shrink-0 mr-1.5" style="background-color: {{ ['#eab308', '#3b82f6', '#f97316', '#a855f7', '#22c55e'][$i] }}"></span>
+                        <span class="text-xs font-medium text-gray-600 truncate">{{ $label }}</span>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
@@ -399,10 +409,13 @@ function statusBadgeType($status) {
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: '#1a237e',
-                                    padding: 12,
-                                    titleFont: { size: 13, family: "'Poppins', sans-serif" },
-                                    bodyFont: { size: 13, family: "'Poppins', sans-serif" },
+                                    padding: window.innerWidth < 768 ? 8 : 12,
+                                    titleFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
+                                    bodyFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
                                     displayColors: false,
+                                    intersect: window.innerWidth >= 768,
+                                    mode: window.innerWidth < 768 ? 'index' : 'nearest',
+                                    caretPadding: 8,
                                 }
                             },
                             scales: {
@@ -453,7 +466,7 @@ function statusBadgeType($status) {
             // ==================== DOUGHNUT CHART ====================
             var ctxDonut = document.getElementById('donutChart');
             if (ctxDonut) {
-                new Chart(ctxDonut.getContext('2d'), {
+                var donutChart = new Chart(ctxDonut.getContext('2d'), {
                     type: 'doughnut',
                     data: {
                         labels: @json($statusLabels),
@@ -477,6 +490,7 @@ function statusBadgeType($status) {
                         cutout: '75%',
                         plugins: {
                             legend: {
+                                display: window.innerWidth >= 1024,
                                 position: 'bottom',
                                 labels: { 
                                     padding: 20, 
@@ -486,11 +500,46 @@ function statusBadgeType($status) {
                                 }
                             },
                             tooltip: {
-                                padding: 12,
-                                titleFont: { size: 13, family: "'Poppins', sans-serif" },
-                                bodyFont: { size: 13, family: "'Poppins', sans-serif" },
+                                padding: window.innerWidth < 768 ? 8 : 12,
+                                titleFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
+                                bodyFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
+                                caretPadding: 8,
+                                displayColors: window.innerWidth >= 1024,
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        if (window.innerWidth < 1024) {
+                                            return '';
+                                        }
+                                        return tooltipItems[0].label;
+                                    },
+                                    label: function(context) {
+                                        if (window.innerWidth < 1024) {
+                                            return context.raw.toString();
+                                        }
+                                        return context.label + ': ' + context.formattedValue;
+                                    }
+                                }
                             }
                         }
+                    }
+                });
+
+                // Dynamically toggle built-in legend and tooltip configurations on window resize
+                window.addEventListener('resize', function() {
+                    var isDesktop = window.innerWidth >= 1024;
+                    var needsUpdate = false;
+
+                    if (donutChart.options.plugins.legend.display !== isDesktop) {
+                        donutChart.options.plugins.legend.display = isDesktop;
+                        needsUpdate = true;
+                    }
+                    if (donutChart.options.plugins.tooltip.displayColors !== isDesktop) {
+                        donutChart.options.plugins.tooltip.displayColors = isDesktop;
+                        needsUpdate = true;
+                    }
+
+                    if (needsUpdate) {
+                        donutChart.update();
                     }
                 });
             }
