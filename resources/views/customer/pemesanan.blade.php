@@ -266,8 +266,13 @@
                             :class="selectedCategoryId == cat.id ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e] shadow-md scale-[1.02]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'"
                             class="border-2 rounded-xl p-5 cursor-pointer transition-all duration-300 flex flex-col items-center text-center relative group"
                         >
-                            <div :class="selectedCategoryId == cat.id ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300">
-                                <i :data-lucide="cat.icon || 'shirt'" class="w-8 h-8"></i>
+                            <div :class="selectedCategoryId == cat.id ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 overflow-hidden">
+                                <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
+                                    <img :src="'/storage/' + cat.icon" class="w-10 h-10 object-contain rounded" />
+                                </template>
+                                <template x-if="!cat.icon || (!cat.icon.includes('/') && !cat.icon.includes('.'))">
+                                    <i :data-lucide="cat.icon || 'shirt'" class="w-8 h-8"></i>
+                                </template>
                             </div>
                             <h3 class="font-bold text-sm mt-4 text-gray-800" x-text="cat.name"></h3>
                             <p x-show="cat.description" class="text-gray-400 text-[11px] mt-1.5 leading-relaxed max-w-[200px]" x-text="cat.description"></p>

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -50,7 +51,13 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
-        $category = Category::create($request->validated());
+        $data = $request->validated();
+        if ($request->hasFile('icon')) {
+            $path = $request->file('icon')->store('categories', 'public');
+            $data['icon'] = $path;
+        }
+
+        $category = Category::create($data);
 
         return response()->json([
             'success'  => true,
@@ -61,7 +68,18 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $category->update($request->validated());
+        $data = $request->validated();
+        if ($request->hasFile('icon')) {
+            if ($category->icon && Storage::disk('public')->exists($category->icon)) {
+                Storage::disk('public')->delete($category->icon);
+            }
+            $path = $request->file('icon')->store('categories', 'public');
+            $data['icon'] = $path;
+        } else {
+            unset($data['icon']);
+        }
+
+        $category->update($data);
 
         return response()->json([
             'success'  => true,

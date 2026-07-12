@@ -43,7 +43,10 @@
                                 <span x-text="cat.parent_name || '—'" :class="cat.parent_name ? 'text-[#1a237e] font-semibold' : 'text-gray-400'"></span>
                             </td>
                             <td class="px-6 py-4 text-center text-gray-600">
-                                <template x-if="cat.icon">
+                                <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
+                                    <img :src="'/storage/' + cat.icon" class="w-8 h-8 mx-auto object-contain rounded border border-gray-100 bg-white" />
+                                </template>
+                                <template x-if="cat.icon && !cat.icon.includes('/') && !cat.icon.includes('.')">
                                     <i :data-lucide="cat.icon" class="w-5 h-5 mx-auto text-gray-500"></i>
                                 </template>
                                 <span x-show="!cat.icon" class="text-gray-400">—</span>
@@ -111,12 +114,19 @@
                     </select>
                     <p class="text-xs text-gray-400 mt-1">Pilih kategori induk jika kategori ini merupakan sub-kategori.</p>
                 </div>
+                <template x-if="editId && icon && (icon.includes('/') || icon.includes('.'))">
+                    <div class="mb-3 flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                        <img :src="'/storage/' + icon" class="w-12 h-12 object-contain rounded-lg bg-white border border-gray-200">
+                        <div>
+                            <span class="text-xs font-semibold text-gray-700 block">Ikon Saat Ini</span>
+                            <span class="text-[10px] text-gray-400">Biarkan kosong jika tidak ingin mengubah</span>
+                        </div>
+                    </div>
+                </template>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Ikon (Lucide)</label>
-                    <input type="text" x-model="icon"
-                           class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
-                           placeholder="shirt, shorts, jacket, ...">
-                    <p class="text-xs text-gray-400 mt-1">Nama icon Lucide. Contoh: <code class="bg-gray-100 px-1 rounded">shirt</code>, <code class="bg-gray-100 px-1 rounded">shorts</code>, <code class="bg-gray-100 px-1 rounded">jacket</code>.</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ikon Kategori</label>
+                    <input type="file" class="filepond" id="category-icon-pond" accept="image/png,image/jpeg,image/jpg,image/webp" data-max-file-size="2MB">
+                    <p class="text-xs text-gray-400 mt-1">Gunakan gambar berformat PNG/JPG/WebP dengan rasio 1:1 (Square). Rekomendasi resolusi: 512x512 piksel, maks 2MB.</p>
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
@@ -342,6 +352,12 @@ function kategoriApp() {
         },
 
         openModal(cat) {
+            // Find and clear FilePond files
+            const pond = FilePond.find(document.querySelector('#category-icon-pond'));
+            if (pond) {
+                pond.removeFiles();
+            }
+
             if (cat) {
                 this.editId = cat.id;
                 this.name = cat.name;
@@ -356,7 +372,12 @@ function kategoriApp() {
                 this.description = '';
             }
             this.modalOpen = true;
-            this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
+            this.$nextTick(() => { 
+                if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); 
+                if (window.FilePond) {
+                    FilePond.parse(document.body);
+                }
+            });
         },
 
         async simpan() {
@@ -366,18 +387,35 @@ function kategoriApp() {
             const url = this.editId
                 ? '/staf/kategori/' + this.editId
                 : '{{ route("staf.kategori.store") }}';
-            const method = this.editId ? 'PUT' : 'POST';
 
             try {
+                const formData = new FormData();
+                formData.append('name', this.name.trim());
+                if (this.parent_id) {
+                    formData.append('parent_id', this.parent_id);
+                }
+                if (this.description) {
+                    formData.append('description', this.description.trim());
+                }
+
+                if (this.editId) {
+                    formData.append('_method', 'PUT');
+                }
+
+                // Add FilePond icon file if selected
+                const pond = FilePond.find(document.querySelector('#category-icon-pond'));
+                if (pond) {
+                    pond.getFiles().forEach(f => {
+                        if (f.file instanceof File) {
+                            formData.append('icon', f.file);
+                        }
+                    });
+                }
+
                 const res = await fetch(url, {
-                    method: method,
-                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: this.name.trim(),
-                        parent_id: this.parent_id || null,
-                        icon: this.icon.trim() || null,
-                        description: this.description.trim() || null
-                    })
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+                    body: formData
                 });
                 const data = await res.json();
                 if (data.success) {
