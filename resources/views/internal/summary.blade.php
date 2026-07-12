@@ -1,48 +1,93 @@
 @extends('layouts.internal')
 @section('title', 'Summary')
 
+@push('styles')
+<style>
+    /* Sembunyikan scrollbar untuk Chrome, Safari dan Opera */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    /* Sembunyikan scrollbar untuk IE, Edge dan Firefox */
+    .scrollbar-hide {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .stats-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+    }
+    @media (min-width: 1024px) {
+        .stats-dots {
+            display: none;
+        }
+    }
+    .stats-dots .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background-color: #d1d5db;
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+    .stats-dots .dot.active {
+        width: 20px;
+        background-color: #1a237e;
+    }
+</style>
+@endpush
+
 @section('topbar-left')
     <h1 class="text-xl font-bold text-[#1a237e]">Summary</h1>
 @endsection
 
 @section('internal-content')
 
-{{-- ─── KPI BARIS 1 ───────────────────────────────────────────────────── --}}
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
-@foreach($kpi1 as $k)
-<a href="{{ $k['url'] }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1 hover:border-[#1a237e]/30 cursor-pointer group">
-    <div class="flex justify-between items-start mb-3">
-        <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
-        </div>
-        <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
-            @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
-            {{ $k['c'] }}
-        </span>
-    </div>
-    <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
-    <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
-</a>
-@endforeach
-</div>
+{{-- ─── KPI SUMMARY CARDS ────────────────────────────────────────────────── --}}
+<div class="relative mb-5" id="summary-stats-scroll">
+    <div class="grid grid-flow-col auto-cols-[calc(50%-0.625rem)] lg:grid-flow-row lg:grid-cols-4 gap-5 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
+        @foreach($kpi1 as $k)
+        <a href="{{ $k['url'] }}" class="snap-start bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 lg:hover:shadow-md lg:hover:-translate-y-1 lg:hover:border-[#1a237e]/30 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center lg:group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
+                </div>
+                <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
+                    @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
+                    {{ $k['c'] }}
+                </span>
+            </div>
+            <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
+        </a>
+        @endforeach
 
-{{-- ─── KPI BARIS 2 ───────────────────────────────────────────────────── --}}
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
-@foreach($kpi2 as $k)
-<a href="{{ $k['url'] }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-1 hover:border-[#1a237e]/30 cursor-pointer group">
-    <div class="flex justify-between items-start mb-3">
-        <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
-        </div>
-        <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
-            @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
-            {{ $k['c'] }}
-        </span>
+        @foreach($kpi2 as $k)
+        <a href="{{ $k['url'] }}" class="snap-start bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 lg:hover:shadow-md lg:hover:-translate-y-1 lg:hover:border-[#1a237e]/30 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center lg:group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
+                </div>
+                <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
+                    @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
+                    {{ $k['c'] }}
+                </span>
+            </div>
+            <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
+        </a>
+        @endforeach
     </div>
-    <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
-    <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
-</a>
-@endforeach
+    
+    {{-- Pagination dots for 4 groups of 2 cards --}}
+    <div class="stats-dots" id="summary-stats-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
 </div>
 
 {{-- ─── FILTER PANEL ──────────────────────────────────────────────────── --}}
@@ -312,5 +357,46 @@ function summaryFilter() {
         }
     }
 }
+
+// Stats page indicator dots for Summary page (4 groups of 2 cards)
+function initSummaryStatsDots(containerId, dotsId) {
+    var container = document.getElementById(containerId);
+    var dotsContainer = document.getElementById(dotsId);
+    if (!container || !dotsContainer) return;
+    var dots = dotsContainer.querySelectorAll('.dot');
+    if (!dots.length) return;
+
+    // Only run on mobile
+    if (window.innerWidth >= 1024) return;
+
+    function update() {
+        var scrollEl = container.querySelector('.grid');
+        if (!scrollEl) return;
+        var cards = scrollEl.querySelectorAll('.snap-start');
+        if (!cards.length) return;
+        var containerLeft = scrollEl.getBoundingClientRect().left;
+        var closestCard = 0;
+        var minDist = Infinity;
+        cards.forEach(function(card, i) {
+            var dist = Math.abs(card.getBoundingClientRect().left - containerLeft);
+            if (dist < minDist) {
+                minDist = dist;
+                closestCard = i;
+            }
+        });
+        // Map card index to group index (2 cards per group)
+        var activeGroup = Math.floor(closestCard / 2);
+        dots.forEach(function(d, i) {
+            d.classList.toggle('active', i === activeGroup);
+        });
+    }
+
+    var scrollEl = container.querySelector('.grid');
+    if (scrollEl) scrollEl.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    update();
+}
+
+initSummaryStatsDots('summary-stats-scroll', 'summary-stats-dots');
 </script>
 @endsection
