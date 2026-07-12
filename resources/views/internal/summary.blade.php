@@ -175,7 +175,9 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4">Top 5 Bahan Terlaris</h3>
-        <div class="h-56"><canvas id="chartTop5"></canvas></div>
+        <div class="overflow-x-auto lg:overflow-visible">
+            <div class="h-56 min-w-[500px] lg:min-w-0"><canvas id="chartTop5"></canvas></div>
+        </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4">🥧 Distribusi Jenis Pesanan</h3>
@@ -312,9 +314,10 @@ new Chart(document.getElementById('chartTop5'), {
 
         {
             id:'valueLabels',
-            afterDatasetsDraw(chart){
+            afterDraw(chart){
                 const ctx=chart.ctx;
                 const meta=chart.getDatasetMeta(0);
+                if (!meta || !meta.data) return;
                 meta.data.forEach((bar,index)=>{
                     const value=chart.data.datasets[0].data[index];
                     ctx.save();
@@ -322,7 +325,7 @@ new Chart(document.getElementById('chartTop5'), {
                     ctx.font="bold 11px Poppins, sans-serif";
                     ctx.textAlign='left';
                     ctx.textBaseline='middle';
-                    ctx.fillText(value+' terjual',bar.x+10,bar.y);
+                    ctx.fillText(value+' terjual',bar.x+6,bar.y);
                     ctx.restore();
                 });
             }
