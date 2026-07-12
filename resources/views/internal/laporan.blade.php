@@ -162,7 +162,7 @@
                 A. Ringkasan Statistik
             </h4>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-md:max-h-64 max-md:overflow-y-auto">
             <table class="w-full text-sm text-left text-gray-700">
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
