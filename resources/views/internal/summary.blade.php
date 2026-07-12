@@ -158,13 +158,13 @@
 {{-- ─── CHARTS ROW 1 ──────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">📈 Revenue Per Minggu</h3>
+        <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="trending-up" class="w-4 h-4 text-[#1a237e]"></i></span> Revenue Per Minggu</h3>
         <div class="overflow-x-auto lg:overflow-visible">
             <div class="h-56 min-w-[700px] lg:min-w-0"><canvas id="chartRevenue"></canvas></div>
         </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">📊 Pesanan Masuk vs Selesai</h3>
+        <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="bar-chart-3" class="w-4 h-4 text-[#1a237e]"></i></span> Pesanan Masuk vs Selesai</h3>
         <div class="overflow-x-auto lg:overflow-visible">
             <div class="h-56 min-w-[700px] lg:min-w-0"><canvas id="chartOrders"></canvas></div>
         </div>
@@ -174,13 +174,13 @@
 {{-- ─── CHARTS ROW 2 ──────────────────────────────────────────────────── --}}
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">Top 5 Bahan Terlaris</h3>
+        <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="layers" class="w-4 h-4 text-[#1a237e]"></i></span> Top 5 Bahan Terlaris</h3>
         <div class="overflow-x-auto lg:overflow-visible">
             <div class="h-56 min-w-[500px] lg:min-w-0"><canvas id="chartTop5"></canvas></div>
         </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">🥧 Distribusi Jenis Pesanan</h3>
+        <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="pie-chart" class="w-4 h-4 text-[#1a237e]"></i></span> Distribusi Jenis Pesanan</h3>
         <div class="h-56 flex justify-center"><canvas id="chartDist"></canvas></div>
     </div>
 </div>
@@ -188,7 +188,7 @@
 {{-- ─── TEAM PERFORMANCE TABLE ─────────────────────────────────────────── --}}
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-5 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="font-semibold text-gray-900">👥 Performance & Workload Tim</h3>
+        <h3 class="font-semibold text-gray-900 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="users" class="w-4 h-4 text-[#1a237e]"></i></span> Performance & Workload Tim</h3>
     </div>
     <div class="overflow-x-auto overflow-y-auto max-h-80 lg:overflow-visible lg:max-h-none">
         <table class="w-full text-sm">
@@ -242,7 +242,7 @@
 {{-- ─── ACTIVITY ─────────────────────────────────────────────────────────── --}}
 <div class="mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-900 mb-4">🔔 Recent Activity</h3>
+        <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 text-[#1a237e]"></i></span> Recent Activity</h3>
         <div class="space-y-4 overflow-x-auto overflow-y-auto max-h-80 lg:overflow-visible lg:max-h-none">
         @forelse($activities as $a)
         <div class="flex gap-3">
@@ -405,5 +405,6 @@ function initSummaryStatsDots(containerId, dotsId) {
 }
 
 initSummaryStatsDots('summary-stats-scroll', 'summary-stats-dots');
+if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons({ icons: window.lucide.icons });
 </script>
 @endsection
