@@ -72,5 +72,15 @@
     @include('notify::components.notify')
     @stack('scripts')
     @notifyJs
+
+<script>
+document.addEventListener('alpine:init', function () {
+    if (window.Alpine && window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.Alpine.nextTick(function () {
+            window.lucide.createIcons({ icons: window.lucide.icons });
+        });
+    }
+});
+</script>
 </body>
 </html>

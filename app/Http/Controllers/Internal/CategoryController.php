@@ -18,6 +18,8 @@ class CategoryController extends Controller
             ->map(fn($cat) => [
                 'id'               => $cat->id,
                 'name'             => $cat->name,
+                'icon'             => $cat->icon,
+                'description'      => $cat->description,
                 'attributes_schema' => $cat->attributes_schema ?? [],
                 'products_count'   => $cat->products_count,
             ]);
@@ -33,6 +35,8 @@ class CategoryController extends Controller
             ->map(fn($cat) => [
                 'id'               => $cat->id,
                 'name'             => $cat->name,
+                'icon'             => $cat->icon,
+                'description'      => $cat->description,
                 'attributes_schema' => $cat->attributes_schema ?? [],
                 'products_count'   => $cat->products_count,
             ]);

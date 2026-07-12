@@ -21,6 +21,7 @@
                 <thead class="bg-gray-50 border-b border-gray-200 text-gray-500">
                     <tr>
                         <th class="px-6 py-4 font-medium">Nama Kategori</th>
+                        <th class="px-6 py-4 font-medium text-center">Ikon</th>
                         <th class="px-6 py-4 font-medium text-center">Jumlah Produk</th>
                         <th class="px-6 py-4 font-medium text-center">Jumlah Atribut</th>
                         <th class="px-6 py-4 text-right font-medium">Aksi</th>
@@ -37,6 +38,12 @@
                     <template x-for="cat in categories" :key="cat.id">
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-gray-900" x-text="cat.name"></td>
+                            <td class="px-6 py-4 text-center text-gray-600">
+                                <template x-if="cat.icon">
+                                    <i :data-lucide="cat.icon" class="w-5 h-5 mx-auto text-gray-500"></i>
+                                </template>
+                                <span x-show="!cat.icon" class="text-gray-400">—</span>
+                            </td>
                             <td class="px-6 py-4 text-center text-gray-600" x-text="cat.products_count"></td>
                             <td class="px-6 py-4 text-center">
                                 <template x-if="cat.attributes_schema && cat.attributes_schema.length > 0">
@@ -68,7 +75,7 @@
                     </template>
                     <template x-if="!loading && categories.length === 0">
                         <tr>
-                            <td colspan="4" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
+                            <td colspan="5" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
                         </tr>
                     </template>
                 </tbody>
@@ -88,6 +95,19 @@
                     <input type="text" x-model="name" required
                            class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
                            placeholder="Contoh: Jersey Basket, Jaket, Celana Training">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ikon (Lucide)</label>
+                    <input type="text" x-model="icon"
+                           class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
+                           placeholder="shirt, shorts, jacket, ...">
+                    <p class="text-xs text-gray-400 mt-1">Nama icon Lucide. Contoh: <code class="bg-gray-100 px-1 rounded">shirt</code>, <code class="bg-gray-100 px-1 rounded">shorts</code>, <code class="bg-gray-100 px-1 rounded">jacket</code>.</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                    <textarea x-model="description" rows="3"
+                              class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
+                              placeholder="Deskripsi singkat untuk card kategori..."></textarea>
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
@@ -272,6 +292,8 @@ function kategoriApp() {
         modalOpen: false,
         editId: null,
         name: '',
+        icon: '',
+        description: '',
         submitting: false,
 
         // --- Atribut Dinamis ---
@@ -294,6 +316,7 @@ function kategoriApp() {
                     headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf }
                 });
                 this.categories = await res.json();
+                this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
             } catch (e) {
                 Notify.error('Gagal memuat data kategori.');
             } finally {
@@ -306,9 +329,13 @@ function kategoriApp() {
             if (cat) {
                 this.editId = cat.id;
                 this.name = cat.name;
+                this.icon = cat.icon || '';
+                this.description = cat.description || '';
             } else {
                 this.editId = null;
                 this.name = '';
+                this.icon = '';
+                this.description = '';
             }
             this.modalOpen = true;
             this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
@@ -327,7 +354,11 @@ function kategoriApp() {
                 const res = await fetch(url, {
                     method: method,
                     headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: this.name.trim() })
+                    body: JSON.stringify({
+                        name: this.name.trim(),
+                        icon: this.icon.trim() || null,
+                        description: this.description.trim() || null
+                    })
                 });
                 const data = await res.json();
                 if (data.success) {

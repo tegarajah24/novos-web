@@ -46,9 +46,11 @@ Route::get('/pesan', function () {
         }
 
         // Ambil semua kategori untuk form pemesanan dinamis
-        $categories = \App\Models\Category::whereIn('name', ['Jersey', 'Bawahan', 'Jaket'])->get()->map(fn($c) => [
+        $categories = \App\Models\Category::all()->map(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
+            'icon' => $c->icon,
+            'description' => $c->description,
             'attributes_schema' => $c->attributes_schema ?? []
         ]);
 
