@@ -159,7 +159,9 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4">📈 Revenue Per Minggu</h3>
-        <div class="h-56"><canvas id="chartRevenue"></canvas></div>
+        <div class="overflow-x-auto lg:overflow-visible">
+            <div class="h-56 min-w-[700px] lg:min-w-0"><canvas id="chartRevenue"></canvas></div>
+        </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4">📊 Pesanan Masuk vs Selesai</h3>
