@@ -243,7 +243,7 @@
 <div class="mb-5">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4">🔔 Recent Activity</h3>
-        <div class="space-y-4">
+        <div class="space-y-4 overflow-x-auto overflow-y-auto max-h-80 lg:overflow-visible lg:max-h-none">
         @forelse($activities as $a)
         <div class="flex gap-3">
             <div class="mt-1 w-2.5 h-2.5 rounded-full {{ $a['color'] }} shrink-0"></div>
