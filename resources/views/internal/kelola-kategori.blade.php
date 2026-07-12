@@ -21,6 +21,7 @@
                 <thead class="bg-gray-50 border-b border-gray-200 text-gray-500">
                     <tr>
                         <th class="px-6 py-4 font-medium">Nama Kategori</th>
+                        <th class="px-6 py-4 font-medium">Induk Kategori</th>
                         <th class="px-6 py-4 font-medium text-center">Ikon</th>
                         <th class="px-6 py-4 font-medium text-center">Jumlah Produk</th>
                         <th class="px-6 py-4 font-medium text-center">Jumlah Atribut</th>
@@ -30,7 +31,7 @@
                 <tbody class="divide-y divide-gray-100">
                     <template x-if="loading">
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center">
+                            <td colspan="5" class="px-6 py-12 text-center">
                                 <span class="loading loading-spinner loading-md text-[#1a237e]"></span>
                             </td>
                         </tr>
@@ -38,6 +39,9 @@
                     <template x-for="cat in categories" :key="cat.id">
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-gray-900" x-text="cat.name"></td>
+                            <td class="px-6 py-4 text-gray-600">
+                                <span x-text="cat.parent_name || '—'" :class="cat.parent_name ? 'text-[#1a237e] font-semibold' : 'text-gray-400'"></span>
+                            </td>
                             <td class="px-6 py-4 text-center text-gray-600">
                                 <template x-if="cat.icon">
                                     <i :data-lucide="cat.icon" class="w-5 h-5 mx-auto text-gray-500"></i>
@@ -75,7 +79,7 @@
                     </template>
                     <template x-if="!loading && categories.length === 0">
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
+                            <td colspan="6" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
                         </tr>
                     </template>
                 </tbody>
@@ -97,6 +101,17 @@
                            placeholder="Contoh: Jersey Basket, Jaket, Celana Training">
                 </div>
                 <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Induk Kategori (Optional)</label>
+                    <select x-model="parent_id"
+                            class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]">
+                        <option value="">— Tidak ada (Kategori Utama) —</option>
+                        <template x-for="c in categories" :key="c.id">
+                            <option x-show="c.id !== editId && !c.parent_id" :value="c.id" x-text="c.name"></option>
+                        </template>
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1">Pilih kategori induk jika kategori ini merupakan sub-kategori.</p>
+                </div>
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Ikon (Lucide)</label>
                     <input type="text" x-model="icon"
                            class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
@@ -106,8 +121,8 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
                     <textarea x-model="description" rows="3"
-                              class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
-                              placeholder="Deskripsi singkat untuk card kategori..."></textarea>
+                               class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
+                               placeholder="Deskripsi singkat untuk card kategori..."></textarea>
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
@@ -292,6 +307,7 @@ function kategoriApp() {
         modalOpen: false,
         editId: null,
         name: '',
+        parent_id: '',
         icon: '',
         description: '',
         submitting: false,
@@ -329,11 +345,13 @@ function kategoriApp() {
             if (cat) {
                 this.editId = cat.id;
                 this.name = cat.name;
+                this.parent_id = cat.parent_id || '';
                 this.icon = cat.icon || '';
                 this.description = cat.description || '';
             } else {
                 this.editId = null;
                 this.name = '';
+                this.parent_id = '';
                 this.icon = '';
                 this.description = '';
             }
@@ -356,6 +374,7 @@ function kategoriApp() {
                     headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name: this.name.trim(),
+                        parent_id: this.parent_id || null,
                         icon: this.icon.trim() || null,
                         description: this.description.trim() || null
                     })

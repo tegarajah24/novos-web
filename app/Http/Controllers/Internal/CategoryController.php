@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::withCount('products')
+        $categories = Category::with(['parent'])->withCount('products')
             ->orderBy('name')
             ->get()
             ->map(fn($cat) => [
@@ -22,6 +22,8 @@ class CategoryController extends Controller
                 'description'      => $cat->description,
                 'attributes_schema' => $cat->attributes_schema ?? [],
                 'products_count'   => $cat->products_count,
+                'parent_id'        => $cat->parent_id,
+                'parent_name'      => $cat->parent ? $cat->parent->name : null,
             ]);
 
         return view('internal.kelola-kategori', compact('categories'));
@@ -29,7 +31,7 @@ class CategoryController extends Controller
 
     public function getData()
     {
-        $categories = Category::withCount('products')
+        $categories = Category::with(['parent'])->withCount('products')
             ->orderBy('name')
             ->get()
             ->map(fn($cat) => [
@@ -39,6 +41,8 @@ class CategoryController extends Controller
                 'description'      => $cat->description,
                 'attributes_schema' => $cat->attributes_schema ?? [],
                 'products_count'   => $cat->products_count,
+                'parent_id'        => $cat->parent_id,
+                'parent_name'      => $cat->parent ? $cat->parent->name : null,
             ]);
 
         return response()->json($categories);

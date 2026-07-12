@@ -21,14 +21,13 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
          @click="toggle()"
          class="fixed inset-0 z-40 bg-black/50 xl:hidden">
     </div>
-
     <aside
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-        :style="window.innerWidth >= 1280 ? 'width: ' + (sidebarOpen ? '16rem' : '5rem') : ''"
+        :style="window.innerWidth >= 1280 ? 'width: ' + (sidebarOpen ? '16rem' : '5rem') + '; transition: all 0.3s ease;' : 'transition: all 0.3s ease;'"
         style="width: {{ $isSidebarOpen ? '16rem' : '5rem' }}; transition: all 0.3s ease;"
         class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0 z-50
                fixed inset-y-0 left-0 w-64 -translate-x-full
-               xl:relative xl:z-auto xl:block xl:translate-x-0">
+               xl:relative xl:z-auto xl:block xl:translate-x-0 transition-all duration-300 ease-in-out">
 
     {{-- Logo Area --}}
     <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 overflow-hidden">
