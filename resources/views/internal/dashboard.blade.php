@@ -403,78 +403,109 @@ function statusBadgeType($status) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Preloaded chart data
+            var allChartData = @json($allChartData);
 
-            // Tampilkan angka statistik langsung (tanpa animasi counter)
+            // Animate stats counter smoothly on load
             document.querySelectorAll('.stats-counter').forEach(function(el) {
-                el.textContent = el.getAttribute('data-target') || '0';
+                var target = parseInt(el.getAttribute('data-target')) || 0;
+                if (target === 0) {
+                    el.textContent = '0';
+                    return;
+                }
+                var duration = 1000; // 1 second
+                var start = 0;
+                var startTime = null;
+
+                function animateCounter(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    var progress = currentTime - startTime;
+                    var percent = Math.min(progress / duration, 1);
+                    // Ease out quadratic
+                    var easePercent = percent * (2 - percent);
+                    var current = Math.floor(easePercent * target);
+                    el.textContent = current;
+                    
+                    if (percent < 1) {
+                        requestAnimationFrame(animateCounter);
+                    } else {
+                        el.textContent = target;
+                    }
+                }
+                requestAnimationFrame(animateCounter);
             });
 
             // ==================== LINE CHART ====================
             var lineChart = null;
 
-            function loadChart(filter) {
-                fetch('{{ route("staf.dashboard.chart-data") }}?filter=' + filter, {
-                    headers: { 'Accept': 'application/json' }
-                })
-                .then(function(res) { return res.json(); })
-                .then(function(result) {
-                    var ctxLine = document.getElementById('lineChart');
-                    if (!ctxLine) return;
+            function initLineChart(filter) {
+                var ctxLine = document.getElementById('lineChart');
+                if (!ctxLine) return;
 
-                    if (lineChart) {
-                        lineChart.destroy();
-                    }
+                var chartInfo = allChartData[filter];
+                if (!chartInfo) return;
 
-                    lineChart = new Chart(ctxLine.getContext('2d'), {
-                        type: 'line',
-                        data: {
-                            labels: result.labels,
-                            datasets: [{
-                                label: 'Pesanan',
-                                data: result.data,
-                                borderColor: '#1a237e',
-                                backgroundColor: 'rgba(26, 35, 126, 0.05)',
-                                borderWidth: 2,
-                                tension: 0.4,
-                                fill: true,
-                                pointBackgroundColor: '#1a237e',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
-                            }]
+                lineChart = new Chart(ctxLine.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: chartInfo.labels,
+                        datasets: [{
+                            label: 'Pesanan',
+                            data: chartInfo.data,
+                            borderColor: '#1a237e',
+                            backgroundColor: 'rgba(26, 35, 126, 0.05)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#1a237e',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: '#1a237e',
-                                    padding: window.innerWidth < 768 ? 8 : 12,
-                                    titleFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
-                                    bodyFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
-                                    displayColors: false,
-                                    intersect: window.innerWidth >= 768,
-                                    mode: window.innerWidth < 768 ? 'index' : 'nearest',
-                                    caretPadding: 8,
-                                }
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#1a237e',
+                                padding: window.innerWidth < 768 ? 8 : 12,
+                                titleFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
+                                bodyFont: { size: window.innerWidth < 768 ? 11 : 13, family: "'Poppins', sans-serif" },
+                                displayColors: false,
+                                intersect: window.innerWidth >= 768,
+                                mode: window.innerWidth < 768 ? 'index' : 'nearest',
+                                caretPadding: 8,
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true, 
+                                grid: { color: '#f3f4f6', borderDash: [4, 4] },
+                                border: { display: false }
                             },
-                            scales: {
-                                y: { 
-                                    beginAtZero: true, 
-                                    grid: { color: '#f3f4f6', borderDash: [4, 4] },
-                                    border: { display: false }
-                                },
-                                x: { 
-                                    grid: { display: false },
-                                    border: { display: false }
-                                }
+                            x: { 
+                                grid: { display: false },
+                                border: { display: false }
                             }
                         }
-                    });
-                })
-                .catch(function() {});
+                    }
+                });
+            }
+
+            function updateLineChart(filter) {
+                var chartInfo = allChartData[filter];
+                if (lineChart && chartInfo) {
+                    lineChart.data.labels = chartInfo.labels;
+                    lineChart.data.datasets[0].data = chartInfo.data;
+                    lineChart.update();
+                }
             }
 
             // Filter: pill tab buttons (desktop)
@@ -485,9 +516,12 @@ function statusBadgeType($status) {
                         b.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700';
                     });
                     this.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-white shadow-sm text-[#1a237e]';
+                    
+                    var filterVal = this.dataset.filter;
                     var sel = document.getElementById('chartFilterSelect');
-                    if (sel) sel.value = this.dataset.filter;
-                    loadChart(this.dataset.filter);
+                    if (sel) sel.value = filterVal;
+                    
+                    updateLineChart(filterVal);
                 });
             });
 
@@ -495,15 +529,33 @@ function statusBadgeType($status) {
             var filterSelect = document.getElementById('chartFilterSelect');
             if (filterSelect) {
                 filterSelect.addEventListener('change', function() {
-                    loadChart(this.value);
+                    var filterVal = this.value;
+                    updateLineChart(filterVal);
+                    
+                    filterBtns.forEach(function(b) {
+                        if (b.dataset.filter === filterVal) {
+                            b.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-white shadow-sm text-[#1a237e]';
+                        } else {
+                            b.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700';
+                        }
+                    });
                 });
             }
 
             // Default ke Harian di mobile, Mingguan di desktop
             var initialFilter = window.innerWidth < 1024 ? 'day' : 'week';
             if (filterSelect) filterSelect.value = initialFilter;
+            
+            // Set initial active state on buttons
+            filterBtns.forEach(function(b) {
+                if (b.dataset.filter === initialFilter) {
+                    b.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all bg-white shadow-sm text-[#1a237e]';
+                } else {
+                    b.className = 'px-3 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-500 hover:text-gray-700';
+                }
+            });
 
-            loadChart(initialFilter);
+            initLineChart(initialFilter);
 
             // ==================== DOUGHNUT CHART ====================
             var ctxDonut = document.getElementById('donutChart');
@@ -530,6 +582,12 @@ function statusBadgeType($status) {
                         responsive: true,
                         maintainAspectRatio: false,
                         cutout: '75%',
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true,
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        },
                         plugins: {
                             legend: {
                                 display: window.innerWidth >= 1024,

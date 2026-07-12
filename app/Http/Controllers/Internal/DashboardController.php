@@ -52,15 +52,6 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $weeklyLabels = [];
-        $weeklyData = [];
-        for ($i = 7; $i >= 0; $i--) {
-            $weekStart = now()->subWeeks($i)->startOfWeek();
-            $weekEnd = now()->subWeeks($i)->endOfWeek();
-            $weeklyLabels[] = 'W' . (8 - $i);
-            $weeklyData[] = Order::whereBetween('created_at', [$weekStart, $weekEnd])->count();
-        }
-
         $pending = Order::where('status', 'menunggu_pembayaran')->count();
         $design = Order::whereIn('status', ['dikonfirmasi', 'disetujui', 'di_design'])->count();
         $acc = Order::where('status', 'disetujui')->count();
@@ -79,17 +70,25 @@ class DashboardController extends Controller
         $printQueue  = Order::whereIn('status', ['siap_cetak', 'menunggu_spk'])->count();
         $sewingQueue = Order::where('status', 'diproduksi')->count();
 
+        // Preload all chart data for instant and responsive UI
+        $allChartData = [
+            'day' => $this->getChartDataForFilter('day'),
+            'week' => $this->getChartDataForFilter('week'),
+            'month' => $this->getChartDataForFilter('month'),
+            'year' => $this->getChartDataForFilter('year'),
+        ];
+
         return view('internal.dashboard', compact(
             'totalOrders', 'totalTrend',
             'pendingOrders', 'pendingTrend',
             'inProcessOrders', 'processTrend',
             'completedToday', 'completedTrend',
             'recentOrders',
-            'weeklyLabels', 'weeklyData',
             'statusLabels', 'statusData',
             'isDesign', 'isProduction',
             'designWaiting', 'designInProgress', 'designWaitingAcc',
             'printQueue', 'sewingQueue',
+            'allChartData',
         ));
     }
 
@@ -293,7 +292,11 @@ class DashboardController extends Controller
     public function chartData(Request $request): JsonResponse
     {
         $filter = $request->query('filter', 'day');
+        return response()->json($this->getChartDataForFilter($filter));
+    }
 
+    private function getChartDataForFilter(string $filter): array
+    {
         $labels = [];
         $data = [];
 
@@ -358,10 +361,10 @@ class DashboardController extends Controller
                 break;
         }
 
-        return response()->json([
+        return [
             'labels' => $labels,
             'data'   => $data,
             'filter' => $filter,
-        ]);
+        ];
     }
 }
