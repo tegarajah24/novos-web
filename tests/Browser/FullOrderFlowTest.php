@@ -42,13 +42,13 @@ class FullOrderFlowTest extends DuskTestCase
             $c->loginAs($customer)->visit('/pesan');
             $c->pause(3000);
 
-            // Step 1: Pilih Jersey Custom
+            // Step 1: Pilih Produk Custom
             $c->script("document.querySelectorAll('.grid.md\\\\:grid-cols-2 > div, .grid.grid-cols-1.md\\\\:grid-cols-2 > div')[0]?.click()");
             $c->pause(500);
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Selanjutnya')) { b.click(); break; } }");
             $c->pause(1500);
 
-            // Step 2: Isi detail desain
+            // Step 2: Pilih Kategori
             $c->script('
                 let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r) {
@@ -57,6 +57,16 @@ class FullOrderFlowTest extends DuskTestCase
                         r.selectedCategoryId = jerseyCat.id;
                         r.onCategoryChange();
                     }
+                }
+            ');
+            $c->pause(500);
+            $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Selanjutnya')) { b.click(); break; } }");
+            $c->pause(1000);
+
+            // Step 3: Isi detail desain
+            $c->script('
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
+                if (r) {
                     if (r.form) {
                         r.form.nama_pemesan = "Dusk Tester";
                         r.form.team_name = "Test Tim Dusk";
@@ -82,7 +92,7 @@ class FullOrderFlowTest extends DuskTestCase
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Pesan Langsung')) { b.click(); break; } }");
             $c->pause(2000);
 
-            // Step 3: Address
+            // Step 4: Address
             $c->script('
                 let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r && r.addresses && r.addresses.length > 0) {
@@ -92,7 +102,7 @@ class FullOrderFlowTest extends DuskTestCase
             ');
             $c->pause(2000);
 
-            // Step 4: Set prioritas & konfirmasi
+            // Step 5: Set prioritas & konfirmasi
             $c->script('let r = document.querySelector(".max-w-6xl")._x_dataStack[0]; if (r) r.prioritas = "normal";');
             $c->pause(500);
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Konfirmasi') || b.textContent.includes('Bayar') || b.textContent.includes('Buat Pesanan')) { b.click(); break; } }");

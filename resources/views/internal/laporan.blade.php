@@ -255,13 +255,10 @@
 </div>
 @endsection
 
-@push('styles')
 <style>
     [x-cloak] { display: none !important; }
 </style>
-@endpush
 
-@push('scripts')
 <script>
 function laporanApp() {
     return {
@@ -367,4 +364,3 @@ function laporanApp() {
     };
 }
 </script>
-@endpush
