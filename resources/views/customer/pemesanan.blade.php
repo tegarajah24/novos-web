@@ -190,7 +190,7 @@
 
         <div class="space-y-5 mt-6">
             {{-- Row: Nama Pemesan + Nama Tim --}}
-            <div class="grid lg:grid-cols-2 gap-6">
+            <div :class="isTeamCategory ? 'grid lg:grid-cols-2 gap-6' : 'grid grid-cols-1'">
                 {{-- Kiri: Nama Pemesan --}}
                 <div class="space-y-5">
                     <div>
@@ -223,7 +223,7 @@
                 </div>
 
                 {{-- Kanan: Nama Tim --}}
-                <div class="space-y-5">
+                <div class="space-y-5" x-show="isTeamCategory" x-transition x-cloak>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
                             Nama Tim / Event
@@ -2043,6 +2043,14 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             const cat = this.selectedCategory;
             return cat ? cat.name : '';
         },
+        get isTeamCategory() {
+            if (!this.selectedCategoryId) return true; // Show by default
+            const name = this.selectedCategoryName.toLowerCase();
+            if (name.includes('jaket') || name.includes('bawahan') || name.includes('celana') || name.includes('rok')) {
+                return false;
+            }
+            return true;
+        },
         get hasBawahanSet() {
             if (this.selectedCategoryName.toLowerCase() !== 'jersey') return false;
             return this.items.some(item => item.tipe_bawahan && item.tipe_bawahan !== '');
@@ -2127,7 +2135,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         get validateStep2() {
-            const basic = this.form.nama_pemesan.trim() !== '' && this.form.team_name.trim() !== '' && this.selectedCategoryId !== '' && this.totalQty >= 1;
+            const isTeam = this.isTeamCategory;
+            const basic = this.form.nama_pemesan.trim() !== '' && (!isTeam || this.form.team_name.trim() !== '') && this.selectedCategoryId !== '' && this.totalQty >= 1;
             if (!basic) return false;
             
             const schema = this.activeSchema;
