@@ -351,7 +351,7 @@
                 {{-- A. Checklist Pelaksanaan SMART-WORK Micro-Break --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
-                        <h3 class="font-bold text-gray-900">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
+                        <h3 class="font-bold text-gray-900 max-md:text-sm">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
                     </div>
                     <div class="overflow-x-auto max-md:max-h-[300px] max-md:overflow-y-auto">
                         <table class="w-full text-sm">
@@ -526,7 +526,7 @@
                 {{-- D. Evaluasi Manfaat --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
-                        <h3 class="font-bold text-gray-900">Evaluasi Manfaat Setelah Micro-Break</h3>
+                        <h3 class="font-bold text-gray-900 max-md:text-sm">Evaluasi Manfaat Setelah Micro-Break</h3>
                         <p class="text-xs text-gray-500 mt-1">Bagaimana kondisi Anda setelah melakukan micro-break?</p>
                     </div>
                     <div class="overflow-x-auto">
