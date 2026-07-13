@@ -140,7 +140,7 @@
         {{-- Row 3: Riwayat 7 Hari --}}
         <div class="bg-white rounded-2xl shadow-sm p-6">
                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-4">Riwayat 7 Hari Terakhir</p>
-                <div class="flex items-center gap-3 justify-center flex-wrap">
+                <div class="flex items-center gap-3 justify-center flex-wrap max-md:max-h-[180px] max-md:overflow-y-auto">
                     <template x-for="(day, i) in weekHistory" :key="i">
                         <div class="flex flex-col items-center gap-1.5 min-w-[52px]">
                             <span class="text-2xl" x-text="day.emoji"></span>
@@ -657,17 +657,22 @@
     {{-- ========== TAB 4: LAPORAN (Super Admin & Manager only) ========== --}}
     <div x-show="activeTab === 3" x-cloak x-transition:enter.duration.300 class="space-y-6">
         {{-- Export Buttons --}}
-        <div class="flex justify-end gap-2" x-show="reportLoaded">
-            <a href="{{ route('staf.daily-mental-check.export-csv') }}"
-               class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export CSV
-            </a>
-            <a href="{{ route('staf.daily-mental-check.export-excel') }}"
-               class="inline-flex items-center gap-1.5 px-3 py-2 bg-green-600 border border-green-600 rounded-lg text-xs font-semibold text-white hover:bg-green-700 transition-colors">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export Excel
-            </a>
+        <div class="flex justify-end gap-2 max-md:justify-between max-md:items-center max-md:bg-white max-md:rounded-2xl max-md:shadow-sm max-md:p-4" x-show="reportLoaded">
+            <div class="hidden max-md:block">
+                <p class="font-bold text-gray-900 text-sm">Unduh File</p>
+            </div>
+            <div class="flex gap-2 shrink-0">
+                <a href="{{ route('staf.daily-mental-check.export-csv') }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Export CSV
+                </a>
+                <a href="{{ route('staf.daily-mental-check.export-excel') }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-2 bg-green-600 border border-green-600 rounded-lg text-xs font-semibold text-white hover:bg-green-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Export Excel
+                </a>
+            </div>
         </div>
 
         {{-- Summary Cards --}}
@@ -696,7 +701,7 @@
                 <h3 class="font-bold text-gray-900">Kondisi Staff Hari Ini</h3>
                 <span class="text-xs text-gray-400" x-text="todayDate"></span>
             </div>
-            <div class="overflow-x-auto" x-show="reportLoaded">
+            <div class="overflow-x-auto max-md:overflow-y-auto max-md:max-h-[300px]" x-show="reportLoaded">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50/80">
@@ -810,7 +815,7 @@
                 <div class="overflow-x-auto max-h-[400px] overflow-y-auto" x-show="reportLoaded">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="bg-gray-50/80 sticky top-0">
+                            <tr class="bg-gray-50/80">
                                 <th class="px-3 py-2.5 text-left font-semibold text-gray-600">Staff</th>
                                 <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Hari</th>
                                 <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Rata-rata</th>
