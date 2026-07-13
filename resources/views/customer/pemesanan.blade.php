@@ -660,12 +660,13 @@
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center gap-2">
                                                 <!-- No Punggung Input -->
-                                                <input type="text" x-model="item.no" placeholder="No" 
-                                                       class="w-14 text-center border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400">
+                                                <input type="text" x-model="item.no" placeholder="No" maxlength="2"
+                                                       @input="item.no = item.no.replace(/[^0-9]/g, '')"
+                                                       class="w-14 text-center border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[10px]">
                                                 
                                                 <!-- Nama Punggung Input -->
-                                                <input type="text" x-model="item.nama" @input="item.nama = item.nama.toUpperCase()" placeholder="Nama Punggung" 
-                                                       class="flex-1 min-w-0 border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white uppercase placeholder-gray-400">
+                                                <input type="text" x-model="item.nama" placeholder="Nama Punggung" maxlength="20"
+                                                       class="flex-1 min-w-0 border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[10px]">
                                             </div>
                                             <!-- Badges -->
                                             <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
