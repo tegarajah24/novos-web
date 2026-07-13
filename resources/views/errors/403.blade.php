@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>* { font-family: 'Poppins', sans-serif; }</style>
 </head>
-<body class="bg-[#f5f5f5] flex items-center justify-center min-h-screen">
+<body class="bg-[#f5f5f5] flex flex-col items-center justify-center min-h-screen">
     <div class="text-center px-4">
         <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-10 h-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
