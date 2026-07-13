@@ -155,8 +155,8 @@
     {{-- ========== TAB 2: ISI DAILY CHECK ========== --}}
     <div x-show="activeTab === 1" x-cloak x-transition:enter.duration.300 class="max-w-5xl mx-auto">
         {{-- Header --}}
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-gray-900">Bagaimana kondisi Anda hari ini?</h2>
+        <div class="flex items-start justify-between max-md:mb-4 mb-6 gap-3">
+            <h2 class="max-md:text-[20px] max-md:leading-[1.3] text-xl font-bold text-gray-900">Bagaimana kondisi Anda hari ini?</h2>
             <button @click="petunjukOpen = true" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#1a237e] bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 Petunjuk Pengisian
