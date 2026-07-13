@@ -582,112 +582,87 @@
                             <span>Secara default, pemain mengikuti <strong>Spesifikasi Utama</strong> di atas. Gunakan kustomisasi jika ada yang berbeda.</span>
                         </div>
                     </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[700px]">
-                            <thead class="bg-gray-800 text-white select-none">
-                                <tr>
-                                    <th class="p-3 w-12 text-center">
-                                        <input type="checkbox" x-model="selectAll" @change="toggleSelectAll()" class="w-4 h-4 rounded cursor-pointer accent-[#1a237e] bg-gray-700 border-gray-600">
-                                    </th>
-                                    <th class="p-3 w-12 text-center">No</th>
-                                    <th class="p-3 w-28">No Punggung</th>
-                                    <th class="p-3">Nama Punggung</th>
-                                    <th class="p-3" x-show="selectedCategoryName.toLowerCase() === 'jersey'" x-cloak>Set Bawahan (Celana/Rok)</th>
-                                    <th class="p-3">Atribut Jersey</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 bg-white">
-                                <template x-for="(item, index) in items" :key="index">
-                                    <tr class="transition-colors hover:bg-gray-50/50" :class="item.selected ? 'bg-blue-50/50' : ''">
-                                        <!-- Checkbox -->
-                                        <td class="p-3 text-center">
-                                            <input type="checkbox" :checked="item.selected" @change="handleCheck($event, index)" class="w-4 h-4 rounded cursor-pointer accent-[#1a237e]">
-                                        </td>
-                                        
-                                        <!-- Row Number -->
-                                        <td class="p-3 text-center text-gray-400 font-semibold" x-text="index + 1"></td>
-                                        
-                                        <!-- No Punggung -->
-                                        <td class="p-3">
-                                            <input type="text" x-model="item.no" placeholder="Contoh: 1"
-                                                   class="w-full border border-gray-300 p-1.5 rounded text-center text-xs font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[11px]">
-                                        </td>
-                                        
-                                        <!-- Nama Punggung -->
-                                        <td class="p-3">
-                                            <input type="text" x-model="item.nama" @input="item.nama = item.nama.toUpperCase()" placeholder="Contoh: Tegar"
-                                                   class="w-full border border-gray-300 p-1.5 rounded text-xs font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white uppercase placeholder-gray-400 placeholder:font-normal placeholder:text-[11px]">
-                                        </td>
-                                        
-                                        <!-- Set Bawahan -->
-                                        <td class="p-3" x-show="selectedCategoryName.toLowerCase() === 'jersey'" x-cloak>
-                                            <div class="flex items-center gap-1.5">
-                                                <select x-model="item.tipe_bawahan"
-                                                        class="border border-gray-300 p-1.5 rounded text-xs font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white">
-                                                    <option value="">- Tanpa Celana -</option>
-                                                    <option value="Celana Pendek">Celana Pendek</option>
-                                                    <option value="Celana Panjang">Celana Panjang</option>
-                                                    <option value="Rok">Rok</option>
-                                                </select>
-                                                
-                                                <select x-show="item.tipe_bawahan" x-model="item.size_bawahan"
-                                                        class="border border-gray-300 p-1.5 rounded text-xs font-semibold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white">
-                                                    <option value="">- Size -</option>
-                                                    <option value="S">S</option>
-                                                    <option value="M">M</option>
-                                                    <option value="L">L</option>
-                                                    <option value="XL">XL</option>
-                                                    <option value="XXL">XXL</option>
-                                                    <option value="3XL">3XL</option>
-                                                    <option value="4XL">4XL</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                        
-                                        <!-- Status Spesifikasi (Applied Attributes & Warnings) -->
-                                        <td class="p-3">
-                                            <div class="flex flex-wrap items-center gap-1.5">
-                                                <!-- Size Badge -->
-                                                <template x-if="item.size">
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold border border-slate-200">
-                                                        Size <span x-text="item.size"></span>
-                                                    </span>
-                                                </template>
-                                                
-                                                <!-- Other customizations/specifications -->
-                                                <template x-for="attr in getCompiledCustomizations(item)" :key="attr.key">
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-[#1a237e] text-[10px] font-medium border border-blue-100">
-                                                        <span x-text="attr.value"></span>
-                                                    </span>
-                                                </template>
+                               <div class="p-4 bg-slate-50/50 border-b border-gray-100 flex items-center justify-between">
+                        <label class="flex items-center gap-2 cursor-pointer select-none text-xs font-semibold text-gray-600">
+                            <input type="checkbox" x-model="selectAll" @change="toggleSelectAll()" class="w-4 h-4 rounded cursor-pointer accent-[#1a237e] border-gray-300 bg-white">
+                            <span>Pilih Semua Pemain</span>
+                        </label>
+                        <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full" x-text="`${items.length} Pemain`"></span>
+                    </div>
 
-                                                <!-- Status Belum Lengkap Warning Badge -->
+                    <div class="p-4 space-y-3 bg-slate-50/30 max-h-[600px] overflow-y-auto">
+                        <template x-for="(item, index) in items" :key="index">
+                            <div class="bg-white border rounded-xl shadow-sm transition-all duration-200 overflow-hidden relative"
+                                 :class="[
+                                     item.selected ? 'border-[#1a237e] bg-blue-50/10' : 'border-gray-200',
+                                     !isRowComplete(item) ? 'hover:border-amber-300' : 'hover:border-gray-300'
+                                 ]">
+                                
+                                <!-- Card Number Badge (Top Left Corner) -->
+                                <div class="absolute -top-0.5 -left-0.5 w-8 h-6 bg-[#1a237e] text-white flex items-center justify-center text-[10px] font-bold rounded-br-lg rounded-tl-xl shadow-sm z-10">
+                                    <span x-text="index + 1"></span>
+                                </div>
+
+                                <!-- Card Header -->
+                                <div class="p-3.5 flex items-center justify-between gap-3 select-none">
+                                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                                        <!-- Checkbox -->
+                                        <input type="checkbox" :checked="item.selected" @change="handleCheck($event, index)" 
+                                               class="w-4 h-4 rounded cursor-pointer accent-[#1a237e] border-gray-300 bg-white">
+
+                                        <!-- Player Info Summary (Inputs inline) -->
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center gap-2">
+                                                <!-- No Punggung Input -->
+                                                <input type="text" x-model="item.no" placeholder="No" 
+                                                       class="w-14 text-center border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400">
+                                                
+                                                <!-- Nama Punggung Input -->
+                                                <input type="text" x-model="item.nama" @input="item.nama = item.nama.toUpperCase()" placeholder="Nama Punggung" 
+                                                       class="flex-1 min-w-0 border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white uppercase placeholder-gray-400">
+                                            </div>
+                                            <!-- Badges -->
+                                            <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                                                <!-- Size Badge -->
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
+                                                    Size <span x-text="item.size || '-'"></span>
+                                                </span>
+                                                <!-- Set Bawahan Badge if Jersey and selected -->
+                                                <template x-if="selectedCategoryName.toLowerCase() === 'jersey' && item.tipe_bawahan">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-50 text-[#1a237e] text-[10px] font-bold border border-indigo-100">
+                                                        Set: <span x-text="`${item.tipe_bawahan} (${item.size_bawahan || '-'})`"></span>
+                                                    </span>
+                                                </template>
+                                                <!-- Customizations badge count -->
+                                                <template x-if="getCompiledCustomizations(item).length > 0">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-100">
+                                                        <span x-text="`${getCompiledCustomizations(item).length} Kustomisasi`"></span>
+                                                    </span>
+                                                </template>
+                                                <!-- Warning Badge -->
                                                 <template x-if="!isRowComplete(item)">
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
-                                                        <svg class="w-3 h-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                                        </svg>
+                                                    <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[9px] font-bold border border-amber-200">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                                                         Belum lengkap
                                                     </span>
                                                 </template>
                                             </div>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
                 <!-- FLOATING BULK BAR (EDIT MASAL UNTUK CUSTOMER) -->
-                <div x-show="countSelected() > 0" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl border border-gray-800 flex items-center gap-6 z-50">
-                    <div class="border-r border-gray-800 pr-4">
-                        <p class="text-[10px] text-gray-400 uppercase font-semibold">Terpilih</p>
-                        <p class="text-base font-bold text-orange-400" x-text="countSelected() + ' Pemain'"></p>
+                <div x-show="countSelected() > 0" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3.5 sm:px-6 sm:py-4 rounded-2xl shadow-2xl border border-gray-800 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 z-50 w-[calc(100%-2rem)] sm:w-auto max-w-md sm:max-w-none">
+                    <div class="border-b sm:border-b-0 sm:border-r border-gray-800 pb-2 sm:pb-0 pr-0 sm:pr-4 w-full sm:w-auto flex items-center justify-between sm:block gap-4">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Terpilih</p>
+                        <p class="text-sm sm:text-base font-bold text-orange-400" x-text="countSelected() + ' Pemain'"></p>
                     </div>
-                    <div class="flex items-center gap-3 text-xs">
-                        <span class="font-semibold text-gray-300">Aksi Massal:</span>
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 text-xs w-full sm:w-auto">
+                        <span class="font-semibold text-gray-300 w-full sm:w-auto text-center sm:text-left mb-0.5 sm:mb-0 hidden sm:inline">Aksi Massal:</span>
                         
                         <div class="flex items-center gap-1.5 bg-gray-800 border border-gray-700 rounded-lg p-1">
                             <span class="text-[10px] text-gray-400 font-semibold px-1">Ukuran:</span>
@@ -703,18 +678,18 @@
                             </select>
                         </div>
 
-                        <button type="button" @click="openOverrideModal(null)" class="bg-[#1a237e] hover:bg-[#283593] text-white font-bold px-3.5 py-1.5 rounded-lg transition-colors shadow flex items-center gap-1 cursor-pointer">
+                        <button type="button" @click="openOverrideModal(null)" class="bg-[#1a237e] hover:bg-[#283593] text-white font-bold px-3 py-1.5 rounded-lg transition-colors shadow flex items-center gap-1 cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
                             Kustom Atribut
                         </button>
                         
-                        <button type="button" @click="resetSelectedOverrides()" class="bg-red-900/60 hover:bg-red-800 text-red-100 font-semibold px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer">
-                            Reset ke Default
+                        <button type="button" @click="resetSelectedOverrides()" class="bg-red-900/60 hover:bg-red-800 text-red-100 font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer">
+                            Reset
                         </button>
                         
                         <button type="button" @click="clearSelection()" class="text-xs text-gray-400 hover:text-white underline ml-1">Batal</button>
                     </div>
-                </div>    </div>
+                </div>
 
         {{-- Upload Section --}}
         <div class="grid lg:grid-cols-2 gap-6 mt-8">
@@ -2802,6 +2777,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             </div>
         </div>
     </div>
+</div>
 </template>
 
 @else
