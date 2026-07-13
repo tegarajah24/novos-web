@@ -712,25 +712,25 @@
             </div>
         </div>
 
-        <div class="flex justify-between mt-8">
+        <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8">
             <button
                 @click="step = 1"
-                class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                class="w-full sm:w-auto px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
             >
                 Kembali
             </button>
-            <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <button
                     @click="addToCart"
                     :disabled="!validateStep2 || loading"
                     :class="(validateStep2 && !loading) ? 'border-2 border-[#1a237e] text-[#1a237e] hover:bg-blue-50 cursor-pointer' : 'border-gray-300 text-gray-400 cursor-not-allowed'"
-                    class="px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                    class="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
-                    <span x-show="!loading" class="inline-flex items-center gap-2">
+                    <span x-show="!loading" class="inline-flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                         Masukkan ke Keranjang
                     </span>
-                    <span x-show="loading" class="inline-flex items-center gap-2">
+                    <span x-show="loading" class="inline-flex items-center justify-center gap-2">
                         <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -742,7 +742,7 @@
                     @click="nextFromStep2()"
                     :disabled="!validateStep2"
                     :class="validateStep2 ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                    class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                    class="w-full sm:w-auto text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
                     Pesan Langsung
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
