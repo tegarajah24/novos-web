@@ -45,13 +45,13 @@ Route::get('/pesan', function () {
             $adminPhone = '62' . substr($adminPhone, 1);
         }
 
-        // Ambil semua kategori untuk form pemesanan dinamis
         $categories = \App\Models\Category::all()->map(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
             'icon' => $c->icon,
             'description' => $c->description,
-            'attributes_schema' => $c->attributes_schema ?? []
+            'attributes_schema' => $c->attributes_schema ?? [],
+            'form_config' => $c->form_config,
         ]);
 
         return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone', 'categories'));

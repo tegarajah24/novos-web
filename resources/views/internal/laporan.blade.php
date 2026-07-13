@@ -253,12 +253,9 @@
         <span>Data diperbarui secara real-time &bull; <span x-text="now"></span></span>
     </p>
 </div>
-@endsection
-
 <style>
     [x-cloak] { display: none !important; }
 </style>
-
 <script>
 function laporanApp() {
     return {
@@ -364,3 +361,4 @@ function laporanApp() {
     };
 }
 </script>
+@endsection

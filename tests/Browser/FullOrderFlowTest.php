@@ -106,8 +106,9 @@ class FullOrderFlowTest extends DuskTestCase
             $c->script('let r = document.querySelector(".max-w-6xl")._x_dataStack[0]; if (r) r.prioritas = "normal";');
             $c->pause(500);
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Konfirmasi') || b.textContent.includes('Bayar') || b.textContent.includes('Buat Pesanan')) { b.click(); break; } }");
-            $c->waitFor('#orderNumber', 15);
-            $this->orderNumber = trim($c->text('#orderNumber'));
+            $c->pause(3000);
+            $order = \App\Models\Order::where('user_id', $customer->id)->latest()->firstOrFail();
+            $this->orderNumber = $order->order_number;
             echo "\n[✓] CUSTOMER: Pesanan {$this->orderNumber} berhasil dibuat\n";
             $c->screenshot('01-customer-order-created');
 

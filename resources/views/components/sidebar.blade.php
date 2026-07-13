@@ -178,6 +178,12 @@ window.navigateAjax = function (url, isPopState) {
     const main = document.querySelector('main');
     if (!main) { window.location.href = url; return; }
 
+    if (window.FilePond) {
+        document.querySelectorAll('.filepond').forEach(function(el) {
+            var pond = window.FilePond.find(el);
+            if (pond) pond.destroy();
+        });
+    }
     main.innerHTML = '<div class="flex items-center justify-center py-20"><div class="flex flex-col items-center gap-3"><div class="w-8 h-8 border-2 border-[#1a237e] border-t-transparent rounded-full animate-spin"></div><p class="text-sm text-gray-500">Memuat...</p></div></div>';
 
     fetch(url, {
@@ -221,6 +227,9 @@ window.navigateAjax = function (url, isPopState) {
             }
             if (window.Alpine) {
                 window.Alpine.initTree(main);
+            }
+            if (window.FilePond) {
+                window.FilePond.parse(main);
             }
         }
     })

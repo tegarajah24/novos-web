@@ -18,6 +18,7 @@ class StoreCategoryRequest extends FormRequest
             'icon' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'description' => 'nullable|string|max:500',
             'parent_id' => 'nullable|exists:categories,id',
+            'form_config' => 'nullable|array',
         ];
     }
 }

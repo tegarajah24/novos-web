@@ -251,7 +251,7 @@
 
         <div class="space-y-5 mt-6">
             {{-- Row: Nama Pemesan + Nama Tim --}}
-            <div :class="isTeamCategory ? 'grid lg:grid-cols-2 gap-6' : 'grid grid-cols-1'">
+            <div :class="formFieldsGridClass">
                 {{-- Kiri: Nama Pemesan --}}
                 <div class="space-y-5">
                     <div>
@@ -272,7 +272,7 @@
                             <p class="text-xs text-red-500 mt-1">Nama pemesan wajib diisi</p>
                         </template>
                     </div>
-                    <div>
+                    <div x-show="showNamaArtikelField" x-transition x-cloak>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Artikel</label>
                         <input
                             type="text"
@@ -283,9 +283,9 @@
                     </div>
                 </div>
 
-                {{-- Kanan: Nama Tim --}}
-                <div class="space-y-5" x-show="isTeamCategory" x-transition x-cloak>
-                    <div>
+                {{-- Kanan: Nama Tim & Sponsor --}}
+                <div class="space-y-5" x-show="showTeamNameField || showDetailSponsorField" x-transition x-cloak>
+                    <div x-show="showTeamNameField" x-transition x-cloak>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
                             Nama Tim / Event
                             <span class="text-red-500">*</span>
@@ -303,7 +303,7 @@
                             <p class="text-xs text-red-500 mt-1">Nama tim / event wajib diisi</p>
                         </template>
                     </div>
-                    <div>
+                    <div x-show="showDetailSponsorField" x-transition x-cloak>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Sponsor</label>
                         <input
                             type="text"
@@ -359,7 +359,7 @@
                         </svg>
                     </button>
                 </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedSpecs" x-transition>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedSpecs">
                     {{-- Ukuran Jersey Utama (Global Size) --}}
                     <div class="space-y-1.5">
                         <div class="flex items-center justify-between">
@@ -397,7 +397,7 @@
                                     class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
                                 >
                                     <option value="">- Pilih -</option>
-                                    <template x-for="opt in attr.options" :key="opt.value">
+                                    <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
                                         <option :value="opt.value" x-text="opt.value"></option>
                                     </template>
                                 </select>
@@ -428,7 +428,7 @@
                         </svg>
                     </button>
                 </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedBawahan" x-transition>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedBawahan">
                     <template x-for="attr in bawahanSchema" :key="attr.id">
                         <div class="space-y-1.5">
                             <div class="flex items-center justify-between">
@@ -445,7 +445,7 @@
                                     class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
                                 >
                                     <option value="">- Pilih -</option>
-                                    <template x-for="opt in attr.options" :key="opt.value">
+                                    <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
                                         <option :value="opt.value" x-text="opt.value"></option>
                                     </template>
                                 </select>
@@ -1390,10 +1390,7 @@
     </div>
 
     {{-- Step 5: Konfirmasi --}}
-    <div x-show="step === 5" x-cloak
-         x-transition:enter="transition ease-out duration-400"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100">
+    <div x-show="step === 5" x-cloak>
         <div class="text-center max-w-lg mx-auto py-4">
             {{-- Green Checkmark --}}
             <div class="flex justify-center mb-6">
@@ -1404,11 +1401,11 @@
                 </div>
             </div>
 
-            <h2 class="text-xl font-bold text-green-600 mb-2 animate-fade-slide" style="animation-delay:0.15s">Pesanan Berhasil Dibuat!</h2>
-            <p class="text-gray-500 text-sm mb-8 animate-fade-slide" style="animation-delay:0.3s">Tim kami akan segera memproses pesanan Anda. Pantau status pesanan melalui halaman Tracking.</p>
+            <h2 class="text-xl font-bold text-green-600 mb-2" style="animation-delay:0.15s">Pesanan Berhasil Dibuat!</h2>
+            <p class="text-gray-500 text-sm mb-8" style="animation-delay:0.3s">Tim kami akan segera memproses pesanan Anda. Pantau status pesanan melalui halaman Tracking.</p>
 
             {{-- Order ID --}}
-            <div class="mb-6 animate-fade-slide" style="animation-delay:0.45s">
+            <div class="mb-6" style="animation-delay:0.45s">
                 <p class="text-sm text-gray-500 mb-1">Order ID:</p>
                 <div class="flex items-center justify-center gap-2">
                     <span class="text-lg font-mono font-bold text-gray-900 tracking-wider" x-text="orderNumber" id="orderNumber"></span>
@@ -1423,7 +1420,7 @@
             </div>
 
             {{-- Ringkasan Pesanan --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-8 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.6s">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-8 text-left max-w-sm mx-auto" style="animation-delay:0.6s">
                 <template x-if="mode === 'single'">
                     <div class="space-y-2.5 text-sm">
                         <div class="flex justify-between">
@@ -1496,7 +1493,7 @@
             </div>
 
             {{-- Info Pembayaran DP --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.7s">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto" style="animation-delay:0.7s">
                 <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                     Pembayaran DP Minimal 10%
@@ -1535,7 +1532,7 @@
             </div>
 
             {{-- Kirim Bukti Bayar ke WhatsApp --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.8s">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto" style="animation-delay:0.8s">
                 <h4 class="text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                     Kirim Bukti Pembayaran
@@ -1555,7 +1552,7 @@
             </div>
 
             {{-- Buttons --}}
-            <div class="flex flex-col sm:flex-row gap-3 justify-center animate-fade-slide" style="animation-delay:0.9s">
+            <div class="flex flex-col sm:flex-row gap-3 justify-center" style="animation-delay:0.9s">
                 <a :href="'/tracking?q=' + orderNumber" class="px-8 py-3 bg-[#1a237e] text-white rounded-lg font-semibold hover:bg-[#283593] transition-colors text-center">
                     Tracking Pesanan
                 </a>
@@ -1581,8 +1578,8 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-slide {
-    opacity: 0;
-    animation: fadeSlideUp 0.5s ease-out forwards;
+    opacity: 1;
+    animation: fadeSlideUp 0.5s ease-out;
 }
 
 /* SweetAlert2 toast — di bawah navbar (h-16 = 64px) */
@@ -2075,13 +2072,24 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             const cat = this.selectedCategory;
             return cat ? cat.name : '';
         },
-        get isTeamCategory() {
-            if (!this.selectedCategoryId) return true; // Show by default
-            const name = this.selectedCategoryName.toLowerCase();
-            if (name.includes('jaket') || name.includes('bawahan') || name.includes('celana') || name.includes('rok')) {
-                return false;
-            }
-            return true;
+        get showTeamNameField() {
+            if (!this.selectedCategoryId) return true;
+            const cat = this.selectedCategory;
+            return cat && cat.form_config ? !!cat.form_config.show_team_name : true;
+        },
+        get showNamaArtikelField() {
+            if (!this.selectedCategoryId) return true;
+            const cat = this.selectedCategory;
+            return cat && cat.form_config ? !!cat.form_config.show_nama_artikel : true;
+        },
+        get showDetailSponsorField() {
+            if (!this.selectedCategoryId) return true;
+            const cat = this.selectedCategory;
+            return cat && cat.form_config ? !!cat.form_config.show_detail_sponsor : true;
+        },
+        get formFieldsGridClass() {
+            const hasRightCol = this.showTeamNameField || this.showDetailSponsorField;
+            return hasRightCol ? 'grid lg:grid-cols-2 gap-6' : 'grid grid-cols-1 gap-6';
         },
         get hasBawahanSet() {
             if (this.selectedCategoryName.toLowerCase() !== 'jersey') return false;
@@ -2167,7 +2175,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         get validateStep2() {
-            const isTeam = this.isTeamCategory;
+            const isTeam = this.showTeamNameField;
             const basic = this.form.nama_pemesan.trim() !== '' && (!isTeam || this.form.team_name.trim() !== '') && this.selectedCategoryId !== '' && this.totalQty >= 1;
             if (!basic) return false;
             
@@ -2817,7 +2825,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                                 class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
                             >
                                 <option value="">- Ikuti Spesifikasi Utama -</option>
-                                <template x-for="opt in attr.options" :key="opt.value">
+                                <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
                                     <option :value="opt.value" x-text="opt.value"></option>
                                 </template>
                             </select>

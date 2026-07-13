@@ -134,6 +134,23 @@
                                class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
                                placeholder="Deskripsi singkat untuk card kategori..."></textarea>
                 </div>
+                <div class="mb-5 bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                    <span class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2.5">Konfigurasi Kolom Form</span>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                            <input type="checkbox" x-model="form_config.show_team_name" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
+                            <span>Tampilkan kolom <strong>Nama Tim / Event</strong></span>
+                        </label>
+                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                            <input type="checkbox" x-model="form_config.show_nama_artikel" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
+                            <span>Tampilkan kolom <strong>Nama Artikel</strong></span>
+                        </label>
+                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                            <input type="checkbox" x-model="form_config.show_detail_sponsor" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
+                            <span>Tampilkan kolom <strong>Detail Sponsor</strong></span>
+                        </label>
+                    </div>
+                </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
                     <button type="submit" :disabled="submitting" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
@@ -320,6 +337,11 @@ function kategoriApp() {
         parent_id: '',
         icon: '',
         description: '',
+        form_config: {
+            show_team_name: true,
+            show_nama_artikel: true,
+            show_detail_sponsor: true
+        },
         submitting: false,
 
         // --- Atribut Dinamis ---
@@ -364,12 +386,22 @@ function kategoriApp() {
                 this.parent_id = cat.parent_id || '';
                 this.icon = cat.icon || '';
                 this.description = cat.description || '';
+                this.form_config = Object.assign({
+                    show_team_name: true,
+                    show_nama_artikel: true,
+                    show_detail_sponsor: true
+                }, cat.form_config || {});
             } else {
                 this.editId = null;
                 this.name = '';
                 this.parent_id = '';
                 this.icon = '';
                 this.description = '';
+                this.form_config = {
+                    show_team_name: true,
+                    show_nama_artikel: true,
+                    show_detail_sponsor: true
+                };
             }
             this.modalOpen = true;
             this.$nextTick(() => { 
@@ -397,6 +429,12 @@ function kategoriApp() {
                 if (this.description) {
                     formData.append('description', this.description.trim());
                 }
+                formData.append('form_config[show_team_name]', this.form_config.show_team_name ? '1' : '0');
+                formData.append('form_config[show_nama_artikel]', this.form_config.show_nama_artikel ? '1' : '0');
+                formData.append('form_config[show_detail_sponsor]', this.form_config.show_detail_sponsor ? '1' : '0');
+                formData.append('form_config[show_team_name]', this.form_config.show_team_name ? '1' : '0');
+                formData.append('form_config[show_nama_artikel]', this.form_config.show_nama_artikel ? '1' : '0');
+                formData.append('form_config[show_detail_sponsor]', this.form_config.show_detail_sponsor ? '1' : '0');
 
                 if (this.editId) {
                     formData.append('_method', 'PUT');

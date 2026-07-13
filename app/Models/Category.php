@@ -14,13 +14,36 @@ class Category extends Model
         'icon',
         'description',
         'attributes_schema',
+        'form_config',
     ];
 
     protected function casts(): array
     {
         return [
             'attributes_schema' => 'array',
+            'form_config' => 'array',
         ];
+    }
+
+    public function getFormConfigAttribute($value)
+    {
+        $defaults = [
+            'show_team_name' => true,
+            'show_nama_artikel' => true,
+            'show_detail_sponsor' => true,
+        ];
+
+        if (!$value) {
+            return $defaults;
+        }
+
+        $arr = is_string($value) ? json_decode($value, true) : $value;
+        if (is_array($arr)) {
+            foreach ($arr as $key => $val) {
+                $arr[$key] = filter_var($val, FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+        return array_merge($defaults, is_array($arr) ? $arr : []);
     }
 
     public function parent(): BelongsTo
