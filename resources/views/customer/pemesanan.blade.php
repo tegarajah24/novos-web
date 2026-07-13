@@ -316,20 +316,27 @@
 
             {{-- Spesifikasi Utama (Atribut Global) --}}
             <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm mt-6" x-show="selectedCategoryId">
-                <h4 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
-                    Spesifikasi Utama (Berlaku untuk Semua Jersey)
+                <h4 class="text-sm font-bold text-gray-800 mb-4 flex items-center justify-between cursor-pointer select-none" @click="expandedSpecs = !expandedSpecs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
+                        <span>Spesifikasi Utama (Berlaku untuk Semua Jersey)</span>
+                    </div>
+                    <button type="button" class="text-gray-400 hover:text-gray-600 transition-transform duration-200" :class="expandedSpecs ? 'rotate-180' : ''">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
                 </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedSpecs" x-transition>
                     {{-- Ukuran Jersey Utama (Global Size) --}}
                     <div class="space-y-1.5">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-semibold text-gray-600">Ukuran Jersey Utama <span class="text-red-500">*</span></span>
                         </div>
                         <select
-                            x-model="form.size"
-                            @change="onGlobalSizeChange()"
-                            class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                             x-model="form.size"
+                             @change="onGlobalSizeChange()"
+                             class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
                         >
                             <option value="">- Pilih Ukuran -</option>
                             <option value="S">S</option>
@@ -378,11 +385,18 @@
 
             {{-- Spesifikasi Bawahan (Dinamis jika ada Set Bawahan) --}}
             <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm mt-6" x-show="hasBawahanSet" x-cloak>
-                <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
-                    Spesifikasi Bawahan (Berlaku untuk Semua Celana/Rok Setelan)
+                <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center justify-between cursor-pointer select-none" @click="expandedBawahan = !expandedBawahan">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
+                        <span>Spesifikasi Bawahan (Berlaku untuk Semua Celana/Rok Setelan)</span>
+                    </div>
+                    <button type="button" class="text-gray-400 hover:text-gray-600 transition-transform duration-200" :class="expandedBawahan ? 'rotate-180' : ''">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
                 </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedBawahan" x-transition>
                     <template x-for="attr in bawahanSchema" :key="attr.id">
                         <div class="space-y-1.5">
                             <div class="flex items-center justify-between">
@@ -1559,6 +1573,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         categories: categories,
         selectedCategoryId: '',
         subStep: 1,
+        expandedSpecs: true,
+        expandedBawahan: true,
         init() {
             this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
         },
