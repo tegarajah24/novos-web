@@ -191,10 +191,10 @@
                             <div class="space-y-6">
                                 {{-- Tabel Pertanyaan --}}
                                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full text-sm">
-                                            <thead>
-                                                <tr class="bg-gray-50/80">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-50/80">
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700 w-10">No</th>
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Pertanyaan</th>
                                                     <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">Baik</th>
@@ -353,7 +353,7 @@
                     <div class="px-6 pt-5 pb-2">
                         <h3 class="font-bold text-gray-900">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto max-md:max-h-[300px] max-md:overflow-y-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-gray-50/80">
