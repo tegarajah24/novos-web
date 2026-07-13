@@ -49,7 +49,7 @@
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
-        <p class="text-gray-500 mt-1">Pesan produk custom impianmu dalam 5 langkah mudah</p>
+        <p class="text-gray-500 mt-1">Pesan produk custom impianmu dalam 4 langkah mudah</p>
     </div>
 
     {{-- Step Indicator --}}
@@ -79,7 +79,7 @@
         </template>
     </div>
 
-    {{-- Step 1: Pilih Jenis Pesanan --}}
+    {{-- Step 1: Pilih Jenis & Kategori --}}
     <div x-show="step === 1" x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-6"
@@ -87,121 +87,124 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 translate-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">Pilih Jenis Pesanan</h2>
-        <p class="text-sm text-gray-500 mt-1">Pilih jenis pesanan yang sesuai kebutuhan Anda</p>
 
-        {{-- Banner Konsultasi WhatsApp --}}
-        <div class="mb-5 flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 animate-fade-slide">
-            <span class="shrink-0 mt-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-green-600">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-                </svg>
-            </span>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-green-800">Konsultasi dulu via WhatsApp sebelum pesan!</p>
-                <p class="text-xs text-green-700 mt-0.5 leading-relaxed">Untuk hasil jersey yang maksimal, silakan hubungi admin kami terlebih dahulu agar brief desain Anda bisa diproses dengan tepat.</p>
-            </div>
-            <a href="https://wa.me/{{ $adminPhone }}?text={{ urlencode('Halo Novos, saya ingin konsultasi pesanan produk custom') }}"
-               target="_blank" rel="noopener"
-               class="shrink-0 inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-                Chat Admin
-            </a>
-        </div>
+        {{-- Phase 1: Pilih Jenis --}}
+        <div x-show="jenisPhase === 1"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0">
+            <h2 class="text-lg font-semibold text-gray-900">Pilih Jenis Pesanan</h2>
+            <p class="text-sm text-gray-500 mt-1">Pilih jenis pesanan yang sesuai kebutuhan Anda</p>
 
-        <div class="grid md:grid-cols-2 gap-6 mt-6">
-            {{-- Produk Custom --}}
-            <div
-                @click="jenis = 'custom'"
-                :class="jenis === 'custom' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
-                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
-                style="animation-delay:0.1s"
-            >
-                <div :class="jenis === 'custom' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
+            {{-- Banner Konsultasi WhatsApp --}}
+            <div class="mb-5 flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 animate-fade-slide">
+                <span class="shrink-0 mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-green-600">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                    </svg>
+                </span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-green-800">Konsultasi dulu via WhatsApp sebelum pesan!</p>
+                    <p class="text-xs text-green-700 mt-0.5 leading-relaxed">Untuk hasil jersey yang maksimal, silakan hubungi admin kami terlebih dahulu agar brief desain Anda bisa diproses dengan tepat.</p>
                 </div>
-                <h3 class="font-bold text-lg mt-4">Produk Custom</h3>
-                <p class="text-gray-500 text-sm mt-1 leading-relaxed">Desain produk sepenuhnya sesuai keinginan Anda. Upload logo, pilih spesifikasi, dan tentukan detail sendiri.</p>
+                <a href="https://wa.me/{{ $adminPhone }}?text={{ urlencode('Halo Novos, saya ingin konsultasi pesanan produk custom') }}"
+                   target="_blank" rel="noopener"
+                   class="shrink-0 inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                    Chat Admin
+                </a>
             </div>
 
-            {{-- Produk Katalog --}}
-            <div
-                @click="jenis = 'katalog'"
-                :class="jenis === 'katalog' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
-                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
-                style="animation-delay:0.2s"
-            >
-                <div :class="jenis === 'katalog' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                {{-- Produk Custom --}}
+                <div
+                    @click="jenis = 'custom'"
+                    :class="jenis === 'custom' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
+                    class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
+                    style="animation-delay:0.1s"
+                >
+                    <div :class="jenis === 'custom' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mt-4">Produk Custom</h3>
+                    <p class="text-gray-500 text-sm mt-1 leading-relaxed">Desain produk sepenuhnya sesuai keinginan Anda. Upload logo, pilih spesifikasi, dan tentukan detail sendiri.</p>
                 </div>
-                <h3 class="font-bold text-lg mt-4">Produk Katalog</h3>
-                <p class="text-gray-500 text-sm mt-1 leading-relaxed">Pilih dari koleksi desain yang sudah tersedia. Tinggal pilih ukuran dan jumlah pesanan.</p>
-            </div>
-        </div>
 
-        <div class="flex justify-end mt-8">
-            <button
-                @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else if (!hasOrders) showFirstOrderAlert(); else step = 2;"
-                :disabled="!jenis"
-                :class="jenis ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
-            >
-                Selanjutnya
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
-        </div>
-    </div>
-
-    {{-- Step 2: Pilih Kategori --}}
-    <div x-show="step === 2" x-cloak
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-6"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 translate-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">Pilih Kategori</h2>
-        <p class="text-sm text-gray-500 mt-1">Pilih kategori produk custom yang ingin Anda pesan</p>
-
-        <div class="mt-6 space-y-6">
-            {{-- Pilihan Kategori Kustom (Visual Cards) --}}
-            <div class="space-y-4">
-                <label class="block text-sm font-semibold text-gray-700">
-                    Pilih Kategori Produk Custom <span class="text-red-500">*</span>
-                </label>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <template x-for="cat in categories" :key="cat.id">
-                        <div
-                            @click="selectCategoryByName(cat.name)"
-                            :class="selectedCategoryId == cat.id ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e] shadow-md scale-[1.02]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'"
-                            class="border-2 rounded-xl p-5 cursor-pointer transition-all duration-300 flex flex-col items-center text-center relative group"
-                        >
-                            <div :class="selectedCategoryId == cat.id ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 overflow-hidden">
-                                <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
-                                    <img :src="'/storage/' + cat.icon" class="w-10 h-10 object-contain rounded" />
-                                </template>
-                                <template x-if="!cat.icon || (!cat.icon.includes('/') && !cat.icon.includes('.'))">
-                                    <i :data-lucide="cat.icon || 'shirt'" class="w-8 h-8"></i>
-                                </template>
-                            </div>
-                            <h3 class="font-bold text-sm mt-4 text-gray-800" x-text="cat.name"></h3>
-                            <p x-show="cat.description" class="text-gray-400 text-[11px] mt-1.5 leading-relaxed max-w-[200px]" x-text="cat.description"></p>
-
-                            <div x-show="selectedCategoryId == cat.id" class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-[#1a237e]"></div>
-                        </div>
-                    </template>
+                {{-- Produk Katalog --}}
+                <div
+                    @click="jenis = 'katalog'"
+                    :class="jenis === 'katalog' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
+                    class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
+                    style="animation-delay:0.2s"
+                >
+                    <div :class="jenis === 'katalog' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mt-4">Produk Katalog</h3>
+                    <p class="text-gray-500 text-sm mt-1 leading-relaxed">Pilih dari koleksi desain yang sudah tersedia. Tinggal pilih ukuran dan jumlah pesanan.</p>
                 </div>
             </div>
 
-            <div class="flex justify-between items-center">
+            <div class="flex justify-end mt-8">
                 <button
-                    @click="step = 1"
+                    @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else if (!hasOrders) showFirstOrderAlert(); else jenisPhase = 2;"
+                    :disabled="!jenis"
+                    :class="jenis ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                    class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                >
+                    Selanjutnya
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
+        </div>
+
+        {{-- Phase 2: Pilih Kategori --}}
+        <div x-show="jenisPhase === 2"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0">
+            <h2 class="text-lg font-semibold text-gray-900">Pilih Kategori</h2>
+            <p class="text-sm text-gray-500 mt-1">Pilih kategori produk custom yang ingin Anda pesan</p>
+
+            <div class="mt-6 space-y-6">
+                <div class="space-y-4">
+                    <label class="block text-sm font-semibold text-gray-700">
+                        Pilih Kategori Produk Custom <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <template x-for="cat in categories" :key="cat.id">
+                            <div
+                                @click="selectCategoryByName(cat.name)"
+                                :class="selectedCategoryId == cat.id ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e] shadow-md scale-[1.02]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'"
+                                class="border-2 rounded-xl p-5 cursor-pointer transition-all duration-300 flex flex-col items-center text-center relative group"
+                            >
+                                <div :class="selectedCategoryId == cat.id ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 overflow-hidden">
+                                    <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
+                                        <img :src="'/storage/' + cat.icon" class="w-10 h-10 object-contain rounded" />
+                                    </template>
+                                    <template x-if="!cat.icon || (!cat.icon.includes('/') && !cat.icon.includes('.'))">
+                                        <i :data-lucide="cat.icon || 'shirt'" class="w-8 h-8"></i>
+                                    </template>
+                                </div>
+                                <h3 class="font-bold text-sm mt-4 text-gray-800" x-text="cat.name"></h3>
+                                <p x-show="cat.description" class="text-gray-400 text-[11px] mt-1.5 leading-relaxed max-w-[200px]" x-text="cat.description"></p>
+
+                                <div x-show="selectedCategoryId == cat.id" class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-[#1a237e]"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-8">
+                <button
+                    @click="jenisPhase = 1"
                     class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
                 >
                     Kembali
                 </button>
                 <button
-                    @click="step = 3"
+                    @click="step = 2"
                     :disabled="!selectedCategoryId"
                     :class="selectedCategoryId ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                     class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
@@ -214,7 +217,7 @@
     </div>
 
     {{-- Step 3: Detail & Upload --}}
-    <div x-show="step === 3" x-cloak
+    <div x-show="step === 2" x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-6"
          x-transition:enter-end="opacity-100 translate-y-0"
@@ -661,11 +664,15 @@
                                             <div class="flex items-center gap-2">
                                                 <!-- No Punggung Input -->
                                                 <input type="text" x-model="item.no" placeholder="No" maxlength="2"
+                                                       :id="'no-' + index"
                                                        @input="item.no = item.no.replace(/[^0-9]/g, '')"
+                                                       @keydown.enter.prevent="document.getElementById('nama-' + index)?.focus()"
                                                        class="w-14 text-center border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[10px]">
                                                 
                                                 <!-- Nama Punggung Input -->
                                                 <input type="text" x-model="item.nama" placeholder="Nama Punggung" maxlength="20"
+                                                       :id="'nama-' + index"
+                                                       @keydown.enter.prevent="document.getElementById('no-' + (index + 1))?.focus()"
                                                        class="flex-1 min-w-0 border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[10px]">
                                             </div>
                                             <!-- Badges -->
@@ -761,7 +768,7 @@
 
         <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8">
             <button
-                @click="step = 2"
+                @click="step = 1"
                 class="w-full sm:w-auto px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
             >
                 Kembali
@@ -1185,7 +1192,7 @@
     </div>
 
     {{-- Step 4: Prioritas & Pembayaran --}}
-    <div x-show="step === 4" x-cloak
+    <div x-show="step === 3" x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-6"
          x-transition:enter-end="opacity-100 translate-y-0"
@@ -1364,7 +1371,7 @@
 
         <div class="flex justify-end gap-4 mt-8">
             <button
-                @click="step = 3"
+                @click="step = 2"
                 class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
             >
                 Kembali
@@ -1390,7 +1397,7 @@
     </div>
 
     {{-- Step 5: Konfirmasi --}}
-    <div x-show="step === 5" x-cloak>
+    <div x-show="step === 4" x-cloak>
         <div class="text-center max-w-lg mx-auto py-4">
             {{-- Green Checkmark --}}
             <div class="flex justify-center mb-6">
@@ -1596,8 +1603,9 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         step: 1,
         mode: 'single',
         cartItemsToCheckout: [],
-        steps: ['Pilih Jenis', 'Pilih Kategori', 'Detail & Upload', 'Prioritas & Bayar', 'Konfirmasi'],
+        steps: ['Pilih Jenis & Kategori', 'Detail & Upload', 'Prioritas & Bayar', 'Konfirmasi'],
         jenis: null,
+        jenisPhase: 1,
         catalogProduct: catalogProduct,
         categories: categories,
         selectedCategoryId: '',
@@ -1754,7 +1762,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         if (this.catalogProduct.jenis_potongan) this.form.customizations['jenis_potongan'] = this.catalogProduct.jenis_potongan;
                         if (this.catalogProduct.lengan_jahitan) this.form.customizations['lengan_jahitan'] = this.catalogProduct.lengan_jahitan;
                     }
-                    this.step = 3;
+                    this.step = 2;
                 }
             }
 
@@ -2262,7 +2270,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         useSelectedAddress() {
-            this.step = 4;
+            this.step = 3;
         },
 
         openContactModal() {
@@ -2352,7 +2360,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         timer: 1500,
                         showConfirmButton: false
                     });
-                    this.step = 4;
+                    this.step = 3;
                 } else {
                     throw new Error(data.message || 'Gagal menyimpan alamat');
                 }
@@ -2485,7 +2493,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             .then(data => {
                 if (!data.success) throw new Error('Gagal membuat pesanan');
                 this.orderNumber = data.orderNumber;
-                this.step = 5;
+                this.step = 4;
                 this.loading = false;
                 this.$nextTick(() => this.setupBuktiBayarPond());
             })
@@ -2523,7 +2531,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             .then(data => {
                 if (!data.success) throw new Error('Gagal memproses checkout keranjang');
                 this.orderNumber = data.orderNumber;
-                this.step = 5;
+                this.step = 4;
                 this.loading = false;
                 this.$nextTick(() => this.setupBuktiBayarPond());
                 const store = window.Alpine.store('summary');
@@ -2644,6 +2652,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         resetForm() {
             this.jenis = null;
+            this.jenisPhase = 1;
             this.selectedCategoryId = '';
             this.form = {
                 team_name: '',
@@ -2681,7 +2690,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 if (result.isConfirmed) {
                     window.open('https://wa.me/{{ $adminPhone }}?text={{ urlencode("Halo Novos, saya ingin konsultasi pesanan produk custom") }}', '_blank');
                 } else {
-                    this.step = 2;
+                    this.jenisPhase = 2;
                 }
             });
         },
