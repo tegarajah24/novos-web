@@ -72,14 +72,15 @@
         margin-bottom: 24px;
     }
     table thead th {
-        background: #888;
-        color: #fff;
+        background: #fff;
+        color: #000;
         padding: 9px 10px;
         font-size: 10px;
         font-weight: 600;
         text-align: left;
         text-transform: uppercase;
         letter-spacing: 0.4px;
+        border-bottom: 2px solid #000;
     }
     table thead th:last-child { text-align: right; }
     table tbody tr:nth-child(odd) td { background: #f5f5f5; }
