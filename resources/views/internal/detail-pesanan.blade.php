@@ -802,9 +802,44 @@ if (!empty($order['item_details'])) {
                 @endif
             </div>
 
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-500">Total</span>
-                <span class="font-bold text-gray-900">{{ rh($order['payment']['total']) }}</span>
+            <div class="flex justify-between text-sm mt-1">
+                <span class="text-gray-500">DP Dibayar</span>
+                <span class="font-semibold text-green-600">Rp {{ number_format($order['payment']['dp_amount'] ?? 0, 0, ',', '.') }}</span>
+            </div>
+            
+            <div class="flex justify-between text-sm mt-1">
+                <span class="text-gray-500">Sisa Bayar</span>
+                <span class="font-bold text-gray-900">Rp {{ number_format(max(0, $order['payment']['total'] - ($order['payment']['dp_amount'] ?? 0)), 0, ',', '.') }}</span>
+            </div>
+
+            {{-- Form Input DP (Hanya Admin / Super Admin / Manager) --}}
+            @if($canValidate)
+            <div class="mt-3 pt-3 border-t border-gray-100">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Set Nominal DP (Rp)</label>
+                <div class="flex gap-1.5">
+                    <input type="number" x-model="dpAmount" placeholder="Contoh: 50000" 
+                        class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                    <button @click="saveDp()" :disabled="savingDp"
+                        class="px-3 py-1.5 bg-[#1a237e] text-white text-xs font-bold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center shrink-0">
+                        <svg x-show="savingDp" class="w-3 h-3 animate-spin mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Simpan
+                    </button>
+                </div>
+            </div>
+            @endif
+
+            {{-- Tombol Link Invoice --}}
+            <div class="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                <a href="{{ route('staf.pesanan.invoice', $order['order_id']) }}" target="_blank"
+                    class="w-full py-2 rounded-lg text-xs font-bold border border-[#1a237e] text-[#1a237e] hover:bg-blue-50 transition-colors flex items-center justify-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Lihat Invoice Faktur
+                </a>
+                <a href="{{ route('staf.pesanan.invoice.download', $order['order_id']) }}" target="_blank"
+                    class="w-full py-2 rounded-lg text-xs font-bold bg-[#1a237e] text-white hover:bg-[#283593] transition-colors flex items-center justify-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download PDF Invoice
+                </a>
             </div>
 
             {{-- Tombol Validasi Pembayaran --}}
@@ -898,6 +933,41 @@ function detailPesananApp() {
 function paymentSection() {
     return {
         loading: false,
+        savingDp: false,
+        dpAmount: '{{ $order['payment']['dp_amount'] ?? 0 }}',
+        async saveDp() {
+            if (this.savingDp) return;
+            if (!this.dpAmount || this.dpAmount < 0) {
+                Notify.error('Jumlah DP tidak valid.');
+                return;
+            }
+
+            this.savingDp = true;
+            try {
+                const res = await fetch('{{ route("staf.pesanan.invoice.dp", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dp_amount: this.dpAmount
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Notify.success('DP berhasil disimpan!', 'Berhasil!');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    Notify.error(data.message || 'Gagal menyimpan DP');
+                }
+            } catch (e) {
+                Notify.error('Terjadi kesalahan sistem.');
+            } finally {
+                this.savingDp = false;
+            }
+        },
         async validateDp() {
             if (this.loading) return;
 
