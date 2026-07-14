@@ -15,6 +15,7 @@ class Category extends Model
         'description',
         'attributes_schema',
         'form_config',
+        'base_price',
     ];
 
     protected function casts(): array
@@ -22,6 +23,7 @@ class Category extends Model
         return [
             'attributes_schema' => 'array',
             'form_config' => 'array',
+            'base_price' => 'decimal:2',
         ];
     }
 

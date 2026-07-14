@@ -39,14 +39,81 @@ class OrderController extends Controller
             $nextSeq = $lastOrder ? (int) substr($lastOrder->order_number, -3) + 1 : 1;
             $orderNumber = $todayPrefix . str_pad($nextSeq, 3, '0', STR_PAD_LEFT);
 
-            $totalQty = !empty($data['items']) ? count($data['items']) : ($data['total_qty'] ?? 0);
-            $pricePerItem = \App\Models\Setting::get('base_price_per_pcs', 85000);
+            $category = \App\Models\Category::find($data['category_id']);
+            $basePrice = $category ? floatval($category->base_price) : 85000;
+            $schema = $category ? ($category->attributes_schema ?? []) : [];
+            
+            $bawahanCategory = \App\Models\Category::where('name', 'like', 'bawahan')->first();
+            $bawahanSchema = $bawahanCategory ? ($bawahanCategory->attributes_schema ?? []) : [];
+
+            $totalQty = 0;
+            $subtotal = 0;
+            $calculatedItems = [];
+
+            if (!empty($data['items']) && is_array($data['items'])) {
+                $totalQty = count($data['items']);
+                foreach ($data['items'] as $item) {
+                    $itemPrice = $basePrice;
+                    $rowCustom = $item['customizations'] ?? [];
+                    if (is_string($rowCustom)) {
+                        $rowCustom = json_decode($rowCustom, true) ?? [];
+                    }
+
+                    // 1. Modifiers from main category
+                    foreach ($schema as $attr) {
+                        $selectedVal = $rowCustom[$attr['id']] ?? null;
+                        if ($selectedVal && !empty($attr['options'])) {
+                            $opt = collect($attr['options'])->firstWhere('value', $selectedVal);
+                            if ($opt) {
+                                $itemPrice += floatval($opt['price_modifier'] ?? 0);
+                            }
+                        }
+                    }
+
+                    // 2. Modifiers from bawahan
+                    $hasBawahan = !empty($item['tipe_bawahan']);
+                    if ($hasBawahan) {
+                        foreach ($bawahanSchema as $attr) {
+                            $selectedVal = $rowCustom[$attr['id']] ?? null;
+                            if ($selectedVal && !empty($attr['options'])) {
+                                $opt = collect($attr['options'])->firstWhere('value', $selectedVal);
+                                if ($opt) {
+                                    $itemPrice += floatval($opt['price_modifier'] ?? 0);
+                                }
+                            }
+                        }
+                    }
+
+                    $subtotal += $itemPrice;
+                    $calculatedItems[] = [
+                        'item' => $item,
+                        'price' => $itemPrice
+                    ];
+                }
+            } else {
+                $totalQty = intval($data['total_qty'] ?? 1);
+                $itemPrice = $basePrice;
+                $customizations = is_array($data['customizations'] ?? null)
+                    ? $data['customizations']
+                    : (json_decode($data['customizations'] ?? '{}', true) ?? []);
+
+                foreach ($schema as $attr) {
+                    $selectedVal = $customizations[$attr['id']] ?? null;
+                    if ($selectedVal && !empty($attr['options'])) {
+                        $opt = collect($attr['options'])->firstWhere('value', $selectedVal);
+                        if ($opt) {
+                            $itemPrice += floatval($opt['price_modifier'] ?? 0);
+                        }
+                    }
+                }
+                $subtotal = $totalQty * $itemPrice;
+            }
+
             $biayaPrioritas = match ($data['prioritas'] ?? 'normal') {
                 'express'       => 50000,
                 'super_express' => 150000,
                 default         => 0,
             };
-            $subtotal = $totalQty * $pricePerItem;
             $totalPrice = $subtotal + $biayaPrioritas;
 
             $prioritasLabel = match ($data['prioritas'] ?? 'normal') {
@@ -55,7 +122,7 @@ class OrderController extends Controller
                 default         => 'Normal',
             };
 
-            $catatanText = $data['catatan'] ? "=== Detail Pesanan ===\n" . $data['catatan'] : '';
+            $catatanText = ($data['catatan'] ?? '') ? "=== Detail Pesanan ===\n" . $data['catatan'] : '';
 
             // Bangun ringkasan kustomisasi umum jika ada
             $customizations = is_array($data['customizations'] ?? null)
@@ -82,21 +149,25 @@ class OrderController extends Controller
                 'order_id'       => $order->id,
                 'size'           => '-',
                 'qty'            => $totalQty,
-                'price_per_item' => $pricePerItem,
-                'subtotal'       => $totalQty * $pricePerItem,
+                'price_per_item' => $totalQty > 0 ? ($subtotal / $totalQty) : 0,
+                'subtotal'       => $subtotal,
             ]);
 
             // Simpan detail per baris item pesanan
-            if (!empty($data['items']) && is_array($data['items'])) {
-                foreach ($data['items'] as $item) {
+            if (!empty($calculatedItems)) {
+                foreach ($calculatedItems as $calc) {
+                    $item = $calc['item'];
+                    $itemPrice = $calc['price'];
                     $rowCustom = $item['customizations'] ?? [];
+                    if (is_string($rowCustom)) {
+                        $rowCustom = json_decode($rowCustom, true) ?? [];
+                    }
                     if (!empty($item['tipe_bawahan'])) {
                         $rowCustom['tipe_bawahan'] = $item['tipe_bawahan'];
                     }
                     if (!empty($item['size_bawahan'])) {
                         $rowCustom['size_bawahan'] = $item['size_bawahan'];
                     }
-                    // Fallback model_lengan
                     $modelLengan = $rowCustom['lengan_jahitan'] ?? $rowCustom['lengan'] ?? null;
                     OrderItemDetail::create([
                         'order_id'       => $order->id,
@@ -105,7 +176,7 @@ class OrderController extends Controller
                         'model_lengan'   => $modelLengan,
                         'size'           => $item['size'] ?? 'M',
                         'customizations' => $rowCustom,
-                        'price'          => 0,
+                        'price'          => $itemPrice,
                     ]);
                 }
             } elseif (!empty($data['catatan'])) {

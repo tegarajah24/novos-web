@@ -23,6 +23,7 @@
                         <th class="px-6 py-4 font-medium">Nama Kategori</th>
                         <th class="px-6 py-4 font-medium">Induk Kategori</th>
                         <th class="px-6 py-4 font-medium text-center">Ikon</th>
+                        <th class="px-6 py-4 font-medium text-center">Harga Dasar</th>
                         <th class="px-6 py-4 font-medium text-center">Jumlah Produk</th>
                         <th class="px-6 py-4 font-medium text-center">Jumlah Atribut</th>
                         <th class="px-6 py-4 text-right font-medium">Aksi</th>
@@ -31,7 +32,7 @@
                 <tbody class="divide-y divide-gray-100">
                     <template x-if="loading">
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
+                            <td colspan="7" class="px-6 py-12 text-center">
                                 <span class="loading loading-spinner loading-md text-[#1a237e]"></span>
                             </td>
                         </tr>
@@ -51,6 +52,7 @@
                                 </template>
                                 <span x-show="!cat.icon" class="text-gray-400">—</span>
                             </td>
+                            <td class="px-6 py-4 text-center font-semibold text-[#1a237e]" x-text="cat.base_price ? 'Rp ' + Number(cat.base_price).toLocaleString('id-ID') : 'Rp 0'"></td>
                             <td class="px-6 py-4 text-center text-gray-600" x-text="cat.products_count"></td>
                             <td class="px-6 py-4 text-center">
                                 <template x-if="cat.attributes_schema && cat.attributes_schema.length > 0">
@@ -82,7 +84,7 @@
                     </template>
                     <template x-if="!loading && categories.length === 0">
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
+                            <td colspan="7" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
                         </tr>
                     </template>
                 </tbody>
@@ -113,6 +115,19 @@
                         </template>
                     </select>
                     <p class="text-xs text-gray-400 mt-1">Pilih kategori induk jika kategori ini merupakan sub-kategori.</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Harga Dasar per Jersey</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500 text-sm">Rp</span>
+                        <input type="number" x-model="base_price" min="0" step="1000"
+                               @if(auth()->user()->role->name !== 'Super Admin') disabled @endif
+                               class="w-full rounded-xl border-gray-300 pl-10 pr-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e] disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                               placeholder="Contoh: 85000">
+                    </div>
+                    @if(auth()->user()->role->name !== 'Super Admin')
+                        <p class="text-[10px] text-gray-400 mt-1">Hanya Super Admin yang dapat mengubah harga dasar.</p>
+                    @endif
                 </div>
                 <template x-if="editId && icon && (icon.includes('/') || icon.includes('.'))">
                     <div class="mb-3 flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl border border-gray-100">
@@ -278,8 +293,15 @@
                                                 <template x-for="(opt, oi) in attr.options" :key="oi">
                                                     <div class="flex items-center gap-2">
                                                         <input type="text" x-model="opt.value"
-                                                            class="flex-1 rounded-lg border-gray-200 bg-white text-xs px-3 py-1.5 focus:ring-purple-500 focus:border-purple-500"
+                                                            class="flex-1 rounded-lg border-gray-200 bg-white text-xs px-3 py-1.5 focus:ring-[#1a237e] focus:border-[#1a237e]"
                                                             placeholder="Nilai opsi...">
+                                                        <div class="relative w-32 shrink-0">
+                                                            <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-gray-400 text-[10px]">Rp</span>
+                                                            <input type="number" x-model="opt.price_modifier" min="0" step="1000"
+                                                                @if(auth()->user()->role->name !== 'Super Admin') disabled @endif
+                                                                class="w-full rounded-lg border-gray-200 bg-white pl-7 pr-2 py-1.5 text-xs focus:ring-[#1a237e] focus:border-[#1a237e] disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                                                placeholder="+ Harga">
+                                                        </div>
                                                         <button @click="removeOption(attr, oi)"
                                                             class="text-gray-300 hover:text-red-500 transition-colors p-1" title="Hapus opsi">
                                                             <i data-lucide="x" class="w-3 h-3"></i>
@@ -337,6 +359,7 @@ function kategoriApp() {
         parent_id: '',
         icon: '',
         description: '',
+        base_price: 0,
         form_config: {
             show_team_name: true,
             show_nama_artikel: true,
@@ -386,6 +409,7 @@ function kategoriApp() {
                 this.parent_id = cat.parent_id || '';
                 this.icon = cat.icon || '';
                 this.description = cat.description || '';
+                this.base_price = cat.base_price || 0;
                 this.form_config = Object.assign({
                     show_team_name: true,
                     show_nama_artikel: true,
@@ -397,6 +421,7 @@ function kategoriApp() {
                 this.parent_id = '';
                 this.icon = '';
                 this.description = '';
+                this.base_price = 0;
                 this.form_config = {
                     show_team_name: true,
                     show_nama_artikel: true,
@@ -429,6 +454,7 @@ function kategoriApp() {
                 if (this.description) {
                     formData.append('description', this.description.trim());
                 }
+                formData.append('base_price', this.base_price || 0);
                 formData.append('form_config[show_team_name]', this.form_config.show_team_name ? '1' : '0');
                 formData.append('form_config[show_nama_artikel]', this.form_config.show_nama_artikel ? '1' : '0');
                 formData.append('form_config[show_detail_sponsor]', this.form_config.show_detail_sponsor ? '1' : '0');
@@ -527,7 +553,10 @@ function kategoriApp() {
                     type:             attr.type || 'select',
                     required:         attr.required !== false,
                     reference_image:  attr.reference_image || '',
-                    options:          (attr.options || []).map(o => ({ value: o.value || '' })),
+                    options:          (attr.options || []).map(o => ({ 
+                        value: o.value || '',
+                        price_modifier: Number(o.price_modifier) || 0
+                    })),
                     // Pisahkan depends_on jadi 2 field agar mudah di-bind Alpine
                     depends_on_id:    attr.depends_on?.attribute_id || '',
                     depends_on_value: attr.depends_on?.value || '',
@@ -548,7 +577,7 @@ function kategoriApp() {
                 type: 'select',
                 required: true,
                 reference_image: '',
-                options: [{ value: '' }],
+                options: [{ value: '', price_modifier: 0 }],
                 depends_on_id: '',
                 depends_on_value: '',
             });
@@ -566,7 +595,7 @@ function kategoriApp() {
 
         addOption(attr) {
             if (!attr.options) attr.options = [];
-            attr.options.push({ value: '' });
+            attr.options.push({ value: '', price_modifier: 0 });
             this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
         },
 
@@ -612,7 +641,10 @@ function kategoriApp() {
                     type:           attr.type,
                     required:       !!attr.required,
                     reference_image: attr.reference_image || '',
-                    options:        (attr.options || []).filter(o => o.value.trim()).map(o => ({ value: o.value.trim() })),
+                    options:        (attr.options || []).filter(o => o.value.trim()).map(o => ({ 
+                        value: o.value.trim(),
+                        price_modifier: Number(o.price_modifier) || 0
+                    })),
                 };
                 if (attr.depends_on_id && attr.depends_on_value) {
                     obj.depends_on = {

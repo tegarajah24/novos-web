@@ -35,6 +35,7 @@ class CategoryAttributeController extends Controller
             'attributes_schema.*.required'            => 'boolean',
             'attributes_schema.*.options'             => 'nullable|array',
             'attributes_schema.*.options.*.value'     => 'required|string|max:200',
+            'attributes_schema.*.options.*.price_modifier' => 'nullable|numeric|min:0',
             'attributes_schema.*.depends_on'          => 'nullable|array',
             'attributes_schema.*.depends_on.attribute_id' => 'nullable|string',
             'attributes_schema.*.depends_on.value'    => 'nullable|string',

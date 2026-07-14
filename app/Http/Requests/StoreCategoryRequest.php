@@ -19,6 +19,7 @@ class StoreCategoryRequest extends FormRequest
             'description' => 'nullable|string|max:500',
             'parent_id' => 'nullable|exists:categories,id',
             'form_config' => 'nullable|array',
+            'base_price' => 'nullable|numeric|min:0',
         ];
     }
 }

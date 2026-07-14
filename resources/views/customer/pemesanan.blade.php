@@ -229,13 +229,14 @@
 
         <div class="grid grid-cols-1 grid-rows-1 mt-6">
             {{-- Sub-Step 1: Detail & Upload Form --}}
-            <div x-show="subStep === 1" class="col-start-1 row-start-1"
+            <div x-show="subStep === 1" class="col-start-1 row-start-1 pb-24"
                  x-transition:enter="transition ease-out duration-500 transform"
                  x-transition:enter-start="-translate-x-12 opacity-0"
                  x-transition:enter-end="translate-x-0 opacity-100"
                  x-transition:leave="transition ease-in duration-300 transform"
                  x-transition:leave-start="translate-x-0 opacity-100"
                  x-transition:leave-end="-translate-x-12 opacity-0">
+                <div class="space-y-6">
 
         {{-- Selected product from catalog --}}
         <template x-if="catalogProduct">
@@ -395,15 +396,23 @@
                                 </template>
                             </div>
                             <template x-if="attr.type === 'select' || attr.type === 'radio'">
-                                <select
-                                    x-model="form.customizations[attr.id]"
-                                    class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
-                                >
-                                    <option value="">- Pilih -</option>
-                                    <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
-                                        <option :value="opt.value" x-text="opt.value"></option>
+                                <div>
+                                    <select
+                                        x-model="form.customizations[attr.id]"
+                                        class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                                    >
+                                        <option value="">- Pilih -</option>
+                                        <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
+                                            <option :value="opt.value" x-text="opt.value"></option>
+                                        </template>
+                                    </select>
+                                    <template x-if="getSelectedOptionPrice(attr) > 0">
+                                        <div class="mt-1 flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            <span x-text="'+ ' + formatRupiah(getSelectedOptionPrice(attr))"></span>
+                                        </div>
                                     </template>
-                                </select>
+                                </div>
                             </template>
                             <template x-if="attr.type === 'text'">
                                 <input
@@ -443,15 +452,23 @@
                                 </template>
                             </div>
                             <template x-if="attr.type === 'select' || attr.type === 'radio'">
-                                <select
-                                    x-model="form.customizations[attr.id]"
-                                    class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
-                                >
-                                    <option value="">- Pilih -</option>
-                                    <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
-                                        <option :value="opt.value" x-text="opt.value"></option>
+                                <div>
+                                    <select
+                                        x-model="form.customizations[attr.id]"
+                                        class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                                    >
+                                        <option value="">- Pilih -</option>
+                                        <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
+                                            <option :value="opt.value" x-text="opt.value"></option>
+                                        </template>
+                                    </select>
+                                    <template x-if="getSelectedOptionPrice(attr) > 0">
+                                        <div class="mt-1 flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            <span x-text="'+ ' + formatRupiah(getSelectedOptionPrice(attr))"></span>
+                                        </div>
                                     </template>
-                                </select>
+                                </div>
                             </template>
                             <template x-if="attr.type === 'text'">
                                 <input
@@ -803,9 +820,22 @@
                 </button>
             </div>
         </div>
-        </div>
-        </div>
             </div>
+
+            {{-- Sticky Bottom Pricing Bar (Desktop & Mobile) --}}
+            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3.5 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-40">
+                <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-wider">Estimasi Harga</p>
+                        <p class="text-base sm:text-lg font-extrabold text-[#1a237e]" x-text="formatRupiah(hargaDasar)"></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs sm:text-sm font-semibold text-gray-700" x-text="totalQty + ' pcs'"></p>
+                        <p class="text-[10px] sm:text-xs text-gray-400" x-text="'@ ' + formatRupiah(hargaPerJersey)"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
             {{-- Sub-Step 2: Alamat Form / Select --}}
             <div x-show="subStep === 2" x-cloak class="col-start-1 row-start-1"
@@ -2147,6 +2177,43 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             return p ? p.label : '';
         },
 
+        get basePriceFromCategory() {
+            if (this.jenis === 'katalog') {
+                return this.basePricePerPcs;
+            }
+            return this.selectedCategory?.base_price ? Number(this.selectedCategory.base_price) : 85000;
+        },
+
+        get totalAttrModifier() {
+            let total = 0;
+            const schema = this.activeSchema;
+            schema.forEach(attr => {
+                const val = this.form.customizations[attr.id];
+                const opt = (attr.options || []).find(o => o.value === val);
+                total += Number(opt?.price_modifier || 0);
+            });
+            if (this.hasBawahanSet) {
+                const bSchema = this.bawahanSchema;
+                bSchema.forEach(attr => {
+                    const val = this.form.customizations[attr.id];
+                    const opt = (attr.options || []).find(o => o.value === val);
+                    total += Number(opt?.price_modifier || 0);
+                });
+            }
+            return total;
+        },
+
+        get hargaPerJersey() {
+            return this.basePriceFromCategory + this.totalAttrModifier;
+        },
+
+        getSelectedOptionPrice(attr) {
+            const val = this.form.customizations[attr.id];
+            if (!val) return 0;
+            const opt = (attr.options || []).find(o => o.value === val);
+            return Number(opt?.price_modifier || 0);
+        },
+
         get hargaDasar() {
             if (this.mode === 'cart_checkout') {
                 return this.cartItemsToCheckout.reduce((sum, item) => {
@@ -2156,7 +2223,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     return sum + (item.qty * (item.product?.price || 0));
                 }, 0);
             }
-            return this.totalQty * this.basePricePerPcs;
+            return this.totalQty * this.hargaPerJersey;
         },
 
         get biayaPrioritas() {
@@ -2448,6 +2515,9 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             formData.append('phone', this.formPhone);
             if (this.selectedAddressId) {
                 formData.append('address_id', this.selectedAddressId);
+            }
+            if (this.selectedCategoryId) {
+                formData.append('category_id', this.selectedCategoryId);
             }
 
             // Append structured items array
