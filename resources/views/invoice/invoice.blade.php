@@ -203,6 +203,7 @@
             @if($company_phone)
             <div class="brand-tagline" style="margin-top:4px">{{ $company_phone }}</div>
             @endif
+            <div class="brand-tagline" style="margin-top:4px">Invoice Date: {{ now()->format('d F Y') }}</div>
         </div>
         <div class="invoice-meta">
             <div class="label">FAKTUR</div>
@@ -210,8 +211,6 @@
             <div class="date">Tanggal: {{ $order->created_at->format('d F Y') }}</div>
         </div>
     </div>
-
-
 
     {{-- ── INFO PESANAN ── --}}
     <div style="margin-bottom:16px; font-size:11px; color:#333; line-height:1.8">
@@ -305,8 +304,7 @@
     {{-- ── FOOTER ── --}}
     <div class="footer">
         <div class="footer-left">
-            Dokumen ini diterbitkan secara digital oleh sistem {{ $company_name }}.<br>
-            Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB
+            Dokumen ini diterbitkan secara digital oleh sistem {{ $company_name }}.
         </div>
         <div class="footer-right">
             <div class="ttd-label">Hormat kami,</div>
