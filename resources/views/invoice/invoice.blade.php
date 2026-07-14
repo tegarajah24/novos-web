@@ -150,8 +150,9 @@
     }
 
     @media screen {
+        html { overflow-x: auto; }
         body {
-            max-width: 210mm;
+            width: 210mm;
             margin: 0 auto;
         }
     }
