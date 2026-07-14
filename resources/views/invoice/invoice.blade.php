@@ -82,14 +82,13 @@
         letter-spacing: 0.4px;
     }
     table thead th:last-child { text-align: right; }
+    table tbody tr:nth-child(odd) td { background: #f5f5f5; }
+    table tbody tr:nth-child(even) td { background: #fff; }
     table tbody td {
         padding: 8px 10px;
         font-size: 11px;
         color: #333;
-        border: 1px solid #ccc;
-        border-top: none;
     }
-    table tbody tr:first-child td { border-top: 1px solid #ccc; }
     table tbody td:last-child { text-align: right; font-weight: 600; }
     .empty-row td {
         text-align: center;
