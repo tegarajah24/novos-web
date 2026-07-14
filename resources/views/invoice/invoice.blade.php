@@ -284,20 +284,21 @@
     <table class="payment-info">
         <thead>
             <tr>
-                <th style="border-bottom: 2px solid #000; background: #fff; color: #000; text-transform: uppercase; letter-spacing: 0.6px; font-size: 11px; text-align: left;">Detail Pembayaran</th>
+                <th colspan="2" style="border-bottom: 2px solid #000; background: #fff; color: #000; text-transform: uppercase; letter-spacing: 0.6px; font-size: 11px; text-align: left;">Detail Pembayaran</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td style="padding: 10px 0; font-size: 11px; color: #333; line-height: 1.8; text-align: left; font-weight: 400;">
+            <tr style="background: #fff;">
+                <td style="padding: 10px 0; font-size: 11px; color: #000; line-height: 1.8; text-align: left; font-weight: 700; vertical-align: top; width: 70%;">
                     Pilihan #1: BRI 6965 01 003981 53 8<br>
                     Pilihan #2: Mandiri 1380019031454<br>
                     Pilihan #3: BNI 0899192812<br>
-                    Atas Nama Sidik Abdulah<br>
                     <br>
-                    <strong>Minimal DP 10%</strong> Dulu Baru Akan Di Produksi<br>
+                    Minimal DP 10% Dulu Baru Akan Di Produksi
+                </td>
+                <td style="padding: 10px 0; font-size: 11px; color: #000; line-height: 1.8; text-align: left; font-weight: 700; vertical-align: top;">
                     @if($company_instagram)
-                        Instagram : {{ $company_instagram }}
+                        Instagram : {{ '@' . ltrim($company_instagram, '@') }}
                     @endif
                 </td>
             </tr>
