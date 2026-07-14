@@ -33,8 +33,6 @@
 
     {{-- Mobile Menu Selection --}}
     <div x-show="tab === 'menu'" x-transition class="md:hidden space-y-6">
-        <p class="text-sm text-gray-500 -mt-2">Kelola informasi aplikasi dan preferensi Anda</p>
-        
         <div class="bg-white border border-gray-100 rounded-2xl shadow-sm divide-y divide-gray-100 overflow-hidden">
             @if(auth()->user()->role->name === 'Super Admin')
             <!-- Toko Menu -->
