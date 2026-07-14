@@ -2,17 +2,38 @@
 // PHP converts dots in cookie names to underscores in $_COOKIE superglobal
 // 'sidebar.open' (JS) → 'sidebar_open' (PHP). Always use sidebar_open.
 $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] === 'false');
+$isOnDmc = request()->routeIs('staf.daily-mental-check');
+$dmcRoute = route('staf.daily-mental-check');
 ?>
 
 {{-- Sidebar wrapper: shared Alpine scope for backdrop + aside --}}
 <div
     x-data="{
         sidebarOpen: window.innerWidth >= 1280 ? {{ $isSidebarOpen ? 'true' : 'false' }} : false,
+        isOnDmc: {{ $isOnDmc ? 'true' : 'false' }},
+        dmcOpen: location.hash.startsWith('#dmc='),
+        dmcHash: location.hash,
+        setDmcTab(tab) {
+            location.hash = 'dmc=' + tab;
+            this.dmcHash = '#dmc=' + tab;
+            if (window.innerWidth < 1280) this.sidebarOpen = false;
+        },
+        toggleDmc() {
+            this.dmcOpen = !this.dmcOpen;
+        },
+        isDmcActive(index) {
+            if (index === 0) return this.dmcHash === '' || this.dmcHash === '#' || this.dmcHash === '#dmc=0';
+            return this.dmcHash === '#dmc=' + index;
+        },
+        isAnyDmcActive() {
+            return this.dmcOpen || (this.isOnDmc && [0, 1, 2, 3].some(i => this.isDmcActive(i)));
+        },
         toggle() {
             this.sidebarOpen = !this.sidebarOpen;
             document.cookie = 'sidebar_open=' + this.sidebarOpen + '; path=/; SameSite=Lax; max-age=' + (60 * 60 * 24 * 365);
         }
     }"
+    x-init="window.addEventListener('hashchange', () => { dmcHash = location.hash; })"
     @sidebar-toggle.window="toggle()"
     class="contents">
 
@@ -24,10 +45,10 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
 
     <aside
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-        :style="window.innerWidth >= 1280 ? { width: sidebarOpen ? '16rem' : '5rem' } : { width: '16rem' }"
+        :style="window.innerWidth >= 1280 ? { width: sidebarOpen ? '16rem' : '5rem' } : { width: '18rem' }"
         style="transition: all 0.3s ease;"
         class="bg-white min-h-screen border-r border-gray-200 flex flex-col shrink-0 z-50
-               fixed inset-y-0 left-0 w-64 -translate-x-full
+               fixed inset-y-0 left-0 w-72 -translate-x-full
                xl:relative xl:z-auto xl:block xl:translate-x-0">
 
     {{-- Logo Area --}}
@@ -104,10 +125,68 @@ $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] =
         @endcanAccess
 
         @canAccess('daily-mental-check')
-        <a href="{{ route('staf.daily-mental-check') }}"
+        <div class="xl:hidden mb-3 pb-3 border-b border-gray-100">
+            <button @click.stop="toggleDmc()"
+                    :class="isAnyDmcActive() ? 'bg-[#1a237e]/90 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'"
+                    class="flex items-center justify-between w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                <div class="flex items-center gap-3 transition-colors duration-200" :class="isAnyDmcActive() ? 'text-white' : 'text-[#1a237e]'">
+                    <i data-lucide="heart" class="w-5 h-5 shrink-0"></i>
+                    <span class="whitespace-nowrap">Daily Mental Check</span>
+                </div>
+                <span class="w-4 h-4 transition-transform duration-200" :class="[dmcOpen ? '' : '-rotate-90', isAnyDmcActive() ? 'text-white' : 'text-gray-400']">
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </span>
+            </button>
+            <div x-show="dmcOpen" x-cloak class="space-y-3 mt-3">
+                @if(request()->routeIs('staf.daily-mental-check'))
+                <button @click.stop="setDmcTab(0)"
+                        :class="isDmcActive(0) ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Dashboard
+                </button>
+                <button @click.stop="setDmcTab(1)"
+                        :class="isDmcActive(1) ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Isi Daily Check
+                </button>
+                <button @click.stop="setDmcTab(2)"
+                        :class="isDmcActive(2) ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Micro-Break
+                </button>
+                @if(in_array(auth()->user()->role->name, ['Super Admin', 'Manager']))
+                <button @click.stop="setDmcTab(3)"
+                        :class="isDmcActive(3) ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Laporan
+                </button>
+                @endif
+                @else
+                <a href="{{ $dmcRoute }}#dmc=0"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Dashboard
+                </a>
+                <a href="{{ $dmcRoute }}#dmc=1"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Isi Daily Check
+                </a>
+                <a href="{{ $dmcRoute }}#dmc=2"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Micro-Break
+                </a>
+                @if(in_array(auth()->user()->role->name, ['Super Admin', 'Manager']))
+                <a href="{{ $dmcRoute }}#dmc=3"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Laporan
+                </a>
+                @endif
+                @endif
+            </div>
+        </div>
+        <a href="{{ $dmcRoute }}"
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
-           class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.daily-mental-check') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
+           class="hidden xl:flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.daily-mental-check') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
             <i data-lucide="heart" class="w-5 h-5 shrink-0 {{ request()->routeIs('staf.daily-mental-check') ? 'text-white' : 'text-[#1a237e]' }}"></i>
             <span x-show="window.innerWidth < 1280 || sidebarOpen" class="font-medium whitespace-nowrap">Daily Mental Check</span>
         </a>

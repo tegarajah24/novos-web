@@ -9,9 +9,9 @@
 @section('internal-content')
 <div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}', posterUrl: '{{ $posterUrl }}', reminderTimes: {{ json_encode($reminderTimes) }} })">
     {{-- Tab Navigation --}}
-    <div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+    <div class="hidden md:flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
-            <button @click="activeTab = i"
+            <button @click="activeTab = i; location.hash = 'dmc=' + i"
                 :class="activeTab === i ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
                 class="flex-1 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
             >
@@ -140,7 +140,7 @@
         {{-- Row 3: Riwayat 7 Hari --}}
         <div class="bg-white rounded-2xl shadow-sm p-6">
                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-4">Riwayat 7 Hari Terakhir</p>
-                <div class="flex items-center gap-3 justify-center flex-wrap">
+                <div class="flex items-center gap-3 justify-center flex-wrap max-md:max-h-[180px] max-md:overflow-y-auto">
                     <template x-for="(day, i) in weekHistory" :key="i">
                         <div class="flex flex-col items-center gap-1.5 min-w-[52px]">
                             <span class="text-2xl" x-text="day.emoji"></span>
@@ -155,8 +155,8 @@
     {{-- ========== TAB 2: ISI DAILY CHECK ========== --}}
     <div x-show="activeTab === 1" x-cloak x-transition:enter.duration.300 class="max-w-5xl mx-auto">
         {{-- Header --}}
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-gray-900">Bagaimana kondisi Anda hari ini?</h2>
+        <div class="flex items-start justify-between max-md:mb-4 mb-6 gap-3">
+            <h2 class="max-md:text-[20px] max-md:leading-[1.3] text-xl font-bold text-gray-900">Bagaimana kondisi Anda hari ini?</h2>
             <button @click="petunjukOpen = true" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#1a237e] bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 Petunjuk Pengisian
@@ -191,10 +191,10 @@
                             <div class="space-y-6">
                                 {{-- Tabel Pertanyaan --}}
                                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full text-sm">
-                                            <thead>
-                                                <tr class="bg-gray-50/80">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-50/80">
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700 w-10">No</th>
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Pertanyaan</th>
                                                     <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">Baik</th>
@@ -351,9 +351,9 @@
                 {{-- A. Checklist Pelaksanaan SMART-WORK Micro-Break --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
-                        <h3 class="font-bold text-gray-900">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
+                        <h3 class="font-bold text-gray-900 max-md:text-sm">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto max-md:max-h-[300px] max-md:overflow-y-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-gray-50/80">
@@ -526,7 +526,7 @@
                 {{-- D. Evaluasi Manfaat --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
-                        <h3 class="font-bold text-gray-900">Evaluasi Manfaat Setelah Micro-Break</h3>
+                        <h3 class="font-bold text-gray-900 max-md:text-sm">Evaluasi Manfaat Setelah Micro-Break</h3>
                         <p class="text-xs text-gray-500 mt-1">Bagaimana kondisi Anda setelah melakukan micro-break?</p>
                     </div>
                     <div class="overflow-x-auto">
@@ -657,17 +657,22 @@
     {{-- ========== TAB 4: LAPORAN (Super Admin & Manager only) ========== --}}
     <div x-show="activeTab === 3" x-cloak x-transition:enter.duration.300 class="space-y-6">
         {{-- Export Buttons --}}
-        <div class="flex justify-end gap-2" x-show="reportLoaded">
-            <a href="{{ route('staf.daily-mental-check.export-csv') }}"
-               class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export CSV
-            </a>
-            <a href="{{ route('staf.daily-mental-check.export-excel') }}"
-               class="inline-flex items-center gap-1.5 px-3 py-2 bg-green-600 border border-green-600 rounded-lg text-xs font-semibold text-white hover:bg-green-700 transition-colors">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export Excel
-            </a>
+        <div class="flex justify-end gap-2 max-md:justify-between max-md:items-center max-md:bg-white max-md:rounded-2xl max-md:shadow-sm max-md:p-4" x-show="reportLoaded">
+            <div class="hidden max-md:block">
+                <p class="font-bold text-gray-900 text-sm">Unduh File</p>
+            </div>
+            <div class="flex gap-2 shrink-0">
+                <a href="{{ route('staf.daily-mental-check.export-csv') }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Export CSV
+                </a>
+                <a href="{{ route('staf.daily-mental-check.export-excel') }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-2 bg-green-600 border border-green-600 rounded-lg text-xs font-semibold text-white hover:bg-green-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Export Excel
+                </a>
+            </div>
         </div>
 
         {{-- Summary Cards --}}
@@ -696,7 +701,7 @@
                 <h3 class="font-bold text-gray-900">Kondisi Staff Hari Ini</h3>
                 <span class="text-xs text-gray-400" x-text="todayDate"></span>
             </div>
-            <div class="overflow-x-auto" x-show="reportLoaded">
+            <div class="overflow-x-auto max-md:overflow-y-auto max-md:max-h-[300px]" x-show="reportLoaded">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50/80">
@@ -810,7 +815,7 @@
                 <div class="overflow-x-auto max-h-[400px] overflow-y-auto" x-show="reportLoaded">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="bg-gray-50/80 sticky top-0">
+                            <tr class="bg-gray-50/80">
                                 <th class="px-3 py-2.5 text-left font-semibold text-gray-600">Staff</th>
                                 <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Hari</th>
                                 <th class="px-3 py-2.5 text-center font-semibold text-gray-600">Rata-rata</th>
@@ -1144,6 +1149,14 @@ function dailyMentalCheck(config = {}) {
                 }));
                 this.compliancePercent = histData.compliance_percent;
             } catch (e) { console.error('Failed to load history:', e); }
+
+            const dmcMatch = location.hash.match(/^#dmc=(\d)$/);
+            if (dmcMatch) this.activeTab = parseInt(dmcMatch[1]);
+
+            window.addEventListener('hashchange', () => {
+                const m = location.hash.match(/^#dmc=(\d)$/);
+                if (m) this.activeTab = parseInt(m[1]);
+            });
 
             if (['Super Admin', 'Manager'].includes(this.userRole)) {
                 await this.fetchReport();

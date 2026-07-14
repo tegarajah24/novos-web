@@ -9,35 +9,35 @@
 @section('internal-content')
 <div x-data="kategoriApp()" x-init="init()">
     <div class="bg-white shadow-sm rounded-2xl overflow-hidden">
-        <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+        <div class="p-4 md:p-5 border-b border-gray-100 flex items-center justify-between gap-2 flex-wrap">
             <h2 class="font-semibold text-gray-900 text-sm">Daftar Kategori</h2>
             <button @click="openModal()" class="px-4 py-2 bg-[#1a237e] text-white text-xs font-semibold rounded-xl hover:bg-[#283593] transition-colors">
                 + Tambah Kategori
             </button>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-[70vh]">
             <table class="w-full text-left text-sm">
-                <thead class="bg-gray-50 border-b border-gray-200 text-gray-500">
+                <thead class="bg-gray-50 border-b border-gray-200 text-gray-500 sticky top-0 z-10">
                     <tr>
-                        <th class="px-6 py-4 font-medium">Nama Kategori</th>
-                        <th class="px-6 py-4 font-medium text-center">Jumlah Produk</th>
-                        <th class="px-6 py-4 text-right font-medium">Aksi</th>
+                        <th class="px-4 md:px-6 py-3 md:py-4 font-medium">Nama Kategori</th>
+                        <th class="px-4 md:px-6 py-3 md:py-4 font-medium text-center">Jumlah Produk</th>
+                        <th class="px-4 md:px-6 py-3 md:py-4 text-right font-medium">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     <template x-if="loading">
                         <tr>
-                            <td colspan="3" class="px-6 py-12 text-center">
+                            <td colspan="3" class="px-4 md:px-6 py-12 text-center">
                                 <span class="loading loading-spinner loading-md text-[#1a237e]"></span>
                             </td>
                         </tr>
                     </template>
                     <template x-for="cat in categories" :key="cat.id">
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900" x-text="cat.name"></td>
-                            <td class="px-6 py-4 text-center text-gray-600" x-text="cat.products_count"></td>
-                            <td class="px-6 py-4 text-right">
+                            <td class="px-4 md:px-6 py-3 md:py-4 font-medium text-gray-900 max-w-[200px] truncate" x-text="cat.name"></td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-gray-600" x-text="cat.products_count"></td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-right whitespace-nowrap">
                                 <button @click="openModal(cat)" class="text-gray-400 hover:text-[#1a237e] p-1.5 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                                     <i data-lucide="pencil" class="w-4 h-4"></i>
                                 </button>
@@ -49,7 +49,7 @@
                     </template>
                     <template x-if="!loading && categories.length === 0">
                         <tr>
-                            <td colspan="3" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
+                            <td colspan="3" class="px-4 md:px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
                         </tr>
                     </template>
                 </tbody>
