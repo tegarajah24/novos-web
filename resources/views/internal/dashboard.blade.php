@@ -69,13 +69,9 @@ function statusBadgeType($status) {
 @endphp
 
     <!-- Stats Row -->
-<<<<<<< HEAD
-    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-=======
     @if($isDesign)
     <div class="relative" id="stats-scroll-design">
     <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
->>>>>>> a03152a774321c3292ed89a30c6c195221cb1a73
 
             <!-- Card D1: Menunggu Desain -->
             <a href="{{ route('staf.daftar-pesanan') }}?status=dikonfirmasi" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-purple-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
@@ -89,20 +85,6 @@ function statusBadgeType($status) {
                 <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $designWaiting }}">0</h3>
                 <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Desain</p>
             </a>
-
-<<<<<<< HEAD
-        <!-- Card D1: Menunggu Desain -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=dikonfirmasi" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col hover:shadow-xl hover:border-purple-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3 md:mb-4">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                </div>
-            </div>
-            <h3 class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $designWaiting }}">0</h3>
-            <p class="text-gray-500 text-xs md:text-sm mt-1.5 md:mt-2 font-medium">Menunggu Desain</p>
-        </a>
 
         <!-- Card D2: Sedang Di Desain -->
         <a href="{{ route('staf.daftar-pesanan') }}?status=di_design" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col hover:shadow-xl hover:border-blue-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
@@ -305,8 +287,6 @@ function statusBadgeType($status) {
             <p class="text-gray-500 text-xs md:text-sm mt-1.5 md:mt-2 font-medium">Selesai Hari Ini</p>
         </a>
 
-        @endif
-=======
             <!-- Card D2: Sedang Di Desain -->
             <a href="{{ route('staf.daftar-pesanan') }}?status=di_design" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-blue-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
                 <div class="flex justify-between items-start mb-4">
@@ -345,7 +325,6 @@ function statusBadgeType($status) {
                 <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
                 <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
             </a>
->>>>>>> a03152a774321c3292ed89a30c6c195221cb1a73
 
         </div>
         <div class="stats-dots" id="stats-dots-design">
