@@ -425,37 +425,49 @@
         </div>
 
         {{-- Daftar Isi --}}
-        <div class="glass-card rounded-2xl p-7">
-            <div class="flex items-center gap-3 mb-5">
+        <div class="glass-card rounded-2xl p-4 md:p-7">
+            <div @click="isMobile ? showToc = !showToc : null"
+                class="flex items-center gap-3 mb-5 cursor-pointer select-none">
                 <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="list" class="w-5 h-5 text-green-600"></i>
                 </div>
-                <div>
+                <div class="flex-1">
                     <h2 class="text-base font-bold text-gray-900">Daftar Isi</h2>
                     <p class="text-xs text-gray-500">Navigasi cepat ke bagian panduan yang diinginkan</p>
                 </div>
+                <i x-show="isMobile"
+                    data-lucide="chevron-down"
+                    class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                    :class="showToc ? 'rotate-180' : ''"></i>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                <template x-for="(item, index) in panduanMenu" :key="index">
-                    <a @click.prevent="scrollTo('panduan-'+item.id)" href="#panduan-"+item.id
-                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors group">
-                        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
-                            :style="'background:'+item.color">
-                            <span x-text="index+1"></span>
-                        </span>
-                        <div class="min-w-0">
-                            <p class="text-sm font-semibold text-gray-800 group-hover:text-[#1a237e]" x-text="item.label"></p>
-                            <p class="text-xs text-gray-400 truncate" x-text="item.desc"></p>
-                        </div>
-                    </a>
-                </template>
+            <div x-show="!isMobile || showToc"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    <template x-for="(item, index) in panduanMenu" :key="index">
+                        <a @click.prevent="scrollTo('panduan-'+item.id)" href="#panduan-"+item.id
+                            class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors group">
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+                                :style="'background:'+item.color">
+                                <span x-text="index+1"></span>
+                            </span>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-800 group-hover:text-[#1a237e]" x-text="item.label"></p>
+                                <p class="text-xs text-gray-400 truncate" x-text="item.desc"></p>
+                            </div>
+                        </a>
+                    </template>
+                </div>
             </div>
         </div>
 
         {{-- Konten Panduan --}}
         <template x-for="(item, index) in panduanMenu" :key="index">
-            <div :id="'panduan-'+item.id" class="glass-card rounded-2xl p-7 scroll-mt-24">
-                <div class="flex items-start gap-4">
+            <div :id="'panduan-'+item.id" class="glass-card rounded-2xl p-4 md:p-7 scroll-mt-24">
+                <div @click="isMobile ? toggleGuide(index) : null"
+                    class="flex items-start gap-4"
+                    :class="isMobile ? 'cursor-pointer select-none' : ''">
                     <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md"
                         :style="'background:'+item.color">
                         <i :data-lucide="item.icon" class="w-6 h-6"></i>
@@ -463,33 +475,44 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-2">
                             <h3 class="text-base font-bold text-gray-900" x-text="item.label"></h3>
-                            <span class="text-[10px] font-semibold px-2 py-1 rounded-full shrink-0 text-white"
-                                :style="'background:'+item.color" x-text="item.badge"></span>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-[10px] font-semibold px-2 py-1 rounded-full shrink-0 text-white"
+                                    :style="'background:'+item.color" x-text="item.badge"></span>
+                                <i x-show="isMobile"
+                                    data-lucide="chevron-down"
+                                    class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                                    :class="activeGuide === index ? 'rotate-180' : ''"></i>
+                            </div>
                         </div>
                         <p class="text-xs text-gray-400 mt-0.5" x-text="item.desc"></p>
                     </div>
                 </div>
-                <div class="mt-5 space-y-4">
-                    <template x-for="(section, si) in item.sections" :key="si">
-                        <div class="panduan-section-card p-4 rounded-xl border border-gray-100">
-                            <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0"
-                                    :style="'background:'+item.color" x-text="si+1"></span>
-                                <span x-text="section.title"></span>
-                            </h4>
-                            <div class="mt-2 text-sm text-gray-600 leading-relaxed space-y-2" x-html="section.body"></div>
-                        </div>
-                    </template>
-                </div>
-                <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <button @click="scrollTo('panduan-'+panduanMenu[Math.max(0,index-1)].id)" x-show="index>0"
-                        class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1">
-                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Sebelumnya
-                    </button>
-                    <button @click="scrollTo('panduan-'+panduanMenu[Math.min(panduanMenu.length-1,index+1)].id)" x-show="index<panduanMenu.length-1"
-                        class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1 ml-auto">
-                        Selanjutnya <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                    </button>
+                <div x-show="!isMobile || activeGuide === index"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 -translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0">
+                    <div class="mt-5 space-y-4">
+                        <template x-for="(section, si) in item.sections" :key="si">
+                            <div class="panduan-section-card p-4 rounded-xl border border-gray-100">
+                                <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                                        :style="'background:'+item.color" x-text="si+1"></span>
+                                    <span x-text="section.title"></span>
+                                </h4>
+                                <div class="mt-2 text-sm text-gray-600 leading-relaxed space-y-2" x-html="section.body"></div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                        <button @click="scrollTo('panduan-'+panduanMenu[Math.max(0,index-1)].id)" x-show="index>0"
+                            class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Sebelumnya
+                        </button>
+                        <button @click="scrollTo('panduan-'+panduanMenu[Math.min(panduanMenu.length-1,index+1)].id)" x-show="index<panduanMenu.length-1"
+                            class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1 ml-auto">
+                            Selanjutnya <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </template>
@@ -520,6 +543,8 @@ function settingApp() {
         tab: @json(auth()->user()->role->name === 'Super Admin' ? 'toko' : 'tampilan'),
         saving: false,
         isMobile: window.innerWidth < 768,
+        activeGuide: null,
+        showToc: true,
 
         form: {
             company_name: '',
@@ -755,6 +780,10 @@ function settingApp() {
             },
         ],
 
+        toggleGuide(index) {
+            this.activeGuide = this.activeGuide === index ? null : index;
+        },
+
         scrollTo(id) {
             var el = document.getElementById(id);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -771,6 +800,7 @@ function settingApp() {
             this.form.hours_sunday      = @json($settings['hours_sunday'] ?? 'Libur');
 
             this.isMobile = window.innerWidth < 768;
+            this.showToc = !this.isMobile;
             if (this.isMobile) {
                 this.tab = 'menu';
             }
