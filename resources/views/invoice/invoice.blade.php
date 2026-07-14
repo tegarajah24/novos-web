@@ -187,25 +187,6 @@
         line-height: 1.5;
     }
 
-    /* ── PAYMENT INFO ── */
-    .payment-info {
-        background: #f0fdf4;
-        border: 1px solid #bbf7d0;
-        border-radius: 8px;
-        padding: 14px 16px;
-        margin-bottom: 24px;
-    }
-    .payment-info-title {
-        font-size: 10px;
-        font-weight: 700;
-        color: #166534;
-        margin-bottom: 8px;
-    }
-    .payment-info p {
-        font-size: 10px;
-        color: #15803d;
-        line-height: 1.7;
-    }
     .bank-line {
         font-size: 11px;
         font-weight: 700;
@@ -383,23 +364,6 @@
         <p>
             Total tagihan di atas merupakan biaya produksi jersey. Ongkos kirim akan ditentukan setelah pesanan selesai diproduksi
             berdasarkan berat paket dan lokasi pengiriman, dan akan dikomunikasikan oleh tim kami via WhatsApp.
-        </p>
-    </div>
-
-    {{-- ── INFO PEMBAYARAN ── --}}
-    <div class="payment-info">
-        <div class="payment-info-title">📋 Cara Pembayaran</div>
-        <p>
-            Silakan lakukan transfer ke rekening berikut:<br>
-            @if($company_bank)
-            <span class="bank-line">{{ $company_bank }}</span><br>
-            @else
-            <span class="bank-line">Hubungi admin untuk informasi rekening.</span><br>
-            @endif
-            Setelah transfer, kirim bukti pembayaran ke WhatsApp admin kami:
-            @if($company_phone)
-            <strong>{{ $company_phone }}</strong>
-            @endif
         </p>
     </div>
 
