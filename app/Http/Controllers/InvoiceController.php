@@ -53,6 +53,28 @@ class InvoiceController extends Controller
 
         $sisaBayar = max(0, $subtotal - $dpPaid);
 
+        // Group items by size + customizations combination
+        $groupedItems = collect();
+        $excludeKeys = ['tipe_bawahan', 'size_bawahan'];
+        foreach ($items as $item) {
+            $cust = $item->customizations ?? [];
+            $filtered = array_filter($cust, fn($v, $k) => $v && !in_array($k, $excludeKeys), ARRAY_FILTER_USE_BOTH);
+            ksort($filtered);
+            $key = $item->size . '|' . json_encode($filtered);
+            if (!isset($groupedItems[$key])) {
+                $groupedItems[$key] = [
+                    'size'           => $item->size,
+                    'customizations' => $filtered,
+                    'qty'            => 0,
+                    'price'          => $item->price,
+                    'subtotal'       => 0,
+                ];
+            }
+            $groupedItems[$key]['qty']++;
+            $groupedItems[$key]['subtotal'] += $item->price;
+        }
+        $groupedItems = $groupedItems->values();
+
         $companyName  = Setting::get('company_name', 'Novos Jersey');
         $companyPhone = Setting::get('company_phone', '');
         $companyBank  = Setting::get('company_bank_info', '');
@@ -61,6 +83,7 @@ class InvoiceController extends Controller
             'order'         => $order,
             'design'        => $design,
             'items'         => $items,
+            'grouped_items' => $groupedItems,
             'payment'       => $payment,
             'subtotal'      => $subtotal,
             'dp_paid'       => $dpPaid,

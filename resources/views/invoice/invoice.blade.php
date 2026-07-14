@@ -121,15 +121,6 @@
     }
     table tbody tr:first-child td { border-top: 1px solid #ccc; }
     table tbody td:last-child { text-align: right; font-weight: 600; }
-    .customization-tag {
-        display: inline-block;
-        font-size: 9px;
-        background: #e8e8e8;
-        color: #333;
-        padding: 1px 5px;
-        border-radius: 3px;
-        margin: 1px 2px 1px 0;
-    }
     .empty-row td {
         text-align: center;
         color: #888;
@@ -288,60 +279,39 @@
         </div>
     </div>
 
-    {{-- ── TABEL RINCIAN ITEM ── --}}
+    {{-- ── TABEL RINCIAN PESANAN ── --}}
     <div class="section-title">Rincian Pesanan</div>
     <table>
         <thead>
             <tr>
                 <th style="width:5%">#</th>
-                <th style="width:20%">Nama</th>
-                <th style="width:8%">No.</th>
                 <th style="width:8%">Ukuran</th>
-                <th style="width:35%">Kustomisasi</th>
-                <th style="width:12%; text-align:right">Harga/pcs</th>
+                <th style="width:32%">Atribut</th>
+                <th style="width:8%; text-align:center">Qty</th>
+                <th style="width:15%; text-align:right">Harga/pcs</th>
+                <th style="width:18%; text-align:right">Subtotal</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($items as $i => $item)
+            @forelse($grouped_items as $i => $group)
             <tr>
                 <td>{{ $i + 1 }}</td>
-                <td>{{ $item->nama_punggung ?: '-' }}</td>
-                <td>{{ $item->no_punggung ?: '-' }}</td>
-                <td>{{ strtoupper($item->size) }}</td>
+                <td>{{ strtoupper($group['size']) }}</td>
                 <td>
-                    @if($item->customizations)
-                        @foreach($item->customizations as $key => $val)
-                            @if($val && !in_array($key, ['tipe_bawahan', 'size_bawahan']))
-                            <span class="customization-tag">{{ $val }}</span>
-                            @endif
-                        @endforeach
-                        @if(!empty($item->customizations['tipe_bawahan']))
-                        <span class="customization-tag">Bawahan: {{ $item->customizations['tipe_bawahan'] }}</span>
-                        @endif
-                        @if(!empty($item->customizations['size_bawahan']))
-                        <span class="customization-tag">Ukuran Bawahan: {{ strtoupper($item->customizations['size_bawahan']) }}</span>
-                        @endif
+                    @if($group['customizations'])
+                        {{ implode(', ', $group['customizations']) }}
                     @else
-                        -
+                        <span style="color:#999">-</span>
                     @endif
                 </td>
-                <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                <td style="text-align:center">{{ $group['qty'] }}</td>
+                <td style="text-align:right">Rp {{ number_format($group['price'], 0, ',', '.') }}</td>
+                <td style="text-align:right">Rp {{ number_format($group['subtotal'], 0, ',', '.') }}</td>
             </tr>
             @empty
-            {{-- Fallback jika tidak ada item detail, tampilkan dari order_items --}}
-            @foreach($order->orderItems as $i => $oi)
-            <tr>
-                <td>{{ $i + 1 }}</td>
-                <td colspan="3">Jersey Custom</td>
-                <td>{{ $oi->qty }} pcs</td>
-                <td>Rp {{ number_format($oi->price_per_item, 0, ',', '.') }}</td>
-            </tr>
-            @endforeach
-            @if($order->orderItems->isEmpty())
             <tr class="empty-row">
                 <td colspan="6">Belum ada rincian item pesanan</td>
             </tr>
-            @endif
             @endforelse
         </tbody>
     </table>
