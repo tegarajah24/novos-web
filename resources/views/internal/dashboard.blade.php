@@ -198,6 +198,13 @@ function statusBadgeType($status) {
             <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
         </a>
 
+        </div>
+        <div class="stats-dots" id="stats-dots-production">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+
     @else
     <div class="relative" id="stats-scroll-default">
     <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
