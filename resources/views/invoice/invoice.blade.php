@@ -130,17 +130,11 @@
 
     /* ── DISCLAIMER ── */
     .disclaimer {
-        background: #f5f5f5;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 12px 16px;
+        border-top: 1px solid #ccc;
+        padding-top: 12px;
         margin-bottom: 24px;
-    }
-    .disclaimer-title {
         font-size: 10px;
-        font-weight: 700;
-        color: #333;
-        margin-bottom: 4px;
+        color: #555;
     }
     @media screen {
         html { overflow-x: auto; }
@@ -287,9 +281,7 @@
     </div>
 
     {{-- ── DISCLAIMER ONGKIR ── --}}
-    <div class="disclaimer">
-        <div class="disclaimer-title">Perhatian — Harga Belum Termasuk Ongkos Kirim</div>
-    </div>
+    <div class="disclaimer">Perhatian — Harga Belum Termasuk Ongkos Kirim</div>
 
     {{-- ── FOOTER ── --}}
     <div class="footer">
