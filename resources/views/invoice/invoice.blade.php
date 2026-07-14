@@ -215,24 +215,12 @@
 
     {{-- ── INFO PESANAN ── --}}
     <div style="margin-bottom:16px; font-size:11px; color:#333; line-height:1.8">
-        @if($design && $design->team_name)
-        <span><strong>Tim:</strong> {{ $design->team_name }}</span><br>
-        @endif
         @if($design && $design->nama_pemesan)
         <span><strong>Pemesan:</strong> {{ $design->nama_pemesan }}</span><br>
         @endif
-        <span><strong>Status:</strong>
-            {{ match($order->status) {
-                'menunggu_pembayaran' => 'Menunggu Pembayaran DP',
-                'dikonfirmasi'        => 'Dikonfirmasi',
-                'disetujui'           => 'Disetujui',
-                'di_design'           => 'Tahap Desain',
-                'siap_cetak'          => 'Siap Cetak',
-                'diproduksi'          => 'Diproduksi',
-                'selesai'             => 'Selesai',
-                default               => $order->status,
-            } }}
-        </span>
+        @if($design && $design->team_name)
+        <span><strong>Tim:</strong> {{ $design->team_name }}</span>
+        @endif
     </div>
 
     {{-- ── TABEL RINCIAN PESANAN ── --}}
