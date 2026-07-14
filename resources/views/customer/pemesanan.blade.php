@@ -227,15 +227,8 @@
         <h2 class="text-lg font-semibold text-gray-900" x-text="subStep === 1 ? 'Detail & Upload' : 'Alamat Pengiriman'"></h2>
         <p class="text-sm text-gray-500 mt-1" x-text="subStep === 1 ? 'Lengkapi informasi pesanan dan upload file desain Anda' : 'Lengkapi alamat pengiriman untuk pesanan Anda'"></p>
 
-        <div class="grid grid-cols-1 grid-rows-1 mt-6">
             {{-- Sub-Step 1: Detail & Upload Form --}}
-            <div x-show="subStep === 1" class="col-start-1 row-start-1 pb-24"
-                 x-transition:enter="transition ease-out duration-500 transform"
-                 x-transition:enter-start="-translate-x-12 opacity-0"
-                 x-transition:enter-end="translate-x-0 opacity-100"
-                 x-transition:leave="transition ease-in duration-300 transform"
-                 x-transition:leave-start="translate-x-0 opacity-100"
-                 x-transition:leave-end="-translate-x-12 opacity-0">
+            <div x-show="subStep === 1" class="pb-24">
                 <div class="space-y-6">
 
         {{-- Selected product from catalog --}}
@@ -821,6 +814,7 @@
             </div>
         </div>
             </div>
+            </div>
 
             {{-- Sticky Bottom Pricing Bar (Desktop & Mobile) --}}
             <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3.5 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-40">
@@ -835,19 +829,11 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-            {{-- Sub-Step 2: Alamat Form / Select --}}
-            <div x-show="subStep === 2" x-cloak class="col-start-1 row-start-1"
-                 x-transition:enter="transition ease-out duration-500 transform"
-                 x-transition:enter-start="translate-x-12 opacity-0"
-                 x-transition:enter-end="translate-x-0 opacity-100"
-                 x-transition:leave="transition ease-in duration-300 transform"
-                 x-transition:leave-start="translate-x-0 opacity-100"
-                 x-transition:leave-end="translate-x-12 opacity-0">
-                 
+        {{-- Sub-Step 2: Alamat Form / Select --}}
+            <div x-show="subStep === 2">
                 {{-- Mode 1: Detail Kontak & Alamat --}}
-                <div x-show="addressMode === 'select'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                <div x-show="addressMode === 'select'" class="space-y-6">
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Detail Kontak & Alamat</h3>
                         <p class="text-xs text-gray-500 mt-0.5">Pastikan data kontak dan alamat pengiriman Anda sudah benar sebelum melanjutkan.</p>
@@ -954,7 +940,7 @@
                 </div>
 
                 {{-- Mode 2: Pilih Alamat yang Sudah Ada (Card List) --}}
-                <div x-show="addressMode === 'list'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                <div x-show="addressMode === 'list'" class="space-y-6">
                     <div class="flex justify-between items-center mb-2">
                         <div>
                             <h3 class="font-bold text-lg text-gray-900">Pilih Alamat Lain</h3>
@@ -1015,7 +1001,7 @@
                 </div>
 
                 {{-- Mode 3: Form Input Alamat Baru --}}
-                <div x-show="addressMode === 'create'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                <div x-show="addressMode === 'create'" class="space-y-6">
                     <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
                         <div class="grid md:grid-cols-2 gap-6">
                             {{-- Nama Depan --}}
@@ -1218,7 +1204,6 @@
 
 
             </div>
-        </div>
     </div>
 
     {{-- Step 4: Prioritas & Pembayaran --}}
@@ -1741,7 +1726,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     const state = JSON.parse(savedState);
                     this.mode = state.mode || 'single';
                     this.step = state.step;
-                    this.subStep = state.subStep;
+                    this.subStep = state.step === 2 ? 1 : (state.subStep || 1);
                     this.prioritas = state.prioritas || 'normal';
                     this.selectedAddressId = state.selectedAddressId || null;
 
