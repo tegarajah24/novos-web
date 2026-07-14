@@ -144,6 +144,13 @@
         }
     }
 
+    @media print {
+        body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+
     .bank-line {
         font-size: 11px;
         font-weight: 700;
