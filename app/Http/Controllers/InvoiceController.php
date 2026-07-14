@@ -54,7 +54,7 @@ class InvoiceController extends Controller
         $sisaBayar = max(0, $subtotal - $dpPaid);
 
         // Group items by size + customizations combination
-        $groupedItems = collect();
+        $groupedItems = [];
         $excludeKeys = ['tipe_bawahan', 'size_bawahan'];
         foreach ($items as $item) {
             $cust = $item->customizations ?? [];
@@ -73,7 +73,7 @@ class InvoiceController extends Controller
             $groupedItems[$key]['qty']++;
             $groupedItems[$key]['subtotal'] += $item->price;
         }
-        $groupedItems = $groupedItems->values();
+        $groupedItems = collect($groupedItems)->values();
 
         $companyName  = Setting::get('company_name', 'Novos Jersey');
         $companyPhone = Setting::get('company_phone', '');
