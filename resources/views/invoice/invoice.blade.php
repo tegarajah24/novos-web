@@ -61,6 +61,7 @@
         border-collapse: collapse;
         margin-bottom: 16px;
     }
+    table.data-table { margin-bottom: 0; }
     table thead th {
         background: #fff;
         color: #000;
@@ -96,8 +97,9 @@
     }
     .summary-box {
         width: 260px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        border: 1px solid #bbb;
+        border-radius: 0;
+        background: #f5f5f5;
         overflow: hidden;
     }
     .summary-row {
@@ -105,14 +107,13 @@
         justify-content: space-between;
         padding: 6px 14px;
         font-size: 10px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #ddd;
     }
     .summary-row:last-child { border-bottom: none; }
-    .summary-row .s-label { color: #555; }
+    .summary-row .s-label { color: #333; }
     .summary-row .s-value { font-weight: 600; color: #000; }
     .summary-row.dp-row .s-value { color: #000; }
     .summary-row.total-final {
-        background: #fff;
         border-top: 2px solid #000;
         padding: 12px 14px;
     }
@@ -192,7 +193,7 @@
     </div>
 
     {{-- ── TABEL RINCIAN PESANAN ── --}}
-    <table>
+    <table class="data-table">
         <thead>
             <tr>
                 <th style="width:5%">#</th>
