@@ -142,12 +142,6 @@
         color: #333;
         margin-bottom: 4px;
     }
-    .disclaimer p {
-        font-size: 10px;
-        color: #444;
-        line-height: 1.5;
-    }
-
     @media screen {
         html { overflow-x: auto; }
         body {
@@ -295,10 +289,6 @@
     {{-- ── DISCLAIMER ONGKIR ── --}}
     <div class="disclaimer">
         <div class="disclaimer-title">Perhatian — Harga Belum Termasuk Ongkos Kirim</div>
-        <p>
-            Total tagihan di atas merupakan biaya produksi jersey. Ongkos kirim akan ditentukan setelah pesanan selesai diproduksi
-            berdasarkan berat paket dan lokasi pengiriman, dan akan dikomunikasikan oleh tim kami via WhatsApp.
-        </p>
     </div>
 
     {{-- ── FOOTER ── --}}
