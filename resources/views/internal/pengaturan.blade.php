@@ -170,7 +170,7 @@
         </button>
 
         {{-- Mode Tema --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="sun-moon" class="w-5 h-5 text-indigo-600"></i>
@@ -180,7 +180,7 @@
                     <p class="text-xs text-gray-500">Pilih antara terang, gelap, atau ikuti sistem</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="m in themeOptions" :key="m.value">
                     <button @click="applyTheme(m.value)"
                         :class="appearance.theme===m.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5' : 'hover:bg-gray-50'"
@@ -196,7 +196,7 @@
         </div>
 
         {{-- Color Palette / Scheme --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-pink-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="swatch-book" class="w-5 h-5 text-pink-500"></i>
@@ -227,7 +227,7 @@
         </div>
 
         {{-- Custom Color --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="pipette" class="w-5 h-5 text-orange-500"></i>
@@ -272,7 +272,7 @@
         </div>
 
         {{-- Font Size --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="type" class="w-5 h-5 text-teal-600"></i>
@@ -282,7 +282,7 @@
                     <p class="text-xs text-gray-500">Sesuaikan ukuran teks untuk kenyamanan membaca</p>
                 </div>
             </div>
-            <div class="grid grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <template x-for="fs in fontSizes" :key="fs.value">
                     <button @click="applyFontSize(fs.value)"
                         :class="appearance.fontSize===fs.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5 text-[#1a237e]' : 'hover:bg-gray-50 text-gray-600'"
@@ -295,7 +295,7 @@
         </div>
 
         {{-- Button Style --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="square" class="w-5 h-5 text-purple-600"></i>
@@ -323,7 +323,7 @@
         </div>
 
         {{-- Rounded --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="circle-dashed" class="w-5 h-5 text-yellow-600"></i>
@@ -333,7 +333,7 @@
                     <p class="text-xs text-gray-500">Atur tingkat kelengkungan sudut elemen UI</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="r in roundedOptions" :key="r.value">
                     <button @click="applyRounded(r.value)"
                         :class="appearance.rounded===r.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5' : 'hover:bg-gray-50'"
@@ -346,7 +346,7 @@
         </div>
 
         {{-- Kepadatan Tata Letak --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="layout-grid" class="w-5 h-5 text-blue-500"></i>
@@ -356,7 +356,7 @@
                     <p class="text-xs text-gray-500">Atur kerapatan dan jarak elemen (padding/margin) di seluruh sistem</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="d in densities" :key="d.value">
                     <button @click="applyDensity(d.value)"
                         :class="appearance.density===d.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5 text-[#1a237e]' : 'hover:bg-gray-50 text-gray-600'"
@@ -369,7 +369,7 @@
         </div>
 
         {{-- Pilihan Gaya Font --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="languages" class="w-5 h-5 text-indigo-500"></i>
@@ -379,7 +379,7 @@
                     <p class="text-xs text-gray-500">Pilih jenis huruf yang digunakan di seluruh panel</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="f in fontOptions" :key="f.value">
                     <button @click="applyFontFamily(f.value)"
                         :class="appearance.fontFamily===f.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5 text-[#1a237e]' : 'hover:bg-gray-50 text-gray-600'"
@@ -393,13 +393,13 @@
         </div>
 
         {{-- Preview & Reset --}}
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3">
             <button @click="resetAppearance()"
-                class="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all">
+                class="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all w-full md:w-fit justify-center">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset ke Default
             </button>
             <button @click="saveAppearance()"
-                class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all shadow-md shadow-[#1a237e]/20 active:scale-95">
+                class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all shadow-md shadow-[#1a237e]/20 active:scale-95 w-full md:w-fit justify-center">
                 <i data-lucide="check-circle" class="w-4 h-4"></i> Terapkan Tampilan
             </button>
         </div>
