@@ -204,7 +204,7 @@
             </tr>
         </thead>
         <tbody>
-            @php $maxRows = 14; @endphp
+            @php $maxRows = 22; @endphp
             @forelse($grouped_items as $i => $group)
             <tr>
                 <td>{{ $i + 1 }}</td>
