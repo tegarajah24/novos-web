@@ -85,17 +85,17 @@
 
     {{-- Table --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/50 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wider">
-                        <th class="px-6 py-4 font-semibold">Nama</th>
-                        <th class="px-6 py-4 font-semibold">Username</th>
-                        <th class="px-6 py-4 font-semibold">Email</th>
-                        <th class="px-6 py-4 font-semibold">Role</th>
-                        <th class="px-6 py-4 font-semibold">Status</th>
-                        <th class="px-6 py-4 font-semibold">Tanggal Dibuat</th>
-                        <th class="px-6 py-4 font-semibold text-center">Aksi</th>
+        <div class="overflow-x-auto max-h-[70vh]">
+            <table class="w-full text-left border-separate border-spacing-0">
+                <thead class="sticky top-0 z-10">
+                    <tr class="bg-gray-50/50 text-xs text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-4 font-semibold border-b border-gray-100">Nama</th>
+                        <th class="px-6 py-4 font-semibold border-b border-gray-100">Username</th>
+                        <th class="px-6 py-4 font-semibold border-b border-gray-100">Email</th>
+                        <th class="px-6 py-4 font-semibold border-b border-gray-100">Role</th>
+                        <th class="px-6 py-4 font-semibold border-b border-gray-100">Status</th>
+                        <th class="px-6 py-4 font-semibold border-b border-gray-100">Tanggal Dibuat</th>
+                        <th class="px-6 py-4 font-semibold text-center border-b border-gray-100">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700" id="userTableBody">
