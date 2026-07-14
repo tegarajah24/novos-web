@@ -258,6 +258,7 @@
                 <td colspan="6">Belum ada rincian item pesanan</td>
             </tr>
             @endforelse
+            @if($grouped_items->count() > 0)
             @for($e = $grouped_items->count(); $e < $maxRows; $e++)
             <tr>
                 <td>&nbsp;</td>
@@ -268,6 +269,7 @@
                 <td></td>
             </tr>
             @endfor
+            @endif
         </tbody>
     </table>
 
