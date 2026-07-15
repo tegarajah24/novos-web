@@ -68,6 +68,37 @@ class CustomCategorySeeder extends Seeder
                 'reference_image' => Setting::get('jersey_lengan_image', 'images/Model Lengan & Jahitan.png'),
                 'options'         => array_values(array_map(fn($v) => ['value' => $v], $lenganOptions)),
             ],
+            // ── Bawahan (per-item) ──
+            [
+                'id'       => 'set_bawahan',
+                'name'     => 'Set Bawahan?',
+                'type'     => 'select',
+                'required' => false,
+                'options'  => [
+                    ['value' => 'Tidak'],
+                    ['value' => 'Ya'],
+                ],
+            ],
+            [
+                'id'         => 'tipe_bawahan',
+                'name'       => 'Tipe Bawahan',
+                'type'       => 'select',
+                'required'   => true,
+                'depends_on' => ['attribute_id' => 'set_bawahan', 'value' => 'Ya'],
+                'options'    => [
+                    ['value' => 'Celana Pendek'],
+                    ['value' => 'Celana Panjang / Training'],
+                    ['value' => 'Rok Olahraga'],
+                ],
+            ],
+            [
+                'id'         => 'bahan_bawahan',
+                'name'       => 'Bahan Bawahan',
+                'type'       => 'select',
+                'required'   => true,
+                'depends_on' => ['attribute_id' => 'set_bawahan', 'value' => 'Ya'],
+                'options'    => array_values(array_map(fn($v) => ['value' => $v], $bawahanBahanOptions)),
+            ],
         ];
 
         // 2. Bawahan Schema

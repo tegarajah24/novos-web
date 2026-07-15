@@ -44,8 +44,6 @@ class StoreOrderRequest extends FormRequest
             'items.*.no'       => 'nullable|string|max:50',
             'items.*.nama'     => 'nullable|string|max:100',
             'items.*.size'     => 'nullable|string|max:20',
-            'items.*.tipe_bawahan' => 'nullable|string|max:100',
-            'items.*.size_bawahan' => 'nullable|string|max:20',
             'items.*.customizations' => 'nullable|array',
             'catatan'          => 'nullable|string|max:5000',
             'total_qty'        => 'nullable|integer|min:1',

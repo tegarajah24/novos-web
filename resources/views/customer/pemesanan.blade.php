@@ -315,7 +315,7 @@
         <div class="space-y-5 mt-6">
             {{-- Row: Nama Pemesan + Nama Tim --}}
             <div :class="formFieldsGridClass">
-                {{-- Kiri: Nama Pemesan --}}
+                {{-- Kiri: Nama Pemesan, Nama Tim, Nama Artikel --}}
                 <div class="space-y-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
@@ -335,19 +335,6 @@
                             <p class="text-xs text-red-500 mt-1">Nama pemesan wajib diisi</p>
                         </template>
                     </div>
-                    <div x-show="showNamaArtikelField" x-transition x-cloak>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Artikel</label>
-                        <input
-                            type="text"
-                            x-model="form.nama_artikel"
-                            placeholder="Contoh: Jersey Tim Futsal"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
-                        >
-                    </div>
-                </div>
-
-                {{-- Kanan: Nama Tim & Sponsor --}}
-                <div class="space-y-5" x-show="showTeamNameField || showDetailSponsorField" x-transition x-cloak>
                     <div x-show="showTeamNameField" x-transition x-cloak>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
                             Nama Tim / Event
@@ -366,7 +353,21 @@
                             <p class="text-xs text-red-500 mt-1">Nama tim / event wajib diisi</p>
                         </template>
                     </div>
+                </div>
+
+                {{-- Kanan: Nama Artikel & Detail Sponsor --}}
+                <div class="space-y-5">
+                    <div x-show="showNamaArtikelField" x-transition x-cloak>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Artikel</label>
+                        <input
+                            type="text"
+                            x-model="form.nama_artikel"
+                            placeholder="Contoh: Jersey Tim Futsal"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                        >
+                    </div>
                     <div x-show="showDetailSponsorField" x-transition x-cloak>
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Sponsor</label>
                         <input
                             type="text"
@@ -468,63 +469,6 @@
                                     </select>
                                     <template x-if="getSelectedOptionPrice(attr) > 0">
                                         <div class="mt-1 flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                            <span x-text="'+ ' + formatRupiah(getSelectedOptionPrice(attr))"></span>
-                                        </div>
-                                    </template>
-                                </div>
-                            </template>
-                            <template x-if="attr.type === 'text'">
-                                <input
-                                    type="text"
-                                    x-model="form.customizations[attr.id]"
-                                    class="w-full border border-gray-300 p-2 rounded-lg text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
-                                    :placeholder="'Masukkan ' + attr.name"
-                                >
-                            </template>
-                        </div>
-                    </template>
-                </div>
-            </div>
-
-            {{-- Spesifikasi Bawahan (Dinamis jika ada Set Bawahan) --}}
-            <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm mt-6" x-show="hasBawahanSet" x-cloak>
-                <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center justify-between cursor-pointer select-none" @click="expandedBawahan = !expandedBawahan">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
-                        <span>Spesifikasi Bawahan (Berlaku untuk Semua Celana/Rok Setelan)</span>
-                    </div>
-                    <button type="button" class="text-gray-400 hover:text-gray-600 transition-transform duration-200" :class="expandedBawahan ? 'rotate-180' : ''">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedBawahan">
-                    <template x-for="attr in bawahanSchema" :key="attr.id">
-                        <div class="space-y-1.5">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-gray-600" x-text="attr.name"></span>
-                                <template x-if="attr.reference_image">
-                                    <button type="button" @click="showAttrGuide(attr)" class="text-[10px] text-blue-900 hover:underline flex items-center gap-0.5">
-                                        Panduan
-                                    </button>
-                                </template>
-                            </div>
-                            <template x-if="attr.type === 'select' || attr.type === 'radio'">
-                                <div>
-                                    <select
-                                        x-model="form.customizations[attr.id]"
-                                        class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
-                                    >
-                                        <option value="">- Pilih -</option>
-                                        <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
-                                            <option :value="opt.value" x-text="opt.value"></option>
-                                        </template>
-                                    </select>
-                                    <template x-if="getSelectedOptionPrice(attr) > 0">
-                                        <div class="mt-1 flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                                             <span x-text="'+ ' + formatRupiah(getSelectedOptionPrice(attr))"></span>
                                         </div>
                                     </template>
@@ -759,9 +703,9 @@
                                                     Size <span x-text="item.size || '-'"></span>
                                                 </span>
                                                 <!-- Set Bawahan Badge if Jersey and selected -->
-                                                <template x-if="selectedCategoryName.toLowerCase() === 'jersey' && item.tipe_bawahan">
+                                                <template x-if="selectedCategoryName.toLowerCase() === 'jersey' && item.customizations['set_bawahan'] === 'Ya' && item.customizations['tipe_bawahan']">
                                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-50 text-[#1a237e] text-[10px] font-bold border border-indigo-100">
-                                                        Set: <span x-text="`${item.tipe_bawahan} (${item.size_bawahan || '-'})`"></span>
+                                                        Set: <span x-text="`${item.customizations['tipe_bawahan']} (${item.size || '-'})`"></span>
                                                     </span>
                                                 </template>
                                                 <!-- Customizations list -->
@@ -881,7 +825,6 @@
                 </button>
             </div>
         </div>
-            </div>
             </div>
             </div>
 
@@ -2012,22 +1955,11 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     this.form.customizations[attr.id] = '';
                 });
             }
-            if (this.selectedCategoryName.toLowerCase() === 'jersey') {
-                const bSchema = this.bawahanSchema;
-                if (bSchema) {
-                    bSchema.forEach(attr => {
-                        this.form.customizations[attr.id] = '';
-                    });
-                }
-            }
             this.updateItemsRows(this.form.total_qty);
         },
 
         updateItemsRows(val) {
             const count = parseInt(val) || 1;
-            const schema = this.activeSchema;
-            const isJersey = this.selectedCategoryName.toLowerCase() === 'jersey';
-            const bSchema = isJersey ? this.bawahanSchema : [];
             
             if (this.items.length > count) {
                 this.items = this.items.slice(0, count);
@@ -2039,8 +1971,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         no: '',
                         nama: '',
                         size: this.form.size || '',
-                        tipe_bawahan: '',
-                        size_bawahan: '',
                         customizations: {}
                     });
                 }
@@ -2104,15 +2034,10 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         isRowComplete(item) {
             if (!item.size) return false;
-            
-            const isJersey = this.selectedCategoryName.toLowerCase() === 'jersey';
-            if (isJersey && item.tipe_bawahan && item.tipe_bawahan !== '' && !item.size_bawahan) {
-                return false;
-            }
 
             const schema = this.activeSchema;
             const compiled = Object.assign({}, this.form.customizations, item.customizations);
-            const jerseyOk = schema.every(attr => {
+            const allOk = schema.every(attr => {
                 if (!attr.required) return true;
                 if (attr.depends_on && attr.depends_on.attribute_id) {
                     const parentVal = compiled[attr.depends_on.attribute_id];
@@ -2121,35 +2046,17 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 const val = compiled[attr.id];
                 return val !== undefined && val !== null && val.toString().trim() !== '';
             });
-            if (!jerseyOk) return false;
-
-            if (isJersey && item.tipe_bawahan && item.tipe_bawahan !== '') {
-                const bawahanSchema = this.bawahanSchema;
-                const bawahanOk = bawahanSchema.every(attr => {
-                    if (!attr.required) return true;
-                    if (attr.depends_on && attr.depends_on.attribute_id) {
-                        const parentVal = compiled[attr.depends_on.attribute_id];
-                        if (parentVal !== attr.depends_on.value) return true;
-                    }
-                    const val = compiled[attr.id];
-                    return val !== undefined && val !== null && val.toString().trim() !== '';
-                });
-                if (!bawahanOk) return false;
-            }
+            if (!allOk) return false;
 
             return true;
         },
 
         getCompiledCustomizations(item) {
             const compiled = Object.assign({}, this.form.customizations, item.customizations);
-            const isJersey = this.selectedCategoryName.toLowerCase() === 'jersey';
-            const hasSet = item.tipe_bawahan && item.tipe_bawahan !== '';
             const schema = this.activeSchema;
-            const bSchema = this.bawahanSchema;
             
             const result = [];
             
-            // Loop through jersey attributes
             schema.forEach(attr => {
                 if (this.isAttrActive(attr, item)) {
                     const val = compiled[attr.id];
@@ -2161,21 +2068,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     }
                 }
             });
-            
-            // Loop through bawahan attributes only if player has a bawahan set
-            if (isJersey && hasSet) {
-                bSchema.forEach(attr => {
-                    if (this.isAttrActive(attr, item)) {
-                        const val = compiled[attr.id];
-                        if (val) {
-                            result.push({
-                                key: attr.id,
-                                value: val
-                            });
-                        }
-                    }
-                });
-            }
             
             return result;
         },
@@ -2277,18 +2169,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             const hasRightCol = this.showTeamNameField || this.showDetailSponsorField;
             return hasRightCol ? 'grid lg:grid-cols-2 gap-6' : 'grid grid-cols-1 gap-6';
         },
-        get hasBawahanSet() {
-            if (this.selectedCategoryName.toLowerCase() !== 'jersey') return false;
-            return this.items.some(item => item.tipe_bawahan && item.tipe_bawahan !== '');
-        },
-        get bawahanCategory() {
-            return this.categories.find(c => c.name.toLowerCase() === 'bawahan');
-        },
-        get bawahanSchema() {
-            const cat = this.bawahanCategory;
-            return cat ? (cat.attributes_schema || []) : [];
-        },
-
         get activeSchema() {
             const cat = this.categories.find(c => c.id == this.selectedCategoryId);
             return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
@@ -2336,18 +2216,27 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             let total = 0;
             const schema = this.activeSchema;
             schema.forEach(attr => {
+                if (attr.depends_on && attr.depends_on.attribute_id) return;
                 const val = this.form.customizations[attr.id];
                 const opt = (attr.options || []).find(o => o.value === val);
                 total += Number(opt?.price_modifier || 0);
             });
-            if (this.hasBawahanSet) {
-                const bSchema = this.bawahanSchema;
-                bSchema.forEach(attr => {
-                    const val = this.form.customizations[attr.id];
-                    const opt = (attr.options || []).find(o => o.value === val);
-                    total += Number(opt?.price_modifier || 0);
-                });
-            }
+            return total;
+        },
+
+        getItemModifier(item) {
+            let total = 0;
+            const compiled = Object.assign({}, this.form.customizations, item.customizations || {});
+            this.activeSchema.forEach(attr => {
+                if (attr.depends_on && attr.depends_on.attribute_id) {
+                    const parentVal = compiled[attr.depends_on.attribute_id];
+                    if (parentVal !== attr.depends_on.value) return;
+                }
+                const val = compiled[attr.id];
+                if (!val) return;
+                const opt = (attr.options || []).find(o => o.value === val);
+                total += Number(opt?.price_modifier || 0);
+            });
             return total;
         },
 
@@ -2371,7 +2260,10 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     return sum + (item.qty * (item.product?.price || 0));
                 }, 0);
             }
-            return this.totalQty * this.hargaPerJersey;
+            const base = this.basePriceFromCategory;
+            return this.items.reduce((sum, item) => {
+                return sum + base + this.getItemModifier(item);
+            }, 0);
         },
 
         get biayaPrioritas() {
@@ -2402,21 +2294,14 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (!basic) return false;
             
             const schema = this.activeSchema;
-            const bSchema = this.bawahanSchema;
-            const isJersey = this.selectedCategoryName.toLowerCase() === 'jersey';
 
             return this.items.every(item => {
                 if (!item.size) return false;
                 
-                // If they chose a set, size_bawahan is required!
-                if (isJersey && item.tipe_bawahan && item.tipe_bawahan !== '' && !item.size_bawahan) {
-                    return false;
-                }
-                
                 const compiled = Object.assign({}, this.form.customizations, item.customizations);
                 
-                // Check jersey attributes
-                const jerseyOk = schema.every(attr => {
+                // Check all attributes (jersey + bawahan via depends_on)
+                const allOk = schema.every(attr => {
                     if (!attr.required) return true;
                     if (attr.depends_on && attr.depends_on.attribute_id) {
                         const parentVal = compiled[attr.depends_on.attribute_id];
@@ -2425,21 +2310,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     const val = compiled[attr.id];
                     return val !== undefined && val !== null && val.toString().trim() !== '';
                 });
-                if (!jerseyOk) return false;
-
-                // Check bawahan attributes if set is selected
-                if (isJersey && item.tipe_bawahan && item.tipe_bawahan !== '') {
-                    const bawahanOk = bSchema.every(attr => {
-                        if (!attr.required) return true;
-                        if (attr.depends_on && attr.depends_on.attribute_id) {
-                            const parentVal = compiled[attr.depends_on.attribute_id];
-                            if (parentVal !== attr.depends_on.value) return true;
-                        }
-                        const val = compiled[attr.id];
-                        return val !== undefined && val !== null && val.toString().trim() !== '';
-                    });
-                    if (!bawahanOk) return false;
-                }
+                if (!allOk) return false;
 
                 return true;
             });
@@ -2674,12 +2545,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 formData.append(`items[${index}][no]`, item.no || '');
                 formData.append(`items[${index}][nama]`, item.nama || '');
                 formData.append(`items[${index}][size]`, item.size || 'M');
-                if (item.tipe_bawahan) {
-                    formData.append(`items[${index}][tipe_bawahan]`, item.tipe_bawahan);
-                }
-                if (item.size_bawahan) {
-                    formData.append(`items[${index}][size_bawahan]`, item.size_bawahan);
-                }
                 formData.append(`items[${index}][customizations]`, JSON.stringify(compiled));
             });
 

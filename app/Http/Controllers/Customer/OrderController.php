@@ -42,9 +42,6 @@ class OrderController extends Controller
             $category = \App\Models\Category::find($data['category_id']);
             $basePrice = $category ? floatval($category->base_price) : 85000;
             $schema = $category ? ($category->attributes_schema ?? []) : [];
-            
-            $bawahanCategory = \App\Models\Category::where('name', 'like', 'bawahan')->first();
-            $bawahanSchema = $bawahanCategory ? ($bawahanCategory->attributes_schema ?? []) : [];
 
             $totalQty = 0;
             $subtotal = 0;
@@ -59,27 +56,13 @@ class OrderController extends Controller
                         $rowCustom = json_decode($rowCustom, true) ?? [];
                     }
 
-                    // 1. Modifiers from main category
+                    // Modifiers from all category attributes (jersey + bawahan via depends_on)
                     foreach ($schema as $attr) {
                         $selectedVal = $rowCustom[$attr['id']] ?? null;
                         if ($selectedVal && !empty($attr['options'])) {
                             $opt = collect($attr['options'])->firstWhere('value', $selectedVal);
                             if ($opt) {
                                 $itemPrice += floatval($opt['price_modifier'] ?? 0);
-                            }
-                        }
-                    }
-
-                    // 2. Modifiers from bawahan
-                    $hasBawahan = !empty($item['tipe_bawahan']);
-                    if ($hasBawahan) {
-                        foreach ($bawahanSchema as $attr) {
-                            $selectedVal = $rowCustom[$attr['id']] ?? null;
-                            if ($selectedVal && !empty($attr['options'])) {
-                                $opt = collect($attr['options'])->firstWhere('value', $selectedVal);
-                                if ($opt) {
-                                    $itemPrice += floatval($opt['price_modifier'] ?? 0);
-                                }
                             }
                         }
                     }
@@ -162,11 +145,9 @@ class OrderController extends Controller
                     if (is_string($rowCustom)) {
                         $rowCustom = json_decode($rowCustom, true) ?? [];
                     }
-                    if (!empty($item['tipe_bawahan'])) {
-                        $rowCustom['tipe_bawahan'] = $item['tipe_bawahan'];
-                    }
-                    if (!empty($item['size_bawahan'])) {
-                        $rowCustom['size_bawahan'] = $item['size_bawahan'];
+                    // Auto-set size_bawahan = item size when set_bawahan is chosen
+                    if (($rowCustom['set_bawahan'] ?? '') === 'Ya' && !empty($rowCustom['tipe_bawahan'])) {
+                        $rowCustom['size_bawahan'] = $item['size'] ?? 'M';
                     }
                     $modelLengan = $rowCustom['lengan_jahitan'] ?? $rowCustom['lengan'] ?? null;
                     OrderItemDetail::create([

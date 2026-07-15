@@ -119,6 +119,43 @@ class UpdateJerseyCategorySeeder extends Seeder
                     ['value' => 'RAGLAN B PAKAI MANSET',    'price_modifier' => 15000],
                 ],
             ],
+            // ── Bawahan (per-item) ──
+            [
+                'id'       => 'set_bawahan',
+                'name'     => 'Set Bawahan?',
+                'type'     => 'select',
+                'required' => false,
+                'options'  => [
+                    ['value' => 'Tidak', 'price_modifier' => 0],
+                    ['value' => 'Ya',    'price_modifier' => 0],
+                ],
+            ],
+            [
+                'id'         => 'tipe_bawahan',
+                'name'       => 'Tipe Bawahan',
+                'type'       => 'select',
+                'required'   => true,
+                'depends_on' => ['attribute_id' => 'set_bawahan', 'value' => 'Ya'],
+                'options'    => [
+                    ['value' => 'Celana Pendek',             'price_modifier' => 0],
+                    ['value' => 'Celana Panjang / Training', 'price_modifier' => 10000],
+                    ['value' => 'Rok Olahraga',              'price_modifier' => 5000],
+                ],
+            ],
+            [
+                'id'         => 'bahan_bawahan',
+                'name'       => 'Bahan Bawahan',
+                'type'       => 'select',
+                'required'   => true,
+                'depends_on' => ['attribute_id' => 'set_bawahan', 'value' => 'Ya'],
+                'options'    => [
+                    ['value' => 'LOTTO',           'price_modifier' => 0],
+                    ['value' => 'PARASUT',         'price_modifier' => 0],
+                    ['value' => 'DIADORA',         'price_modifier' => 5000],
+                    ['value' => 'MILANO PREMIUM',  'price_modifier' => 10000],
+                    ['value' => 'MICROCOOL',       'price_modifier' => 5000],
+                ],
+            ],
         ];
 
         if ($jersey) {
