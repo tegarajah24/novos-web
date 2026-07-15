@@ -292,14 +292,14 @@
 
                                 {{-- Pola --}}
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">5. Pola (CDR)</label>
-                                    <input type="file" class="filepond" id="pola-pond" name="pola_files[]" multiple accept=".cdr" data-max-file-size="50MB">
-                                    <p class="text-xs text-gray-400 mt-1">Upload pola jersey/bawahan/jaket format CorelDRAW (CDR)</p>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">5. Pola</label>
+                                    <input type="file" class="filepond" id="pola-pond" name="pola_files[]" multiple accept=".cdr,.pdf,.svg,.ai,.eps,.zip,.rar" data-max-file-size="50MB">
+                                    <p class="text-xs text-gray-400 mt-1">Upload pola jersey/bawahan/jaket (CDR, PDF, SVG, AI, EPS, ZIP)</p>
                                 </div>
 
                                 {{-- Status Dropdown --}}
                                 <div class="border-t border-gray-100 pt-5">
-                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">2. Update Status</label>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">6. Update Status</label>
                                     <select x-model="updateStatus" class="w-full text-sm border-gray-300 rounded-lg focus:ring-[#1a237e] focus:border-[#1a237e] shadow-sm py-2.5">
                                         <option value="">-- Pilih status selanjutnya --</option>
                                         <option value="menunggu_spk">Kirim ke SPK</option>
@@ -367,11 +367,7 @@ function designApp() {
                         stylePanelLayout: 'compact',
                         imagePreviewHeight: 80,
                     };
-                    if (id === 'pola-pond') {
-                        opts.acceptedFileTypes = ['.cdr'];
-                        opts.fileValidateTypeLabelExpectedTypes = 'Hanya file .cdr yang diperbolehkan';
-                        opts.allowImagePreview = false;
-                    }
+
                     const pond = FilePond.create(el, opts);
 
                     pond.on('activatefile', (fileItem) => {
@@ -532,5 +528,15 @@ function designApp() {
 
 <style>
 [x-cloak] { display: none !important; }
+input.filepond {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
 </style>
 @endsection
