@@ -311,6 +311,7 @@
                     </div>
                 </div>
             </div>
+        </div>
 
             {{-- Dynamic details wrapped by selectedCategory --}}
             <div x-show="selectedCategoryId" x-cloak class="space-y-6">
@@ -760,6 +761,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
         {{-- Upload Section --}}
         <div class="grid lg:grid-cols-2 gap-6 mt-8">
@@ -813,6 +815,7 @@
                 </button>
             </div>
         </div>
+            </div>
             </div>
             </div>
 
@@ -1584,7 +1587,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <style>
 [x-cloak] { display: none !important; }
@@ -3063,8 +3065,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             </div>
         </div>
     </div>
-</div>
 </template>
+</div>
 
 @else
 <div class="max-w-5xl mx-auto px-4 py-16">
