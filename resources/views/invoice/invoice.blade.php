@@ -287,7 +287,7 @@
         <table class="info-table">
             <tr>
                 <!-- Customer Box -->
-                <td style="width: 55%; padding-right: 15px;">
+                <td style="width: 68%; padding-right: 15px;">
                     <div class="info-box">
                         <div class="info-box-title">Pelanggan</div>
                         <div class="info-box-content">
@@ -319,14 +319,13 @@
                     </div>
                 </td>
                 <!-- Due Date Box -->
-                <td style="width: 45%;">
+                <td style="width: 32%;">
                     <div class="info-box" style="min-height: 87px;">
                         <div class="info-box-content" style="margin-top: 15px;">
-                            <table>
+                            <table style="width: 100%;">
                                 <tr>
-                                    <td style="width: 40%; font-size: 10px;" class="bold">JATUH TEMPO</td>
-                                    <td style="width: 5%; font-size: 10px;">:</td>
-                                    <td style="width: 55%; font-size: 10px;" class="bold">
+                                    <td style="font-size: 10px; text-align: left;" class="bold">JATUH TEMPO</td>
+                                    <td style="font-size: 10px; text-align: right;" class="bold">
                                         {{ $order->created_at->copy()->addDays(\App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority))->format('d/m/Y') }}
                                     </td>
                                 </tr>
@@ -342,10 +341,10 @@
             <thead>
                 <tr>
                     <th style="width: 5%;" class="text-center">NO.</th>
-                    <th style="width: 45%; text-align: left;">KETERANGAN</th>
-                    <th style="width: 12%;" class="text-center">QTY</th>
-                    <th style="width: 18%; text-align: right;">HARGA SATUAN (Rp.)</th>
-                    <th style="width: 20%; text-align: right;">JUMLAH (Rp.)</th>
+                    <th style="width: 55%; text-align: left;">KETERANGAN</th>
+                    <th style="width: 8%;" class="text-center">QTY</th>
+                    <th style="width: 15%; text-align: right;">HARGA SATUAN (Rp.)</th>
+                    <th style="width: 17%; text-align: right;">JUMLAH (Rp.)</th>
                 </tr>
             </thead>
             <tbody>
@@ -374,8 +373,8 @@
         <!-- Bottom Section: Notes & Spelled-Out on left, Summary/Totals on right (Aligned column widths) -->
         <table class="bottom-table">
             <tr>
-                <!-- Left Side: Message, Spelled-Out, Payment Instructions (width: 62% to align with Col 1 + 2 + 3) -->
-                <td style="width: 62%; padding-right: 15px; vertical-align: top; border: none;">
+                <!-- Left Side: Message, Spelled-Out, Payment Instructions (width: 68% to align with Col 1 + 2 + 3) -->
+                <td style="width: 68%; padding-right: 15px; vertical-align: top; border: none;">
                     <!-- Pesan Box -->
                     <div class="notes-box">
                         <div class="notes-title">Pesan</div>
@@ -401,12 +400,12 @@
                         <span class="bold">Minimal DP 10% Dulu Baru Akan Di Produksi.</span>
                     </div>
                 </td>
-                <!-- Right Side: Totals Summary (width: 38% to align with Col 4 + 5) -->
-                <td style="width: 38%; vertical-align: top; border: none;">
+                <!-- Right Side: Totals Summary (width: 32% to align with Col 4 + 5) -->
+                <td style="width: 32%; vertical-align: top; border: none;">
                     <table class="totals-table">
                         <tr>
-                            <td style="width: 47.3%; padding: 5px 8px; font-size: 9px; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">Subtotal</td>
-                            <td style="width: 52.7%; padding: 5px 8px; font-size: 9px; text-align: right; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">{{ number_format($subtotal, 2, ',', '.') }}</td>
+                            <td style="width: 47%; padding: 5px 8px; font-size: 9px; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">Subtotal</td>
+                            <td style="width: 53%; padding: 5px 8px; font-size: 9px; text-align: right; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">{{ number_format($subtotal, 2, ',', '.') }}</td>
                         </tr>
                         @if($dp_paid > 0)
                         <tr>
