@@ -615,6 +615,7 @@
                     </button>
                 </div>
             </div>
+            </div>
         </template>
 
         {{-- Modal Petunjuk Pengisian Micro-Break --}}
@@ -941,6 +942,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
     </template>
 

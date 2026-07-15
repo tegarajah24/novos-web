@@ -39,14 +39,64 @@ class OrderController extends Controller
             $nextSeq = $lastOrder ? (int) substr($lastOrder->order_number, -3) + 1 : 1;
             $orderNumber = $todayPrefix . str_pad($nextSeq, 3, '0', STR_PAD_LEFT);
 
-            $totalQty = $data['total_qty'] ?? 0;
-            $pricePerItem = \App\Models\Setting::get('base_price_per_pcs', 85000);
+            $category = \App\Models\Category::find($data['category_id']);
+            $basePrice = $category ? floatval($category->base_price) : 85000;
+            $schema = $category ? ($category->attributes_schema ?? []) : [];
+
+            $totalQty = 0;
+            $subtotal = 0;
+            $calculatedItems = [];
+
+            if (!empty($data['items']) && is_array($data['items'])) {
+                $totalQty = count($data['items']);
+                foreach ($data['items'] as $item) {
+                    $itemPrice = $basePrice;
+                    $rowCustom = $item['customizations'] ?? [];
+                    if (is_string($rowCustom)) {
+                        $rowCustom = json_decode($rowCustom, true) ?? [];
+                    }
+
+                    // Modifiers from all category attributes (jersey + bawahan via depends_on)
+                    foreach ($schema as $attr) {
+                        $selectedVal = $rowCustom[$attr['id']] ?? null;
+                        if ($selectedVal && !empty($attr['options'])) {
+                            $opt = collect($attr['options'])->firstWhere('value', $selectedVal);
+                            if ($opt) {
+                                $itemPrice += floatval($opt['price_modifier'] ?? 0);
+                            }
+                        }
+                    }
+
+                    $subtotal += $itemPrice;
+                    $calculatedItems[] = [
+                        'item' => $item,
+                        'price' => $itemPrice
+                    ];
+                }
+            } else {
+                $totalQty = intval($data['total_qty'] ?? 1);
+                $itemPrice = $basePrice;
+                $customizations = is_array($data['customizations'] ?? null)
+                    ? $data['customizations']
+                    : (json_decode($data['customizations'] ?? '{}', true) ?? []);
+
+                foreach ($schema as $attr) {
+                    $selectedVal = $customizations[$attr['id']] ?? null;
+                    if ($selectedVal && !empty($attr['options'])) {
+                        $opt = collect($attr['options'])->firstWhere('value', $selectedVal);
+                        if ($opt) {
+                            $itemPrice += floatval($opt['price_modifier'] ?? 0);
+                        }
+                    }
+                }
+                $subtotal = $totalQty * $itemPrice;
+            }
+
             $biayaPrioritas = match ($data['prioritas'] ?? 'normal') {
                 'express'       => 50000,
                 'super_express' => 150000,
                 default         => 0,
             };
-            $subtotal = $totalQty * $pricePerItem;
             $totalPrice = $subtotal + $biayaPrioritas;
 
             $prioritasLabel = match ($data['prioritas'] ?? 'normal') {
@@ -55,7 +105,18 @@ class OrderController extends Controller
                 default         => 'Normal',
             };
 
-            $catatanText = "Jenis Potongan: " . $data['jenis_potongan'] . "\nModel Lengan & Jahitan: " . $data['lengan_jahitan'] . ($data['catatan'] ? "\n=== Detail Pesanan ===\n" . $data['catatan'] : "");
+            $catatanText = ($data['catatan'] ?? '') ? "=== Detail Pesanan ===\n" . $data['catatan'] : '';
+
+            // Bangun ringkasan kustomisasi umum jika ada
+            $customizations = is_array($data['customizations'] ?? null)
+                ? $data['customizations']
+                : (json_decode($data['customizations'] ?? '{}', true) ?? []);
+            if (!empty($customizations)) {
+                $attrSummary = collect($customizations)
+                    ->map(fn($v, $k) => ucwords(str_replace('_', ' ', $k)) . ': ' . $v)
+                    ->implode("\n");
+                $catatanText = $attrSummary . ($catatanText ? "\n" . $catatanText : '');
+            }
 
             $order = Order::create([
                 'user_id'     => auth()->id(),
@@ -71,12 +132,35 @@ class OrderController extends Controller
                 'order_id'       => $order->id,
                 'size'           => '-',
                 'qty'            => $totalQty,
-                'price_per_item' => $pricePerItem,
-                'subtotal'       => $totalQty * $pricePerItem,
+                'price_per_item' => $totalQty > 0 ? ($subtotal / $totalQty) : 0,
+                'subtotal'       => $subtotal,
             ]);
 
-            // Parse Detail Pesanan (catatan) ke order_item_details
-            if (!empty($data['catatan'])) {
+            // Simpan detail per baris item pesanan
+            if (!empty($calculatedItems)) {
+                foreach ($calculatedItems as $calc) {
+                    $item = $calc['item'];
+                    $itemPrice = $calc['price'];
+                    $rowCustom = $item['customizations'] ?? [];
+                    if (is_string($rowCustom)) {
+                        $rowCustom = json_decode($rowCustom, true) ?? [];
+                    }
+                    // Auto-set size_bawahan = item size when set_bawahan is chosen
+                    if (($rowCustom['set_bawahan'] ?? '') === 'Ya' && !empty($rowCustom['tipe_bawahan'])) {
+                        $rowCustom['size_bawahan'] = $item['size'] ?? 'M';
+                    }
+                    $modelLengan = $rowCustom['lengan_jahitan'] ?? $rowCustom['lengan'] ?? null;
+                    OrderItemDetail::create([
+                        'order_id'       => $order->id,
+                        'no_punggung'    => $item['no'] ?? null,
+                        'nama_punggung'  => $item['nama'] ?? null,
+                        'model_lengan'   => $modelLengan,
+                        'size'           => $item['size'] ?? 'M',
+                        'customizations' => $rowCustom,
+                        'price'          => $itemPrice,
+                    ]);
+                }
+            } elseif (!empty($data['catatan'])) {
                 $lines = explode("\n", trim($data['catatan']));
                 foreach ($lines as $line) {
                     $line = trim($line);
@@ -89,6 +173,7 @@ class OrderController extends Controller
                         'model_lengan' => $parts[2] ?? null,
                         'size'         => $parts[3] ?? null,
                         'keterangan'   => $parts[4] ?? null,
+                        'customizations' => [],
                     ]);
                 }
             }
@@ -151,20 +236,28 @@ class OrderController extends Controller
                 }
             }
 
+            // Bangun backward-compat fields dari customizations (jika ada) untuk pesanan Jersey lama
+            $customizationsArr = is_array($data['customizations'] ?? null)
+                ? $data['customizations']
+                : (json_decode($data['customizations'] ?? '{}', true) ?? []);
+
             DesignRequest::create([
                 'order_id'         => $order->id,
                 'team_name'        => $data['team_name'],
                 'nama_artikel'     => $data['nama_artikel'] ?? null,
                 'nama_pemesan'     => $data['nama_pemesan'] ?? null,
                 'detail_sponsor'   => $data['detail_sponsor'] ?? null,
-                'jenis_potongan'   => $data['jenis_potongan'],
-                'lengan_jahitan'   => $data['lengan_jahitan'],
-                'material'         => $data['bahan'],
-                'collar_style'     => $data['kerah'],
+                // Kolom lama diisi dari customizations jika ada (backward compat)
+                'jenis_potongan'   => $customizationsArr['jenis_potongan'] ?? ($data['jenis_potongan'] ?? null),
+                'lengan_jahitan'   => $customizationsArr['lengan_jahitan'] ?? ($data['lengan_jahitan'] ?? null),
+                'material'         => $customizationsArr['bahan'] ?? ($data['bahan'] ?? null),
+                'collar_style'     => $customizationsArr['kerah'] ?? ($data['kerah'] ?? null),
                 'priority'         => $data['prioritas'] ?? 'normal',
                 'logo'             => $logoPath,
                 'design_files'     => $designFiles,
                 'additional_notes' => $catatanText,
+                // Kolom baru dinamis — inti dari sistem atribut dinamis
+                'customizations'   => !empty($customizationsArr) ? $customizationsArr : null,
             ]);
 
             if (!empty($data['phone'])) {

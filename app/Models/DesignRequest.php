@@ -25,12 +25,14 @@ class DesignRequest extends Model
         'collar_style',
         'priority',
         'additional_notes',
+        'customizations',
     ];
 
     protected function casts(): array
     {
         return [
-            'design_files' => 'array',
+            'design_files'  => 'array',
+            'customizations' => 'array',
         ];
     }
 

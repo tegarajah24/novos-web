@@ -327,15 +327,9 @@
         <span>Data diperbarui secara real-time &bull; <span x-text="now"></span></span>
     </p>
 </div>
-@endsection
-
-@push('styles')
 <style>
     [x-cloak] { display: none !important; }
 </style>
-@endpush
-
-@push('scripts')
 <script>
 function laporanApp() {
     return {
@@ -441,4 +435,4 @@ function laporanApp() {
     };
 }
 </script>
-@endpush
+@endsection

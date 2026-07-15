@@ -12,7 +12,9 @@ use App\Http\Controllers\Internal\ChatController;
 use App\Http\Controllers\Internal\DailyMentalCheckController;
 use App\Http\Controllers\Internal\NotificationController;
 use App\Http\Controllers\Internal\CategoryController;
+use App\Http\Controllers\Internal\CategoryAttributeController;
 use App\Http\Controllers\Internal\SettingController;
+use App\Http\Controllers\InvoiceController;
 
 Route::prefix('staf')
     ->middleware(['auth', 'role:Super Admin,Manager,Admin,Design,Produksi'])
@@ -37,6 +39,12 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::post('/pesanan/{order:order_number}/delete-spk-file', [OrderController::class, 'deleteSpkFile'])->name('pesanan.delete-spk-file');
         Route::post('/pesanan/{order:order_number}/update-spk-notes', [OrderController::class, 'updateSpkNotes'])->name('pesanan.update-spk-notes');
         Route::patch('/pesanan/{order:order_number}/design-request', [OrderController::class, 'updateDesignRequest'])->name('pesanan.update-design-request');
+        Route::put('/pesanan/{order:order_number}/items', [OrderController::class, 'updateItems'])->name('pesanan.update-items');
+
+        Route::get('/pesanan/{orderNumber}/invoice', [InvoiceController::class, 'showInternal'])->name('pesanan.invoice');
+        Route::get('/pesanan/{orderNumber}/invoice/download', [InvoiceController::class, 'downloadInternal'])->name('pesanan.invoice.download');
+        Route::post('/pesanan/{orderNumber}/invoice/dp', [InvoiceController::class, 'saveDp'])->name('pesanan.invoice.dp');
+
 
         Route::get('/design', [DesignController::class, 'index'])->name('design');
         Route::post('/design/update/{order:order_number}', [DesignController::class, 'updateStatus'])->name('design.update');
@@ -90,6 +98,9 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::post('/kategori', [CategoryController::class, 'store'])->name('kategori.store');
         Route::put('/kategori/{category}', [CategoryController::class, 'update'])->name('kategori.update');
         Route::delete('/kategori/{category}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
+        // Route atribut dinamis per kategori
+        Route::get('/kategori/{category}/attributes', [CategoryAttributeController::class, 'getSchema'])->name('kategori.attributes');
+        Route::put('/kategori/{category}/attributes', [CategoryAttributeController::class, 'updateSchema'])->name('kategori.attributes.update');
 
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
         Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');

@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('customer.partials.navbar', function ($view) {
-            $view->with('navbarCategories', Category::orderBy('name')->get());
+            $view->with('navbarCategories', Category::whereNull('parent_id')->with('children')->orderBy('name')->get());
         });
 
         Blade::if('canAccess', function (string $permissionSlug) {

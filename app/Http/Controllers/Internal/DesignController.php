@@ -74,7 +74,7 @@ class DesignController extends Controller
                     'customer'          => $order->user->name ?? '-',
                     'customer_contact'  => $order->user->phone ?? '-',
                     'team_name'         => $dr?->team_name ?? 'Jersey Custom',
-                    'deadline'          => $order->created_at->addDays(7)->format('d M Y'),
+                    'deadline'          => $order->created_at->copy()->addDays(\App\Models\Setting::getDeadlineDaysForPriority($priority))->format('d M Y'),
                     'priority'          => $priority,
                     'revision_note'     => $revision?->notes
                         ? str_replace('Revisi: ', '', $revision->notes)

@@ -84,11 +84,28 @@
                     ></span>
                 </div>
                 <template x-if="!shared && order.id">
-                    <button @click="copyShareLink"
-                        class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all text-gray-600 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                        Bagikan
-                    </button>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {{-- Invoice buttons --}}
+                        <template x-if="['menunggu_pembayaran','dikonfirmasi','disetujui','di_design','siap_cetak','diproduksi','selesai'].includes(order.status)">
+                            <div class="flex items-center gap-2">
+                                <a :href="`/invoice/${order.id}`" target="_blank"
+                                    class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-[#1a237e] text-[#1a237e] rounded-xl hover:bg-blue-50 transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    Lihat Invoice
+                                </a>
+                                <a :href="`/invoice/${order.id}/download`" target="_blank"
+                                    class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold bg-[#1a237e] text-white rounded-xl hover:bg-[#283593] transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    Download PDF
+                                </a>
+                            </div>
+                        </template>
+                        <button @click="copyShareLink"
+                            class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all text-gray-600 shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                            Bagikan
+                        </button>
+                    </div>
                 </template>
             </div>
         </div>
@@ -103,49 +120,70 @@
             </div>
         </template>
 
-        {{-- Stepper Horizontal --}}
+        {{-- Stepper --}}
         <div class="bg-white rounded-xl border border-gray-200 p-6 md:p-8 mb-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-8">Riwayat Status</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-6 md:mb-8">Riwayat Status</h3>
 
-            <div class="overflow-x-auto pb-2 stepper-scroll">
-                <div class="relative flex items-start justify-between min-w-[640px] md:min-w-0 px-1 pt-6">
-                    {{-- Progress bar background --}}
-                    <div class="absolute top-[43px] left-[4%] right-[4%] h-1 bg-gray-200 rounded-full"></div>
-
-                    {{-- Progress bar fill (animated) --}}
-                    <div class="absolute top-[43px] left-[4%] h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-1000 ease-out"
-                         :style="`width: ${animateProgress ? progressPercent : 0}%`"></div>
-
-                    {{-- Stages --}}
-                    <template x-for="(stage, i) in stages" :key="i">
-                        <div class="flex flex-col items-center text-center relative z-10" style="width: 14.285%">
-                            {{-- Circle --}}
+            {{-- Mobile: Vertical --}}
+            <div class="md:hidden space-y-0">
+                <template x-for="(stage, i) in stages" :key="'m-'+i">
+                    <div class="flex items-start gap-4 relative">
+                        {{-- Vertical line --}}
+                        <div class="flex flex-col items-center">
                             <div class="relative">
-                                {{-- Ping ring for active --}}
                                 <template x-if="stage.active && !stage.done">
                                     <span class="absolute -inset-1.5 flex">
                                         <span class="animate-ping absolute inset-0 rounded-full bg-blue-400/40"></span>
                                         <span class="absolute inset-0 rounded-full bg-blue-300/20"></span>
                                     </span>
                                 </template>
+                                <div :class="stage.done ? 'bg-green-500 shadow-lg shadow-green-200' : stage.active ? 'bg-[#1a237e] ring-4 ring-[#1a237e]/20 shadow-lg shadow-blue-200 animate-glow' : 'bg-gray-200'"
+                                     class="w-[34px] h-[34px] rounded-full flex items-center justify-center transition-all duration-500 relative z-10">
+                                    <svg x-show="stage.done" class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span x-show="stage.active && !stage.done" class="w-2.5 h-2.5 bg-white rounded-full"></span>
+                                    <span x-show="!stage.done && !stage.active" class="text-[11px] font-bold text-gray-400" x-text="i + 1"></span>
+                                </div>
+                            </div>
+                            <div x-show="i < stages.length - 1" class="w-[2px] h-6" :class="stage.done ? 'bg-green-400' : 'bg-gray-200'"></div>
+                        </div>
+                        {{-- Label --}}
+                        <div class="pt-1 pb-6">
+                            <p :class="stage.active ? 'text-[#1a237e] font-bold' : stage.done ? 'text-gray-900 font-semibold' : 'text-gray-400'"
+                               class="text-sm leading-tight transition-colors" x-text="stage.label"></p>
+                            <p class="text-[10px] mt-0.5 font-medium"
+                               :class="stage.done ? 'text-green-600' : stage.active ? 'text-blue-600' : 'text-gray-300'"
+                               x-text="stage.done ? 'Selesai' : stage.active ? 'Berjalan' : 'Belum'"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
 
-                                {{-- Circle body --}}
+            {{-- Desktop: Horizontal --}}
+            <div class="hidden md:block overflow-x-auto pb-2 stepper-scroll">
+                <div class="relative flex items-start justify-between min-w-0 px-1 pt-6">
+                    <div class="absolute top-[43px] left-[4%] right-[4%] h-1 bg-gray-200 rounded-full"></div>
+                    <div class="absolute top-[43px] left-[4%] h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-1000 ease-out"
+                         :style="`width: ${animateProgress ? progressPercent : 0}%`"></div>
+                    <template x-for="(stage, i) in stages" :key="'d-'+i">
+                        <div class="flex flex-col items-center text-center relative z-10" style="width: 14.285%">
+                            <div class="relative">
+                                <template x-if="stage.active && !stage.done">
+                                    <span class="absolute -inset-1.5 flex">
+                                        <span class="animate-ping absolute inset-0 rounded-full bg-blue-400/40"></span>
+                                        <span class="absolute inset-0 rounded-full bg-blue-300/20"></span>
+                                    </span>
+                                </template>
                                 <div :class="stage.done ? 'bg-green-500 shadow-lg shadow-green-200' : stage.active ? 'bg-[#1a237e] ring-4 ring-[#1a237e]/20 shadow-lg shadow-blue-200 animate-glow' : 'bg-gray-200'"
                                      class="w-[38px] h-[38px] rounded-full flex items-center justify-center transition-all duration-500 relative">
-                                    {{-- Checkmark for done --}}
                                     <svg x-show="stage.done" class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                    {{-- White dot for active --}}
                                     <span x-show="stage.active && !stage.done" class="w-3 h-3 bg-white rounded-full"></span>
-                                    {{-- Number for pending --}}
                                     <span x-show="!stage.done && !stage.active" class="text-xs font-bold"
                                           :class="stage.pending ? 'text-gray-400' : 'text-white'" x-text="i + 1"></span>
                                 </div>
                             </div>
-
-                            {{-- Label below --}}
                             <div class="mt-3 max-w-[90px]">
                                 <p :class="stage.active ? 'text-[#1a237e] font-bold' : stage.done ? 'text-gray-900 font-semibold' : 'text-gray-400'"
-                                   class="text-[11px] md:text-xs leading-tight transition-colors" x-text="stage.label"></p>
+                                   class="text-xs leading-tight transition-colors" x-text="stage.label"></p>
                                 <p class="text-[10px] mt-1 font-medium"
                                    :class="stage.done ? 'text-green-600' : stage.active ? 'text-blue-600' : 'text-gray-300'"
                                    x-text="stage.done ? 'Selesai' : stage.active ? 'Berjalan' : 'Belum'"></p>

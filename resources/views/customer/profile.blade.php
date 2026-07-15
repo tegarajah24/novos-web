@@ -1167,7 +1167,17 @@
                         </div>
                         <div class="border border-gray-150 rounded-xl p-4 hover:bg-gray-50/50 transition-colors">
                             <h5 class="font-bold text-gray-900 text-sm mb-1.5">Berapa lama estimasi pengerjaan jersey custom?</h5>
-                            <p class="text-xs text-gray-500 leading-relaxed">Kami memiliki 3 pilihan prioritas pengerjaan saat checkout: <strong>Normal</strong> (7-14 hari kerja), <strong>Express</strong> (3-6 hari kerja), and <strong>Super Express</strong> (1-2 hari kerja) terhitung setelah pembayaran DP/Lunas dikonfirmasi.</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                Kami memiliki pilihan prioritas pengerjaan saat checkout: 
+                                <strong>Normal</strong> ({{ App\Models\Setting::get('prioritas_normal_estimasi', '7-14 hari kerja') }})
+                                @if(App\Models\Setting::get('prioritas_express_status', 'active') === 'active')
+                                    , <strong>Express</strong> ({{ App\Models\Setting::get('prioritas_express_estimasi', '3-6 hari kerja') }})
+                                @endif
+                                @if(App\Models\Setting::get('prioritas_super_express_status', 'active') === 'active')
+                                    , dan <strong>Super Express</strong> ({{ App\Models\Setting::get('prioritas_super_express_estimasi', '1-2 hari kerja') }})
+                                @endif
+                                terhitung setelah pembayaran DP/Lunas dikonfirmasi.
+                            </p>
                         </div>
                     </div>
                 </div>

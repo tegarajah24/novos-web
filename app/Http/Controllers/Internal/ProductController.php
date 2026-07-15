@@ -27,18 +27,25 @@ class ProductController extends Controller
             ->latest()
             ->get()
             ->map(function ($product) {
+                $images = $product->images ?? [];
+                if (empty($images)) {
+                    $legacy = [];
+                    if ($product->image) $legacy[] = $product->image;
+                    if ($product->image_belakang) $legacy[] = $product->image_belakang;
+                    $images = $legacy;
+                }
                 return [
                     'id'             => $product->id,
                     'name'           => $product->name,
                     'category_id'    => $product->category_id,
                     'price'          => (int) $product->price,
                     'description'    => $product->description ?? '',
-                    'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
-                    'image_belakang' => $product->image_belakang ? asset('storage/' . $product->image_belakang) : null,
+                    'images'         => array_map(fn($img) => asset('storage/' . $img), $images),
                     'kerah'          => $product->kerah,
                     'bahan'          => $product->bahan,
                     'jenis_potongan' => $product->jenis_potongan,
                     'lengan_jahitan' => $product->lengan_jahitan,
+                    'product_attributes' => $product->product_attributes ?? [],
                 ];
             })
             ->values()
@@ -51,15 +58,17 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            $data['image'] = app(ImageService::class)->compressAndStore($request->file('image'), 'products');
+        $images = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $images[] = app(ImageService::class)->compressAndStore($file, 'products');
+            }
         }
-
-        if ($request->hasFile('image_belakang')) {
-            $data['image_belakang'] = app(ImageService::class)->compressAndStore($request->file('image_belakang'), 'products');
-        }
+        $data['images'] = $images;
 
         $product = Product::create($data);
+
+        $productImages = array_map(fn($img) => asset('storage/' . $img), $product->images ?? []);
 
         return response()->json([
             'success' => true,
@@ -70,12 +79,12 @@ class ProductController extends Controller
                 'category_id'    => $product->category_id,
                 'price'          => (int) $product->price,
                 'description'    => $product->description ?? '',
-                'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
-                'image_belakang' => $product->image_belakang ? asset('storage/' . $product->image_belakang) : null,
+                'images'         => $productImages,
                 'kerah'          => $product->kerah,
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
                 'lengan_jahitan' => $product->lengan_jahitan,
+                'product_attributes' => $product->product_attributes ?? [],
             ],
         ]);
     }
@@ -84,31 +93,25 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $data['image'] = app(ImageService::class)->compressAndStore($request->file('image'), 'products');
-        } elseif ($request->input('image') === '') {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $data['image'] = null;
+        $existingImages = $request->input('existing_images', []);
+
+        $oldImages = $product->images ?? [];
+        $removed = array_diff($oldImages, $existingImages);
+        foreach ($removed as $path) {
+            Storage::disk('public')->delete($path);
         }
 
-        if ($request->hasFile('image_belakang')) {
-            if ($product->image_belakang) {
-                Storage::disk('public')->delete($product->image_belakang);
+        $images = $existingImages;
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $images[] = app(ImageService::class)->compressAndStore($file, 'products');
             }
-            $data['image_belakang'] = app(ImageService::class)->compressAndStore($request->file('image_belakang'), 'products');
-        } elseif ($request->input('image_belakang') === '') {
-            if ($product->image_belakang) {
-                Storage::disk('public')->delete($product->image_belakang);
-            }
-            $data['image_belakang'] = null;
         }
+        $data['images'] = $images;
 
         $product->update($data);
+
+        $productImages = array_map(fn($img) => asset('storage/' . $img), $product->images ?? []);
 
         return response()->json([
             'success' => true,
@@ -119,24 +122,21 @@ class ProductController extends Controller
                 'category_id'    => $product->category_id,
                 'price'          => (int) $product->price,
                 'description'    => $product->description ?? '',
-                'image_depan'    => $product->image ? asset('storage/' . $product->image) : null,
-                'image_belakang' => $product->image_belakang ? asset('storage/' . $product->image_belakang) : null,
+                'images'         => $productImages,
                 'kerah'          => $product->kerah,
                 'bahan'          => $product->bahan,
                 'jenis_potongan' => $product->jenis_potongan,
                 'lengan_jahitan' => $product->lengan_jahitan,
+                'product_attributes' => $product->product_attributes ?? [],
             ],
         ]);
     }
 
     public function destroy(Product $product)
     {
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
-        }
-
-        if ($product->image_belakang) {
-            Storage::disk('public')->delete($product->image_belakang);
+        $images = $product->images ?? [];
+        foreach ($images as $path) {
+            Storage::disk('public')->delete($path);
         }
 
         $product->delete();

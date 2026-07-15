@@ -30,7 +30,9 @@ $dmcRoute = route('staf.daily-mental-check');
         },
         toggle() {
             this.sidebarOpen = !this.sidebarOpen;
-            document.cookie = 'sidebar_open=' + this.sidebarOpen + '; path=/; SameSite=Lax; max-age=' + (60 * 60 * 24 * 365);
+            if (window.innerWidth >= 1280) {
+                document.cookie = 'sidebar_open=' + this.sidebarOpen + '; path=/; SameSite=Lax; max-age=' + (60 * 60 * 24 * 365);
+            }
         }
     }"
     x-init="window.addEventListener('hashchange', () => { dmcHash = location.hash; })"
@@ -39,10 +41,9 @@ $dmcRoute = route('staf.daily-mental-check');
 
     {{-- Backdrop for mobile sidebar --}}
     <div x-show="sidebarOpen" x-cloak
-         @click="toggle()"
+         @click="sidebarOpen = false"
          class="fixed inset-0 z-40 bg-black/50 xl:hidden">
     </div>
-
     <aside
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
         :style="window.innerWidth >= 1280 ? { width: sidebarOpen ? '16rem' : '5rem' } : { width: '18rem' }"
@@ -58,15 +59,14 @@ $dmcRoute = route('staf.daily-mental-check');
     <img src="{{ asset('images/logo.png') }}" alt="Novos Logo" class="w-10 h-10 object-contain">
 </div>
 
-            <span x-show="sidebarOpen"
-                  @if(!$isSidebarOpen) style="display:none" @endif
+            <span x-show="window.innerWidth < 1280 || sidebarOpen"
                   class="text-xl font-bold text-gray-900 whitespace-nowrap">
                 Novos
             </span>
         </a>
 
         {{-- Close button for mobile --}}
-        <button @click="toggle()"
+        <button @click="sidebarOpen = false"
                 class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors xl:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -76,6 +76,7 @@ $dmcRoute = route('staf.daily-mental-check');
     <nav @click="if(window.innerWidth < 1280) sidebarOpen = false" class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @canAccess('dashboard')
         <a href="{{ route('staf.dashboard') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.dashboard') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -86,6 +87,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('summary')
         <a href="{{ route('staf.summary') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.summary') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -96,6 +98,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('orders')
         <a href="{{ route('staf.daftar-pesanan') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.daftar-pesanan') || request()->routeIs('staf.detail-pesanan') || request()->routeIs('staf.chat') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -106,6 +109,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('design')
         <a href="{{ route('staf.design') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.design') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -116,6 +120,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('production')
         <a href="{{ route('staf.produksi') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.produksi') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -184,6 +189,7 @@ $dmcRoute = route('staf.daily-mental-check');
             </div>
         </div>
         <a href="{{ $dmcRoute }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="hidden xl:flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.daily-mental-check') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -194,6 +200,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('reports')
         <a href="{{ route('staf.laporan') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.laporan') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -204,6 +211,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('manage-products')
         <a href="{{ route('staf.kelola-produk') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.kelola-produk') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -214,6 +222,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('categories')
         <a href="{{ route('staf.kategori') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.kategori') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -224,6 +233,7 @@ $dmcRoute = route('staf.daily-mental-check');
 
         @canAccess('manage-users')
         <a href="{{ route('staf.kelola-pengguna') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.kelola-pengguna') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -233,6 +243,7 @@ $dmcRoute = route('staf.daily-mental-check');
         @endcanAccess
 
         <a href="{{ route('staf.pengaturan') }}"
+           data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
            class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.pengaturan') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -245,3 +256,105 @@ $dmcRoute = route('staf.daily-mental-check');
     {{-- (Footer profile removed) --}}
 </aside>
 </div>{{-- end sidebar wrapper --}}
+
+<script>
+window.navigateAjax = function (url, isPopState) {
+    if (!url || url === window.location.href) return;
+    const main = document.querySelector('main');
+    if (!main) { window.location.href = url; return; }
+
+    if (window.FilePond) {
+        document.querySelectorAll('.filepond').forEach(function(el) {
+            var pond = window.FilePond.find(el);
+            if (pond) pond.destroy();
+        });
+    }
+    main.innerHTML = '<div class="flex items-center justify-center py-20"><div class="flex flex-col items-center gap-3"><div class="w-8 h-8 border-2 border-[#1a237e] border-t-transparent rounded-full animate-spin"></div><p class="text-sm text-gray-500">Memuat...</p></div></div>';
+
+    fetch(url, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html, */*'
+        }
+    })
+    .then(r => {
+        if (!r.ok) throw new Error('Page load failed');
+        return r.text();
+    })
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const newTitle = doc.getElementById('ajax-page-title')?.textContent || document.title;
+        const newTopbar = doc.getElementById('ajax-topbar-title')?.innerHTML || '';
+        const newContent = doc.getElementById('ajax-content')?.innerHTML || '';
+
+        if (newContent) {
+            document.title = newTitle;
+            const topbarEl = document.querySelector('#topbar-title');
+            if (topbarEl) topbarEl.innerHTML = newTopbar;
+            if (main) {
+                main.innerHTML = '<div class="animate-entrance">' + newContent + '</div>';
+            }
+            if (!isPopState) window.history.pushState({ url: url }, '', url);
+            updateSidebarActive(url);
+            var allScripts = main.querySelectorAll('script');
+            allScripts.forEach(function(oldScript) {
+                var newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(function(attr) {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+            if (window.lucide && window.lucide.createIcons) {
+                window.lucide.createIcons({ icons: window.lucide.icons });
+            }
+            if (window.Alpine) {
+                window.Alpine.initTree(main);
+            }
+            if (window.FilePond) {
+                window.FilePond.parse(main);
+            }
+        }
+    })
+    .catch(function() { window.location.href = url; });
+}
+
+function updateSidebarActive(url) {
+    document.querySelectorAll('nav a[data-ajax-nav]').forEach(function(link) {
+        var href = link.getAttribute('href');
+        var isActive = url === href || (url + '/') === href || (url.endsWith('/') && url.slice(0, -1) === href);
+        link.classList.remove('bg-[#1a237e]/90', 'text-white');
+        link.classList.add('text-gray-700', 'hover:bg-gray-100');
+        var icon = link.querySelector('[data-lucide]');
+        if (icon) {
+            icon.classList.remove('text-white');
+            icon.classList.add('text-[#1a237e]');
+        }
+        if (isActive) {
+            link.classList.add('bg-[#1a237e]/90', 'text-white');
+            link.classList.remove('text-gray-700', 'hover:bg-gray-100');
+            if (icon) {
+                icon.classList.add('text-white');
+                icon.classList.remove('text-[#1a237e]');
+            }
+        }
+    });
+}
+
+document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[data-ajax-nav]');
+    if (!link) return;
+    var url = link.getAttribute('href');
+    if (!url || url === window.location.href || url.startsWith('#')) return;
+    e.preventDefault();
+    navigateAjax(url);
+});
+
+window.addEventListener('popstate', function (e) {
+    if (e.state && e.state.url) {
+        navigateAjax(e.state.url, true);
+    }
+});
+</script>

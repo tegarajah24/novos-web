@@ -22,6 +22,15 @@ class UpdateSettingRequest extends FormRequest
             'hours_weekday'     => 'nullable|string|max:100',
             'hours_saturday'    => 'nullable|string|max:100',
             'hours_sunday'      => 'nullable|string|max:100',
+            'prioritas_normal_estimasi'        => 'nullable|string|max:255',
+            'prioritas_normal_biaya'           => 'nullable|numeric|min:0',
+            'prioritas_normal_status'          => 'nullable|string|in:active,inactive',
+            'prioritas_express_estimasi'       => 'nullable|string|max:255',
+            'prioritas_express_biaya'          => 'nullable|numeric|min:0',
+            'prioritas_express_status'         => 'nullable|string|in:active,inactive',
+            'prioritas_super_express_estimasi' => 'nullable|string|max:255',
+            'prioritas_super_express_biaya'    => 'nullable|numeric|min:0',
+            'prioritas_super_express_status'   => 'nullable|string|in:active,inactive',
         ];
     }
 }

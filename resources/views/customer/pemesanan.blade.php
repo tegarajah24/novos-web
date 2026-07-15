@@ -40,16 +40,67 @@
 
     $adminWaPhone = preg_replace('/[^0-9]/', '', App\Models\Setting::get('company_phone', '6281234567890'));
     if (str_starts_with($adminWaPhone, '0')) { $adminWaPhone = '62' . substr($adminWaPhone, 1); }
+
+    // Prioritas Pengerjaan Dynamic Settings
+    $prioritasNormalEstimasi = App\Models\Setting::get('prioritas_normal_estimasi', '7-14 hari kerja');
+    $prioritasNormalBiaya = (int) App\Models\Setting::get('prioritas_normal_biaya', 0);
+    $prioritasNormalStatus = App\Models\Setting::get('prioritas_normal_status', 'active');
+
+    $prioritasExpressEstimasi = App\Models\Setting::get('prioritas_express_estimasi', '3-6 hari kerja');
+    $prioritasExpressBiaya = (int) App\Models\Setting::get('prioritas_express_biaya', 50000);
+    $prioritasExpressStatus = App\Models\Setting::get('prioritas_express_status', 'active');
+
+    $prioritasSuperExpressEstimasi = App\Models\Setting::get('prioritas_super_express_estimasi', '1-2 hari kerja');
+    $prioritasSuperExpressBiaya = (int) App\Models\Setting::get('prioritas_super_express_biaya', 150000);
+    $prioritasSuperExpressStatus = App\Models\Setting::get('prioritas_super_express_status', 'active');
+
+    $dynamicPriorities = [];
+    if ($prioritasNormalStatus === 'active') {
+        $dynamicPriorities[] = [
+            'value' => 'normal',
+            'label' => 'Normal',
+            'desc' => $prioritasNormalEstimasi,
+            'biaya' => $prioritasNormalBiaya,
+            'harga' => $prioritasNormalBiaya > 0 ? '+Rp' . number_format($prioritasNormalBiaya, 0, ',', '.') : 'Gratis'
+        ];
+    }
+    if ($prioritasExpressStatus === 'active') {
+        $dynamicPriorities[] = [
+            'value' => 'express',
+            'label' => 'Express',
+            'desc' => $prioritasExpressEstimasi,
+            'biaya' => $prioritasExpressBiaya,
+            'harga' => $prioritasExpressBiaya > 0 ? '+Rp' . number_format($prioritasExpressBiaya, 0, ',', '.') : 'Gratis'
+        ];
+    }
+    if ($prioritasSuperExpressStatus === 'active') {
+        $dynamicPriorities[] = [
+            'value' => 'super_express',
+            'label' => 'Super Express',
+            'desc' => $prioritasSuperExpressEstimasi,
+            'biaya' => $prioritasSuperExpressBiaya,
+            'harga' => $prioritasSuperExpressBiaya > 0 ? '+Rp' . number_format($prioritasSuperExpressBiaya, 0, ',', '.') : 'Gratis'
+        ];
+    }
+    if (empty($dynamicPriorities)) {
+        $dynamicPriorities[] = [
+            'value' => 'normal',
+            'label' => 'Normal',
+            'desc' => '7-14 hari kerja',
+            'biaya' => 0,
+            'harga' => 'Gratis'
+        ];
+    }
 @endphp
 
 @section('content')
 @auth
 
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }})">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }}, {{ json_encode($categories) }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
-        <p class="text-gray-500 mt-1">Pesan jersey custom impianmu dalam 4 langkah mudah</p>
+        <p class="text-gray-500 mt-1">Pesan produk custom impianmu dalam 4 langkah mudah</p>
     </div>
 
     {{-- Step Indicator --}}
@@ -79,7 +130,7 @@
         </template>
     </div>
 
-    {{-- Step 1: Pilih Jenis Pesanan --}}
+    {{-- Step 1: Pilih Jenis & Kategori --}}
     <div x-show="step === 1" x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-6"
@@ -87,72 +138,151 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 translate-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">Pilih Jenis Pesanan</h2>
-        <p class="text-sm text-gray-500 mt-1">Pilih jenis pesanan yang sesuai kebutuhan Anda</p>
 
-        {{-- Banner Konsultasi WhatsApp --}}
-        <div class="mb-5 flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 animate-fade-slide">
-            <span class="shrink-0 mt-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-green-600">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-                </svg>
-            </span>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-green-800">Konsultasi dulu via WhatsApp sebelum pesan!</p>
-                <p class="text-xs text-green-700 mt-0.5 leading-relaxed">Untuk hasil jersey yang maksimal, silakan hubungi admin kami terlebih dahulu agar brief desain Anda bisa diproses dengan tepat.</p>
+        {{-- Phase 1: Pilih Jenis --}}
+        <div x-show="jenisPhase === 1"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0">
+            <h2 class="text-lg font-semibold text-gray-900">Pilih Jenis Pesanan</h2>
+            <p class="text-sm text-gray-500 mt-1">Pilih jenis pesanan yang sesuai kebutuhan Anda</p>
+
+            {{-- Banner Konsultasi WhatsApp --}}
+            <div class="mt-4 mb-5 flex items-center justify-between gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2.5 sm:py-3 animate-fade-slide">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="shrink-0 text-green-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                        </svg>
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-xs sm:text-sm font-semibold text-green-800">Konsultasi via WhatsApp sebelum pesan!</p>
+                        <p class="text-[11px] text-green-700 mt-0.5 leading-relaxed hidden sm:block">Hubungi admin kami terlebih dahulu agar brief desain Anda bisa diproses dengan tepat.</p>
+                    </div>
+                </div>
+                <a href="https://wa.me/{{ $adminPhone }}?text={{ urlencode('Halo Novos, saya ingin konsultasi pesanan produk custom') }}"
+                   target="_blank" rel="noopener"
+                   class="shrink-0 inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition-colors whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                    Chat Admin
+                </a>
+            </div>            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                {{-- Produk Custom --}}
+                <div
+                    @click="jenis = 'custom'"
+                    :class="jenis === 'custom' ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
+                    class="border-2 rounded-xl p-4 md:p-6 cursor-pointer transition-all duration-200 animate-fade-slide relative overflow-hidden flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0"
+                    style="animation-delay:0.1s"
+                >
+                    <div :class="jenis === 'custom' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-colors shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" class="md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
+                    </div>
+                    <div class="min-w-0 flex-1 md:mt-4">
+                        <h3 class="font-bold text-base md:text-lg text-gray-900">Produk Custom</h3>
+                        <p class="text-gray-500 text-xs md:text-sm mt-1 leading-relaxed">Desain produk sepenuhnya sesuai keinginan Anda. Upload logo, pilih spesifikasi, dan tentukan detail sendiri.</p>
+                    </div>
+                    <!-- Selected Checkmark -->
+                    <div x-show="jenis === 'custom'" class="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-[#1a237e] text-white flex items-center justify-center text-xs shadow-sm">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </div>
+                </div>
+
+                {{-- Produk Katalog --}}
+                <div
+                    @click="jenis = 'katalog'"
+                    :class="jenis === 'katalog' ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
+                    class="border-2 rounded-xl p-4 md:p-6 cursor-pointer transition-all duration-200 animate-fade-slide relative overflow-hidden flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0"
+                    style="animation-delay:0.2s"
+                >
+                    <div :class="jenis === 'katalog' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-colors shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" class="md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
+                    </div>
+                    <div class="min-w-0 flex-1 md:mt-4">
+                        <h3 class="font-bold text-base md:text-lg text-gray-900">Produk Katalog</h3>
+                        <p class="text-gray-500 text-xs md:text-sm mt-1 leading-relaxed">Pilih dari koleksi desain yang sudah tersedia. Tinggal pilih ukuran dan jumlah pesanan.</p>
+                    </div>
+                    <!-- Selected Checkmark -->
+                    <div x-show="jenis === 'katalog'" class="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-[#1a237e] text-white flex items-center justify-center text-xs shadow-sm">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </div>
+                </div>
             </div>
-            <a href="https://wa.me/{{ $adminPhone }}?text={{ urlencode('Halo Novos, saya ingin konsultasi pesanan jersey custom') }}"
-               target="_blank" rel="noopener"
-               class="shrink-0 inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.534 4.055 1.474 5.766L0 24l6.395-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.653-.498-5.176-1.37l-.368-.216-3.817.879.906-3.717-.24-.381A9.95 9.95 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-                Chat Admin
-            </a>
+
+            <div class="flex justify-end mt-8">
+                <button
+                    type="button"
+                    @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else if (!hasOrders) showFirstOrderAlert(); else jenisPhase = 2;"
+                    :disabled="!jenis"
+                    :class="jenis ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                    class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                >
+                    Selanjutnya
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-6 mt-6">
-            {{-- Jersey Custom --}}
-            <div
-                @click="jenis = 'custom'"
-                :class="jenis === 'custom' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
-                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
-                style="animation-delay:0.1s"
-            >
-                <div :class="jenis === 'custom' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/></svg>
+        {{-- Phase 2: Pilih Kategori --}}
+        <div x-show="jenisPhase === 2"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0">
+            <h2 class="text-lg font-semibold text-gray-900">Pilih Kategori</h2>
+            <p class="text-sm text-gray-500 mt-1">Pilih kategori produk custom yang ingin Anda pesan</p>
+
+            <div class="mt-6 space-y-6">
+                <div class="space-y-4">
+                    <label class="block text-sm font-semibold text-gray-700">
+                        Pilih Kategori Produk Custom <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <template x-for="cat in categories" :key="cat.id">
+                            <div
+                                @click="selectCategoryByName(cat.name)"
+                                :class="selectedCategoryId == cat.id ? 'border-[#1a237e] bg-blue-50/70 ring-2 ring-[#1a237e] shadow-md scale-[1.02]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'"
+                                class="border-2 rounded-xl p-5 cursor-pointer transition-all duration-300 flex flex-col items-center text-center relative group"
+                            >
+                                <div :class="selectedCategoryId == cat.id ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-[#1a237e]/10 group-hover:text-[#1a237e]'" class="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 overflow-hidden">
+                                    <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
+                                        <img :src="'/storage/' + cat.icon" class="w-10 h-10 object-contain rounded" />
+                                    </template>
+                                    <template x-if="!cat.icon || (!cat.icon.includes('/') && !cat.icon.includes('.'))">
+                                        <i :data-lucide="cat.icon || 'shirt'" class="w-8 h-8"></i>
+                                    </template>
+                                </div>
+                                <h3 class="font-bold text-sm mt-4 text-gray-800" x-text="cat.name"></h3>
+                                <p x-show="cat.description" class="text-gray-400 text-[11px] mt-1.5 leading-relaxed max-w-[200px]" x-text="cat.description"></p>
+
+                                <div x-show="selectedCategoryId == cat.id" class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-[#1a237e]"></div>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-                <h3 class="font-bold text-lg mt-4">Jersey Custom</h3>
-                <p class="text-gray-500 text-sm mt-1 leading-relaxed">Desain jersey sepenuhnya sesuai keinginan Anda. Upload logo, pilih warna, dan tentukan detail desain sendiri.</p>
             </div>
 
-            {{-- Produk Katalog --}}
-            <div
-                @click="jenis = 'katalog'"
-                :class="jenis === 'katalog' ? 'border-[#1a237e] bg-blue-50 ring-2 ring-[#1a237e]' : 'border-gray-200 hover:border-gray-300'"
-                class="border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 animate-fade-slide"
-                style="animation-delay:0.2s"
-            >
-                <div :class="jenis === 'katalog' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-400'" class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19.5Z"/><path d="M12 6v7l2-2 2 2V6"/></svg>
-                </div>
-                <h3 class="font-bold text-lg mt-4">Produk Katalog</h3>
-                <p class="text-gray-500 text-sm mt-1 leading-relaxed">Pilih dari koleksi desain yang sudah tersedia. Tinggal pilih ukuran dan jumlah pesanan.</p>
+            <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8">
+                <button
+                    type="button"
+                    @click="jenisPhase = 1"
+                    class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
+                >
+                    Kembali
+                </button>
+                <button
+                    type="button"
+                    @click="step = 2"
+                    :disabled="!selectedCategoryId"
+                    :class="selectedCategoryId ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                    class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                >
+                    Selanjutnya
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
             </div>
-        </div>
-
-        <div class="flex justify-end mt-8">
-            <button
-                @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else if (!hasOrders) showFirstOrderAlert(); else step = 2;"
-                :disabled="!jenis"
-                :class="jenis ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
-            >
-                Selanjutnya
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
         </div>
     </div>
 
-    {{-- Step 2: Detail & Upload --}}
+    {{-- Step 3: Detail & Upload --}}
     <div x-show="step === 2" x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-6"
@@ -163,15 +293,9 @@
         <h2 class="text-lg font-semibold text-gray-900" x-text="subStep === 1 ? 'Detail & Upload' : 'Alamat Pengiriman'"></h2>
         <p class="text-sm text-gray-500 mt-1" x-text="subStep === 1 ? 'Lengkapi informasi pesanan dan upload file desain Anda' : 'Lengkapi alamat pengiriman untuk pesanan Anda'"></p>
 
-        <div class="grid grid-cols-1 grid-rows-1 mt-6">
             {{-- Sub-Step 1: Detail & Upload Form --}}
-            <div x-show="subStep === 1" class="col-start-1 row-start-1"
-                 x-transition:enter="transition ease-out duration-500 transform"
-                 x-transition:enter-start="-translate-x-12 opacity-0"
-                 x-transition:enter-end="translate-x-0 opacity-100"
-                 x-transition:leave="transition ease-in duration-300 transform"
-                 x-transition:leave-start="translate-x-0 opacity-100"
-                 x-transition:leave-end="-translate-x-12 opacity-0">
+            <div x-show="subStep === 1" class="pb-24">
+                <div class="space-y-6">
 
         {{-- Selected product from catalog --}}
         <template x-if="catalogProduct">
@@ -190,8 +314,8 @@
 
         <div class="space-y-5 mt-6">
             {{-- Row: Nama Pemesan + Nama Tim --}}
-            <div class="grid lg:grid-cols-2 gap-6">
-                {{-- Kiri: Nama Pemesan --}}
+            <div :class="formFieldsGridClass">
+                {{-- Kiri: Nama Pemesan, Nama Tim, Nama Artikel --}}
                 <div class="space-y-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
@@ -211,20 +335,7 @@
                             <p class="text-xs text-red-500 mt-1">Nama pemesan wajib diisi</p>
                         </template>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Artikel</label>
-                        <input
-                            type="text"
-                            x-model="form.nama_artikel"
-                            placeholder="Contoh: Jersey Tim Futsal"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
-                        >
-                    </div>
-                </div>
-
-                {{-- Kanan: Nama Tim --}}
-                <div class="space-y-5">
-                    <div>
+                    <div x-show="showTeamNameField" x-transition x-cloak>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
                             Nama Tim / Event
                             <span class="text-red-500">*</span>
@@ -242,7 +353,20 @@
                             <p class="text-xs text-red-500 mt-1">Nama tim / event wajib diisi</p>
                         </template>
                     </div>
-                    <div>
+                </div>
+
+                {{-- Kanan: Nama Artikel & Detail Sponsor --}}
+                <div class="space-y-5">
+                    <div x-show="showNamaArtikelField" x-transition x-cloak>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Artikel</label>
+                        <input
+                            type="text"
+                            x-model="form.nama_artikel"
+                            placeholder="Contoh: Jersey Tim Futsal"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow"
+                        >
+                    </div>
+                    <div x-show="showDetailSponsorField" x-transition x-cloak>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Sponsor</label>
                         <input
                             type="text"
@@ -253,357 +377,10 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="grid lg:grid-cols-2 gap-6">
-                {{-- Jenis Kerah --}}
-                <div x-data="{ showCollarGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Jenis Kerah <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showCollarGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Kerah
-                        </button>
-                    </div>
-                    <select
-                        x-model="form.kerah"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
-                    >
-                        <option value="">Pilih Jenis Kerah</option>
-                        @foreach($collarOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                    </select>
- 
-                    {{-- Modal Detail Kerah --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showCollarGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
-                        @click.self="showCollarGuide = false"
-                    >
-                        <div
-                            x-show="showCollarGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden"
-                            @click.stop
-                        >
-                            {{-- Modal Header --}}
-                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-base font-bold text-gray-900">Detail Jenis Kerah Jersey</h3>
-                                </div>
-                                <button
-                                    @click="showCollarGuide = false"
-                                    class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
- 
-                            {{-- Modal Body --}}
-                            <div class="px-6 py-5 overflow-y-auto max-h-[75vh]">
-                                <p class="text-xs text-gray-500 mb-4">Panduan referensi variasi desain kerah jersey. Pilih jenis kerah yang sesuai dengan selera Anda.</p>
- 
-                                {{-- Gambar Panduan Kerah --}}
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img
-                                        src="{{ $collarImageUrl }}"
-                                        alt="Panduan Desain Kerah Jersey"
-                                        class="w-full h-auto object-contain"
-                                    >
-                                </div>
-
-
-
-                                <p class="text-xs text-gray-400 mt-3">* Detail variasi spesifik dapat dikonsultasikan lebih lanjut dengan tim desain kami.</p>
-                            </div>
-
-                            {{-- Modal Footer --}}
-                            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
-                                <button
-                                    @click="showCollarGuide = false"
-                                    class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
-                                >
-                                    Mengerti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    </template>
-                </div>
-                <div x-data="{ showBahanGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Bahan Jersey <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showBahanGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Bahan
-                        </button>
-                    </div>
-                    <select
-                        x-model="form.bahan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
-                    >
-                        <option value="">Pilih Bahan Jersey</option>
-                        @foreach($bahanOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                    </select>
- 
-                    {{-- Modal Detail Bahan --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showBahanGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45"
-                    >
-                        <div
-                            x-show="showBahanGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
-                        >
-                            {{-- Modal Header --}}
-                            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <path d="M12 16v-4"/>
-                                            <path d="M12 8h.01"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-gray-900">Jenis Bahan Jersey</h3>
-                                </div>
-                                <button
-                                    @click="showBahanGuide = false"
-                                    class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
- 
-                            {{-- Modal Body --}}
-                            <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
-                                <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis bahan jersey yang tersedia. Pilih bahan yang sesuai dengan kebutuhan Anda.</p>
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img
-                                        src="{{ $bahanImageUrl }}"
-                                        alt="Jenis Bahan Jersey"
-                                        class="w-full h-auto object-contain"
-                                    >
-                                </div>
-                                <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan bahan dengan tim kami jika butuh informasi lebih lanjut.</p>
-                            </div>
-
-                            {{-- Modal Footer --}}
-                            <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
-                                <button
-                                    @click="showBahanGuide = false"
-                                    class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
-                                >
-                                    Mengerti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    </template>
-                </div>
-
-                {{-- Jenis Potongan --}}
-                <div x-data="{ showPotonganGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Jenis Potongan <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showPotonganGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Potongan
-                        </button>
-                    </div>
-                    <select
-                        x-model="form.jenis_potongan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
-                    >
-                        <option value="">Pilih Jenis Potongan</option>
-                        @foreach($potonganOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                    </select>
-
-                    {{-- Modal Detail Potongan --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showPotonganGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45"
-                    >
-                        <div
-                            x-show="showPotonganGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
-                        >
-                            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-gray-900">Jenis Potongan Jersey</h3>
-                                </div>
-                                <button @click="showPotonganGuide = false" class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
-                            <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
-                                <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis-jenis potongan jersey yang tersedia.</p>
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img src="{{ $potonganImageUrl }}" alt="Jenis Potongan Jersey" class="w-full h-auto object-contain">
-                                </div>
-                                <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan potongan dengan tim kami jika Anda membutuhkan penyesuaian khusus.</p>
-                            </div>
-                            <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
-                                <button @click="showPotonganGuide = false" class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors">
-                                    Mengerti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    </template>
-                </div>
-
-                {{-- Model Lengan & Jahitan --}}
-                <div x-data="{ showLenganGuide: false }">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Model Lengan & Jahitan <span class="text-red-500">*</span></label>
-                        <button
-                            type="button"
-                            @click="showLenganGuide = true"
-                            class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                        >
-                            Detail Model Lengan & Jahitan
-                        </button>
-                    </div>
-                    <select
-                        x-model="form.lengan_jahitan"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow bg-white"
-                    >
-                        <option value="">Pilih Model Lengan & Jahitan</option>
-                        @foreach($lenganOptions as $opt)
-                            <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                    </select>
-
-                    {{-- Modal Detail Lengan & Jahitan --}}
-                    <template x-teleport="body">
-                    <div
-                        x-show="showLenganGuide"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45"
-                    >
-                        <div
-                            x-show="showLenganGuide"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
-                        >
-                            {{-- Modal Header --}}
-                            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-gray-900">Model Lengan & Jahitan Jersey</h3>
-                                </div>
-                                <button @click="showLenganGuide = false" class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
-
-                            {{-- Modal Body --}}
-                            <div class="px-5 py-4 overflow-y-auto max-h-[65vh]">
-                                <p class="text-xs text-gray-500 mb-3">Panduan referensi jenis model lengan & jahitan jersey yang tersedia.</p>
-                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                    <img
-                                        src="{{ $lenganImageUrl }}"
-                                        alt="Model Lengan & Jahitan Jersey"
-                                        class="w-full h-auto object-contain"
-                                    >
-                                </div>
-                                <p class="text-xs text-gray-400 mt-3">* Konsultasikan pilihan model lengan dengan tim kami jika Anda membutuhkan penyesuaian khusus.</p>
-                            </div>
-
-                            {{-- Modal Footer --}}
-                            <div class="px-5 py-3.5 border-t border-gray-100 flex justify-end">
-                                <button
-                                    @click="showLenganGuide = false"
-                                    class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
-                                >
-                                    Mengerti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    </template>
-                </div>
-            </div>
+            {{-- Dynamic details wrapped by selectedCategory --}}
+            <div x-show="selectedCategoryId" x-cloak class="space-y-6">
 
             {{-- Total Quantity --}}
             <div class="grid lg:grid-cols-2 gap-6">
@@ -630,6 +407,82 @@
                         >+</button>
                     </div>
                     <p class="text-xs text-gray-400 mt-1">Total keseluruhan jumlah jersey yang dipesan</p>
+                </div>
+            </div>
+
+            {{-- Spesifikasi Utama (Atribut Global) --}}
+            <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm mt-6" x-show="selectedCategoryId">
+                <h4 class="text-sm font-bold text-gray-800 mb-4 flex items-center justify-between cursor-pointer select-none" @click="expandedSpecs = !expandedSpecs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
+                        <span>Spesifikasi Utama (Berlaku untuk Semua Jersey)</span>
+                    </div>
+                    <button type="button" class="text-gray-400 hover:text-gray-600 transition-transform duration-200" :class="expandedSpecs ? 'rotate-180' : ''">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedSpecs">
+                    {{-- Ukuran Jersey Utama (Global Size) --}}
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-gray-600">Ukuran Jersey Utama <span class="text-red-500">*</span></span>
+                        </div>
+                        <select
+                             x-model="form.size"
+                             @change="onGlobalSizeChange()"
+                             class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                        >
+                            <option value="">- Pilih Ukuran -</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="3XL">3XL</option>
+                            <option value="4XL">4XL</option>
+                        </select>
+                    </div>
+
+                    <template x-for="attr in activeSchema" :key="attr.id">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-gray-600" x-text="attr.name"></span>
+                                <template x-if="attr.reference_image">
+                                    <button type="button" @click="showAttrGuide(attr)" class="text-[10px] text-blue-900 hover:underline flex items-center gap-0.5">
+                                        Panduan
+                                    </button>
+                                </template>
+                            </div>
+                            <template x-if="attr.type === 'select' || attr.type === 'radio'">
+                                <div>
+                                    <select
+                                        x-model="form.customizations[attr.id]"
+                                        class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                                    >
+                                        <option value="">- Pilih -</option>
+                                        <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
+                                            <option :value="opt.value" x-text="opt.value"></option>
+                                        </template>
+                                    </select>
+                                    <template x-if="getSelectedOptionPrice(attr) > 0">
+                                        <div class="mt-1 flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
+                                            <span x-text="'+ ' + formatRupiah(getSelectedOptionPrice(attr))"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template x-if="attr.type === 'text'">
+                                <input
+                                    type="text"
+                                    x-model="form.customizations[attr.id]"
+                                    class="w-full border border-gray-300 p-2 rounded-lg text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                                    :placeholder="'Masukkan ' + attr.name"
+                                >
+                            </template>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -789,15 +642,135 @@
                 </div>
                 </template>
 
-                <textarea
-                    x-model="form.catatan"
-                    rows="6"
-                    placeholder="Isi detail per-item dengan format: NoPunggung, Nama Punggung, Model Lengan, Size, Keterangan&#10;&#10;Contoh:&#10;10, Jhon Doe, SHORT SLEVE, L,&#10;7, Jane Doe, LONG SLEVE, M,&#10;9, Alex, SHORT SLEVE, XL, Catatan khusus"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none transition-shadow resize-none"
-                ></textarea>
-                <p class="text-xs text-gray-400 mt-1">Pisahkan setiap item dengan baris baru. Format: NoPunggung, Nama Punggung, Model Lengan, Size, Keterangan</p>
+                {{-- Tabel Data Produksi Dinamis --}}
+                <div class="mt-4 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
+                        <h4 class="text-sm font-bold text-gray-800">Daftar Pemain & Ukuran</h4>
+                        <div class="text-xs text-gray-500 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 animate-pulse">
+                            <span class="flex h-2 w-2 rounded-full bg-blue-600"></span>
+                            <span>Secara default, pemain mengikuti <strong>Spesifikasi Utama</strong> di atas. Gunakan kustomisasi jika ada yang berbeda.</span>
+                        </div>
+                    </div>
+                               <div class="p-4 bg-slate-50/50 border-b border-gray-100 flex items-center justify-between">
+                        <label class="flex items-center gap-2 cursor-pointer select-none text-xs font-semibold text-gray-600">
+                            <input type="checkbox" x-model="selectAll" @change="toggleSelectAll()" class="w-4 h-4 rounded cursor-pointer accent-[#1a237e] border-gray-300 bg-white">
+                            <span>Pilih Semua Pemain</span>
+                        </label>
+                        <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full" x-text="`${items.length} Pemain`"></span>
+                    </div>
+
+                    <div class="p-4 space-y-3 bg-slate-50/30 max-h-[600px] overflow-y-auto">
+                        <template x-for="(item, index) in items" :key="index">
+                            <div class="bg-white border rounded-xl shadow-sm transition-all duration-200 overflow-hidden relative"
+                                 :class="[
+                                     item.selected ? 'border-[#1a237e] bg-blue-50/10' : 'border-gray-200',
+                                     !isRowComplete(item) ? 'hover:border-amber-300' : 'hover:border-gray-300'
+                                 ]">
+                                
+                                <!-- Card Number Badge (Top Left Corner) -->
+                                <div class="absolute -top-0.5 -left-0.5 w-8 h-6 bg-[#1a237e] text-white flex items-center justify-center text-[10px] font-bold rounded-br-lg rounded-tl-xl shadow-sm z-10">
+                                    <span x-text="index + 1"></span>
+                                </div>
+
+                                <!-- Card Header -->
+                                <div class="p-3.5 flex items-center justify-between gap-3 select-none">
+                                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                                        <!-- Checkbox -->
+                                        <input type="checkbox" :checked="item.selected" @change="handleCheck($event, index)" 
+                                               class="w-4 h-4 rounded cursor-pointer accent-[#1a237e] border-gray-300 bg-white">
+
+                                        <!-- Player Info Summary (Inputs inline) -->
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center gap-2">
+                                                <!-- No Punggung Input -->
+                                                <input type="text" x-model="item.no" placeholder="No" maxlength="2"
+                                                       :id="'no-' + index"
+                                                       @input="item.no = item.no.replace(/[^0-9]/g, '')"
+                                                       @keydown.enter.prevent="document.getElementById('nama-' + index)?.focus()"
+                                                       class="w-14 text-center border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[10px]">
+                                                
+                                                <!-- Nama Punggung Input -->
+                                                <input type="text" x-model="item.nama" placeholder="Nama Punggung" maxlength="20"
+                                                       :id="'nama-' + index"
+                                                       @keydown.enter.prevent="document.getElementById('no-' + (index + 1))?.focus()"
+                                                       class="flex-1 min-w-0 border border-gray-300 px-2 py-1 rounded text-xs font-bold text-gray-800 outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-white placeholder-gray-400 placeholder:font-normal placeholder:text-[10px]">
+                                            </div>
+                                            <!-- Badges -->
+                                            <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                                                <!-- Size Badge -->
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
+                                                    Size <span x-text="item.size || '-'"></span>
+                                                </span>
+                                                <!-- Set Bawahan Badge if Jersey and selected -->
+                                                <template x-if="selectedCategoryName.toLowerCase() === 'jersey' && item.customizations['set_bawahan'] === 'Ya' && item.customizations['tipe_bawahan']">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-50 text-[#1a237e] text-[10px] font-bold border border-indigo-100">
+                                                        Set: <span x-text="`${item.customizations['tipe_bawahan']} (${item.size || '-'})`"></span>
+                                                    </span>
+                                                </template>
+                                                <!-- Customizations list -->
+                                                <template x-for="cust in getCompiledCustomizations(item)" :key="cust.key">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-100">
+                                                        <span x-text="cust.value"></span>
+                                                    </span>
+                                                </template>
+                                                <!-- Warning Badge -->
+                                                <template x-if="!isRowComplete(item)">
+                                                    <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[9px] font-bold border border-amber-200">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                        Belum lengkap
+                                                    </span>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- FLOATING BULK BAR (EDIT MASAL UNTUK CUSTOMER) -->
+                <div x-show="countSelected() > 0" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3.5 sm:px-6 sm:py-4 rounded-2xl shadow-2xl border border-gray-800 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 z-50 w-[calc(100%-2rem)] sm:w-auto max-w-md sm:max-w-none">
+                    <div class="border-b sm:border-b-0 sm:border-r border-gray-800 pb-2 sm:pb-0 pr-0 sm:pr-4 w-full sm:w-auto flex items-center justify-between sm:block gap-4">
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Terpilih</p>
+                        <p class="text-sm sm:text-base font-bold text-orange-400" x-text="countSelected() + ' Pemain'"></p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 text-xs w-full sm:w-auto">
+                        <span class="font-semibold text-gray-300 hidden sm:inline">Aksi Massal:</span>
+                        
+                        <!-- Main Tools -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <div class="flex-1 sm:flex-initial flex items-center gap-1.5 bg-gray-800 border border-gray-700 rounded-lg p-1">
+                                <span class="text-[10px] text-gray-400 font-semibold px-1">Ukuran:</span>
+                                <select x-model="bulkForm.size" @change="applyBulkSize()" class="bg-transparent text-white text-xs outline-none cursor-pointer pr-2 w-full sm:w-auto">
+                                    <option value="" class="bg-gray-800">-- Pilih --</option>
+                                    <option value="S" class="bg-gray-800">S</option>
+                                    <option value="M" class="bg-gray-800">M</option>
+                                    <option value="L" class="bg-gray-800">L</option>
+                                    <option value="XL" class="bg-gray-800">XL</option>
+                                    <option value="XXL" class="bg-gray-800">XXL</option>
+                                    <option value="3XL" class="bg-gray-800">3XL</option>
+                                    <option value="4XL" class="bg-gray-800">4XL</option>
+                                </select>
+                            </div>
+
+                            <button type="button" @click="openOverrideModal(null)" class="flex-1 sm:flex-initial bg-[#1a237e] hover:bg-[#283593] text-white font-bold px-3 py-1.5 rounded-lg transition-colors shadow flex items-center justify-center gap-1 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                                Kustom Atribut
+                            </button>
+                        </div>
+                        
+                        <!-- Reset & Cancel (Aligned far apart on mobile) -->
+                        <div class="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto border-t sm:border-t-0 border-gray-800/60 pt-2.5 sm:pt-0 mt-1 sm:mt-0">
+                            <button type="button" @click="resetSelectedOverrides()" class="bg-red-900/60 hover:bg-red-800 text-red-100 font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer">
+                                Reset
+                            </button>
+                            
+                            <button type="button" @click="clearSelection()" class="text-xs text-gray-400 hover:text-white underline">Batal</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
         {{-- Upload Section --}}
         <div class="grid lg:grid-cols-2 gap-6 mt-8">
@@ -814,25 +787,25 @@
             </div>
         </div>
 
-        <div class="flex justify-between mt-8">
+        <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8">
             <button
                 @click="step = 1"
-                class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                class="w-full sm:w-auto px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
             >
                 Kembali
             </button>
-            <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <button
                     @click="addToCart"
                     :disabled="!validateStep2 || loading"
                     :class="(validateStep2 && !loading) ? 'border-2 border-[#1a237e] text-[#1a237e] hover:bg-blue-50 cursor-pointer' : 'border-gray-300 text-gray-400 cursor-not-allowed'"
-                    class="px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                    class="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
-                    <span x-show="!loading" class="inline-flex items-center gap-2">
+                    <span x-show="!loading" class="inline-flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                         Masukkan ke Keranjang
                     </span>
-                    <span x-show="loading" class="inline-flex items-center gap-2">
+                    <span x-show="loading" class="inline-flex items-center justify-center gap-2">
                         <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -844,7 +817,7 @@
                     @click="nextFromStep2()"
                     :disabled="!validateStep2"
                     :class="validateStep2 ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                    class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                    class="w-full sm:w-auto text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
                     Pesan Langsung
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -852,18 +825,27 @@
             </div>
         </div>
             </div>
+            </div>
+        </div>
 
-            {{-- Sub-Step 2: Alamat Form / Select --}}
-            <div x-show="subStep === 2" x-cloak class="col-start-1 row-start-1"
-                 x-transition:enter="transition ease-out duration-500 transform"
-                 x-transition:enter-start="translate-x-12 opacity-0"
-                 x-transition:enter-end="translate-x-0 opacity-100"
-                 x-transition:leave="transition ease-in duration-300 transform"
-                 x-transition:leave-start="translate-x-0 opacity-100"
-                 x-transition:leave-end="translate-x-12 opacity-0">
-                 
+            {{-- Sticky Bottom Pricing Bar (Desktop & Mobile) --}}
+            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3.5 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-40">
+                <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-wider">Estimasi Harga</p>
+                        <p class="text-base sm:text-lg font-extrabold text-[#1a237e]" x-text="formatRupiah(hargaDasar)"></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs sm:text-sm font-semibold text-gray-700" x-text="totalQty + ' pcs'"></p>
+                        <p class="text-[10px] sm:text-xs text-gray-400" x-text="'@ ' + formatRupiah(hargaPerJersey)"></p>
+                    </div>
+                </div>
+            </div>
+
+        {{-- Sub-Step 2: Alamat Form / Select --}}
+            <div x-show="subStep === 2" class="pb-24">
                 {{-- Mode 1: Detail Kontak & Alamat --}}
-                <div x-show="addressMode === 'select'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                <div x-show="addressMode === 'select'" class="space-y-6">
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Detail Kontak & Alamat</h3>
                         <p class="text-xs text-gray-500 mt-0.5">Pastikan data kontak dan alamat pengiriman Anda sudah benar sebelum melanjutkan.</p>
@@ -950,18 +932,20 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-6">
+                    <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-6">
                         <button
+                            type="button"
                             @click="backFromSubStep2()"
-                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
                         >
                             Kembali
                         </button>
                         <button
+                            type="button"
                             @click="useSelectedAddress()"
                             :disabled="!selectedAddressId"
                             :class="selectedAddressId ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                            class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                            class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                         >
                             Lanjutkan ke Pembayaran
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -970,7 +954,7 @@
                 </div>
 
                 {{-- Mode 2: Pilih Alamat yang Sudah Ada (Card List) --}}
-                <div x-show="addressMode === 'list'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                <div x-show="addressMode === 'list'" class="space-y-6">
                     <div class="flex justify-between items-center mb-2">
                         <div>
                             <h3 class="font-bold text-lg text-gray-900">Pilih Alamat Lain</h3>
@@ -1020,10 +1004,11 @@
                         </template>
                     </div>
 
-                    <div class="flex justify-between mt-8">
+                    <div class="flex flex-col sm:flex-row justify-start mt-8">
                         <button
+                            type="button"
                             @click="addressMode = 'select'"
-                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
                         >
                             Batal
                         </button>
@@ -1031,7 +1016,7 @@
                 </div>
 
                 {{-- Mode 3: Form Input Alamat Baru --}}
-                <div x-show="addressMode === 'create'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
+                <div x-show="addressMode === 'create'" class="space-y-6">
                     <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
                         <div class="grid md:grid-cols-2 gap-6">
                             {{-- Nama Depan --}}
@@ -1203,18 +1188,20 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-8">
+                    <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8">
                         <button
+                            type="button"
                             @click="addresses.length > 0 ? addressMode = 'list' : subStep = 1"
-                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
                         >
                             Kembali
                         </button>
                         <button
+                            type="button"
                             @click="saveAddress()"
                             :disabled="!validateAddress || addressLoading.submit"
                             :class="(validateAddress && !addressLoading.submit) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                            class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                            class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                         >
                             <span x-show="!addressLoading.submit" class="inline-flex items-center gap-2">
                                 Simpan Alamat Baru
@@ -1234,10 +1221,9 @@
 
 
             </div>
-        </div>
     </div>
 
-    {{-- Step 3: Prioritas & Pembayaran --}}
+    {{-- Step 4: Prioritas & Pembayaran --}}
     <div x-show="step === 3" x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-6"
@@ -1415,18 +1401,20 @@
             </div>
         </div>
 
-        <div class="flex justify-end gap-4 mt-8">
+        <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8 pb-24">
             <button
+                type="button"
                 @click="step = 2"
-                class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
             >
                 Kembali
             </button>
             <button
+                type="button"
                 @click="mode === 'cart_checkout' ? submitCartCheckout() : submitOrder()"
                 :disabled="!validateStep3 || loading"
                 :class="(validateStep3 && !loading) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
             >
                 <span x-show="!loading" class="inline-flex items-center gap-2">
                     Buat Pesanan
@@ -1443,11 +1431,8 @@
         </div>
     </div>
 
-    {{-- Step 4: Konfirmasi --}}
-    <div x-show="step === 4" x-cloak
-         x-transition:enter="transition ease-out duration-400"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100">
+    {{-- Step 5: Konfirmasi --}}
+    <div x-show="step === 4" x-cloak>
         <div class="text-center max-w-lg mx-auto py-4">
             {{-- Green Checkmark --}}
             <div class="flex justify-center mb-6">
@@ -1458,11 +1443,11 @@
                 </div>
             </div>
 
-            <h2 class="text-xl font-bold text-green-600 mb-2 animate-fade-slide" style="animation-delay:0.15s">Pesanan Berhasil Dibuat!</h2>
-            <p class="text-gray-500 text-sm mb-8 animate-fade-slide" style="animation-delay:0.3s">Tim kami akan segera memproses pesanan Anda. Pantau status pesanan melalui halaman Tracking.</p>
+            <h2 class="text-xl font-bold text-green-600 mb-2" style="animation-delay:0.15s">Pesanan Berhasil Dibuat!</h2>
+            <p class="text-gray-500 text-sm mb-8" style="animation-delay:0.3s">Tim kami akan segera memproses pesanan Anda. Pantau status pesanan melalui halaman Tracking.</p>
 
             {{-- Order ID --}}
-            <div class="mb-6 animate-fade-slide" style="animation-delay:0.45s">
+            <div class="mb-6" style="animation-delay:0.45s">
                 <p class="text-sm text-gray-500 mb-1">Order ID:</p>
                 <div class="flex items-center justify-center gap-2">
                     <span class="text-lg font-mono font-bold text-gray-900 tracking-wider" x-text="orderNumber" id="orderNumber"></span>
@@ -1477,7 +1462,7 @@
             </div>
 
             {{-- Ringkasan Pesanan --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-8 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.6s">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-8 text-left max-w-sm mx-auto" style="animation-delay:0.6s">
                 <template x-if="mode === 'single'">
                     <div class="space-y-2.5 text-sm">
                         <div class="flex justify-between">
@@ -1488,22 +1473,36 @@
                             <span class="text-gray-500">Sponsor</span>
                             <span class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Kerah</span>
-                            <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Bahan</span>
-                            <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Jenis Potongan</span>
-                            <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Lengan & Jahitan</span>
-                            <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
-                        </div>
+                        <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                            <div class="contents">
+                                <template x-for="keyName in Object.keys(form.customizations)" :key="keyName">
+                                    <div class="flex justify-between" x-show="form.customizations[keyName]">
+                                        <span class="text-gray-500" x-text="keyName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                                        <span class="font-medium text-gray-900" x-text="form.customizations[keyName] || '-'"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template x-if="!form.customizations || Object.keys(form.customizations).length === 0">
+                            <div class="contents">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Kerah</span>
+                                    <span class="font-medium text-gray-900" x-text="form.kerah || '-'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Bahan</span>
+                                    <span class="font-medium text-gray-900" x-text="form.bahan || '-'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Jenis Potongan</span>
+                                    <span class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Lengan & Jahitan</span>
+                                    <span class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'"></span>
+                                </div>
+                            </div>
+                        </template>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Jumlah</span>
                             <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
@@ -1536,7 +1535,7 @@
             </div>
 
             {{-- Info Pembayaran DP --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.7s">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto" style="animation-delay:0.7s">
                 <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                     Pembayaran DP Minimal 10%
@@ -1575,7 +1574,7 @@
             </div>
 
             {{-- Kirim Bukti Bayar ke WhatsApp --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto animate-fade-slide" style="animation-delay:0.8s">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto" style="animation-delay:0.8s">
                 <h4 class="text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                     Kirim Bukti Pembayaran
@@ -1595,7 +1594,7 @@
             </div>
 
             {{-- Buttons --}}
-            <div class="flex flex-col sm:flex-row gap-3 justify-center animate-fade-slide" style="animation-delay:0.9s">
+            <div class="flex flex-col sm:flex-row gap-3 justify-center" style="animation-delay:0.9s">
                 <a :href="'/tracking?q=' + orderNumber" class="px-8 py-3 bg-[#1a237e] text-white rounded-lg font-semibold hover:bg-[#283593] transition-colors text-center">
                     Tracking Pesanan
                 </a>
@@ -1605,7 +1604,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <style>
 [x-cloak] { display: none !important; }
@@ -1621,8 +1619,8 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-slide {
-    opacity: 0;
-    animation: fadeSlideUp 0.5s ease-out forwards;
+    opacity: 1;
+    animation: fadeSlideUp 0.5s ease-out;
 }
 
 /* SweetAlert2 toast — di bawah navbar (h-16 = 64px) */
@@ -1634,15 +1632,20 @@
 </style>
 
 <script>
-function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = []) {
+function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = [], categories = []) {
     return {
         step: 1,
         mode: 'single',
         cartItemsToCheckout: [],
-        steps: ['Pilih Jenis', 'Detail & Upload', 'Prioritas & Bayar', 'Konfirmasi'],
+        steps: ['Pilih Jenis & Kategori', 'Detail & Upload', 'Prioritas & Bayar', 'Konfirmasi'],
         jenis: null,
+        jenisPhase: 1,
         catalogProduct: catalogProduct,
+        categories: categories,
+        selectedCategoryId: '',
         subStep: 1,
+        expandedSpecs: true,
+        expandedBawahan: true,
         addresses: userAddresses,
         addressMode: 'select',
         selectedAddressId: null,
@@ -1703,31 +1706,41 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             bahan: '',
             jenis_potongan: '',
             lengan_jahitan: '',
-
+            customizations: {}, // dynamic fields
             catatan: '',
             total_qty: 1,
+            size: '',
         },
+        oldGlobalSize: '',
+        items: [],
+        selectAll: false,
+        selectionMode: 'single',
+        lastCheckedIndex: null,
+        bulkForm: {},
+        showGuideAttr: null,
+        showGuideModal: false,
+        showOverrideModal: false,
+        overrideForm: {},
+        overrideSingleIndex: null,
         prioritas: 'normal',
         showUkuranRef: false,
         orderNumber: null,
         buktiBayarFile: null,
         loading: false,
         hasOrders: hasOrders,
-        prioritasOptions: [
-            { value: 'normal', label: 'Normal', desc: '7\u201314 hari kerja', harga: 'Gratis' },
-            { value: 'express', label: 'Express', desc: '3\u20136 hari kerja', harga: '+Rp50.000' },
-            { value: 'super_express', label: 'Super Express', desc: '1\u20132 hari kerja', harga: '+Rp150.000' }
-        ],
+        prioritasOptions: @json($dynamicPriorities),
         basePricePerPcs: 85000,
 
         init() {
+            let restoredFromCheckout = false;
             const savedState = localStorage.getItem('checkout_state');
             if (savedState) {
                 try {
+                    restoredFromCheckout = true;
                     const state = JSON.parse(savedState);
                     this.mode = state.mode || 'single';
                     this.step = state.step;
-                    this.subStep = state.subStep;
+                    this.subStep = state.step === 2 ? 1 : (state.subStep || 1);
                     this.prioritas = state.prioritas || 'normal';
                     this.selectedAddressId = state.selectedAddressId || null;
 
@@ -1739,31 +1752,24 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         this.jenis = 'katalog';
                         this.basePricePerPcs = parseInt(item.price) || 85000;
                         this.form.total_qty = item.qty || 1;
-                        this.form.kerah = item.kerah || '';
-                        this.form.bahan = item.bahan || '';
-                        this.form.jenis_potongan = item.jenis_potongan || '';
-                        this.form.lengan_jahitan = item.lengan_jahitan || '';
                         this.form.team_name = item.name || '';
                         this.form.nama_artikel = item.category || 'Katalog';
                         this.form.nama_pemesan = '{{ auth()->user()->name }}';
                         
-                        let num = '-';
-                        let name = '-';
-                        if (state.notes) {
-                            const nameMatch = state.notes.match(/Nameset:\s*(.*?)\s*\(No\./i);
-                            const numMatch = state.notes.match(/\(No\.\s*(.*?)\)/i);
-                            if (nameMatch) name = nameMatch[1].trim();
-                            if (numMatch) num = numMatch[1].trim();
+                        const cat = this.categories.find(c => c.name.toLowerCase() === (item.category || '').toLowerCase());
+                        if (cat) {
+                            this.selectedCategoryId = cat.id;
+                            this.onCategoryChange();
                         }
-                        
-                        let lines = [];
-                        for (let i = 0; i < this.form.total_qty; i++) {
-                            lines.push(`${num}, ${name}, ${this.form.lengan_jahitan || '-'}, ${item.size || '-'}, Katalog`);
-                        }
-                        this.form.catatan = lines.join('\n');
                     } else {
                         this.jenis = state.jenis;
                         this.form = state.form || this.form;
+                        if (state.selectedCategoryId) {
+                            this.selectedCategoryId = state.selectedCategoryId;
+                        }
+                        if (state.items) {
+                            this.items = state.items;
+                        }
                     }
                     
                     localStorage.removeItem('checkout_state');
@@ -1776,10 +1782,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     if (this.catalogProduct.harga) {
                         this.basePricePerPcs = parseInt(this.catalogProduct.harga);
                     }
-                    if (this.catalogProduct.kerah) this.form.kerah = this.catalogProduct.kerah;
-                    if (this.catalogProduct.bahan) this.form.bahan = this.catalogProduct.bahan;
-                    if (this.catalogProduct.jenis_potongan) this.form.jenis_potongan = this.catalogProduct.jenis_potongan;
-                    if (this.catalogProduct.lengan_jahitan) this.form.lengan_jahitan = this.catalogProduct.lengan_jahitan;
+                    const cat = this.categories.find(c => c.name.toLowerCase() === (this.catalogProduct.kategori || '').toLowerCase());
+                    if (cat) {
+                        this.selectedCategoryId = cat.id;
+                        this.onCategoryChange();
+                        if (this.catalogProduct.kerah) this.form.customizations['kerah'] = this.catalogProduct.kerah;
+                        if (this.catalogProduct.bahan) this.form.customizations['bahan'] = this.catalogProduct.bahan;
+                        if (this.catalogProduct.jenis_potongan) this.form.customizations['jenis_potongan'] = this.catalogProduct.jenis_potongan;
+                        if (this.catalogProduct.lengan_jahitan) this.form.customizations['lengan_jahitan'] = this.catalogProduct.lengan_jahitan;
+                    }
                     this.step = 2;
                 }
             }
@@ -1794,7 +1805,124 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.addressMode = 'create';
             }
 
+            // Watch total_qty to update items table rows
+            this.$watch('form.total_qty', (val) => {
+                this.updateItemsRows(val);
+            });
+            // Watch category change to reset and align schemas on all item rows
+            this.$watch('selectedCategoryId', () => {
+                this.updateItemsRows(this.form.total_qty);
+            });
+
+            this.updateItemsRows(this.form.total_qty);
+
             this.setupBuktiBayarPond();
+
+            // Restore auto-save draft (only if not restored from checkout_state)
+            const restoreDraft = () => {
+                if (restoredFromCheckout) return;
+                const draft = localStorage.getItem('pesanan_draft');
+                if (!draft) return;
+                let data;
+                try {
+                    data = JSON.parse(draft);
+                } catch(e) {
+                    console.warn('Gagal membaca draft', e);
+                    localStorage.removeItem('pesanan_draft');
+                    return;
+                }
+                const savedTime = new Date(data.savedAt);
+                const now = new Date();
+                const diffMin = Math.floor((now - savedTime) / 60000);
+
+                const askRestore = () => {
+                    if (typeof window.Swal !== 'undefined') {
+                        window.Swal.fire({
+                            icon: 'question',
+                            title: 'Lanjutkan Pesanan Sebelumnya?',
+                            html: 'Kami menemukan data pesanan yang belum selesai dari ' + (diffMin > 0 ? diffMin + ' menit yang lalu' : 'beberapa saat yang lalu') + '.<br><br>Apakah kamu ingin melanjutkan?',
+                            showConfirmButton: true,
+                            confirmButtonText: '<svg class="w-4 h-4 inline mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Lanjutkan',
+                            confirmButtonColor: '#1a237e',
+                            showCancelButton: true,
+                            cancelButtonText: 'Mulai Baru',
+                            cancelButtonColor: '#6b7280',
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                this.restoreDraft(data);
+                            } else {
+                                this.clearDraft();
+                            }
+                        });
+                    } else {
+                        // Fallback: restore langsung tanpa konfirmasi
+                        this.restoreDraft(data);
+                    }
+                };
+
+                // Tunggu Swal tersedia (maks 5 detik)
+                if (typeof window.Swal !== 'undefined') {
+                    askRestore();
+                } else {
+                    let tries = 0;
+                    const waitSwal = setInterval(() => {
+                        tries++;
+                        if (typeof window.Swal !== 'undefined' || tries >= 50) {
+                            clearInterval(waitSwal);
+                            askRestore();
+                        }
+                    }, 100);
+                }
+            };
+
+            this.$nextTick(restoreDraft);
+
+            // Ensure selected prioritas is valid based on settings
+            this.$nextTick(() => {
+                if (this.prioritasOptions.length > 0 && !this.prioritasOptions.some(o => o.value === this.prioritas)) {
+                    this.prioritas = this.prioritasOptions[0].value;
+                }
+            });
+
+            // Re-render icons setelah render ulang
+            this.$nextTick(() => {
+                if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+            });
+
+            // Auto-save setiap kali ada perubahan form (debounce 800ms)
+            let saveTimer;
+            const triggerSave = () => {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(() => {
+                    if (this.step < 4) this.saveDraft();
+                }, 800);
+            };
+            this.$watch('form.nama_pemesan', triggerSave);
+            this.$watch('form.team_name', triggerSave);
+            this.$watch('form.nama_artikel', triggerSave);
+            this.$watch('form.detail_sponsor', triggerSave);
+            this.$watch('form.total_qty', triggerSave);
+            this.$watch('form.size', triggerSave);
+            this.$watch('prioritas', triggerSave);
+            this.$watch('selectedAddressId', triggerSave);
+            this.$watch('formPhone', triggerSave);
+            // Fallback: save saat ada perubahan di form (termasuk items & customizations)
+            document.addEventListener('change', (e) => {
+                if (this.step < 4 && e.target.closest('[x-data^="pemesananForm"]')) {
+                    clearTimeout(saveTimer);
+                    saveTimer = setTimeout(() => this.saveDraft(), 800);
+                }
+            }, true);
+
+            // Backup: auto-save tiap 3 detik
+            this._draftTimer = setInterval(() => {
+                if (this.step < 4) this.saveDraft();
+            }, 3000);
+
+            // Save draft saat pindah halaman
+            const pageUnload = () => this.saveDraft();
+            window.addEventListener('beforeunload', pageUnload);
+            window.addEventListener('pagehide', pageUnload);
         },
 
         setupBuktiBayarPond() {
@@ -1806,6 +1934,244 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     this.uploadPaymentProof(this.orderNumber, fileItem.file);
                 }
             });
+        },
+
+        onGlobalSizeChange() {
+            const newSize = this.form.size;
+            const oldSize = this.oldGlobalSize;
+            this.items.forEach(item => {
+                if (item.size === oldSize) {
+                    item.size = newSize;
+                }
+            });
+            this.oldGlobalSize = newSize;
+        },
+
+        onCategoryChange() {
+            this.form.customizations = {};
+            const schema = this.activeSchema;
+            if (schema) {
+                schema.forEach(attr => {
+                    this.form.customizations[attr.id] = '';
+                });
+            }
+            this.updateItemsRows(this.form.total_qty);
+        },
+
+        updateItemsRows(val) {
+            const count = parseInt(val) || 1;
+            
+            if (this.items.length > count) {
+                this.items = this.items.slice(0, count);
+            } else {
+                const diff = count - this.items.length;
+                for (let i = 0; i < diff; i++) {
+                    this.items.push({
+                        selected: false,
+                        no: '',
+                        nama: '',
+                        size: this.form.size || '',
+                        customizations: {}
+                    });
+                }
+            }
+        },
+
+        isAttrActive(attr, item) {
+            if (!attr.depends_on || !attr.depends_on.attribute_id) return true;
+            const parentVal = item.customizations[attr.depends_on.attribute_id];
+            return parentVal === attr.depends_on.value;
+        },
+
+        toggleSelectAll() {
+            this.items.forEach(item => item.selected = this.selectAll);
+            this.lastCheckedIndex = null;
+        },
+
+        handleCheck(event, index) {
+            let isChecked = event.target.checked;
+            if (this.selectionMode === 'range' || event.shiftKey) {
+                if (this.lastCheckedIndex !== null) {
+                    let start = Math.min(this.lastCheckedIndex, index);
+                    let fontEnd = Math.max(this.lastCheckedIndex, index);
+                    for (let i = start; i <= fontEnd; i++) { this.items[i].selected = isChecked; }
+                } else { this.items[index].selected = isChecked; }
+            } else { this.items[index].selected = isChecked; }
+            this.lastCheckedIndex = index;
+        },
+
+        countSelected() { 
+            return this.items.filter(item => item.selected).length; 
+        },
+
+        clearSelection() { 
+            this.items.forEach(item => item.selected = false); 
+            this.selectAll = false; 
+            this.lastCheckedIndex = null; 
+        },
+
+        getOverrideCount(item) {
+            if (!item.customizations) return 0;
+            return Object.keys(item.customizations).filter(k => {
+                const val = item.customizations[k];
+                return val !== undefined && val !== null && val.toString().trim() !== '';
+            }).length;
+        },
+
+        selectCategoryByName(name) {
+            if (this.catalogProduct) return;
+            const cat = this.categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+            if (cat) {
+                this.selectedCategoryId = cat.id;
+                this.onCategoryChange();
+            }
+        },
+
+        getCategoryIdByName(name) {
+            const cat = this.categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+            return cat ? cat.id : null;
+        },
+
+        isRowComplete(item) {
+            if (!item.size) return false;
+
+            const schema = this.activeSchema;
+            const compiled = Object.assign({}, this.form.customizations, item.customizations);
+            const allOk = schema.every(attr => {
+                if (!attr.required) return true;
+                if (attr.depends_on && attr.depends_on.attribute_id) {
+                    const parentVal = compiled[attr.depends_on.attribute_id];
+                    if (parentVal !== attr.depends_on.value) return true;
+                }
+                const val = compiled[attr.id];
+                return val !== undefined && val !== null && val.toString().trim() !== '';
+            });
+            if (!allOk) return false;
+
+            return true;
+        },
+
+        getCompiledCustomizations(item) {
+            const compiled = Object.assign({}, this.form.customizations, item.customizations);
+            const schema = this.activeSchema;
+            
+            const result = [];
+            
+            schema.forEach(attr => {
+                if (this.isAttrActive(attr, item)) {
+                    const val = compiled[attr.id];
+                    if (val) {
+                        result.push({
+                            key: attr.id,
+                            value: val
+                        });
+                    }
+                }
+            });
+            
+            return result;
+        },
+
+        openOverrideModal(index = null) {
+            this.overrideSingleIndex = index;
+            this.overrideForm = {};
+            
+            this.activeSchema.forEach(attr => {
+                this.overrideForm[attr.id] = '';
+            });
+
+            if (index !== null) {
+                const item = this.items[index];
+                if (item.customizations) {
+                    this.activeSchema.forEach(attr => {
+                        this.overrideForm[attr.id] = item.customizations[attr.id] || '';
+                    });
+                }
+            }
+            this.showOverrideModal = true;
+        },
+
+        saveOverrides() {
+            this.items.forEach((item, index) => {
+                if (item.selected || index === this.overrideSingleIndex) {
+                    if (!item.customizations) item.customizations = {};
+                    this.activeSchema.forEach(attr => {
+                        const val = this.overrideForm[attr.id];
+                        if (val !== undefined && val !== null && val.toString().trim() !== '') {
+                            item.customizations[attr.id] = val;
+                        } else {
+                            delete item.customizations[attr.id];
+                        }
+                    });
+                }
+            });
+            this.showOverrideModal = false;
+            this.overrideForm = {};
+            this.clearSelection();
+        },
+
+        resetSelectedOverrides() {
+            this.items.forEach(item => {
+                if (item.selected) {
+                    item.customizations = {};
+                }
+            });
+            this.clearSelection();
+        },
+
+        applyBulkSize() {
+            if (!this.bulkForm.size) return;
+            this.items.forEach(item => {
+                if (item.selected) {
+                    item.size = this.bulkForm.size;
+                }
+            });
+            this.clearSelection();
+            this.bulkForm = {};
+        },
+
+        isOverrideAttrActive(attr) {
+            if (!attr.depends_on || !attr.depends_on.attribute_id) return true;
+            const parentVal = this.overrideForm[attr.depends_on.attribute_id] !== undefined && this.overrideForm[attr.depends_on.attribute_id] !== ''
+                ? this.overrideForm[attr.depends_on.attribute_id]
+                : this.form.customizations[attr.depends_on.attribute_id];
+            return parentVal === attr.depends_on.value;
+        },
+
+        showAttrGuide(attr) {
+            this.showGuideAttr = attr;
+            this.showGuideModal = true;
+        },
+
+        get selectedCategory() {
+            return this.categories.find(c => c.id == this.selectedCategoryId);
+        },
+        get selectedCategoryName() {
+            const cat = this.selectedCategory;
+            return cat ? cat.name : '';
+        },
+        get showTeamNameField() {
+            if (!this.selectedCategoryId) return true;
+            const cat = this.selectedCategory;
+            return cat && cat.form_config ? !!cat.form_config.show_team_name : true;
+        },
+        get showNamaArtikelField() {
+            if (!this.selectedCategoryId) return true;
+            const cat = this.selectedCategory;
+            return cat && cat.form_config ? !!cat.form_config.show_nama_artikel : true;
+        },
+        get showDetailSponsorField() {
+            if (!this.selectedCategoryId) return true;
+            const cat = this.selectedCategory;
+            return cat && cat.form_config ? !!cat.form_config.show_detail_sponsor : true;
+        },
+        get formFieldsGridClass() {
+            const hasRightCol = this.showTeamNameField || this.showDetailSponsorField;
+            return hasRightCol ? 'grid lg:grid-cols-2 gap-6' : 'grid grid-cols-1 gap-6';
+        },
+        get activeSchema() {
+            const cat = this.categories.find(c => c.id == this.selectedCategoryId);
+            return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
         },
 
         saveCheckoutState() {
@@ -1831,12 +2197,58 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         get selectedAddress() {
             if (!this.addresses) return null;
-            return this.addresses.find(a => a.id === this.selectedAddressId) || null;
+            return this.addresses.find(a => a.id === this.selectedAddressId) || this.addresses.find(a => a.is_primary) || this.addresses[0] || null;
         },
 
         get prioritasText() {
             const p = this.prioritasOptions.find(o => o.value === this.prioritas);
             return p ? p.label : '';
+        },
+
+        get basePriceFromCategory() {
+            if (this.jenis === 'katalog') {
+                return this.basePricePerPcs;
+            }
+            return this.selectedCategory?.base_price ? Number(this.selectedCategory.base_price) : 85000;
+        },
+
+        get totalAttrModifier() {
+            let total = 0;
+            const schema = this.activeSchema;
+            schema.forEach(attr => {
+                if (attr.depends_on && attr.depends_on.attribute_id) return;
+                const val = this.form.customizations[attr.id];
+                const opt = (attr.options || []).find(o => o.value === val);
+                total += Number(opt?.price_modifier || 0);
+            });
+            return total;
+        },
+
+        getItemModifier(item) {
+            let total = 0;
+            const compiled = Object.assign({}, this.form.customizations, item.customizations || {});
+            this.activeSchema.forEach(attr => {
+                if (attr.depends_on && attr.depends_on.attribute_id) {
+                    const parentVal = compiled[attr.depends_on.attribute_id];
+                    if (parentVal !== attr.depends_on.value) return;
+                }
+                const val = compiled[attr.id];
+                if (!val) return;
+                const opt = (attr.options || []).find(o => o.value === val);
+                total += Number(opt?.price_modifier || 0);
+            });
+            return total;
+        },
+
+        get hargaPerJersey() {
+            return this.basePriceFromCategory + this.totalAttrModifier;
+        },
+
+        getSelectedOptionPrice(attr) {
+            const val = this.form.customizations[attr.id];
+            if (!val) return 0;
+            const opt = (attr.options || []).find(o => o.value === val);
+            return Number(opt?.price_modifier || 0);
         },
 
         get hargaDasar() {
@@ -1848,13 +2260,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     return sum + (item.qty * (item.product?.price || 0));
                 }, 0);
             }
-            return this.totalQty * this.basePricePerPcs;
+            const base = this.basePriceFromCategory;
+            return this.items.reduce((sum, item) => {
+                return sum + base + this.getItemModifier(item);
+            }, 0);
         },
 
         get biayaPrioritas() {
-            if (this.prioritas === 'express') return 50000;
-            if (this.prioritas === 'super_express') return 150000;
-            return 0;
+            const opt = this.prioritasOptions.find(o => o.value === this.prioritas);
+            return opt ? parseInt(opt.biaya) : 0;
         },
 
         get activeSizePdf() {
@@ -1875,7 +2289,31 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         get validateStep2() {
-            return this.form.nama_pemesan.trim() !== '' && this.form.team_name.trim() !== '' && this.form.kerah !== '' && this.form.bahan !== '' && this.form.jenis_potongan !== '' && this.form.lengan_jahitan !== '' && this.totalQty >= 1;
+            const isTeam = this.showTeamNameField;
+            const basic = this.form.nama_pemesan.trim() !== '' && (!isTeam || this.form.team_name.trim() !== '') && this.selectedCategoryId !== '' && this.totalQty >= 1;
+            if (!basic) return false;
+            
+            const schema = this.activeSchema;
+
+            return this.items.every(item => {
+                if (!item.size) return false;
+                
+                const compiled = Object.assign({}, this.form.customizations, item.customizations);
+                
+                // Check all attributes (jersey + bawahan via depends_on)
+                const allOk = schema.every(attr => {
+                    if (!attr.required) return true;
+                    if (attr.depends_on && attr.depends_on.attribute_id) {
+                        const parentVal = compiled[attr.depends_on.attribute_id];
+                        if (parentVal !== attr.depends_on.value) return true;
+                    }
+                    const val = compiled[attr.id];
+                    return val !== undefined && val !== null && val.toString().trim() !== '';
+                });
+                if (!allOk) return false;
+
+                return true;
+            });
         },
 
         get validateStep3() {
@@ -1884,6 +2322,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         nextFromStep2() {
             this.subStep = 2;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             if (this.addresses && this.addresses.length > 0) {
                 this.addressMode = 'select';
                 if (!this.selectedAddressId) {
@@ -2072,15 +2511,23 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.loading) return;
             this.loading = true;
 
+            // Generate catatan legacy from items array
+            this.form.catatan = this.items.map(item => {
+                const compiled = Object.assign({}, this.form.customizations, item.customizations);
+                const customParts = Object.entries(compiled)
+                    .filter(([k, v]) => v !== undefined && v !== null && v !== '')
+                    .map(([k, v]) => v)
+                    .join(', ');
+                return `${item.no || '-'}, ${item.nama || '-'}, ${item.size || 'M'}${customParts ? ', ' + customParts : ''}`;
+            }).join('\n');
+
             const formData = new FormData();
             formData.append('team_name', this.form.team_name);
             formData.append('nama_artikel', this.form.nama_artikel);
             formData.append('nama_pemesan', this.form.nama_pemesan);
             formData.append('detail_sponsor', this.form.detail_sponsor);
-            formData.append('kerah', this.form.kerah);
-            formData.append('bahan', this.form.bahan);
-            formData.append('jenis_potongan', this.form.jenis_potongan);
-            formData.append('lengan_jahitan', this.form.lengan_jahitan);
+            // Dynamic customizations JSON
+            formData.append('customizations', JSON.stringify(this.form.customizations || {}));
             formData.append('catatan', this.form.catatan);
             formData.append('total_qty', this.form.total_qty || 1);
             formData.append('prioritas', this.prioritas);
@@ -2088,6 +2535,18 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.selectedAddressId) {
                 formData.append('address_id', this.selectedAddressId);
             }
+            if (this.selectedCategoryId) {
+                formData.append('category_id', this.selectedCategoryId);
+            }
+
+            // Append structured items array
+            this.items.forEach((item, index) => {
+                const compiled = Object.assign({}, this.form.customizations, item.customizations);
+                formData.append(`items[${index}][no]`, item.no || '');
+                formData.append(`items[${index}][nama]`, item.nama || '');
+                formData.append(`items[${index}][size]`, item.size || 'M');
+                formData.append(`items[${index}][customizations]`, JSON.stringify(compiled));
+            });
 
             // Logo tim (logo_files) & Referensi Desain (design_files) dari FilePond
             const pondLogo = FilePond.find(document.querySelector('#pondLogo'));
@@ -2119,6 +2578,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.orderNumber = data.orderNumber;
                 this.step = 4;
                 this.loading = false;
+                this.clearDraft();
                 this.$nextTick(() => this.setupBuktiBayarPond());
             })
             .catch(err => {
@@ -2157,6 +2617,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.orderNumber = data.orderNumber;
                 this.step = 4;
                 this.loading = false;
+                this.clearDraft();
                 this.$nextTick(() => this.setupBuktiBayarPond());
                 const store = window.Alpine.store('summary');
                 if (store) store.fetch();
@@ -2183,6 +2644,16 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.loading) return;
             this.loading = true;
 
+            // Generate catatan legacy from items array
+            this.form.catatan = this.items.map(item => {
+                const compiled = Object.assign({}, this.form.customizations, item.customizations);
+                const customParts = Object.entries(compiled)
+                    .filter(([k, v]) => v !== undefined && v !== null && v !== '')
+                    .map(([k, v]) => v)
+                    .join(', ');
+                return `${item.no || '-'}, ${item.nama || '-'}, ${item.size || 'M'}${customParts ? ', ' + customParts : ''}`;
+            }).join('\n');
+
             const getFirstImage = () => {
                 const pond = FilePond.find(document.querySelector('#pondLogo'));
                 if (pond && pond.getFiles().length > 0) {
@@ -2201,10 +2672,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     nama_artikel: this.form.nama_artikel,
                     nama_pemesan: this.form.nama_pemesan,
                     detail_sponsor: this.form.detail_sponsor,
-                    kerah: this.form.kerah,
-                    bahan: this.form.bahan,
-                    jenis_potongan: this.form.jenis_potongan,
-                    lengan_jahitan: this.form.lengan_jahitan,
+                    customizations: this.form.customizations || {},
+                    items: this.items.map(item => {
+                        return {
+                            no: item.no,
+                            nama: item.nama,
+                            size: item.size,
+                            customizations: Object.assign({}, this.form.customizations, item.customizations)
+                        };
+                    }),
                     catatan: this.form.catatan,
                     total_qty: this.form.total_qty,
                     prioritas: this.prioritas,
@@ -2261,6 +2737,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         resetForm() {
             this.jenis = null;
+            this.jenisPhase = 1;
+            this.selectedCategoryId = '';
             this.form = {
                 team_name: '',
                 nama_artikel: '',
@@ -2270,6 +2748,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 bahan: '',
                 jenis_potongan: '',
                 lengan_jahitan: '',
+                customizations: {},
                 catatan: '',
                 total_qty: 1,
             };
@@ -2279,6 +2758,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             });
             this.prioritas = 'normal';
             this.selectedAddressId = null;
+            this.clearDraft();
         },
 
         showFirstOrderAlert() {
@@ -2294,9 +2774,9 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 cancelButtonText: 'Saya Sudah Konsultasi',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.open('https://wa.me/{{ $adminPhone }}?text={{ urlencode("Halo Novos, saya ingin konsultasi pesanan jersey custom") }}', '_blank');
+                    window.open('https://wa.me/{{ $adminPhone }}?text={{ urlencode("Halo Novos, saya ingin konsultasi pesanan produk custom") }}', '_blank');
                 } else {
-                    this.step = 2;
+                    this.jenisPhase = 2;
                 }
             });
         },
@@ -2362,6 +2842,65 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             ], index)
         },
 
+        saveDraft() {
+            if (this.step >= 4 || (!this.jenis && this.step <= 1)) return;
+            try {
+                const draft = {
+                    jenis: this.jenis || '',
+                    jenisPhase: this.jenisPhase,
+                    selectedCategoryId: this.selectedCategoryId,
+                    step: this.step,
+                    subStep: this.subStep,
+                    form: JSON.parse(JSON.stringify(this.form)),
+                    items: JSON.parse(JSON.stringify(this.items)),
+                    prioritas: this.prioritas,
+                    selectedAddressId: this.selectedAddressId,
+                    formPhone: this.formPhone,
+                    expandedSpecs: this.expandedSpecs,
+                    expandedBawahan: this.expandedBawahan,
+                    addressMode: this.addressMode,
+                    contactInfo: JSON.parse(JSON.stringify(this.contactInfo)),
+                    addressForm: JSON.parse(JSON.stringify(this.addressForm)),
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem('pesanan_draft', JSON.stringify(draft));
+            } catch (e) {
+                console.warn('Gagal menyimpan draft', e);
+            }
+        },
+
+        clearDraft() {
+            localStorage.removeItem('pesanan_draft');
+            if (this._draftTimer) {
+                clearInterval(this._draftTimer);
+                this._draftTimer = null;
+            }
+        },
+
+        restoreDraft(data) {
+            this.jenis = data.jenis;
+            this.jenisPhase = data.jenisPhase || 1;
+            this.selectedCategoryId = data.selectedCategoryId || '';
+
+            Object.assign(this.form, data.form || {});
+
+            this.items = data.items || [];
+            this.step = data.step || 2;
+            this.subStep = data.subStep || 1;
+            this.prioritas = data.prioritas || 'normal';
+            this.selectedAddressId = data.selectedAddressId || null;
+            this.formPhone = data.formPhone || this.formPhone;
+            this.expandedSpecs = data.expandedSpecs !== undefined ? data.expandedSpecs : true;
+            this.expandedBawahan = data.expandedBawahan !== undefined ? data.expandedBawahan : true;
+            this.addressMode = data.addressMode || 'select';
+            if (data.contactInfo) Object.assign(this.contactInfo, data.contactInfo);
+            if (data.addressForm) Object.assign(this.addressForm, data.addressForm);
+
+            this.$nextTick(() => {
+                if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+            });
+        },
+
         openAtasanGallery() {
             window.openPhotoSwipe([
                 {
@@ -2375,6 +2914,97 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
     }
 }
 </script>
+
+<template x-teleport="body">
+    <div
+        x-show="showGuideModal"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
+        @click.self="showGuideModal = false"
+    >
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden" @click.stop>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="text-base font-bold text-gray-900" x-text="showGuideAttr ? 'Panduan: ' + showGuideAttr.name : 'Panduan'"></h3>
+                <button @click="showGuideModal = false" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 flex items-center justify-center transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="px-6 py-5 overflow-y-auto max-h-[70vh] flex items-center justify-center bg-gray-50/50">
+                <template x-if="showGuideAttr && showGuideAttr.reference_image">
+                    <img :src="showGuideAttr.reference_image.startsWith('http') || showGuideAttr.reference_image.startsWith('images/') ? '/' + showGuideAttr.reference_image.replace(/^\//, '') : '/storage/' + showGuideAttr.reference_image" class="max-h-[60vh] w-auto object-contain rounded-xl border border-gray-200 shadow-sm">
+                </template>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                <button @click="showGuideModal = false" class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg">Mengerti</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template x-teleport="body">
+    <div
+        x-show="showOverrideModal"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+        @click.self="showOverrideModal = false"
+    >
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col" @click.stop>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+                <div>
+                    <h3 class="text-base font-bold text-gray-900" x-text="overrideSingleIndex !== null ? 'Kustomisasi Atribut Pemain' : 'Kustomisasi Atribut Massal'"></h3>
+                    <p class="text-[10px] text-gray-500 mt-0.5" x-text="overrideSingleIndex !== null ? 'Mengubah spesifikasi pemain baris #' + (overrideSingleIndex + 1) : 'Mengubah ' + countSelected() + ' pemain terpilih'"></p>
+                </div>
+                <button @click="showOverrideModal = false" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 flex items-center justify-center transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="px-6 py-5 overflow-y-auto max-h-[60vh] space-y-4 bg-gray-50/50 grow">
+                <p class="text-xs text-gray-500">Atribut yang dikosongkan atau diset ke <strong>Default</strong> akan otomatis mengikuti <strong>Spesifikasi Utama</strong> di halaman pemesanan.</p>
+                
+                <template x-for="attr in activeSchema" :key="attr.id">
+                    <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-700" x-text="attr.name"></span>
+                            <template x-if="overrideForm[attr.id]">
+                                <span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-full border border-orange-100">Kustom</span>
+                            </template>
+                            <template x-if="!overrideForm[attr.id]">
+                                <span class="text-[9px] font-medium text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">Default (Utama)</span>
+                            </template>
+                        </div>
+                        
+                        <template x-if="attr.type === 'select' || attr.type === 'radio'">
+                            <select
+                                x-model="overrideForm[attr.id]"
+                                class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                            >
+                                <option value="">- Ikuti Spesifikasi Utama -</option>
+                                <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
+                                    <option :value="opt.value" x-text="opt.value"></option>
+                                </template>
+                            </select>
+                        </template>
+                        
+                        <template x-if="attr.type === 'text'">
+                            <input
+                                type="text"
+                                x-model="overrideForm[attr.id]"
+                                class="w-full border border-gray-300 p-2 rounded-lg text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                                placeholder="- Ikuti Spesifikasi Utama -"
+                            >
+                        </template>
+                    </div>
+                </template>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-2 shrink-0 bg-white">
+                <button @click="showOverrideModal = false" class="px-4 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50">Batal</button>
+                <button @click="saveOverrides()" class="px-5 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-xs font-semibold rounded-lg">Terapkan</button>
+            </div>
+        </div>
+    </div>
+</template>
+</div>
+
 @else
 <div class="max-w-5xl mx-auto px-4 py-16">
     <div class="text-center">

@@ -1,3 +1,10 @@
+@if(request()->ajax())
+{{-- AJAX response: only content sections --}}
+<div id="ajax-topbar-title">@yield('topbar-left')</div>
+<div id="ajax-page-title">@yield('title', 'Admin Panel') - {{ config('app.name', 'Novos') }}</div>
+<div id="ajax-content">@yield('internal-content')</div>
+@stack('scripts')
+@else
 {{-- Layout Internal --}}
 <!DOCTYPE html>
 <html lang="id">
@@ -668,7 +675,7 @@
                     </svg>
                     <i data-lucide="menu" class="w-6 h-6 hidden xl:inline"></i>
                 </button>
-                <div>
+                <div id="topbar-title">
                     @yield('topbar-left')
                 </div>
             </div>
@@ -1245,3 +1252,4 @@ document.addEventListener('alpine:init', function () {
 });
 </script>
 </html>
+@endif

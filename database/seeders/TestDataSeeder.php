@@ -67,12 +67,24 @@ class TestDataSeeder extends Seeder
 
     protected function ensureCategoriesAndProducts(): void
     {
-        $categories = ['Running', 'Sepak Bola', 'Futsal', 'Basket', 'Training'];
+        $categories = [
+            ['name' => 'Jersey',     'icon' => 'shirt',       'description' => 'Jersey olahraga running, sepak bola, futsal, basket, badminton, kaos polos, dll.'],
+            ['name' => 'Bawahan',    'icon' => 'shorts',      'description' => 'Celana pendek olahraga, celana panjang training, rok tenis, rok badminton, dll.'],
+            ['name' => 'Jaket',      'icon' => 'jacket',      'description' => 'Jaket track, hoodie olahraga, pullover zipper, sweater tim, dll.'],
+            ['name' => 'Running',    'icon' => 'shirt',       'description' => 'Jersey lari premium.'],
+            ['name' => 'Sepak Bola', 'icon' => 'shirt',       'description' => 'Jersey sepak bola kualitas lapangan.'],
+            ['name' => 'Futsal',     'icon' => 'shirt',       'description' => 'Jersey futsal pro.'],
+            ['name' => 'Basket',     'icon' => 'shirt',       'description' => 'Jersey basket dengan desain klasik.'],
+            ['name' => 'Training',   'icon' => 'shirt',       'description' => 'Perlengkapan training lengkap.'],
+        ];
 
-        foreach ($categories as $catName) {
-            $category = Category::firstOrCreate(['name' => $catName]);
+        foreach ($categories as $catData) {
+            $category = Category::firstOrCreate(['name' => $catData['name']], [
+                'icon' => $catData['icon'],
+                'description' => $catData['description'],
+            ]);
 
-            $productNames = match ($catName) {
+            $productNames = match ($catData['name']) {
                 'Running'   => ['Novos Running Pro', 'Novos Running Lite'],
                 'Sepak Bola' => ['Novos Jersey Stadion', 'Novos Jersey Elite'],
                 'Futsal'    => ['Novos Futsal Pro'],
