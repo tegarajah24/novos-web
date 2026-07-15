@@ -55,6 +55,7 @@
         if (str_starts_with($adminWaPhone, '0')) { $adminWaPhone = '62' . substr($adminWaPhone, 1); }
         $adminWaUrl = 'https://wa.me/' . $adminWaPhone . '?text=' . urlencode('Halo Novos, saya ingin bertanya mengenai pesanan saya');
     @endphp
+    @if(!request()->routeIs('pemesanan'))
     <div class="fixed bottom-6 right-6 z-50" x-data="{ hover: false }">
         <a href="{{ $adminWaUrl }}" target="_blank" rel="noopener" 
            @mouseenter="hover = true" @mouseleave="hover = false"
@@ -66,11 +67,22 @@
             <span>Tanya Admin</span>
         </a>
     </div>
+    @endif
 
 </div>
 
     @include('notify::components.notify')
     @stack('scripts')
     @notifyJs
+
+<script>
+document.addEventListener('alpine:init', function () {
+    if (window.Alpine && window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.Alpine.nextTick(function () {
+            window.lucide.createIcons({ icons: window.lucide.icons });
+        });
+    }
+});
+</script>
 </body>
 </html>

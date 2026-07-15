@@ -3,6 +3,8 @@
 @php
 $noteColors = ['bg-green-500','bg-yellow-500','bg-blue-500','bg-purple-500'];
 function rh($n){ return 'Rp '.number_format($n,0,',','.'); }
+$role = auth()->user()->role->name;
+$canValidate = in_array($role, ['Admin', 'Manager', 'Super Admin']);
 @endphp
 
 @section('title', 'Detail Pesanan')
@@ -209,10 +211,22 @@ if (!empty($order['item_details'])) {
                 <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-medium text-gray-900" :class="{ 'text-gray-400 italic': !form.nama_artikel }" x-text="form.nama_artikel || 'Belum diisi'">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Pemesan</span><div class="font-medium text-gray-900" x-text="form.nama_pemesan || '-'">{{ $order['product']['nama_pemesan'] ?? '-' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Detail Sponsor</span><div class="font-medium text-gray-900" x-text="form.detail_sponsor || '-'">{{ $order['product']['detail_sponsor'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Bahan</span><div class="font-medium text-gray-900" x-text="form.material || '-'">{{ $order['product']['material'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Kerah</span><div class="font-medium text-gray-900" x-text="form.collar_style || '-'">{{ $order['product']['collar_style'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
-                <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
+                <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                    <template x-for="(val, key) in form.customizations" :key="key">
+                        <div>
+                            <span class="text-gray-500 text-xs" x-text="key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                            <div class="font-medium text-gray-900" x-text="val || '-'"></div>
+                        </div>
+                    </template>
+                </template>
+                <template x-if="!form.customizations || Object.keys(form.customizations).length === 0">
+                    <div class="contents">
+                        <div><span class="text-gray-500 text-xs">Bahan</span><div class="font-medium text-gray-900" x-text="form.material || '-'">{{ $order['product']['material'] ?? '-' }}</div></div>
+                        <div><span class="text-gray-500 text-xs">Kerah</span><div class="font-medium text-gray-900" x-text="form.collar_style || '-'">{{ $order['product']['collar_style'] ?? '-' }}</div></div>
+                        <div><span class="text-gray-500 text-xs">Jenis Potongan</span><div class="font-medium text-gray-900" x-text="form.jenis_potongan || '-'">{{ $order['product']['jenis_potongan'] ?? '-' }}</div></div>
+                        <div><span class="text-gray-500 text-xs">Lengan & Jahitan</span><div class="font-medium text-gray-900" x-text="form.lengan_jahitan || '-'">{{ $order['product']['lengan_jahitan'] ?? '-' }}</div></div>
+                    </div>
+                </template>
                 <div><span class="text-gray-500 text-xs">Prioritas</span><div class="font-medium" :class="{'text-green-600 font-semibold': form.priority === 'normal', 'text-orange-600 font-semibold': form.priority === 'express', 'text-red-600 font-bold': form.priority === 'super_express'}" x-text="form.priority === 'express' ? 'Express' : form.priority === 'super_express' ? 'Super Express' : 'Normal'">{{ $order['product']['priority'] ?? 'normal' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Tanggal Masuk</span><div class="font-medium text-gray-900">{{ $order['tanggal_masuk'] }}</div></div>
                 <div><span class="text-gray-500 text-xs">Deadline</span><div class="font-medium text-red-600">{{ $order['deadline'] }}</div></div>
@@ -221,26 +235,38 @@ if (!empty($order['item_details'])) {
             {{-- Item Details Table --}}
             @if(!empty($order['item_details']))
             <div class="mb-4">
-                <span class="text-xs font-medium text-gray-600 mb-2 block">Detail Item Pesanan</span>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-gray-600 block">Detail Item Pesanan</span>
+                    @if($canValidate)
+                    <button @click="openItemsModal()" class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-white bg-[#1a237e] hover:bg-[#0d124a] rounded-lg transition-colors cursor-pointer shadow-sm">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        Kelola Item & Harga
+                    </button>
+                    @endif
+                </div>
                 <div class="overflow-x-auto rounded-lg border border-gray-200">
                     <table class="w-full text-sm">
                         <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
                             <tr>
-                                <th class="px-3 py-2 text-left font-semibold">No Punggung</th>
+                                <th class="px-3 py-2 text-left font-semibold">No</th>
                                 <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
-                                <th class="px-3 py-2 text-left font-semibold">Model Lengan</th>
+                                <th class="px-3 py-2 text-left font-semibold">NPG</th>
                                 <th class="px-3 py-2 text-left font-semibold">Size</th>
                                 <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
+                                <th class="px-3 py-2 text-right font-semibold">Harga</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @foreach($order['item_details'] as $detail)
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-3 py-2 text-gray-800 font-medium">{{ $detail['no_punggung'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $detail['nama_punggung'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $detail['model_lengan'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-800 font-medium">{{ $loop->iteration }}</td>
+                                <td class="px-3 py-2 text-gray-700 font-medium">{{ $detail['nama_punggung'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-700">{{ $detail['no_punggung'] ?? '-' }}</td>
                                 <td class="px-3 py-2 text-gray-700">{{ $detail['size'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700 max-w-[200px] truncate">{{ $detail['keterangan'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-700">
+                                    {{ $detail['keterangan_simple'] ?? '-' }}
+                                </td>
+                                <td class="px-3 py-2 text-right font-medium text-gray-900">{{ 'Rp ' . number_format($detail['price'] ?? 0, 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -248,6 +274,100 @@ if (!empty($order['item_details'])) {
                 </div>
             </div>
             @endif
+
+            {{-- Kelola Item & Harga Modal --}}
+            <div x-show="itemsModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
+                <div class="flex items-center justify-center min-h-screen px-4">
+                    <div x-show="itemsModalOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" @click="itemsModalOpen = false"></div>
+                    <div x-show="itemsModalOpen" x-transition.scale.origin.bottom class="relative w-full max-w-5xl p-6 my-8 bg-white rounded-2xl shadow-2xl border border-gray-200">
+                        <div class="flex items-center justify-between mb-5">
+                            <h3 class="text-lg font-bold text-gray-900">Kelola Item Pesanan & Harga Invoice</h3>
+                            <button @click="itemsModalOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto rounded-lg border border-gray-200 mb-4 max-h-[60vh]">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-3 py-3 font-semibold w-24">No Punggung</th>
+                                        <th class="px-3 py-3 font-semibold w-40">Nama Punggung</th>
+                                        <th class="px-3 py-3 font-semibold w-24">Size</th>
+                                        <th class="px-3 py-3 font-semibold">Customizations</th>
+                                        <th class="px-3 py-3 font-semibold w-48">Harga (Rp)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 bg-white">
+                                    <template x-for="(item, idx) in items" :key="item.id">
+                                        <tr class="hover:bg-gray-50/50 transition-colors">
+                                            <td class="px-3 py-2">
+                                                <input type="text" x-model="item.no_punggung" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none">
+                                            </td>
+                                            <td class="px-3 py-2">
+                                                <input type="text" x-model="item.nama_punggung" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none">
+                                            </td>
+                                            <td class="px-3 py-2">
+                                                <input type="text" x-model="item.size" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none">
+                                            </td>
+                                            <td class="px-3 py-2 space-y-1">
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    @foreach($attributesSchema as $attr)
+                                                        <div>
+                                                            <span class="text-[10px] text-gray-400 font-semibold block">{{ $attr['name'] }}</span>
+                                                            @if(!empty($attr['options']))
+                                                                <select x-model="item.customizations['{{ $attr['id'] }}']" class="w-full px-1.5 py-0.5 text-xs border border-gray-200 rounded bg-white">
+                                                                    <option value="">-</option>
+                                                                    @foreach($attr['options'] as $opt)
+                                                                        @php $val = is_array($opt) ? ($opt['value'] ?? '') : $opt; @endphp
+                                                                        <option value="{{ $val }}">{{ $val }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @else
+                                                                <input type="text" x-model="item.customizations['{{ $attr['id'] }}']" class="w-full px-1.5 py-0.5 text-xs border border-gray-200 rounded">
+                                                            @endif
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-2">
+                                                <div class="relative rounded-md shadow-sm">
+                                                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5">
+                                                        <span class="text-xs text-gray-500 font-medium">Rp</span>
+                                                    </div>
+                                                    <input
+                                                        type="number"
+                                                        x-model="item.price"
+                                                        @keydown.enter.prevent="applyShortcut(idx)"
+                                                        @keydown.down.prevent="applyShortcut(idx)"
+                                                        @blur="applyShortcut(idx)"
+                                                        class="w-full pl-8 pr-2.5 py-1 text-sm border border-gray-200 rounded focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none font-semibold text-gray-900"
+                                                        placeholder="85000"
+                                                    >
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-xs text-gray-500 mb-4 bg-blue-50 p-3 rounded-lg flex items-start gap-2 border border-blue-100">
+                            <svg class="w-4 h-4 text-blue-900 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div>
+                                <span class="font-bold text-blue-900">Tips Shortcut Admin:</span> Ketik ribuan (misal: 115 atau 122.5), lalu tekan <kbd class="bg-white border border-gray-300 rounded px-1 text-[10px]">Enter</kbd> / <kbd class="bg-white border border-gray-300 rounded px-1 text-[10px]">Panah Bawah</kbd> / pindah input untuk otomatis melipatgandakan menjadi ribuan (<span class="font-semibold">Rp 115.000</span> / <span class="font-semibold">Rp 122.500</span>).
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button @click="itemsModalOpen = false" class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                                Batal
+                            </button>
+                            <button @click="saveItems()" :disabled="loading" class="px-5 py-2 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#0d124a] rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
+                                <svg x-show="loading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                Simpan Item & Update Invoice
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {{-- Edit Modal --}}
             <div x-show="editModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
                 <div class="flex items-center justify-center min-h-screen px-4">
@@ -276,22 +396,36 @@ if (!empty($order['item_details'])) {
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Detail Sponsor</label>
                                 <input type="text" x-model="form.detail_sponsor" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
                             </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Bahan</label>
-                                <input type="text" x-model="form.material" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Kerah</label>
-                                <input type="text" x-model="form.collar_style" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Potongan</label>
-                                <input type="text" x-model="form.jenis_potongan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Lengan & Jahitan</label>
-                                <input type="text" x-model="form.lengan_jahitan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
-                            </div>
+                            <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                                <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <template x-for="keyName in Object.keys(form.customizations)" :key="keyName">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1" x-text="keyName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></label>
+                                            <input type="text" x-model="form.customizations[keyName]" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template x-if="!form.customizations || Object.keys(form.customizations).length === 0">
+                                <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bahan</label>
+                                        <input type="text" x-model="form.material" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Kerah</label>
+                                        <input type="text" x-model="form.collar_style" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Potongan</label>
+                                        <input type="text" x-model="form.jenis_potongan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Lengan & Jahitan</label>
+                                        <input type="text" x-model="form.lengan_jahitan" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    </div>
+                                </div>
+                            </template>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Prioritas</label>
                                 <select x-model="form.priority" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all bg-white">
@@ -657,9 +791,44 @@ if (!empty($order['item_details'])) {
                 @endif
             </div>
 
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-500">Total</span>
-                <span class="font-bold text-gray-900">{{ rh($order['payment']['total']) }}</span>
+            <div class="flex justify-between text-sm mt-1">
+                <span class="text-gray-500">DP Dibayar</span>
+                <span class="font-semibold text-green-600" x-text="dpDisplay">Rp {{ number_format($order['payment']['dp_amount'] ?? 0, 0, ',', '.') }}</span>
+            </div>
+            
+            <div class="flex justify-between text-sm mt-1">
+                <span class="text-gray-500">Sisa Bayar</span>
+                <span class="font-bold text-gray-900" x-text="sisaBayarDisplay">Rp {{ number_format(max(0, $order['payment']['total'] - ($order['payment']['dp_amount'] ?? 0)), 0, ',', '.') }}</span>
+            </div>
+
+            {{-- Form Input DP (Hanya Admin / Super Admin / Manager) --}}
+            @if($canValidate)
+            <div class="mt-3 pt-3 border-t border-gray-100">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Set Nominal DP (Rp)</label>
+                <div class="flex gap-1.5">
+                    <input type="number" x-model="dpAmount" placeholder="Contoh: 50000" 
+                        class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
+                    <button @click="saveDp()" :disabled="savingDp"
+                        class="px-3 py-1.5 bg-[#1a237e] text-white text-xs font-bold rounded-lg hover:bg-[#283593] transition-colors flex items-center justify-center shrink-0">
+                        <svg x-show="savingDp" class="w-3 h-3 animate-spin mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Simpan
+                    </button>
+                </div>
+            </div>
+            @endif
+
+            {{-- Tombol Link Invoice --}}
+            <div class="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                <a href="{{ route('staf.pesanan.invoice', $order['order_id']) }}" target="_blank"
+                    class="w-full py-2 rounded-lg text-xs font-bold border border-[#1a237e] text-[#1a237e] hover:bg-blue-50 transition-colors flex items-center justify-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Lihat Invoice Faktur
+                </a>
+                <a href="{{ route('staf.pesanan.invoice.download', $order['order_id']) }}" target="_blank"
+                    class="w-full py-2 rounded-lg text-xs font-bold bg-[#1a237e] text-white hover:bg-[#283593] transition-colors flex items-center justify-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download PDF Invoice
+                </a>
             </div>
 
             {{-- Tombol Validasi Pembayaran --}}
@@ -753,6 +922,54 @@ function detailPesananApp() {
 function paymentSection() {
     return {
         loading: false,
+        savingDp: false,
+        dpAmount: '{{ $order['payment']['dp_amount'] ?? '' }}',
+        paymentTotal: {{ $order['payment']['total'] ?? 0 }},
+        get dpDisplay() {
+            const val = parseInt(this.dpAmount);
+            return isNaN(val) || val === 0 ? 'Rp 0' : 'Rp ' + val.toLocaleString('id-ID');
+        },
+        get sisaBayar() {
+            const dp = parseInt(this.dpAmount);
+            return isNaN(dp) ? this.paymentTotal : Math.max(0, this.paymentTotal - dp);
+        },
+        get sisaBayarDisplay() {
+            return 'Rp ' + this.sisaBayar.toLocaleString('id-ID');
+        },
+        async saveDp() {
+            if (this.savingDp) return;
+            const amount = parseInt(this.dpAmount);
+            if (isNaN(amount) || amount < 0) {
+                Notify.error('Jumlah DP tidak valid.');
+                return;
+            }
+
+            this.savingDp = true;
+            try {
+                const res = await fetch('{{ route("staf.pesanan.invoice.dp", $order["order_id"]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dp_amount: amount
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.dpAmount = data.dp_amount;
+                    Notify.success('DP berhasil disimpan!', 'Berhasil!');
+                } else {
+                    Notify.error(data.message || 'Gagal menyimpan DP');
+                }
+            } catch (e) {
+                Notify.error('Terjadi kesalahan sistem.');
+            } finally {
+                this.savingDp = false;
+            }
+        },
         async validateDp() {
             if (this.loading) return;
 
@@ -916,20 +1133,24 @@ function updateStatusSection() {
     const __product = @json($order['product']);
 
     function editProduk() {
+        const p = __product;
         return {
             editModalOpen: false,
+            itemsModalOpen: false,
             loading: false,
+            items: [],
             form: {
-                team_name: '',
-                nama_artikel: '',
-                nama_pemesan: '',
-                detail_sponsor: '',
-                material: '',
-                collar_style: '',
-                jenis_potongan: '',
-                lengan_jahitan: '',
-                priority: 'normal',
-                additional_notes: '',
+                team_name: p.team_name || '',
+                nama_artikel: p.nama_artikel || '',
+                nama_pemesan: p.nama_pemesan || '',
+                detail_sponsor: p.detail_sponsor || '',
+                material: p.material || '',
+                collar_style: p.collar_style || '',
+                jenis_potongan: p.jenis_potongan || '',
+                lengan_jahitan: p.lengan_jahitan || '',
+                priority: p.priority || 'normal',
+                additional_notes: p.notes || '',
+                customizations: p.customizations ? JSON.parse(JSON.stringify(p.customizations)) : {},
             },
             openModal() {
                 const p = __product;
@@ -943,7 +1164,47 @@ function updateStatusSection() {
                 this.form.lengan_jahitan = p.lengan_jahitan || '';
                 this.form.priority = p.priority || 'normal';
                 this.form.additional_notes = p.notes || '';
+                this.form.customizations = p.customizations ? JSON.parse(JSON.stringify(p.customizations)) : {};
                 this.editModalOpen = true;
+            },
+            openItemsModal() {
+                this.items = JSON.parse(JSON.stringify(@json($order['item_details'])));
+                this.items.forEach(item => {
+                    if (!item.customizations) item.customizations = {};
+                });
+                this.itemsModalOpen = true;
+            },
+            applyShortcut(index) {
+                let val = parseFloat(this.items[index].price);
+                if (val > 0 && val < 1000) {
+                    this.items[index].price = val * 1000;
+                }
+            },
+            async saveItems() {
+                this.loading = true;
+                try {
+                    const res = await fetch('{{ route("staf.pesanan.update-items", $order["order_id"]) }}', {
+                        method: 'PUT',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ items: this.items })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        Notify.success(data.message, 'Berhasil!');
+                        this.itemsModalOpen = false;
+                        setTimeout(() => location.reload(), 800);
+                    } else {
+                        Notify.error(data.message || 'Terjadi kesalahan.');
+                    }
+                } catch (e) {
+                    Notify.error('Terjadi kesalahan sistem.');
+                } finally {
+                    this.loading = false;
+                }
             },
             async save() {
                 this.loading = true;

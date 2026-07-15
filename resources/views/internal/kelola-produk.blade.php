@@ -74,22 +74,16 @@
                             <td class="text-center text-gray-500 font-medium" x-text="prod.id"></td>
                             <td>
                                 <div class="flex items-center gap-1.5">
-                                    <div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                        <template x-if="prod.image_depan">
-                                            <img :src="prod.image_depan" class="object-cover w-full h-full" alt="Depan">
-                                        </template>
-                                        <template x-if="!prod.image_depan">
+                                    <template x-for="(img, i) in (prod.images || [])" :key="i">
+                                        <div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                                            <img :src="img" class="object-cover w-full h-full" :alt="'Foto ' + (i+1)">
+                                        </div>
+                                    </template>
+                                    <template x-if="!prod.images || prod.images.length === 0">
+                                        <div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
                                             <i data-lucide="image" class="w-4 h-4 text-gray-400"></i>
-                                        </template>
-                                    </div>
-                                    <div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                        <template x-if="prod.image_belakang">
-                                            <img :src="prod.image_belakang" class="object-cover w-full h-full" alt="Belakang">
-                                        </template>
-                                        <template x-if="!prod.image_belakang">
-                                            <i data-lucide="image" class="w-4 h-4 text-gray-400"></i>
-                                        </template>
-                                    </div>
+                                        </div>
+                                    </template>
                                 </div>
                             </td>
                             <td class="font-bold text-gray-900" x-text="prod.name"></td>
@@ -368,90 +362,45 @@
                             <textarea x-model="formData.description" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25" rows="3" placeholder="Detail bahan, printing, dsb..." style="resize:none;"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Jenis Kerah</label>
-                            <select x-model="formData.kerah" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="O-NECK V.1">O-NECK V.1</option>
-                                <option value="O-NECK V.2">O-NECK V.2</option>
-                                <option value="O-NECK V.3">O-NECK V.3</option>
-                                <option value="O-NECK V.4">O-NECK V.4</option>
-                                <option value="V-NECK V.5">V-NECK V.5</option>
-                                <option value="V-NECK V.1">V-NECK V.1</option>
-                                <option value="V-NECK V.2">V-NECK V.2</option>
-                                <option value="V-NECK V.3">V-NECK V.3</option>
-                                <option value="V-NECK V.4">V-NECK V.4</option>
-                                <option value="V-NECK V.5">V-NECK V.5</option>
-                                <option value="CLASSIC V.1">CLASSIC V.1</option>
-                                <option value="CLASSIC V.2">CLASSIC V.2</option>
-                                <option value="CLASSIC V.3">CLASSIC V.3</option>
-                                <option value="CLASSIC V.4">CLASSIC V.4</option>
-                                <option value="CLASSIC V.5">CLASSIC V.5</option>
-                                <option value="V-NECK V3 TUMPUK">V-NECK V3 TUMPUK</option>
-                                <option value="TIMNAS">TIMNAS</option>
-                            </select>
+                    {{-- Atribut Dinamis — Render dari schema kategori yang dipilih --}}
+                    <template x-if="selectedCategorySchema.length > 0">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Atribut Default Produk</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <template x-for="attr in selectedCategorySchema" :key="attr.id">
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide" x-text="attr.name"></label>
+                                        <template x-if="attr.type === 'select' || attr.type === 'radio'">
+                                            <select :name="'product_attributes[' + attr.id + ']'"
+                                                x-model="formData.product_attributes[attr.id]"
+                                                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                                                <option value="">Pilih (opsional)</option>
+                                                <template x-for="opt in (attr.options || [])" :key="opt.value">
+                                                    <option :value="opt.value" x-text="opt.value"></option>
+                                                </template>
+                                            </select>
+                                        </template>
+                                        <template x-if="attr.type === 'text'">
+                                            <input type="text" :name="'product_attributes[' + attr.id + ']'"
+                                                x-model="formData.product_attributes[attr.id]"
+                                                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25"
+                                                :placeholder="'Isi ' + attr.name">
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Bahan Jersey</label>
-                            <select x-model="formData.bahan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="BINTIK JARUM GRADE B">BINTIK JARUM GRADE B</option>
-                                <option value="MILANO GRADE B">MILANO GRADE B</option>
-                                <option value="BINTIK JARUM PREMIUM">BINTIK JARUM PREMIUM</option>
-                                <option value="MILANO PREMIUM">MILANO PREMIUM</option>
-                                <option value="RABBIT">RABBIT</option>
-                                <option value="DROPPEDDLE">DROPPEDDLE</option>
-                                <option value="SMASH">SMASH</option>
-                                <option value="WAFFLE">WAFFLE</option>
-                                <option value="EMBOSH">EMBOSH</option>
-                                <option value="MICROCOOL">MICROCOOL</option>
-                                <option value="JAQUARD AERO">JAQUARD AERO</option>
-                                <option value="COTTON 24S">COTTON 24S</option>
-                                <option value="COTTON 30S">COTTON 30S</option>
-                                <option value="LOTTO">LOTTO</option>
-                                <option value="PARASUT">PARASUT</option>
-                                <option value="PUMA">PUMA</option>
-                                <option value="ULTRALIGHT A">ULTRALIGHT A</option>
-                                <option value="ULTRALIGHT B">ULTRALIGHT B</option>
-                            </select>
+                    </template>
+                    <template x-if="formData.category_id && selectedCategorySchema.length === 0">
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-700">
+                            <strong>Info:</strong> Kategori ini belum punya atribut. Tambahkan dulu di menu <strong>Kelola Kategori → Kelola Atribut</strong>.
                         </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Jenis Potongan</label>
-                            <select x-model="formData.jenis_potongan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="REGULER">REGULER</option>
-                                <option value="SLIMFIT CEWE">SLIMFIT CEWE</option>
-                                <option value="OVERSIZE">OVERSIZE</option>
-                                <option value="TUNIK">TUNIK</option>
-                                <option value="SLIM FIT UNISEX">SLIM FIT UNISEX</option>
-                                <option value="BOXY CUT">BOXY CUT</option>
-                                <option value="KIDS">KIDS</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Model Lengan & Jahitan</label>
-                            <select x-model="formData.lengan_jahitan" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
-                                <option value="">Pilih (opsional)</option>
-                                <option value="REGULER OVERDECK">REGULER OVERDECK</option>
-                                <option value="REGULER PAKAI MANSET">REGULER PAKAI MANSET</option>
-                                <option value="RAGLAN A OVERDECK">RAGLAN A OVERDECK</option>
-                                <option value="RAGLAN A PAKAI MANSET">RAGLAN A PAKAI MANSET</option>
-                                <option value="RAGLAN B OVERDECK">RAGLAN B OVERDECK</option>
-                                <option value="RAGLAN B PAKAI MANSET">RAGLAN B PAKAI MANSET</option>
-                            </select>
-                        </div>
-                    </div>
+                    </template>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Depan</label>
-                            <input type="file" class="filepond" id="pondDepan" name="image" accept="image/*" data-max-file-size="5MB" data-allow-multiple="false">
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Tampak Belakang</label>
-                            <input type="file" class="filepond" id="pondBelakang" name="image_belakang" accept="image/*" data-max-file-size="5MB" data-allow-multiple="false">
-                        </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Foto Produk</label>
+                        <input type="file" class="filepond" id="pondImages" name="images[]" accept="image/*" data-max-file-size="5MB" data-allow-multiple="true">
+                        <p class="text-xs text-gray-400 mt-1">Upload 2-4 foto produk (depan, belakang, samping, dll)</p>
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 mt-6">
@@ -469,6 +418,7 @@
         </div>
     </div>
     </template>
+</div>
 
 <script>
 function kelolaProdukApp() {
@@ -503,14 +453,16 @@ function kelolaProdukApp() {
             category_id: '',
             price: '',
             description: '',
-            kerah: '',
-            bahan: '',
-            jenis_potongan: '',
-            lengan_jahitan: ''
+            product_attributes: {}, // Object dinamis {attr_id: value}
         },
 
-        originalImageDepan: null,
-        originalImageBelakang: null,
+        get selectedCategorySchema() {
+            if (!this.formData.category_id) return [];
+            const cat = this.categories.find(c => c.id == this.formData.category_id);
+            return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
+        },
+
+        originalImages: [],
 
         initApp() {
             this.renderIcons();
@@ -544,13 +496,9 @@ function kelolaProdukApp() {
                 category_id: '',
                 price: '',
                 description: '',
-                kerah: '',
-                bahan: '',
-                jenis_potongan: '',
-                lengan_jahitan: ''
+                product_attributes: {},
             };
-            this.originalImageDepan = null;
-            this.originalImageBelakang = null;
+            this.originalImages = [];
             this.clearFilePonds();
             this.showModal = true;
             this.$nextTick(() => this.renderIcons());
@@ -564,21 +512,15 @@ function kelolaProdukApp() {
                 category_id: product.category_id,
                 price: product.price,
                 description: product.description,
-                kerah: product.kerah || '',
-                bahan: product.bahan || '',
-                jenis_potongan: product.jenis_potongan || '',
-                lengan_jahitan: product.lengan_jahitan || ''
+                product_attributes: product.product_attributes || {},
             };
-            this.originalImageDepan = product.image_depan || null;
-            this.originalImageBelakang = product.image_belakang || null;
+            this.originalImages = product.images || [];
             this.clearFilePonds();
-            if (product.image_depan) {
-                const p1 = FilePond.find(document.querySelector('#pondDepan'));
-                if (p1) p1.addFile(product.image_depan);
-            }
-            if (product.image_belakang) {
-                const p2 = FilePond.find(document.querySelector('#pondBelakang'));
-                if (p2) p2.addFile(product.image_belakang);
+            var pond = FilePond.find(document.querySelector('#pondImages'));
+            if (pond) {
+                (product.images || []).forEach(function(url) {
+                    pond.addFile(url);
+                });
             }
             this.showModal = true;
             this.$nextTick(() => this.renderIcons());
@@ -590,10 +532,8 @@ function kelolaProdukApp() {
         },
 
         clearFilePonds() {
-            ['pondDepan', 'pondBelakang'].forEach(id => {
-                const pond = FilePond.find(document.querySelector('#' + id));
-                if (pond) pond.removeFiles();
-            });
+            var pond = FilePond.find(document.querySelector('#pondImages'));
+            if (pond) pond.removeFiles();
         },
 
         async saveProduct() {
@@ -604,25 +544,27 @@ function kelolaProdukApp() {
             fd.append('category_id', this.formData.category_id);
             fd.append('price', this.formData.price);
             fd.append('description', this.formData.description || '');
-            fd.append('kerah', this.formData.kerah || '');
-            fd.append('bahan', this.formData.bahan || '');
-            fd.append('jenis_potongan', this.formData.jenis_potongan || '');
-            fd.append('lengan_jahitan', this.formData.lengan_jahitan || '');
+            fd.append('product_attributes', JSON.stringify(this.formData.product_attributes || {}));
 
-            const pondDepan = FilePond.find(document.querySelector('#pondDepan'));
-            if (pondDepan && pondDepan.getFiles().length > 0) {
-                const f = pondDepan.getFiles()[0];
-                if (f.file instanceof File) fd.append('image', f.file, f.file.name);
-            } else if (this.formMode === 'edit' && this.originalImageDepan) {
-                fd.append('image', '');
+            var pond = FilePond.find(document.querySelector('#pondImages'));
+            var newFiles = [];
+            var keptPaths = [];
+            if (pond) {
+                pond.getFiles().forEach(function(f) {
+                    if (f.file instanceof File) {
+                        newFiles.push(f.file);
+                    } else if (f.file) {
+                        keptPaths.push(f.file.name || f.file);
+                    }
+                });
             }
-
-            const pondBelakang = FilePond.find(document.querySelector('#pondBelakang'));
-            if (pondBelakang && pondBelakang.getFiles().length > 0) {
-                const f = pondBelakang.getFiles()[0];
-                if (f.file instanceof File) fd.append('image_belakang', f.file, f.file.name);
-            } else if (this.formMode === 'edit' && this.originalImageBelakang) {
-                fd.append('image_belakang', '');
+            newFiles.forEach(function(file) {
+                fd.append('images[]', file, file.name);
+            });
+            if (this.formMode === 'edit') {
+                keptPaths.forEach(function(path, i) {
+                    fd.append('existing_images[' + i + ']', path);
+                });
             }
 
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');

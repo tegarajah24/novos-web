@@ -12,8 +12,7 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'image',
-        'image_belakang',
+        'images',
         'min_qty',
         'production_days',
         'is_active',
@@ -22,13 +21,16 @@ class Product extends Model
         'bahan',
         'jenis_potongan',
         'lengan_jahitan',
+        'product_attributes',
     ];
 
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:2',
-            'is_active' => 'boolean',
+            'price'              => 'decimal:2',
+            'is_active'          => 'boolean',
+            'product_attributes' => 'array',
+            'images'             => 'array',
         ];
     }
 

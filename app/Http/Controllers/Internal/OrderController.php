@@ -356,24 +356,114 @@ class OrderController extends Controller
             ];
         }
 
+        $getMajority = function ($attributeKey, $fallback) use ($order) {
+            if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
+                return $fallback;
+            }
+            $counts = [];
+            foreach ($order->itemDetails as $detail) {
+                $val = $detail->customizations[$attributeKey] ?? null;
+                if (!$val) {
+                    if ($attributeKey === 'bahan') {
+                        $val = $order->designRequest?->material;
+                    } elseif ($attributeKey === 'kerah') {
+                        $val = $order->designRequest?->collar_style;
+                    } elseif ($attributeKey === 'jenis_potongan') {
+                        $val = $order->designRequest?->jenis_potongan;
+                    } elseif ($attributeKey === 'lengan_jahitan') {
+                        $val = $order->designRequest?->lengan_jahitan;
+                    }
+                }
+                $val = $val ? strtoupper(trim($val)) : '-';
+                if ($val === '-') {
+                    continue;
+                }
+                $counts[$val] = ($counts[$val] ?? 0) + 1;
+            }
+            if (empty($counts)) {
+                return $fallback;
+            }
+            arsort($counts);
+            return key($counts);
+        };
+
+        $majorityBahan = $getMajority('bahan', $order->designRequest?->material ?? '-');
+        $majorityKerah = $getMajority('kerah', $order->designRequest?->collar_style ?? '-');
+        $majorityPotongan = $getMajority('jenis_potongan', $order->designRequest?->jenis_potongan ?? '-');
+        $majorityLengan = $getMajority('lengan_jahitan', $order->designRequest?->lengan_jahitan ?? '-');
+
         $itemDetails = [];
         if ($order->itemDetails && $order->itemDetails->isNotEmpty()) {
             foreach ($order->itemDetails as $detail) {
+                // Determine deviations
+                $diffs = [];
+
+                $itemBahan = $detail->customizations['bahan'] ?? null;
+                if ($itemBahan && strtoupper(trim($itemBahan)) !== $majorityBahan) {
+                    $diffs[] = ucwords(strtolower(trim($itemBahan)));
+                }
+
+                $itemKerah = $detail->customizations['kerah'] ?? null;
+                if ($itemKerah && strtoupper(trim($itemKerah)) !== $majorityKerah) {
+                    $diffs[] = ucwords(strtolower(trim($itemKerah)));
+                }
+
+                $itemPotongan = $detail->customizations['jenis_potongan'] ?? null;
+                if ($itemPotongan && strtoupper(trim($itemPotongan)) !== $majorityPotongan) {
+                    $diffs[] = ucwords(strtolower(trim($itemPotongan)));
+                }
+
+                $itemLengan = $detail->customizations['lengan_jahitan'] ?? null;
+                if ($itemLengan && strtoupper(trim($itemLengan)) !== $majorityLengan) {
+                    $diffs[] = ucwords(strtolower(trim($itemLengan)));
+                }
+
+                if ($detail->keterangan) {
+                    $diffs[] = trim($detail->keterangan);
+                }
+
+                $keteranganStr = !empty($diffs) ? implode(', ', $diffs) : '-';
+
                 $itemDetails[] = [
-                    'no_punggung'  => $detail->no_punggung,
+                    'id'            => $detail->id,
+                    'no_punggung'   => $detail->no_punggung,
                     'nama_punggung' => $detail->nama_punggung,
-                    'model_lengan' => $detail->model_lengan,
-                    'size'         => $detail->size,
-                    'keterangan'   => $detail->keterangan,
+                    'model_lengan'  => $detail->model_lengan,
+                    'size'          => $detail->size,
+                    'keterangan'    => $detail->keterangan,
+                    'keterangan_simple' => $keteranganStr,
+                    'customizations'=> $detail->customizations ?? [],
+                    'price'         => (float) ($detail->price ?? 0),
                 ];
             }
         }
 
-        $deadlineDays = match ($order->designRequest?->priority) {
-            'super_express' => 2,
-            'express'       => 6,
-            default         => 14,
-        };
+        $customizations = $order->designRequest?->customizations ?? [];
+        if (isset($customizations['bahan'])) $customizations['bahan'] = $majorityBahan;
+        if (isset($customizations['kerah'])) $customizations['kerah'] = $majorityKerah;
+        if (isset($customizations['jenis_potongan'])) $customizations['jenis_potongan'] = $majorityPotongan;
+        if (isset($customizations['lengan_jahitan'])) $customizations['lengan_jahitan'] = $majorityLengan;
+
+        $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
+
+        $attributesSchema = [];
+        $categoryName = null;
+        if ($order->designRequest) {
+            $checkCustomizations = $order->designRequest->customizations ?? [];
+            if (isset($checkCustomizations['model_jaket']) || isset($checkCustomizations['bahan_jaket'])) {
+                $categoryName = 'Jaket';
+            } elseif (isset($checkCustomizations['model_bawahan']) || isset($checkCustomizations['bahan_bawahan'])) {
+                $categoryName = 'Bawahan';
+            } else {
+                $categoryName = 'Jersey';
+            }
+        }
+        if ($categoryName) {
+            $category = \App\Models\Category::where('name', $categoryName)->first();
+            if ($category) {
+                $attributesSchema = $category->attributes_schema ?? [];
+            }
+        }
 
         $order = [
             'order_id'      => $order->order_number,
@@ -393,11 +483,12 @@ class OrderController extends Controller
                 'nama_artikel'   => $order->designRequest?->nama_artikel ?? '-',
                 'nama_pemesan'   => $order->designRequest?->nama_pemesan ?? '-',
                 'detail_sponsor' => $order->designRequest?->detail_sponsor ?? '-',
-                'material'       => $order->designRequest?->material ?? '-',
-                'collar_style'   => $order->designRequest?->collar_style ?? '-',
-                'jenis_potongan' => $order->designRequest?->jenis_potongan ?? '-',
-                'lengan_jahitan' => $order->designRequest?->lengan_jahitan ?? '-',
+                'material'       => $majorityBahan,
+                'collar_style'   => $majorityKerah,
+                'jenis_potongan' => $majorityPotongan,
+                'lengan_jahitan' => $majorityLengan,
                 'priority'       => $order->designRequest?->priority ?? 'normal',
+                'customizations' => $customizations,
             ],
             'sizes'         => $sizes,
             'item_details'  => $itemDetails,
@@ -408,6 +499,7 @@ class OrderController extends Controller
                 'subtotal'          => (float) ($order->orderItems->sum('subtotal')),
                 'biaya_prioritas'   => 0,
                 'total'             => (float) ($order->payment?->amount ?? $order->total_price ?? 0),
+                'dp_amount'         => $order->payment?->dp_amount ? (float) $order->payment->dp_amount : null,
                 'method'            => $order->payment?->payment_method ?? '-',
                 'status'            => $order->payment?->status === 'success' ? 'lunas' : 'pending',
                 'payment_proof'     => $order->payment?->payment_proof ? asset('storage/' . $order->payment->payment_proof) : null,
@@ -415,7 +507,12 @@ class OrderController extends Controller
             ],
         ];
 
-        return view('internal.detail-pesanan', compact('order', 'badgeType', 'badgeLabel', 'steps') + ['rawStatus' => $rawStatus]);
+
+
+        return view('internal.detail-pesanan', compact('order', 'badgeType', 'badgeLabel', 'steps') + [
+            'rawStatus' => $rawStatus,
+            'attributesSchema' => $attributesSchema,
+        ]);
     }
 
     public function assign(AssignOrderRequest $request, Order $order)
@@ -732,6 +829,7 @@ class OrderController extends Controller
             'lengan_jahitan' => 'nullable|string|max:255',
             'additional_notes' => 'nullable|string|max:5000',
             'priority'       => 'nullable|string|in:normal,express,super_express',
+            'customizations' => 'nullable|array',
         ]);
 
         if (!$order->designRequest) {
@@ -744,7 +842,7 @@ class OrderController extends Controller
         $order->designRequest->update($request->only([
             'team_name', 'nama_artikel', 'nama_pemesan', 'detail_sponsor',
             'material', 'collar_style', 'jenis_potongan', 'lengan_jahitan',
-            'additional_notes', 'priority',
+            'additional_notes', 'priority', 'customizations',
         ]));
 
         return response()->json([
@@ -1017,11 +1115,7 @@ class OrderController extends Controller
         $sheet->getRowDimension(2)->setRowHeight(20);
 
         // Specs Fields mapping
-        $deadlineDays = match ($order->designRequest?->priority) {
-            'super_express' => 2,
-            'express'       => 6,
-            default         => 14,
-        };
+        $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
 
         $leftFields = [
             ['label1' => 'Jenis',            'val1' => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog', 'label2' => 'Bahan',            'val2' => $order->designRequest?->material ?? '-'],
@@ -1486,6 +1580,7 @@ class OrderController extends Controller
         $order->load([
             'user',
             'orderItems',
+            'itemDetails',
             'designRequest',
         ]);
 
@@ -1555,11 +1650,43 @@ class OrderController extends Controller
         $bdrThinAll    = ['borders' => ['allBorders' => ['borderStyle' => $BORDER_THIN,  'color' => $BLACK]]];
 
         $designFiles = $order->designRequest?->design_files ?? [];
-        $deadlineDays = match ($order->designRequest?->priority) {
-            'super_express' => 2,
-            'express'       => 6,
-            default         => 14,
+        $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
+
+        $getMajority = function ($attributeKey, $fallback) use ($order) {
+            if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
+                return $fallback;
+            }
+            $counts = [];
+            foreach ($order->itemDetails as $detail) {
+                $val = $detail->customizations[$attributeKey] ?? null;
+                if (!$val) {
+                    if ($attributeKey === 'bahan') {
+                        $val = $order->designRequest?->material;
+                    } elseif ($attributeKey === 'kerah') {
+                        $val = $order->designRequest?->collar_style;
+                    } elseif ($attributeKey === 'jenis_potongan') {
+                        $val = $order->designRequest?->jenis_potongan;
+                    } elseif ($attributeKey === 'lengan_jahitan') {
+                        $val = $order->designRequest?->lengan_jahitan;
+                    }
+                }
+                $val = $val ? strtoupper(trim($val)) : '-';
+                if ($val === '-') {
+                    continue;
+                }
+                $counts[$val] = ($counts[$val] ?? 0) + 1;
+            }
+            if (empty($counts)) {
+                return $fallback;
+            }
+            arsort($counts);
+            return key($counts);
         };
+
+        $majorityBahan = $getMajority('bahan', $order->designRequest?->material ?? '-');
+        $majorityKerah = $getMajority('kerah', $order->designRequest?->collar_style ?? '-');
+        $majorityPotongan = $getMajority('jenis_potongan', $order->designRequest?->jenis_potongan ?? '-');
+        $majorityLengan = $getMajority('lengan_jahitan', $order->designRequest?->lengan_jahitan ?? '-');
 
         // ═══════════════════════════════════════════════════════════════
         // SHEET 1 — "depan"  (Portrait A4)
@@ -1588,10 +1715,10 @@ class OrderController extends Controller
 
         // ── Rows 4-9: Specs grid ──
         $specs = [
-            ['Jenis',            'Jersey Custom',                                                'Bahan',            $order->designRequest?->material ?? '-'],
-            ['Nama Tim',         $order->designRequest?->team_name ?? '-',                        'Kerah',            $order->designRequest?->collar_style ?? '-'],
-            ['Nama Artikel',     $order->designRequest?->nama_artikel ?? '-',                     'Jenis Potongan',   $order->designRequest?->jenis_potongan ?? '-'],
-            ['Nama Pemesan',     $order->designRequest?->nama_pemesan ?? $order->user?->name ?? '-', 'Lengan & Jahitan', $order->designRequest?->lengan_jahitan ?? '-'],
+            ['Jenis',            'Jersey Custom',                                                'Bahan',            $majorityBahan],
+            ['Nama Tim',         $order->designRequest?->team_name ?? '-',                        'Kerah',            $majorityKerah],
+            ['Nama Artikel',     $order->designRequest?->nama_artikel ?? '-',                     'Jenis Potongan',   $majorityPotongan],
+            ['Nama Pemesan',     $order->designRequest?->nama_pemesan ?? $order->user?->name ?? '-', 'Lengan & Jahitan', $majorityLengan],
             ['Detail Sponsor',   $order->designRequest?->detail_sponsor ?? '-',                   'Prioritas',        ucfirst($order->designRequest?->priority ?? 'Normal')],
             ['Tanggal Masuk',    $order->created_at->format('d M Y'),                              'Deadline',         $order->created_at->addDays($deadlineDays)->format('d M Y')],
         ];
@@ -1864,17 +1991,131 @@ class OrderController extends Controller
         $sheet->getStyle('A1:J44')->applyFromArray($bdrOutline);
 
         // ═══════════════════════════════════════════════════════════════
-        // SHEET 2 — "belakang" (Landscape A4)
+        // SHEET 2 — "daftar_pemain" (Portrait A4)
         // ═══════════════════════════════════════════════════════════════
         $sheet2 = $spreadsheet->createSheet();
-        $sheet2->setTitle('belakang');
+        $sheet2->setTitle('daftar_pemain');
         $sheet2->getPageSetup()
+            ->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT)
+            ->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        $sheet2->setShowGridLines(true);
+
+        // Thin border grid di semua sel sebagai base
+        $sheet2->getStyle('A1:J44')->applyFromArray($bdrThinAll);
+
+        // Headers
+        $sheet2->setCellValue('A1', 'DAFTAR PEMAIN & RINCIAN ATRIBUT');
+        $sheet2->mergeCells('A1:J1');
+        $sheet2->getStyle('A1:J1')->applyFromArray($styleHdr);
+        $sheet2->getRowDimension(1)->setRowHeight(30);
+
+        $sheet2->setCellValue('A2', 'No. Pesanan: ' . $order->order_number);
+        $sheet2->mergeCells('A2:J2');
+        $sheet2->getStyle('A2:J2')->applyFromArray($styleSub);
+        $sheet2->getRowDimension(2)->setRowHeight(20);
+
+        // Table Headers
+        $sheet2->setCellValue('A4', 'No');
+        $sheet2->getStyle('A4')->applyFromArray($styleSub);
+
+        $sheet2->setCellValue('B4', 'Nama Punggung');
+        $sheet2->mergeCells('B4:D4');
+        $sheet2->getStyle('B4:D4')->applyFromArray($styleSub);
+
+        $sheet2->setCellValue('E4', 'No Punggung');
+        $sheet2->mergeCells('E4:F4');
+        $sheet2->getStyle('E4:F4')->applyFromArray($styleSub);
+
+        $sheet2->setCellValue('G4', 'Size');
+        $sheet2->getStyle('G4')->applyFromArray($styleSub);
+
+        $sheet2->setCellValue('H4', 'Keterangan');
+        $sheet2->mergeCells('H4:J4');
+        $sheet2->getStyle('H4:J4')->applyFromArray($styleSub);
+
+        $sheet2->getStyle('A4:J4')->applyFromArray($bdrOutline);
+        $sheet2->getRowDimension(4)->setRowHeight(22);
+
+        $rowNum = 5;
+        if ($order->itemDetails && $order->itemDetails->isNotEmpty()) {
+            foreach ($order->itemDetails as $index => $detail) {
+                // Determine deviations
+                $diffs = [];
+
+                $itemBahan = $detail->customizations['bahan'] ?? null;
+                if ($itemBahan && strtoupper(trim($itemBahan)) !== $majorityBahan) {
+                    $diffs[] = ucwords(strtolower(trim($itemBahan)));
+                }
+
+                $itemKerah = $detail->customizations['kerah'] ?? null;
+                if ($itemKerah && strtoupper(trim($itemKerah)) !== $majorityKerah) {
+                    $diffs[] = ucwords(strtolower(trim($itemKerah)));
+                }
+
+                $itemPotongan = $detail->customizations['jenis_potongan'] ?? null;
+                if ($itemPotongan && strtoupper(trim($itemPotongan)) !== $majorityPotongan) {
+                    $diffs[] = ucwords(strtolower(trim($itemPotongan)));
+                }
+
+                $itemLengan = $detail->customizations['lengan_jahitan'] ?? null;
+                if ($itemLengan && strtoupper(trim($itemLengan)) !== $majorityLengan) {
+                    $diffs[] = ucwords(strtolower(trim($itemLengan)));
+                }
+
+                if ($detail->keterangan) {
+                    $diffs[] = trim($detail->keterangan);
+                }
+
+                $keteranganStr = !empty($diffs) ? implode(', ', $diffs) : '-';
+
+                // Render player row
+                $sheet2->setCellValue('A' . $rowNum, $index + 1);
+                $sheet2->getStyle('A' . $rowNum)->applyFromArray($styleVal);
+
+                $sheet2->setCellValue('B' . $rowNum, $detail->nama_punggung ?? '-');
+                $sheet2->mergeCells('B' . $rowNum . ':D' . $rowNum);
+                $sheet2->getStyle('B' . $rowNum . ':D' . $rowNum)->applyFromArray($styleValLeft);
+
+                $sheet2->setCellValue('E' . $rowNum, $detail->no_punggung ?? '-');
+                $sheet2->mergeCells('E' . $rowNum . ':F' . $rowNum);
+                $sheet2->getStyle('E' . $rowNum . ':F' . $rowNum)->applyFromArray($styleVal);
+
+                $sheet2->setCellValue('G' . $rowNum, $detail->size ?? '-');
+                $sheet2->getStyle('G' . $rowNum)->applyFromArray($styleVal);
+
+                $sheet2->setCellValue('H' . $rowNum, $keteranganStr);
+                $sheet2->mergeCells('H' . $rowNum . ':J' . $rowNum);
+                $sheet2->getStyle('H' . $rowNum . ':J' . $rowNum)->applyFromArray($styleValLeft);
+
+                $sheet2->getStyle('A' . $rowNum . ':J' . $rowNum)->applyFromArray($bdrThinAll);
+                $sheet2->getRowDimension($rowNum)->setRowHeight(20);
+                $rowNum++;
+            }
+        } else {
+            $sheet2->setCellValue('A' . $rowNum, 'Tidak ada data item pesanan.');
+            $sheet2->mergeCells('A' . $rowNum . ':J' . $rowNum);
+            $sheet2->getStyle('A' . $rowNum)->applyFromArray($styleValLeft);
+            $sheet2->getStyle('A' . $rowNum . ':J' . $rowNum)->applyFromArray($bdrThinAll);
+            $sheet2->getRowDimension($rowNum)->setRowHeight(20);
+            $rowNum++;
+        }
+
+        // Apply outer border to data and set print area
+        $sheet2->getStyle('A4:J' . ($rowNum - 1))->applyFromArray($bdrOutline);
+        $sheet2->getPageSetup()->setPrintArea('A1:J' . ($rowNum - 1));
+
+        // ═══════════════════════════════════════════════════════════════
+        // SHEET 3 — "belakang" (Landscape A4)
+        // ═══════════════════════════════════════════════════════════════
+        $sheet3 = $spreadsheet->createSheet();
+        $sheet3->setTitle('belakang');
+        $sheet3->getPageSetup()
             ->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE)
             ->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-        $sheet2->getPageMargins()->setTop(0.75)->setBottom(0.75)->setLeft(0.25)->setRight(0.25);
-        $sheet2->setShowGridLines(true);
+        $sheet3->getPageMargins()->setTop(0.75)->setBottom(0.75)->setLeft(0.25)->setRight(0.25);
+        $sheet3->setShowGridLines(true);
         // Thin border grid di semua sel sebagai base
-        $sheet2->getStyle('A1:N33')->applyFromArray($bdrThinAll);
+        $sheet3->getStyle('A1:N33')->applyFromArray($bdrThinAll);
 
         $mockupDepan    = null;
         $mockupBelakang = null;
@@ -1898,15 +2139,15 @@ class OrderController extends Controller
                             'left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]],
             'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
         ];
-        $sheet2->setCellValue('A1', 'RINCIAN');
-        $sheet2->mergeCells('A1:N1');
-        $sheet2->getStyle('A1:N1')->applyFromArray($styleRincianHdr);
-        $sheet2->getRowDimension(1)->setRowHeight(15);
+        $sheet3->setCellValue('A1', 'RINCIAN');
+        $sheet3->mergeCells('A1:N1');
+        $sheet3->getStyle('A1:N1')->applyFromArray($styleRincianHdr);
+        $sheet3->getRowDimension(1)->setRowHeight(15);
 
         // ── Rows 2-22: Image area ──
-        $sheet2->mergeCells('A2:N22');
-        $sheet2->getStyle('A2:N22')->applyFromArray(['borders' => ['left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]]]);
-        $sheet2->getRowDimension(22)->setRowHeight(15);
+        $sheet3->mergeCells('A2:N22');
+        $sheet3->getStyle('A2:N22')->applyFromArray(['borders' => ['left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]]]);
+        $sheet3->getRowDimension(22)->setRowHeight(15);
 
         // Embed mockup & detail images in the large area
         $bigImgRow = 4;
@@ -1915,7 +2156,7 @@ class OrderController extends Controller
             if (file_exists($p)) {
                 try {
                     $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $d->setPath($p)->setHeight(250)->setCoordinates('B' . $bigImgRow)->setWorksheet($sheet2);
+                    $d->setPath($p)->setHeight(250)->setCoordinates('B' . $bigImgRow)->setWorksheet($sheet3);
                 } catch (\Exception $e) {}
             }
         }
@@ -1924,15 +2165,15 @@ class OrderController extends Controller
             if (file_exists($p)) {
                 try {
                     $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $d->setPath($p)->setHeight(250)->setCoordinates('H' . $bigImgRow)->setWorksheet($sheet2);
+                    $d->setPath($p)->setHeight(250)->setCoordinates('H' . $bigImgRow)->setWorksheet($sheet3);
                 } catch (\Exception $e) {}
             }
         }
 
         // ── Row 23: Separator ──
-        $sheet2->mergeCells('A23:N23');
-        $sheet2->getStyle('A23:N23')->applyFromArray(['borders' => ['left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]]]);
-        $sheet2->getRowDimension(23)->setRowHeight(15);
+        $sheet3->mergeCells('A23:N23');
+        $sheet3->getStyle('A23:N23')->applyFromArray(['borders' => ['left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]]]);
+        $sheet3->getRowDimension(23)->setRowHeight(15);
 
         // ── Row 24: Section titles ──
         $styleSecHdr = [
@@ -1942,35 +2183,35 @@ class OrderController extends Controller
                             'left'   => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]],
             'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_BOTTOM],
         ];
-        $sheet2->setCellValue('A24', 'DETAIL DEPAN');
-        $sheet2->mergeCells('A24:D24');
-        $sheet2->getStyle('A24:D24')->applyFromArray($styleSecHdr);
+        $sheet3->setCellValue('A24', 'DETAIL DEPAN');
+        $sheet3->mergeCells('A24:D24');
+        $sheet3->getStyle('A24:D24')->applyFromArray($styleSecHdr);
 
-        $sheet2->setCellValue('E24', 'NAMA & NO PUNGGUNG');
-        $sheet2->mergeCells('E24:H24');
-        $sheet2->getStyle('E24:H24')->applyFromArray($styleSecHdr);
+        $sheet3->setCellValue('E24', 'NAMA & NO PUNGGUNG');
+        $sheet3->mergeCells('E24:H24');
+        $sheet3->getStyle('E24:H24')->applyFromArray($styleSecHdr);
 
-        $sheet2->setCellValue('I24', 'DETAIL SPONSOR');
-        $sheet2->mergeCells('I24:N24');
-        $sheet2->getStyle('I24:N24')->applyFromArray($styleSecHdr);
-        $sheet2->getRowDimension(24)->setRowHeight(15);
+        $sheet3->setCellValue('I24', 'DETAIL SPONSOR');
+        $sheet3->mergeCells('I24:N24');
+        $sheet3->getStyle('I24:N24')->applyFromArray($styleSecHdr);
+        $sheet3->getRowDimension(24)->setRowHeight(15);
 
         // ── Rows 25-33: Image boxes ──
         $styleImgBox = [
             'borders' => ['left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]],
         ];
 
-        $sheet2->mergeCells('A25:D33');
-        $sheet2->getStyle('A25:D33')->applyFromArray($styleImgBox);
+        $sheet3->mergeCells('A25:D33');
+        $sheet3->getStyle('A25:D33')->applyFromArray($styleImgBox);
 
-        $sheet2->mergeCells('E25:H33');
-        $sheet2->getStyle('E25:H33')->applyFromArray($styleImgBox);
+        $sheet3->mergeCells('E25:H33');
+        $sheet3->getStyle('E25:H33')->applyFromArray($styleImgBox);
 
-        $sheet2->mergeCells('I25:N33');
-        $sheet2->getStyle('I25:N33')->applyFromArray($styleImgBox);
+        $sheet3->mergeCells('I25:N33');
+        $sheet3->getStyle('I25:N33')->applyFromArray($styleImgBox);
 
         for ($r = 25; $r <= 33; $r++) {
-            $sheet2->getRowDimension($r)->setRowHeight(15);
+            $sheet3->getRowDimension($r)->setRowHeight(15);
         }
 
         // Detail depan image in A25:D33
@@ -1979,7 +2220,7 @@ class OrderController extends Controller
             if (file_exists($p)) {
                 try {
                     $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $d->setPath($p)->setHeight(80)->setCoordinates('B' . 26)->setWorksheet($sheet2);
+                    $d->setPath($p)->setHeight(80)->setCoordinates('B' . 26)->setWorksheet($sheet3);
                 } catch (\Exception $e) {}
             }
         }
@@ -1990,7 +2231,7 @@ class OrderController extends Controller
             if (file_exists($p)) {
                 try {
                     $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $d->setPath($p)->setHeight(80)->setCoordinates('F' . 26)->setWorksheet($sheet2);
+                    $d->setPath($p)->setHeight(80)->setCoordinates('F' . 26)->setWorksheet($sheet3);
                 } catch (\Exception $e) {}
             }
         }
@@ -2004,14 +2245,13 @@ class OrderController extends Controller
             $row = 26 + intdiv($idx, 2) * 3;
             try {
                 $d = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $d->setPath($p)->setHeight(60)->setCoordinates($col . $row)->setWorksheet($sheet2);
+                $d->setPath($p)->setHeight(60)->setCoordinates($col . $row)->setWorksheet($sheet3);
             } catch (\Exception $e) {}
         }
 
-        // ── Outer border for sheet 2 ──
-        $sheet2->getStyle('A1:N33')->applyFromArray($bdrOutline);
+        // ── Outer border for sheet 3 ──
+        $sheet3->getStyle('A1:N33')->applyFromArray($bdrOutline);
 
-        // ═══════════════════════════════════════════════════════════════
         // ── WRITE FILE ──
         // ═══════════════════════════════════════════════════════════════
         $spreadsheet->setActiveSheetIndex(0);
@@ -2126,5 +2366,78 @@ class OrderController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => 'Catatan SPK berhasil diperbarui.']);
+    }
+
+    public function updateItems(Request $request, Order $order)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:order_item_details,id',
+            'items.*.no_punggung' => 'nullable|string|max:50',
+            'items.*.nama_punggung' => 'nullable|string|max:100',
+            'items.*.model_lengan' => 'nullable|string|max:100',
+            'items.*.size' => 'nullable|string|max:20',
+            'items.*.price' => 'required|numeric|min:0',
+            'items.*.customizations' => 'nullable|array',
+        ]);
+
+        $itemsData = $request->input('items');
+        
+        DB::transaction(function() use ($itemsData, $order) {
+            $totalItemPrice = 0;
+            
+            foreach ($itemsData as $item) {
+                $detail = OrderItemDetail::findOrFail($item['id']);
+                
+                $rowCustom = $item['customizations'] ?? $detail->customizations ?? [];
+                // Sync model_lengan with customizations fallback
+                $modelLengan = $item['model_lengan'] ?? $rowCustom['lengan_jahitan'] ?? $rowCustom['lengan'] ?? $detail->model_lengan;
+
+                $detail->update([
+                    'no_punggung' => $item['no_punggung'] ?? null,
+                    'nama_punggung' => $item['nama_punggung'] ?? null,
+                    'model_lengan' => $modelLengan,
+                    'size' => $item['size'] ?? null,
+                    'price' => $item['price'] ?? 0,
+                    'customizations' => $rowCustom,
+                ]);
+                $totalItemPrice += (float) ($item['price'] ?? 0);
+            }
+            
+            // Prioritas fee
+            $prioritas = $order->designRequest?->priority ?? 'normal';
+            $biayaPrioritas = match ($prioritas) {
+                'express' => 50000.0,
+                'super_express' => 150000.0,
+                default => 0.0,
+            };
+            
+            $newTotalPrice = $totalItemPrice + $biayaPrioritas;
+            $totalQty = count($itemsData);
+            
+            // Update Order total_price
+            $order->update([
+                'total_price' => $newTotalPrice
+            ]);
+            
+            // Update OrderItem subtotal/price per item if single
+            $singleItem = $order->orderItems()->first();
+            if ($singleItem) {
+                $singleItem->update([
+                    'qty' => $totalQty,
+                    'price_per_item' => $totalQty > 0 ? ($totalItemPrice / $totalQty) : 0,
+                    'subtotal' => $totalItemPrice,
+                ]);
+            }
+            
+            // Update related payment amount
+            if ($order->payment) {
+                $order->payment->update([
+                    'amount' => $newTotalPrice
+                ]);
+            }
+        });
+
+        return response()->json(['success' => true, 'message' => 'Detail item pesanan & harga invoice berhasil diperbarui.']);
     }
 }

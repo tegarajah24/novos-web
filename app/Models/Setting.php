@@ -23,4 +23,27 @@ class Setting extends Model
     {
         return static::pluck('value', 'key')->toArray();
     }
+
+    public static function getDeadlineDaysForPriority(?string $priority): int
+    {
+        $priority = $priority ?: 'normal';
+        
+        $defaultDays = match ($priority) {
+            'super_express' => 2,
+            'express'       => 6,
+            default         => 14,
+        };
+
+        $estimasi = static::get("prioritas_{$priority}_estimasi");
+        if (!$estimasi) {
+            return $defaultDays;
+        }
+
+        preg_match_all('/\d+/', $estimasi, $matches);
+        if (!empty($matches[0])) {
+            return (int) end($matches[0]);
+        }
+
+        return $defaultDays;
+    }
 }

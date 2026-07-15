@@ -14,7 +14,17 @@ class OrderItemDetail extends Model
         'model_lengan',
         'size',
         'keterangan',
+        'customizations',
+        'price',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'customizations' => 'array',
+            'price' => 'decimal:2',
+        ];
+    }
 
     public function order(): BelongsTo
     {

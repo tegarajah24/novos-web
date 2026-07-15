@@ -33,15 +33,32 @@ class CustomerOrderTest extends DuskTestCase
             $c->visit('/pesan');
             $c->pause(3000);
 
-            // Step 1: Pilih Jersey Custom (click on the first card in grid)
+            // Step 1: Pilih Produk Custom (click on the first card in grid)
             $c->script("document.querySelectorAll('.grid.md\\\\:grid-cols-2 > div, .grid.grid-cols-1.md\\\\:grid-cols-2 > div')[0]?.click()");
             $c->pause(500);
 
-            // Click Selanjutnya button
+            // Click Selanjutnya to go to Step 2 (Pilih Kategori)
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Selanjutnya')) { b.click(); break; } }");
             $c->pause(1000);
 
-            // Wait for step 2
+            // Select category in Step 2 so we can proceed
+            $c->script('
+                let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
+                if (r) {
+                    const jerseyCat = r.categories.find(c => c.name.toLowerCase() === "jersey");
+                    if (jerseyCat) {
+                        r.selectedCategoryId = jerseyCat.id;
+                        r.onCategoryChange();
+                    }
+                }
+            ');
+            $c->pause(500);
+
+            // Click Selanjutnya again to go to Step 3 (Detail & Upload)
+            $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Selanjutnya')) { b.click(); break; } }");
+            $c->pause(1000);
+
+            // Wait for step 3 (Detail & Upload)
             $c->waitForTextIn('body', 'Detail', 8)
                ->waitForTextIn('body', 'Upload', 5);
             $c->pause(500);
@@ -68,7 +85,7 @@ class CustomerOrderTest extends DuskTestCase
             $c->script("let btns = document.querySelectorAll('button'); for(let b of btns) { if(b.textContent.includes('Pesan Langsung')) { b.click(); break; } }");
             $c->pause(2000);
 
-            // Step 3: Pilih alamat atau skip
+            // Step 4: Pilih alamat atau skip
             $c->script('
                 let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r && r.addresses && r.addresses.length > 0) {
@@ -78,7 +95,7 @@ class CustomerOrderTest extends DuskTestCase
             ');
             $c->pause(2000);
 
-            // Step 4: Set prioritas & konfirmasi
+            // Step 5: Set prioritas & konfirmasi
             $c->script('
                 let r = document.querySelector(".max-w-6xl")._x_dataStack[0];
                 if (r) r.prioritas = "normal";

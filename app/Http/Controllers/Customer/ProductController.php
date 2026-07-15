@@ -29,10 +29,13 @@ class ProductController extends Controller
                 'lengan_jahitan' => $p->lengan_jahitan,
             ]);
 
-        $categories = Category::orderBy('name')->get()->map(fn($c) => [
-            'slug' => Str::slug($c->name),
-            'name' => $c->name,
-        ]);
+        $categories = Category::whereNotIn('name', ['Jersey', 'Bawahan', 'Jaket'])
+            ->orderBy('name')
+            ->get()
+            ->map(fn($c) => [
+                'slug' => Str::slug($c->name),
+                'name' => $c->name,
+            ]);
 
         return view('customer.katalog', compact('products', 'categories'));
     }

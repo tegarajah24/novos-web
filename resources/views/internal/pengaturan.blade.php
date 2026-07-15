@@ -10,8 +10,8 @@
 @section('internal-content')
 <div x-data="settingApp()" x-init="init()" class="max-w-4xl mx-auto">
 
-    {{-- Tab Navigation --}}
-    <div class="flex gap-1 mb-6 bg-white border border-gray-200 rounded-2xl p-1.5 w-fit shadow-sm">
+    {{-- Tab Navigation (Desktop Only) --}}
+    <div class="hidden md:flex gap-1 mb-6 bg-white border border-gray-200 rounded-2xl p-1.5 w-fit shadow-sm">
         @if(auth()->user()->role->name === 'Super Admin')
         <button @click="tab='toko'"
             :class="tab==='toko' ? 'bg-[#1a237e] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'"
@@ -31,9 +31,61 @@
         </button>
     </div>
 
+    {{-- Mobile Menu Selection --}}
+    <div x-show="tab === 'menu'" x-transition class="md:hidden space-y-6">
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm divide-y divide-gray-100 overflow-hidden">
+            @if(auth()->user()->role->name === 'Super Admin')
+            <!-- Toko Menu -->
+            <button @click="tab = 'toko'" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors text-left">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center shrink-0">
+                        <i data-lucide="store" class="w-6 h-6 text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm">Toko</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Kelola informasi toko, kontak, dan jam operasional</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+            </button>
+            @endif
+
+            <!-- Tampilan Menu -->
+            <button @click="tab = 'tampilan'" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors text-left">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
+                        <i data-lucide="palette" class="w-6 h-6 text-emerald-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm">Tampilan</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Atur tema, warna, dan preferensi tampilan aplikasi</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+            </button>
+
+            <!-- Panduan Menu -->
+            <button @click="tab = 'panduan'" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors text-left">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-yellow-50 rounded-2xl flex items-center justify-center shrink-0">
+                        <i data-lucide="book-open" class="w-6 h-6 text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm">Panduan</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Lihat panduan penggunaan dan FAQ</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+            </button>
+        </div>
+    </div>
+
     {{-- ======================== TAB TOKO ======================== --}}
     @if(auth()->user()->role->name === 'Super Admin')
     <div x-show="tab==='toko'" x-transition>
+        <button @click="tab = 'menu'" class="flex items-center gap-2 mb-6 text-[#1a237e] hover:bg-gray-50 font-semibold md:hidden bg-white border border-gray-200 rounded-xl px-4 py-2.5 shadow-sm w-fit">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Pengaturan
+        </button>
         <div class="bg-white shadow-sm rounded-2xl p-7">
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 bg-[#1a237e]/10 rounded-xl flex items-center justify-center">
@@ -98,6 +150,78 @@
                     </div>
                 </div>
 
+                {{-- Prioritas Pengerjaan --}}
+                <div class="border-t border-gray-100 pt-5">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4">Prioritas Pengerjaan</h4>
+                    <div class="space-y-4">
+                        {{-- Normal --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Normal (Estimasi)</label>
+                                <input type="text" x-model="form.prioritas_normal_estimasi" placeholder="7-14 hari kerja"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Normal (Biaya Tambahan Rp)</label>
+                                <input type="number" x-model="form.prioritas_normal_biaya" placeholder="0"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Status</label>
+                                <select x-model="form.prioritas_normal_status"
+                                        class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Nonaktif</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Express --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Express (Estimasi)</label>
+                                <input type="text" x-model="form.prioritas_express_estimasi" placeholder="3-6 hari kerja"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Express (Biaya Tambahan Rp)</label>
+                                <input type="number" x-model="form.prioritas_express_biaya" placeholder="50000"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Status</label>
+                                <select x-model="form.prioritas_express_status"
+                                        class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Nonaktif</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Super Express --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Super Express (Estimasi)</label>
+                                <input type="text" x-model="form.prioritas_super_express_estimasi" placeholder="1-2 hari kerja"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Super Express (Biaya Tambahan Rp)</label>
+                                <input type="number" x-model="form.prioritas_super_express_biaya" placeholder="150000"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Status</label>
+                                <select x-model="form.prioritas_super_express_status"
+                                        class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Nonaktif</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-1">
                     <button type="submit" :disabled="saving"
                             class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all active:scale-95 disabled:opacity-50 shadow-md shadow-[#1a237e]/20">
@@ -113,9 +237,12 @@
 
     {{-- ======================== TAB TAMPILAN ======================== --}}
     <div x-show="tab==='tampilan'" x-transition x-cloak class="space-y-5">
+        <button @click="tab = 'menu'" class="flex items-center gap-2 text-[#1a237e] hover:bg-gray-50 font-semibold md:hidden bg-white border border-gray-200 rounded-xl px-4 py-2.5 shadow-sm w-fit">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Pengaturan
+        </button>
 
         {{-- Mode Tema --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="sun-moon" class="w-5 h-5 text-indigo-600"></i>
@@ -125,7 +252,7 @@
                     <p class="text-xs text-gray-500">Pilih antara terang, gelap, atau ikuti sistem</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="m in themeOptions" :key="m.value">
                     <button @click="applyTheme(m.value)"
                         :class="appearance.theme===m.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5' : 'hover:bg-gray-50'"
@@ -141,7 +268,7 @@
         </div>
 
         {{-- Color Palette / Scheme --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-pink-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="swatch-book" class="w-5 h-5 text-pink-500"></i>
@@ -172,7 +299,7 @@
         </div>
 
         {{-- Custom Color --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="pipette" class="w-5 h-5 text-orange-500"></i>
@@ -217,7 +344,7 @@
         </div>
 
         {{-- Font Size --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="type" class="w-5 h-5 text-teal-600"></i>
@@ -227,7 +354,7 @@
                     <p class="text-xs text-gray-500">Sesuaikan ukuran teks untuk kenyamanan membaca</p>
                 </div>
             </div>
-            <div class="grid grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <template x-for="fs in fontSizes" :key="fs.value">
                     <button @click="applyFontSize(fs.value)"
                         :class="appearance.fontSize===fs.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5 text-[#1a237e]' : 'hover:bg-gray-50 text-gray-600'"
@@ -240,7 +367,7 @@
         </div>
 
         {{-- Button Style --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="square" class="w-5 h-5 text-purple-600"></i>
@@ -268,7 +395,7 @@
         </div>
 
         {{-- Rounded --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="circle-dashed" class="w-5 h-5 text-yellow-600"></i>
@@ -278,7 +405,7 @@
                     <p class="text-xs text-gray-500">Atur tingkat kelengkungan sudut elemen UI</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="r in roundedOptions" :key="r.value">
                     <button @click="applyRounded(r.value)"
                         :class="appearance.rounded===r.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5' : 'hover:bg-gray-50'"
@@ -291,7 +418,7 @@
         </div>
 
         {{-- Kepadatan Tata Letak --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="layout-grid" class="w-5 h-5 text-blue-500"></i>
@@ -301,7 +428,7 @@
                     <p class="text-xs text-gray-500">Atur kerapatan dan jarak elemen (padding/margin) di seluruh sistem</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="d in densities" :key="d.value">
                     <button @click="applyDensity(d.value)"
                         :class="appearance.density===d.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5 text-[#1a237e]' : 'hover:bg-gray-50 text-gray-600'"
@@ -314,7 +441,7 @@
         </div>
 
         {{-- Pilihan Gaya Font --}}
-        <div class="bg-white shadow-sm rounded-2xl p-7">
+        <div class="bg-white shadow-sm rounded-2xl p-4 md:p-7">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="languages" class="w-5 h-5 text-indigo-500"></i>
@@ -324,7 +451,7 @@
                     <p class="text-xs text-gray-500">Pilih jenis huruf yang digunakan di seluruh panel</p>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <template x-for="f in fontOptions" :key="f.value">
                     <button @click="applyFontFamily(f.value)"
                         :class="appearance.fontFamily===f.value ? 'ring-2 ring-[#1a237e] bg-[#1a237e]/5 text-[#1a237e]' : 'hover:bg-gray-50 text-gray-600'"
@@ -338,13 +465,13 @@
         </div>
 
         {{-- Preview & Reset --}}
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3">
             <button @click="resetAppearance()"
-                class="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all">
+                class="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all w-full md:w-fit justify-center">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset ke Default
             </button>
             <button @click="saveAppearance()"
-                class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all shadow-md shadow-[#1a237e]/20 active:scale-95">
+                class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all shadow-md shadow-[#1a237e]/20 active:scale-95 w-full md:w-fit justify-center">
                 <i data-lucide="check-circle" class="w-4 h-4"></i> Terapkan Tampilan
             </button>
         </div>
@@ -352,6 +479,9 @@
 
     {{-- ======================== TAB PANDUAN ======================== --}}
     <div x-show="tab==='panduan'" x-transition x-cloak class="space-y-5">
+        <button @click="tab = 'menu'" class="flex items-center gap-2 text-[#1a237e] hover:bg-gray-50 font-semibold md:hidden bg-white border border-gray-200 rounded-xl px-4 py-2.5 shadow-sm w-fit">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Pengaturan
+        </button>
 
         {{-- Header --}}
         <div class="glass-card rounded-2xl p-7 panduan-header-bg">
@@ -367,37 +497,49 @@
         </div>
 
         {{-- Daftar Isi --}}
-        <div class="glass-card rounded-2xl p-7">
-            <div class="flex items-center gap-3 mb-5">
+        <div class="glass-card rounded-2xl p-4 md:p-7">
+            <div @click="isMobile ? showToc = !showToc : null"
+                class="flex items-center gap-3 mb-5 cursor-pointer select-none">
                 <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
                     <i data-lucide="list" class="w-5 h-5 text-green-600"></i>
                 </div>
-                <div>
+                <div class="flex-1">
                     <h2 class="text-base font-bold text-gray-900">Daftar Isi</h2>
                     <p class="text-xs text-gray-500">Navigasi cepat ke bagian panduan yang diinginkan</p>
                 </div>
+                <i x-show="isMobile"
+                    data-lucide="chevron-down"
+                    class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                    :class="showToc ? 'rotate-180' : ''"></i>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                <template x-for="(item, index) in panduanMenu" :key="index">
-                    <a @click.prevent="scrollTo('panduan-'+item.id)" href="#panduan-"+item.id
-                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors group">
-                        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
-                            :style="'background:'+item.color">
-                            <span x-text="index+1"></span>
-                        </span>
-                        <div class="min-w-0">
-                            <p class="text-sm font-semibold text-gray-800 group-hover:text-[#1a237e]" x-text="item.label"></p>
-                            <p class="text-xs text-gray-400 truncate" x-text="item.desc"></p>
-                        </div>
-                    </a>
-                </template>
+            <div x-show="!isMobile || showToc"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    <template x-for="(item, index) in panduanMenu" :key="index">
+                        <a @click.prevent="scrollTo('panduan-'+item.id)" href="#panduan-"+item.id
+                            class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors group">
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+                                :style="'background:'+item.color">
+                                <span x-text="index+1"></span>
+                            </span>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-800 group-hover:text-[#1a237e]" x-text="item.label"></p>
+                                <p class="text-xs text-gray-400 truncate" x-text="item.desc"></p>
+                            </div>
+                        </a>
+                    </template>
+                </div>
             </div>
         </div>
 
         {{-- Konten Panduan --}}
         <template x-for="(item, index) in panduanMenu" :key="index">
-            <div :id="'panduan-'+item.id" class="glass-card rounded-2xl p-7 scroll-mt-24">
-                <div class="flex items-start gap-4">
+            <div :id="'panduan-'+item.id" class="glass-card rounded-2xl p-4 md:p-7 scroll-mt-24">
+                <div @click="isMobile ? toggleGuide(index) : null"
+                    class="flex items-start gap-4"
+                    :class="isMobile ? 'cursor-pointer select-none' : ''">
                     <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md"
                         :style="'background:'+item.color">
                         <i :data-lucide="item.icon" class="w-6 h-6"></i>
@@ -405,33 +547,44 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-2">
                             <h3 class="text-base font-bold text-gray-900" x-text="item.label"></h3>
-                            <span class="text-[10px] font-semibold px-2 py-1 rounded-full shrink-0 text-white"
-                                :style="'background:'+item.color" x-text="item.badge"></span>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-[10px] font-semibold px-2 py-1 rounded-full shrink-0 text-white"
+                                    :style="'background:'+item.color" x-text="item.badge"></span>
+                                <i x-show="isMobile"
+                                    data-lucide="chevron-down"
+                                    class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                                    :class="activeGuide === index ? 'rotate-180' : ''"></i>
+                            </div>
                         </div>
                         <p class="text-xs text-gray-400 mt-0.5" x-text="item.desc"></p>
                     </div>
                 </div>
-                <div class="mt-5 space-y-4">
-                    <template x-for="(section, si) in item.sections" :key="si">
-                        <div class="panduan-section-card p-4 rounded-xl border border-gray-100">
-                            <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0"
-                                    :style="'background:'+item.color" x-text="si+1"></span>
-                                <span x-text="section.title"></span>
-                            </h4>
-                            <div class="mt-2 text-sm text-gray-600 leading-relaxed space-y-2" x-html="section.body"></div>
-                        </div>
-                    </template>
-                </div>
-                <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <button @click="scrollTo('panduan-'+panduanMenu[Math.max(0,index-1)].id)" x-show="index>0"
-                        class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1">
-                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Sebelumnya
-                    </button>
-                    <button @click="scrollTo('panduan-'+panduanMenu[Math.min(panduanMenu.length-1,index+1)].id)" x-show="index<panduanMenu.length-1"
-                        class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1 ml-auto">
-                        Selanjutnya <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                    </button>
+                <div x-show="!isMobile || activeGuide === index"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 -translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0">
+                    <div class="mt-5 space-y-4">
+                        <template x-for="(section, si) in item.sections" :key="si">
+                            <div class="panduan-section-card p-4 rounded-xl border border-gray-100">
+                                <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                                        :style="'background:'+item.color" x-text="si+1"></span>
+                                    <span x-text="section.title"></span>
+                                </h4>
+                                <div class="mt-2 text-sm text-gray-600 leading-relaxed space-y-2" x-html="section.body"></div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                        <button @click="scrollTo('panduan-'+panduanMenu[Math.max(0,index-1)].id)" x-show="index>0"
+                            class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Sebelumnya
+                        </button>
+                        <button @click="scrollTo('panduan-'+panduanMenu[Math.min(panduanMenu.length-1,index+1)].id)" x-show="index<panduanMenu.length-1"
+                            class="text-xs font-semibold text-gray-500 hover:text-[#1a237e] flex items-center gap-1 ml-auto">
+                            Selanjutnya <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </template>
@@ -461,6 +614,9 @@ function settingApp() {
     return {
         tab: @json(auth()->user()->role->name === 'Super Admin' ? 'toko' : 'tampilan'),
         saving: false,
+        isMobile: window.innerWidth < 768,
+        activeGuide: null,
+        showToc: true,
 
         form: {
             company_name: '',
@@ -471,6 +627,15 @@ function settingApp() {
             hours_weekday: '08.00 - 17.00',
             hours_saturday: '08.00 - 13.00',
             hours_sunday: 'Libur',
+            prioritas_normal_estimasi: '7-14 hari kerja',
+            prioritas_normal_biaya: 0,
+            prioritas_normal_status: 'active',
+            prioritas_express_estimasi: '3-6 hari kerja',
+            prioritas_express_biaya: 50000,
+            prioritas_express_status: 'active',
+            prioritas_super_express_estimasi: '1-2 hari kerja',
+            prioritas_super_express_biaya: 150000,
+            prioritas_super_express_status: 'active',
         },
 
         appearance: { ...DEFAULT_APPEARANCE },
@@ -696,6 +861,10 @@ function settingApp() {
             },
         ],
 
+        toggleGuide(index) {
+            this.activeGuide = this.activeGuide === index ? null : index;
+        },
+
         scrollTo(id) {
             var el = document.getElementById(id);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -710,6 +879,29 @@ function settingApp() {
             this.form.hours_weekday     = @json($settings['hours_weekday'] ?? '08.00 - 17.00');
             this.form.hours_saturday    = @json($settings['hours_saturday'] ?? '08.00 - 13.00');
             this.form.hours_sunday      = @json($settings['hours_sunday'] ?? 'Libur');
+            this.form.prioritas_normal_estimasi = @json($settings['prioritas_normal_estimasi'] ?? '7-14 hari kerja');
+            this.form.prioritas_normal_biaya = @json($settings['prioritas_normal_biaya'] ?? 0);
+            this.form.prioritas_normal_status = @json($settings['prioritas_normal_status'] ?? 'active');
+            this.form.prioritas_express_estimasi = @json($settings['prioritas_express_estimasi'] ?? '3-6 hari kerja');
+            this.form.prioritas_express_biaya = @json($settings['prioritas_express_biaya'] ?? 50000);
+            this.form.prioritas_express_status = @json($settings['prioritas_express_status'] ?? 'active');
+            this.form.prioritas_super_express_estimasi = @json($settings['prioritas_super_express_estimasi'] ?? '1-2 hari kerja');
+            this.form.prioritas_super_express_biaya = @json($settings['prioritas_super_express_biaya'] ?? 150000);
+            this.form.prioritas_super_express_status = @json($settings['prioritas_super_express_status'] ?? 'active');
+
+            this.isMobile = window.innerWidth < 768;
+            this.showToc = !this.isMobile;
+            if (this.isMobile) {
+                this.tab = 'menu';
+            }
+
+            window.addEventListener('resize', () => {
+                const wasMobile = this.isMobile;
+                this.isMobile = window.innerWidth < 768;
+                if (wasMobile && !this.isMobile && this.tab === 'menu') {
+                    this.tab = @json(auth()->user()->role->name === 'Super Admin' ? 'toko' : 'tampilan');
+                }
+            });
 
             const saved = localStorage.getItem('novos_appearance');
             if (saved) {

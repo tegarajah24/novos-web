@@ -7,43 +7,55 @@
 @endsection
 
 @section('internal-content')
-    {{-- Stats Cards --}}
-    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-[#1a237e] flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+    {{-- Stats Cards Carousel (Mobile) / Grid (Desktop) --}}
+    <div x-data="{ activeSlide: 0 }" class="mb-4 lg:mb-8">
+        <div x-ref="carousel"
+             @scroll="activeSlide = Math.round($el.scrollLeft / ($el.scrollWidth / 2))"
+             class="flex lg:grid lg:grid-cols-4 gap-4 lg:gap-6 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div class="flex-none w-1/2 lg:w-auto snap-start bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-11 h-11 rounded-xl bg-[#1a237e] flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
                 </div>
+                <h3 class="text-2xl lg:text-3xl font-bold text-gray-900" id="totalUsers">0</h3>
+                <p class="text-gray-500 text-sm mt-1">Total Pengguna</p>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900" id="totalUsers">0</h3>
-            <p class="text-gray-500 text-sm mt-1">Total Pengguna</p>
+            <div class="flex-none w-1/2 lg:w-auto snap-start bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
+                </div>
+                <h3 class="text-2xl lg:text-3xl font-bold text-gray-900" id="totalManager">0</h3>
+                <p class="text-gray-500 text-sm mt-1">Manager</p>
+            </div>
+            <div class="flex-none w-1/2 lg:w-auto snap-start bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
+                </div>
+                <h3 class="text-2xl lg:text-3xl font-bold text-gray-900" id="totalAdmin">0</h3>
+                <p class="text-gray-500 text-sm mt-1">Admin</p>
+            </div>
+            <div class="flex-none w-1/2 lg:w-auto snap-start bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
+                </div>
+                <h3 class="text-2xl lg:text-3xl font-bold text-gray-900" id="totalProduksiDesign">0</h3>
+                <p class="text-gray-500 text-sm mt-1">Produksi &amp; Design</p>
+            </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                </div>
-            </div>
-            <h3 class="text-3xl font-bold text-gray-900" id="totalManager">0</h3>
-            <p class="text-gray-500 text-sm mt-1">Manager</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                </div>
-            </div>
-            <h3 class="text-3xl font-bold text-gray-900" id="totalAdmin">0</h3>
-            <p class="text-gray-500 text-sm mt-1">Admin</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                </div>
-            </div>
-            <h3 class="text-3xl font-bold text-gray-900" id="totalProduksiDesign">0</h3>
-            <p class="text-gray-500 text-sm mt-1">Produksi &amp; Design</p>
+        {{-- Dots Indicator (Mobile only) --}}
+        <div class="flex lg:hidden justify-center gap-2 mt-4">
+            <template x-for="(dot, i) in 2" :key="i">
+                <button @click="$refs.carousel.scrollLeft = i * ($refs.carousel.scrollWidth / 2)"
+                        class="w-2 h-2 rounded-full transition-all duration-300"
+                        :class="activeSlide === i ? 'bg-[#1a237e] w-6' : 'bg-gray-300'"></button>
+            </template>
         </div>
     </div>
 
@@ -73,7 +85,7 @@
 
     {{-- Table --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-[70vh]">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wider">

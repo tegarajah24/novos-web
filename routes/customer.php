@@ -14,6 +14,7 @@ use App\Http\Controllers\Customer\ReviewController;
 use App\Http\Controllers\Customer\ProductInteractionController;
 use App\Http\Controllers\Api\SummaryController;
 use App\Http\Controllers\Api\WilayahController;
+use App\Http\Controllers\InvoiceController;
 use App\Models\Wilayah;
 
 // Public routes
@@ -45,7 +46,16 @@ Route::get('/pesan', function () {
             $adminPhone = '62' . substr($adminPhone, 1);
         }
 
-        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone'));
+        $categories = \App\Models\Category::all()->map(fn($c) => [
+            'id' => $c->id,
+            'name' => $c->name,
+            'icon' => $c->icon,
+            'description' => $c->description,
+            'attributes_schema' => $c->attributes_schema ?? [],
+            'form_config' => $c->form_config,
+        ]);
+
+        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone', 'categories'));
     })->name('pemesanan');
 
 // Public routes for wilayah data
@@ -68,6 +78,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/pesan/cart', [OrderController::class, 'storeCart'])->name('pesan.store-cart');
     Route::post('/pesan/{order:order_number}/approve', [OrderController::class, 'approve'])->name('pesan.approve');
     Route::post('/pesan/{order:order_number}/payment-proof', [OrderController::class, 'uploadPaymentProof'])->name('pesan.payment-proof');
+
+    Route::get('/invoice/{orderNumber}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/invoice/{orderNumber}/download', [InvoiceController::class, 'download'])->name('invoice.download');
 
     Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking');
     Route::post('/tracking/{id}/acc', [TrackingController::class, 'accDesign'])->name('tracking.acc');
