@@ -150,6 +150,78 @@
                     </div>
                 </div>
 
+                {{-- Prioritas Pengerjaan --}}
+                <div class="border-t border-gray-100 pt-5">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4">Prioritas Pengerjaan</h4>
+                    <div class="space-y-4">
+                        {{-- Normal --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Normal (Estimasi)</label>
+                                <input type="text" x-model="form.prioritas_normal_estimasi" placeholder="7-14 hari kerja"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Normal (Biaya Tambahan Rp)</label>
+                                <input type="number" x-model="form.prioritas_normal_biaya" placeholder="0"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Status</label>
+                                <select x-model="form.prioritas_normal_status"
+                                        class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Nonaktif</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Express --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Express (Estimasi)</label>
+                                <input type="text" x-model="form.prioritas_express_estimasi" placeholder="3-6 hari kerja"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Express (Biaya Tambahan Rp)</label>
+                                <input type="number" x-model="form.prioritas_express_biaya" placeholder="50000"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Status</label>
+                                <select x-model="form.prioritas_express_status"
+                                        class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Nonaktif</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Super Express --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Super Express (Estimasi)</label>
+                                <input type="text" x-model="form.prioritas_super_express_estimasi" placeholder="1-2 hari kerja"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Super Express (Biaya Tambahan Rp)</label>
+                                <input type="number" x-model="form.prioritas_super_express_biaya" placeholder="150000"
+                                       class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Status</label>
+                                <select x-model="form.prioritas_super_express_status"
+                                        class="w-full rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Nonaktif</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-1">
                     <button type="submit" :disabled="saving"
                             class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all active:scale-95 disabled:opacity-50 shadow-md shadow-[#1a237e]/20">
@@ -555,6 +627,15 @@ function settingApp() {
             hours_weekday: '08.00 - 17.00',
             hours_saturday: '08.00 - 13.00',
             hours_sunday: 'Libur',
+            prioritas_normal_estimasi: '7-14 hari kerja',
+            prioritas_normal_biaya: 0,
+            prioritas_normal_status: 'active',
+            prioritas_express_estimasi: '3-6 hari kerja',
+            prioritas_express_biaya: 50000,
+            prioritas_express_status: 'active',
+            prioritas_super_express_estimasi: '1-2 hari kerja',
+            prioritas_super_express_biaya: 150000,
+            prioritas_super_express_status: 'active',
         },
 
         appearance: { ...DEFAULT_APPEARANCE },
@@ -798,6 +879,15 @@ function settingApp() {
             this.form.hours_weekday     = @json($settings['hours_weekday'] ?? '08.00 - 17.00');
             this.form.hours_saturday    = @json($settings['hours_saturday'] ?? '08.00 - 13.00');
             this.form.hours_sunday      = @json($settings['hours_sunday'] ?? 'Libur');
+            this.form.prioritas_normal_estimasi = @json($settings['prioritas_normal_estimasi'] ?? '7-14 hari kerja');
+            this.form.prioritas_normal_biaya = @json($settings['prioritas_normal_biaya'] ?? 0);
+            this.form.prioritas_normal_status = @json($settings['prioritas_normal_status'] ?? 'active');
+            this.form.prioritas_express_estimasi = @json($settings['prioritas_express_estimasi'] ?? '3-6 hari kerja');
+            this.form.prioritas_express_biaya = @json($settings['prioritas_express_biaya'] ?? 50000);
+            this.form.prioritas_express_status = @json($settings['prioritas_express_status'] ?? 'active');
+            this.form.prioritas_super_express_estimasi = @json($settings['prioritas_super_express_estimasi'] ?? '1-2 hari kerja');
+            this.form.prioritas_super_express_biaya = @json($settings['prioritas_super_express_biaya'] ?? 150000);
+            this.form.prioritas_super_express_status = @json($settings['prioritas_super_express_status'] ?? 'active');
 
             this.isMobile = window.innerWidth < 768;
             this.showToc = !this.isMobile;

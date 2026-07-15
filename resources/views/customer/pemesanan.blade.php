@@ -40,6 +40,57 @@
 
     $adminWaPhone = preg_replace('/[^0-9]/', '', App\Models\Setting::get('company_phone', '6281234567890'));
     if (str_starts_with($adminWaPhone, '0')) { $adminWaPhone = '62' . substr($adminWaPhone, 1); }
+
+    // Prioritas Pengerjaan Dynamic Settings
+    $prioritasNormalEstimasi = App\Models\Setting::get('prioritas_normal_estimasi', '7-14 hari kerja');
+    $prioritasNormalBiaya = (int) App\Models\Setting::get('prioritas_normal_biaya', 0);
+    $prioritasNormalStatus = App\Models\Setting::get('prioritas_normal_status', 'active');
+
+    $prioritasExpressEstimasi = App\Models\Setting::get('prioritas_express_estimasi', '3-6 hari kerja');
+    $prioritasExpressBiaya = (int) App\Models\Setting::get('prioritas_express_biaya', 50000);
+    $prioritasExpressStatus = App\Models\Setting::get('prioritas_express_status', 'active');
+
+    $prioritasSuperExpressEstimasi = App\Models\Setting::get('prioritas_super_express_estimasi', '1-2 hari kerja');
+    $prioritasSuperExpressBiaya = (int) App\Models\Setting::get('prioritas_super_express_biaya', 150000);
+    $prioritasSuperExpressStatus = App\Models\Setting::get('prioritas_super_express_status', 'active');
+
+    $dynamicPriorities = [];
+    if ($prioritasNormalStatus === 'active') {
+        $dynamicPriorities[] = [
+            'value' => 'normal',
+            'label' => 'Normal',
+            'desc' => $prioritasNormalEstimasi,
+            'biaya' => $prioritasNormalBiaya,
+            'harga' => $prioritasNormalBiaya > 0 ? '+Rp' . number_format($prioritasNormalBiaya, 0, ',', '.') : 'Gratis'
+        ];
+    }
+    if ($prioritasExpressStatus === 'active') {
+        $dynamicPriorities[] = [
+            'value' => 'express',
+            'label' => 'Express',
+            'desc' => $prioritasExpressEstimasi,
+            'biaya' => $prioritasExpressBiaya,
+            'harga' => $prioritasExpressBiaya > 0 ? '+Rp' . number_format($prioritasExpressBiaya, 0, ',', '.') : 'Gratis'
+        ];
+    }
+    if ($prioritasSuperExpressStatus === 'active') {
+        $dynamicPriorities[] = [
+            'value' => 'super_express',
+            'label' => 'Super Express',
+            'desc' => $prioritasSuperExpressEstimasi,
+            'biaya' => $prioritasSuperExpressBiaya,
+            'harga' => $prioritasSuperExpressBiaya > 0 ? '+Rp' . number_format($prioritasSuperExpressBiaya, 0, ',', '.') : 'Gratis'
+        ];
+    }
+    if (empty($dynamicPriorities)) {
+        $dynamicPriorities[] = [
+            'value' => 'normal',
+            'label' => 'Normal',
+            'desc' => '7-14 hari kerja',
+            'biaya' => 0,
+            'harga' => 'Gratis'
+        ];
+    }
 @endphp
 
 @section('content')
@@ -1734,11 +1785,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         buktiBayarFile: null,
         loading: false,
         hasOrders: hasOrders,
-        prioritasOptions: [
-            { value: 'normal', label: 'Normal', desc: '7\u201314 hari kerja', harga: 'Gratis' },
-            { value: 'express', label: 'Express', desc: '3\u20136 hari kerja', harga: '+Rp50.000' },
-            { value: 'super_express', label: 'Super Express', desc: '1\u20132 hari kerja', harga: '+Rp150.000' }
-        ],
+        prioritasOptions: @json($dynamicPriorities),
         basePricePerPcs: 85000,
 
         init() {
@@ -1886,6 +1933,13 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             };
 
             this.$nextTick(restoreDraft);
+
+            // Ensure selected prioritas is valid based on settings
+            this.$nextTick(() => {
+                if (this.prioritasOptions.length > 0 && !this.prioritasOptions.some(o => o.value === this.prioritas)) {
+                    this.prioritas = this.prioritasOptions[0].value;
+                }
+            });
 
             // Re-render icons setelah render ulang
             this.$nextTick(() => {
@@ -2321,9 +2375,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         get biayaPrioritas() {
-            if (this.prioritas === 'express') return 50000;
-            if (this.prioritas === 'super_express') return 150000;
-            return 0;
+            const opt = this.prioritasOptions.find(o => o.value === this.prioritas);
+            return opt ? parseInt(opt.biaya) : 0;
         },
 
         get activeSizePdf() {
@@ -2398,6 +2451,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         nextFromStep2() {
             this.subStep = 2;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             if (this.addresses && this.addresses.length > 0) {
                 this.addressMode = 'select';
                 if (!this.selectedAddressId) {
