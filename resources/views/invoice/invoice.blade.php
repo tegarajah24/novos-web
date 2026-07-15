@@ -368,11 +368,14 @@
                 <tr>
                     <td colspan="5" class="text-center" style="font-style: italic; color: #999; padding: 15px;">Belum ada rincian item pesanan</td>
                 </tr>
-                @endforelse
-                <!-- Bottom Section merged into the same table structure -->
+            </tbody>
+        </table>
+
+        <!-- Bottom Section: Notes & Spelled-Out on left, Summary/Totals on right (Aligned column widths) -->
+        <table class="bottom-table">
             <tr>
-                <!-- Left Side: Message, Spelled-Out, Bank Info -->
-                <td colspan="3" rowspan="{{ $dp_paid > 0 ? '4' : '3' }}" style="border: none; padding: 15px 15px 0 0; vertical-align: top;">
+                <!-- Left Side: Message, Spelled-Out, Payment Instructions (width: 62% to align with Col 1 + 2 + 3) -->
+                <td style="width: 62%; padding-right: 15px; vertical-align: top; border: none;">
                     <!-- Pesan Box -->
                     <div class="notes-box">
                         <div class="notes-title">Pesan</div>
@@ -398,26 +401,31 @@
                         <span class="bold">Minimal DP 10% Dulu Baru Akan Di Produksi.</span>
                     </div>
                 </td>
-                <!-- Right Side: Subtotal -->
-                <td style="border: none; border-bottom: 1px solid #ddd; padding: 6px 8px; font-size: 9px; vertical-align: middle;">Subtotal</td>
-                <td style="border: none; border-bottom: 1px solid #ddd; padding: 6px 8px; font-size: 9px; text-align: right; vertical-align: middle;">{{ number_format($subtotal, 2, ',', '.') }}</td>
+                <!-- Right Side: Totals Summary (width: 38% to align with Col 4 + 5) -->
+                <td style="width: 38%; vertical-align: top; border: none;">
+                    <table class="totals-table">
+                        <tr>
+                            <td style="width: 47.3%; padding: 5px 8px; font-size: 9px; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">Subtotal</td>
+                            <td style="width: 52.7%; padding: 5px 8px; font-size: 9px; text-align: right; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">{{ number_format($subtotal, 2, ',', '.') }}</td>
+                        </tr>
+                        @if($dp_paid > 0)
+                        <tr>
+                            <td style="padding: 5px 8px; font-size: 9px; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">DP Sudah Dibayar</td>
+                            <td style="padding: 5px 8px; font-size: 9px; text-align: right; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">-{{ number_format($dp_paid, 2, ',', '.') }}</td>
+                        </tr>
+                        @endif
+                        <tr class="totals-bg">
+                            <td style="border: 1px solid #000; border-right: none; padding: 6px 8px; font-size: 9px;">TOTAL</td>
+                            <td style="border: 1px solid #000; border-left: none; padding: 6px 8px; font-size: 9px; text-align: right;">{{ number_format($subtotal, 2, ',', '.') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="bold" style="padding: 5px 8px; font-size: 9px; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;">Sisa Tagihan</td>
+                            <td style="padding: 5px 8px; font-size: 9px; text-align: right; border-bottom: 1px solid #ddd; border-top: none; border-left: none; border-right: none;" class="bold">{{ number_format($sisa_bayar, 2, ',', '.') }}</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
-            @if($dp_paid > 0)
-            <tr>
-                <td style="border: none; border-bottom: 1px solid #ddd; padding: 6px 8px; font-size: 9px; vertical-align: middle;">DP Sudah Dibayar</td>
-                <td style="border: none; border-bottom: 1px solid #ddd; padding: 6px 8px; font-size: 9px; text-align: right; vertical-align: middle;">-{{ number_format($dp_paid, 2, ',', '.') }}</td>
-            </tr>
-            @endif
-            <tr style="background-color: #e9ecef; font-weight: bold;">
-                <td style="border: 1px solid #000; padding: 6px 8px; font-size: 9px; vertical-align: middle;">TOTAL</td>
-                <td style="border: 1px solid #000; padding: 6px 8px; font-size: 9px; text-align: right; vertical-align: middle;">{{ number_format($subtotal, 2, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td style="border: none; border-bottom: 1px solid #ddd; padding: 6px 8px; font-size: 9px; font-weight: bold; vertical-align: middle;">Sisa Tagihan</td>
-                <td style="border: none; border-bottom: 1px solid #ddd; padding: 6px 8px; font-size: 9px; text-align: right; font-weight: bold; vertical-align: middle;">{{ number_format($sisa_bayar, 2, ',', '.') }}</td>
-            </tr>
-        </tbody>
-    </table>
+        </table>
 
         <!-- Footer Section -->
         <table class="footer-section">
