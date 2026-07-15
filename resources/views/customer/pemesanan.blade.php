@@ -1627,9 +1627,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         subStep: 1,
         expandedSpecs: true,
         expandedBawahan: true,
-        init() {
-            this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
-        },
         addresses: userAddresses,
         addressMode: 'select',
         selectedAddressId: null,
@@ -1720,9 +1717,11 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         basePricePerPcs: 85000,
 
         init() {
+            let restoredFromCheckout = false;
             const savedState = localStorage.getItem('checkout_state');
             if (savedState) {
                 try {
+                    restoredFromCheckout = true;
                     const state = JSON.parse(savedState);
                     this.mode = state.mode || 'single';
                     this.step = state.step;
@@ -1803,6 +1802,105 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             this.updateItemsRows(this.form.total_qty);
 
             this.setupBuktiBayarPond();
+
+            // Restore auto-save draft (only if not restored from checkout_state)
+            const restoreDraft = () => {
+                if (restoredFromCheckout) return;
+                const draft = localStorage.getItem('pesanan_draft');
+                if (!draft) return;
+                let data;
+                try {
+                    data = JSON.parse(draft);
+                } catch(e) {
+                    console.warn('Gagal membaca draft', e);
+                    localStorage.removeItem('pesanan_draft');
+                    return;
+                }
+                const savedTime = new Date(data.savedAt);
+                const now = new Date();
+                const diffMin = Math.floor((now - savedTime) / 60000);
+
+                const askRestore = () => {
+                    if (typeof window.Swal !== 'undefined') {
+                        window.Swal.fire({
+                            icon: 'question',
+                            title: 'Lanjutkan Pesanan Sebelumnya?',
+                            html: 'Kami menemukan data pesanan yang belum selesai dari ' + (diffMin > 0 ? diffMin + ' menit yang lalu' : 'beberapa saat yang lalu') + '.<br><br>Apakah kamu ingin melanjutkan?',
+                            showConfirmButton: true,
+                            confirmButtonText: '<svg class="w-4 h-4 inline mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Lanjutkan',
+                            confirmButtonColor: '#1a237e',
+                            showCancelButton: true,
+                            cancelButtonText: 'Mulai Baru',
+                            cancelButtonColor: '#6b7280',
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                this.restoreDraft(data);
+                            } else {
+                                this.clearDraft();
+                            }
+                        });
+                    } else {
+                        // Fallback: restore langsung tanpa konfirmasi
+                        this.restoreDraft(data);
+                    }
+                };
+
+                // Tunggu Swal tersedia (maks 5 detik)
+                if (typeof window.Swal !== 'undefined') {
+                    askRestore();
+                } else {
+                    let tries = 0;
+                    const waitSwal = setInterval(() => {
+                        tries++;
+                        if (typeof window.Swal !== 'undefined' || tries >= 50) {
+                            clearInterval(waitSwal);
+                            askRestore();
+                        }
+                    }, 100);
+                }
+            };
+
+            this.$nextTick(restoreDraft);
+
+            // Re-render icons setelah render ulang
+            this.$nextTick(() => {
+                if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+            });
+
+            // Auto-save setiap kali ada perubahan form (debounce 800ms)
+            let saveTimer;
+            const triggerSave = () => {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(() => {
+                    if (this.step < 4) this.saveDraft();
+                }, 800);
+            };
+            this.$watch('form.nama_pemesan', triggerSave);
+            this.$watch('form.team_name', triggerSave);
+            this.$watch('form.nama_artikel', triggerSave);
+            this.$watch('form.detail_sponsor', triggerSave);
+            this.$watch('form.total_qty', triggerSave);
+            this.$watch('form.size', triggerSave);
+            this.$watch('prioritas', triggerSave);
+            this.$watch('selectedAddressId', triggerSave);
+            this.$watch('formPhone', triggerSave);
+            // Fallback: save saat ada perubahan di form (termasuk items & customizations)
+            document.addEventListener('change', (e) => {
+                if (this.step < 4 && e.target.closest('[x-data^="pemesananForm"]')) {
+                    clearTimeout(saveTimer);
+                    saveTimer = setTimeout(() => this.saveDraft(), 800);
+                }
+            }, true);
+
+            // Backup: auto-save tiap 3 detik
+            this._draftTimer = setInterval(() => {
+                if (this.step < 4) this.saveDraft();
+            }, 3000);
+
+            // Save draft saat pindah halaman
+            const pageUnload = () => this.saveDraft();
+            window.addEventListener('beforeunload', pageUnload);
+            window.addEventListener('pagehide', pageUnload);
         },
 
         setupBuktiBayarPond() {
@@ -2550,6 +2648,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.orderNumber = data.orderNumber;
                 this.step = 4;
                 this.loading = false;
+                this.clearDraft();
                 this.$nextTick(() => this.setupBuktiBayarPond());
             })
             .catch(err => {
@@ -2588,6 +2687,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 this.orderNumber = data.orderNumber;
                 this.step = 4;
                 this.loading = false;
+                this.clearDraft();
                 this.$nextTick(() => this.setupBuktiBayarPond());
                 const store = window.Alpine.store('summary');
                 if (store) store.fetch();
@@ -2728,6 +2828,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             });
             this.prioritas = 'normal';
             this.selectedAddressId = null;
+            this.clearDraft();
         },
 
         showFirstOrderAlert() {
@@ -2809,6 +2910,65 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     alt: 'Rok'
                 },
             ], index)
+        },
+
+        saveDraft() {
+            if (this.step >= 4 || (!this.jenis && this.step <= 1)) return;
+            try {
+                const draft = {
+                    jenis: this.jenis || '',
+                    jenisPhase: this.jenisPhase,
+                    selectedCategoryId: this.selectedCategoryId,
+                    step: this.step,
+                    subStep: this.subStep,
+                    form: JSON.parse(JSON.stringify(this.form)),
+                    items: JSON.parse(JSON.stringify(this.items)),
+                    prioritas: this.prioritas,
+                    selectedAddressId: this.selectedAddressId,
+                    formPhone: this.formPhone,
+                    expandedSpecs: this.expandedSpecs,
+                    expandedBawahan: this.expandedBawahan,
+                    addressMode: this.addressMode,
+                    contactInfo: JSON.parse(JSON.stringify(this.contactInfo)),
+                    addressForm: JSON.parse(JSON.stringify(this.addressForm)),
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem('pesanan_draft', JSON.stringify(draft));
+            } catch (e) {
+                console.warn('Gagal menyimpan draft', e);
+            }
+        },
+
+        clearDraft() {
+            localStorage.removeItem('pesanan_draft');
+            if (this._draftTimer) {
+                clearInterval(this._draftTimer);
+                this._draftTimer = null;
+            }
+        },
+
+        restoreDraft(data) {
+            this.jenis = data.jenis;
+            this.jenisPhase = data.jenisPhase || 1;
+            this.selectedCategoryId = data.selectedCategoryId || '';
+
+            Object.assign(this.form, data.form || {});
+
+            this.items = data.items || [];
+            this.step = data.step || 2;
+            this.subStep = data.subStep || 1;
+            this.prioritas = data.prioritas || 'normal';
+            this.selectedAddressId = data.selectedAddressId || null;
+            this.formPhone = data.formPhone || this.formPhone;
+            this.expandedSpecs = data.expandedSpecs !== undefined ? data.expandedSpecs : true;
+            this.expandedBawahan = data.expandedBawahan !== undefined ? data.expandedBawahan : true;
+            this.addressMode = data.addressMode || 'select';
+            if (data.contactInfo) Object.assign(this.contactInfo, data.contactInfo);
+            if (data.addressForm) Object.assign(this.addressForm, data.addressForm);
+
+            this.$nextTick(() => {
+                if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+            });
         },
 
         openAtasanGallery() {
