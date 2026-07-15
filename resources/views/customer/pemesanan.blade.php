@@ -1955,15 +1955,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             } else {
                 const diff = count - this.items.length;
                 for (let i = 0; i < diff; i++) {
-                    const rowCustom = {};
-                    schema.forEach(attr => {
-                        rowCustom[attr.id] = '';
-                    });
-                    if (isJersey) {
-                        bSchema.forEach(attr => {
-                            rowCustom[attr.id] = '';
-                        });
-                    }
                     this.items.push({
                         selected: false,
                         no: '',
@@ -1971,7 +1962,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         size: this.form.size || '',
                         tipe_bawahan: '',
                         size_bawahan: '',
-                        customizations: rowCustom
+                        customizations: {}
                     });
                 }
             }
