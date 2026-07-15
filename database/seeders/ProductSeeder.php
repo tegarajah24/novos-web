@@ -9,8 +9,8 @@ use Illuminate\Database\Seeder;
 class ProductSeeder extends Seeder
 {
     protected array $images = [
-        'NF-001' => ['file' => 'novos-coklat-Photoroom.png',  'category' => 'Running'],
-        'NF-002' => ['file' => 'novos2-Photoroom.png',        'category' => 'Running'],
+        'NF-001' => ['file' => 'novos-coklat-Photoroom.png',  'category' => 'Jersey'],
+        'NF-002' => ['file' => 'novos2-Photoroom.png',        'category' => 'Jersey'],
         'NF-003' => ['file' => 'novos-merah-Photoroom.png',   'category' => 'Sepak Bola'],
         'NF-004' => ['file' => 'novos3-Photoroom.png',        'category' => 'Futsal'],
         'NF-005' => ['file' => 'novos4-Photoroom.png',        'category' => 'Sepak Bola'],

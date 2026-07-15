@@ -147,10 +147,11 @@
 
             <div class="flex justify-end mt-8">
                 <button
+                    type="button"
                     @click="if(jenis === 'katalog') window.location.href = '{{ route('katalog') }}'; else if (!hasOrders) showFirstOrderAlert(); else jenisPhase = 2;"
                     :disabled="!jenis"
                     :class="jenis ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                    class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                     Selanjutnya
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -196,18 +197,20 @@
                 </div>
             </div>
 
-            <div class="flex justify-between items-center mt-8">
+            <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8">
                 <button
+                    type="button"
                     @click="jenisPhase = 1"
-                    class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                    class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
                 >
                     Kembali
                 </button>
                 <button
+                    type="button"
                     @click="step = 2"
                     :disabled="!selectedCategoryId"
                     :class="selectedCategoryId ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                    class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                     Selanjutnya
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -698,10 +701,10 @@
                                                         Set: <span x-text="`${item.tipe_bawahan} (${item.size_bawahan || '-'})`"></span>
                                                     </span>
                                                 </template>
-                                                <!-- Customizations badge count -->
-                                                <template x-if="getCompiledCustomizations(item).length > 0">
+                                                <!-- Customizations list -->
+                                                <template x-for="cust in getCompiledCustomizations(item)" :key="cust.key">
                                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-100">
-                                                        <span x-text="`${getCompiledCustomizations(item).length} Kustomisasi`"></span>
+                                                        <span x-text="cust.value"></span>
                                                     </span>
                                                 </template>
                                                 <!-- Warning Badge -->
@@ -834,7 +837,7 @@
             </div>
 
         {{-- Sub-Step 2: Alamat Form / Select --}}
-            <div x-show="subStep === 2">
+            <div x-show="subStep === 2" class="pb-24">
                 {{-- Mode 1: Detail Kontak & Alamat --}}
                 <div x-show="addressMode === 'select'" class="space-y-6">
                     <div>
@@ -923,18 +926,20 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-6">
+                    <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-6">
                         <button
+                            type="button"
                             @click="backFromSubStep2()"
-                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
                         >
                             Kembali
                         </button>
                         <button
+                            type="button"
                             @click="useSelectedAddress()"
                             :disabled="!selectedAddressId"
                             :class="selectedAddressId ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                            class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                            class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                         >
                             Lanjutkan ke Pembayaran
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -993,10 +998,11 @@
                         </template>
                     </div>
 
-                    <div class="flex justify-between mt-8">
+                    <div class="flex flex-col sm:flex-row justify-start mt-8">
                         <button
+                            type="button"
                             @click="addressMode = 'select'"
-                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
                         >
                             Batal
                         </button>
@@ -1176,18 +1182,20 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-8">
+                    <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8">
                         <button
+                            type="button"
                             @click="addresses.length > 0 ? addressMode = 'list' : subStep = 1"
-                            class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
                         >
                             Kembali
                         </button>
                         <button
+                            type="button"
                             @click="saveAddress()"
                             :disabled="!validateAddress || addressLoading.submit"
                             :class="(validateAddress && !addressLoading.submit) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                            class="text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                            class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                         >
                             <span x-show="!addressLoading.submit" class="inline-flex items-center gap-2">
                                 Simpan Alamat Baru
@@ -1387,20 +1395,23 @@
             </div>
         </div>
 
-        <div class="flex justify-end gap-4 mt-8">
+        <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8 pb-24">
             <button
+                type="button"
                 @click="step = 2"
-                class="px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors"
+                class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
             >
                 Kembali
             </button>
             <button
+                type="button"
                 @click="mode === 'cart_checkout' ? submitCartCheckout() : submitOrder()"
                 :disabled="!validateStep3 || loading"
                 :class="(validateStep3 && !loading) ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
-                class="w-full sm:w-auto text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                class="w-full sm:w-auto text-white px-5 py-2.5 sm:px-8 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-                Buat Pesanan
+                <span x-show="!loading" class="inline-flex items-center gap-2">
+                    Buat Pesanan
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </span>
                 <span x-show="loading" class="inline-flex items-center gap-2">
@@ -2079,7 +2090,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     if (val) {
                         result.push({
                             key: attr.id,
-                            value: attr.name + ': ' + val
+                            value: val
                         });
                     }
                 }
@@ -2087,18 +2098,13 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             
             // Loop through bawahan attributes only if player has a bawahan set
             if (isJersey && hasSet) {
-                result.push({
-                    key: 'tipe_bawahan',
-                    value: 'Set Bawahan: ' + item.tipe_bawahan + (item.size_bawahan ? ' (Size ' + item.size_bawahan + ')' : '')
-                });
-                
                 bSchema.forEach(attr => {
                     if (this.isAttrActive(attr, item)) {
                         const val = compiled[attr.id];
                         if (val) {
                             result.push({
                                 key: attr.id,
-                                value: '[Bawahan] ' + attr.name + ': ' + val
+                                value: val
                             });
                         }
                     }
