@@ -380,7 +380,13 @@
                     <!-- Pesan Box -->
                     <div class="notes-box">
                         <div class="notes-title">Pesan</div>
-                        <div class="notes-body">{{ $order->notes ?? '-' }}</div>
+                        <div class="notes-body">
+                            <strong>Artikel:</strong> {{ $order->designRequest?->nama_artikel ?? 'Jersey Custom' }}<br>
+                            <strong>Nama Tim:</strong> {{ $order->designRequest?->team_name ?? '-' }}
+                            @if($order->designRequest && $order->designRequest->detail_sponsor)
+                                <br><strong>Sponsor:</strong> {{ $order->designRequest->detail_sponsor }}
+                            @endif
+                        </div>
                     </div>
                     <!-- Terbilang Box -->
                     <div class="notes-box">
