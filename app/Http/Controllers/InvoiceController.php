@@ -75,24 +75,38 @@ class InvoiceController extends Controller
         }
         $groupedItems = collect($groupedItems)->values();
 
-        $companyName      = Setting::get('company_name', 'Novos Jersey');
-        $companyPhone     = Setting::get('company_phone', '');
+        $companyName      = Setting::get('company_name', 'NOVOS');
+        $companyPhone     = Setting::get('company_phone', '081399903888');
         $companyBank      = Setting::get('company_bank_info', '');
         $companyInstagram = Setting::get('company_instagram', '');
+        $companyAddress   = Setting::get('company_address', 'Jl. Gelora Indah 2 No.11, Mangunjaya., BANYUMAS, JAWA TENGAH, 53114');
+        $companyEmail     = Setting::get('company_email', 'cvmerdekaberdikarisejahtera@gmail.com');
+        $companyNpwp      = Setting::get('company_npwp', '21.157.880.2-521.000');
+
+        $customerAddress = \App\Models\CustomerAddress::where('user_id', $order->user_id)
+            ->where('is_primary', true)
+            ->first() ?? \App\Models\CustomerAddress::where('user_id', $order->user_id)->first();
+
+        $terbilang = $this->terbilang($subtotal);
 
         return [
-            'order'         => $order,
-            'design'        => $design,
-            'items'         => $items,
-            'grouped_items' => $groupedItems,
-            'payment'       => $payment,
-            'subtotal'      => $subtotal,
-            'dp_paid'       => $dpPaid,
-            'sisa_bayar'    => $sisaBayar,
+            'order'             => $order,
+            'design'            => $design,
+            'items'             => $items,
+            'grouped_items'     => $groupedItems,
+            'payment'           => $payment,
+            'subtotal'          => $subtotal,
+            'dp_paid'           => $dpPaid,
+            'sisa_bayar'        => $sisaBayar,
             'company_name'      => $companyName,
             'company_phone'     => $companyPhone,
             'company_bank'      => $companyBank,
             'company_instagram' => $companyInstagram,
+            'company_address'   => $companyAddress,
+            'company_email'     => $companyEmail,
+            'company_npwp'      => $companyNpwp,
+            'customer_address'  => $customerAddress,
+            'terbilang'         => $terbilang,
         ];
     }
 
@@ -177,5 +191,42 @@ class InvoiceController extends Controller
             'dp_amount' => $payment->dp_amount,
             'status'    => $payment->status,
         ]);
+    }
+
+    private function penyebut($nilai) {
+        $nilai = abs($nilai);
+        $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+        $temp = "";
+        if ($nilai < 12) {
+            $temp = " " . $huruf[$nilai];
+        } else if ($nilai < 20) {
+            $temp = $this->penyebut($nilai - 10). " belas";
+        } else if ($nilai < 100) {
+            $temp = $this->penyebut((int)($nilai/10)) . " puluh" . $this->penyebut($nilai % 10);
+        } else if ($nilai < 200) {
+            $temp = " seratus" . $this->penyebut($nilai - 100);
+        } else if ($nilai < 1000) {
+            $temp = $this->penyebut((int)($nilai/100)) . " ratus" . $this->penyebut($nilai % 100);
+        } else if ($nilai < 2000) {
+            $temp = " seribu" . $this->penyebut($nilai - 1000);
+        } else if ($nilai < 1000000) {
+            $temp = $this->penyebut((int)($nilai/1000)) . " ribu" . $this->penyebut($nilai % 1000);
+        } else if ($nilai < 1000000000) {
+            $temp = $this->penyebut((int)($nilai/1000000)) . " juta" . $this->penyebut($nilai % 1000000);
+        } else if ($nilai < 1000000000000) {
+            $temp = $this->penyebut((int)($nilai/1000000000)) . " milyar" . $this->penyebut(fmod($nilai,1000000000));
+        } else if ($nilai < 1000000000000000) {
+            $temp = $this->penyebut((int)($nilai/1000000000000)) . " trilyun" . $this->penyebut(fmod($nilai,1000000000000));
+        }     
+        return $temp;
+    }
+
+    private function terbilang($nilai) {
+        if($nilai<0) {
+            $hasil = "minus ". trim($this->penyebut($nilai));
+        } else {
+            $hasil = trim($this->penyebut($nilai));
+        }     
+        return strtoupper($hasil . " RUPIAH");
     }
 }

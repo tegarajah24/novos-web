@@ -2,300 +2,391 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Invoice {{ $order->order_number }}</title>
+<title>Sales Order #{{ $order->order_number }}</title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page {
+        margin: 25px;
+    }
     body {
-        font-family: 'DejaVu Sans', Arial, sans-serif;
-        font-size: 12px;
-        color: #000;
-        background: #fff;
-        padding: 32px;
-    }
-
-    /* ── HEADER ── */
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        border-bottom: 3px solid #000;
-        padding-bottom: 16px;
-        margin-bottom: 16px;
-    }
-    .brand-name {
-        font-size: 22px;
-        font-weight: 700;
-        color: #000;
-        letter-spacing: 1px;
-    }
-    .brand-tagline {
+        font-family: 'Helvetica', 'Arial', sans-serif;
         font-size: 10px;
-        color: #555;
-        margin-top: 2px;
-    }
-    .invoice-meta {
-        text-align: right;
-    }
-    .invoice-meta .label {
-        font-size: 22px;
-        font-weight: 700;
         color: #000;
-        letter-spacing: 2px;
+        line-height: 1.3;
     }
-    .invoice-meta .number {
-        font-size: 12px;
-        font-weight: 600;
-        color: #333;
-        margin-top: 4px;
-    }
-    .invoice-meta .date {
-        font-size: 10px;
-        color: #555;
-        margin-top: 2px;
-    }
-
-    /* ── TABLE ── */
-    table {
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .bold { font-weight: bold; }
+    
+    /* Company & Meta Layout */
+    .header-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
     }
-    table.data-table { margin-bottom: 0; }
-    table thead th {
-        background: #fff;
+    .header-table td {
+        vertical-align: top;
+        border: none;
+    }
+    .company-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 2px;
         color: #000;
-        padding: 6px 10px;
-        font-size: 9px;
-        font-weight: 600;
-        text-align: left;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        border-bottom: 2px solid #000;
     }
-    table thead th:last-child { text-align: right; }
-    table tbody tr:nth-child(odd) td { background: #f5f5f5; }
-    table tbody tr:nth-child(even) td { background: #fff; }
-    table tbody td {
-        padding: 6px 10px;
+    .company-details {
+        font-size: 8.5px;
+        color: #333;
+        line-height: 1.4;
+    }
+    .meta-table {
+        border-collapse: collapse;
+        margin-top: 5px;
+    }
+    .meta-table td {
         font-size: 10px;
+        padding: 2px 5px;
+    }
+    
+    /* Sales Order Title Divider */
+    .title-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+    }
+    .title-table td {
+        vertical-align: middle;
+        border: none;
+    }
+    .title-line {
+        border-bottom: 1px solid #000;
+    }
+    .title-text {
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        padding: 0 10px;
+        white-space: nowrap;
+    }
+    
+    /* Customer & Due Box Layout */
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+    .info-table td {
+        vertical-align: top;
+        border: none;
+    }
+    .info-box {
+        border: 1px solid #000;
+        padding: 8px;
+        min-height: 85px;
+    }
+    .info-box-title {
+        font-size: 9px;
+        font-weight: bold;
+        border-bottom: 1px solid #000;
+        padding-bottom: 3px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+    .info-box-content table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .info-box-content td {
+        font-size: 9px;
+        padding: 2px 0;
+        vertical-align: top;
+    }
+    
+    /* Items Table */
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+    .items-table th {
+        border: 1px solid #000;
+        padding: 6px;
+        font-size: 9px;
+        font-weight: bold;
+        background-color: #fff;
+    }
+    .items-table td {
+        border: 1px solid #000;
+        padding: 6px;
+        font-size: 9px;
+        vertical-align: middle;
+    }
+    .items-table tbody tr {
+        page-break-inside: avoid;
+    }
+    
+    /* Bottom Summary & Notes Layout */
+    .bottom-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    .bottom-table td {
+        vertical-align: top;
+        border: none;
+    }
+    .notes-box {
+        border: 1px solid #000;
+        padding: 6px;
+        margin-bottom: 8px;
+        min-height: 40px;
+    }
+    .notes-title {
+        font-size: 8.5px;
+        font-weight: bold;
+        margin-bottom: 2px;
+        text-transform: uppercase;
+    }
+    .notes-body {
+        font-size: 8.5px;
         color: #333;
     }
-    table tbody td:last-child { text-align: right; font-weight: 600; }
-    .empty-row td {
-        text-align: center;
-        color: #888;
-        padding: 16px;
-        font-style: italic;
+    
+    /* Totals Box */
+    .totals-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #000;
     }
-
-    /* ── SUMMARY ── */
-    .summary-wrapper {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 16px;
-    }
-    .summary-box {
-        width: 260px;
-        border: 1px solid #bbb;
-        border-radius: 0;
-        background: #f5f5f5;
-        overflow: hidden;
-    }
-    .summary-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 6px 14px;
-        font-size: 10px;
+    .totals-table td {
+        padding: 5px 8px;
+        font-size: 9px;
         border-bottom: 1px solid #ddd;
     }
-    .summary-row:last-child { border-bottom: none; }
-    .summary-row .s-label { color: #333; }
-    .summary-row .s-value { font-weight: 600; color: #000; }
-    .summary-row.dp-row .s-value { color: #000; }
-    .summary-row.total-final {
-        border-top: 2px solid #000;
-        padding: 12px 14px;
+    .totals-table tr:last-child td {
+        border-bottom: none;
     }
-    .summary-row.total-final .s-label { color: #000; font-weight: 700; font-size: 12px; }
-    .summary-row.total-final .s-value { color: #000; font-weight: 800; font-size: 13px; }
-
-    /* ── DISCLAIMER ── */
-    .disclaimer {
-        border-top: 1px solid #ccc;
-        padding-top: 8px;
-        margin-bottom: 16px;
-        font-size: 10px;
+    .totals-bg {
+        background-color: #e9ecef;
+        font-weight: bold;
+    }
+    
+    /* Footer Style */
+    .footer-section {
+        margin-top: 30px;
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .footer-section td {
+        border: none;
+        font-size: 8px;
         color: #555;
     }
-    @media screen {
-        html { overflow-x: auto; }
-        body {
-            width: 210mm;
-            margin: 0 auto;
-        }
-    }
-
-    @media print {
-        @page { margin: 8mm; }
-        body {
-            padding: 0;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-    }
-
-    .bank-line {
-        font-size: 11px;
-        font-weight: 700;
-        color: #000;
-    }
-
-    /* ── FOOTER ── */
-    .footer {
-        border-top: 1px solid #ddd;
-        padding-top: 8px;
-    }
-    .footer-left {
-        font-size: 9px;
-        color: #888;
-        line-height: 1.6;
+    .footer-line {
+        border-top: 1px solid #000;
+        margin-top: 5px;
+        padding-top: 3px;
     }
 </style>
 </head>
 <body>
 
-    {{-- ── HEADER ── --}}
-    <div class="header">
-        <div>
-            <div class="brand-name">{{ $company_name }}</div>
-            <div class="brand-tagline">Konveksi & Custom Jersey</div>
-            @if($company_phone)
-            <div class="brand-tagline" style="margin-top:4px">{{ $company_phone }}</div>
-            @endif
-            <div class="brand-tagline" style="margin-top:4px">Invoice Date: {{ now()->format('d F Y') }}</div>
-        </div>
-        <div class="invoice-meta">
-            <div class="label">FAKTUR</div>
-            <div class="number">{{ $order->order_number }}</div>
-            <div class="date">Tanggal: {{ $order->created_at->format('d F Y') }}</div>
-        </div>
-    </div>
+    <!-- Header Section (Company on left, Logo & meta on right) -->
+    <table class="header-table">
+        <tr>
+            <!-- Left Side: Company Details -->
+            <td style="width: 55%;">
+                <div class="company-title">{{ $company_name }}</div>
+                <div class="company-details">
+                    {{ $company_address }}<br>
+                    Telp: {{ $company_phone }}<br>
+                    Email: {{ $company_email }}<br>
+                    {{ $company_npwp }}
+                </div>
+            </td>
+            <!-- Right Side: Logo & Sales Order Info -->
+            <td style="width: 45%; text-align: right;">
+                <div style="margin-bottom: 10px;">
+                    @if(file_exists(public_path('images/logo.png')))
+                        <img src="{{ public_path('images/logo.png') }}" style="height: 35px; width: auto;" alt="Logo">
+                    @else
+                        <div class="company-title">{{ $company_name }}</div>
+                    @endif
+                </div>
+                <table class="meta-table" style="margin-left: auto;">
+                    <tr>
+                        <td class="bold" style="text-align: left; padding-right: 15px;">PEMESANAN #</td>
+                        <td class="bold">:</td>
+                        <td class="bold" style="text-align: left;">{{ $order->order_number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; padding-right: 15px;">TANGGAL</td>
+                        <td>:</td>
+                        <td style="text-align: left;">{{ $order->created_at->format('d/m/Y') }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 
-    {{-- ── INFO PESANAN ── --}}
-    <div style="margin-bottom:16px; font-size:11px; color:#333; line-height:1.8">
-        @if($design && $design->nama_pemesan)
-        <span><strong>Pemesan:</strong> {{ $design->nama_pemesan }}</span><br>
-        @endif
-        @if($design && $design->team_name)
-        <span><strong>Tim:</strong> {{ $design->team_name }}</span>
-        @endif
-    </div>
+    <!-- Title Banner with horizontal lines -->
+    <table class="title-table">
+        <tr>
+            <td class="title-line" style="width: 35%;"></td>
+            <td class="title-text" style="width: 30%;">PEMESANAN PENJUALAN</td>
+            <td class="title-line" style="width: 35%;"></td>
+        </tr>
+    </table>
 
-    {{-- ── TABEL RINCIAN PESANAN ── --}}
-    <table class="data-table">
+    <!-- Customer & Due Date Boxes -->
+    <table class="info-table">
+        <tr>
+            <!-- Customer Box -->
+            <td style="width: 55%; padding-right: 15px;">
+                <div class="info-box">
+                    <div class="info-box-title">Pelanggan</div>
+                    <div class="info-box-content">
+                        <table>
+                            <tr>
+                                <td style="width: 18%;" class="bold">NAMA</td>
+                                <td style="width: 5%;">:</td>
+                                <td style="width: 77%;">{{ $customer_address ? $customer_address->full_name : ($design->nama_pemesan ?? $order->user->name) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold">ALAMAT</td>
+                                <td>:</td>
+                                <td>
+                                    {{ $customer_address ? ($customer_address->detail_address . ', ' . $customer_address->district . ', ' . $customer_address->city . ', ' . $customer_address->province . ' ' . $customer_address->postal_code) : '-' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bold">TELP</td>
+                                <td>:</td>
+                                <td>{{ $order->user->phone ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold">FAX</td>
+                                <td>:</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <!-- Due Date Box -->
+            <td style="width: 45%;">
+                <div class="info-box" style="min-height: 87px;">
+                    <div class="info-box-content" style="margin-top: 15px;">
+                        <table>
+                            <tr>
+                                <td style="width: 40%; font-size: 10px;" class="bold">JATUH TEMPO</td>
+                                <td style="width: 5%; font-size: 10px;">:</td>
+                                <td style="width: 55%; font-size: 10px;" class="bold">
+                                    {{ $order->created_at->copy()->addDays(\App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority))->format('d/m/Y') }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Main Items Table -->
+    <table class="items-table">
         <thead>
             <tr>
-                <th style="width:5%">#</th>
-                <th style="width:8%">Ukuran</th>
-                <th style="width:32%">Atribut</th>
-                <th style="width:8%; text-align:center">Qty</th>
-                <th style="width:15%; text-align:right">Harga/pcs</th>
-                <th style="width:18%; text-align:right">Subtotal</th>
+                <th style="width: 5%;" class="text-center">NO.</th>
+                <th style="width: 45%; text-align: left;">KETERANGAN</th>
+                <th style="width: 12%;" class="text-center">QTY</th>
+                <th style="width: 18%; text-align: right;">HARGA SATUAN (Rp.)</th>
+                <th style="width: 20%; text-align: right;">JUMLAH (Rp.)</th>
             </tr>
         </thead>
         <tbody>
-            @php $maxRows = 22; @endphp
             @forelse($grouped_items as $i => $group)
             <tr>
-                <td>{{ $i + 1 }}</td>
-                <td>{{ strtoupper($group['size']) }}</td>
+                <td class="text-center">{{ $i + 1 }}</td>
                 <td>
+                    <div class="bold">{{ $order->designRequest ? 'JERSEY CUSTOM' : 'PRODUK KATALOG' }} (SIZE {{ strtoupper($group['size']) }})</div>
                     @if($group['customizations'])
-                        {{ implode(', ', $group['customizations']) }}
-                    @else
-                        <span style="color:#999">-</span>
+                        <div style="font-size: 8px; color: #555; margin-top: 2px;">
+                            {{ implode(', ', $group['customizations']) }}
+                        </div>
                     @endif
                 </td>
-                <td style="text-align:center">{{ $group['qty'] }}</td>
-                <td style="text-align:right">Rp {{ number_format($group['price'], 0, ',', '.') }}</td>
-                <td style="text-align:right">Rp {{ number_format($group['subtotal'], 0, ',', '.') }}</td>
+                <td class="text-center">{{ $group['qty'] }} pcs</td>
+                <td class="text-right">{{ number_format($group['price'], 2, ',', '.') }}</td>
+                <td class="text-right bold">{{ number_format($group['subtotal'], 2, ',', '.') }}</td>
             </tr>
             @empty
-            <tr class="empty-row">
-                <td colspan="6">Belum ada rincian item pesanan</td>
+            <tr>
+                <td colspan="5" class="text-center" style="font-style: italic; color: #999; padding: 15px;">Belum ada rincian item pesanan</td>
             </tr>
             @endforelse
-            @if($grouped_items->count() > 0)
-            @for($e = $grouped_items->count(); $e < $maxRows; $e++)
-            <tr>
-                <td>&nbsp;</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            @endfor
-            @endif
         </tbody>
     </table>
 
-    {{-- ── SUMMARY HARGA ── --}}
-    <div class="summary-wrapper">
-        <div class="summary-box">
-            <div class="summary-row">
-                <span class="s-label">Subtotal Jersey</span>
-                <span class="s-value">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
-            </div>
-            @if($dp_paid > 0)
-            <div class="summary-row dp-row">
-                <span class="s-label">DP Sudah Dibayar</span>
-                <span class="s-value">− Rp {{ number_format($dp_paid, 0, ',', '.') }}</span>
-            </div>
-            @endif
-            <div class="summary-row total-final">
-                <span class="s-label">{{ $dp_paid > 0 ? 'Sisa yang Harus Dibayar' : 'Total Tagihan' }}</span>
-                <span class="s-value">Rp {{ number_format($sisa_bayar > 0 ? $sisa_bayar : $subtotal, 0, ',', '.') }}</span>
-            </div>
-        </div>
-    </div>
-
-    {{-- ── DISCLAIMER ONGKIR ── --}}
-    <div class="disclaimer">Perhatian — Harga Belum Termasuk Ongkos Kirim</div>
-
-    {{-- ── DETAIL PEMBAYARAN ── --}}
-    <table class="payment-info">
-        <thead>
-            <tr>
-                <th colspan="2" style="border-bottom: 2px solid #000; background: #fff; color: #000; text-transform: uppercase; letter-spacing: 0.6px; font-size: 11px; text-align: left;">Detail Pembayaran</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr style="background: #fff;">
-                <td style="padding: 6px 0; font-size: 10px; color: #000; line-height: 1.6; text-align: left; font-weight: 700; vertical-align: top; width: 70%;">
+    <!-- Bottom Section: Notes & Spelled-Out on left, Summary/Totals on right -->
+    <table class="bottom-table">
+        <tr>
+            <!-- Left Side: Message, Spelled-Out, Payment Instructions -->
+            <td style="width: 55%; padding-right: 15px;">
+                <!-- Pesan Box -->
+                <div class="notes-box">
+                    <div class="notes-title">Pesan</div>
+                    <div class="notes-body">{{ $order->notes ?? '-' }}</div>
+                </div>
+                <!-- Terbilang Box -->
+                <div class="notes-box">
+                    <div class="notes-title">Terbilang</div>
+                    <div class="notes-body bold">{{ $terbilang }}</div>
+                </div>
+                <!-- Bank Info / Payment Note -->
+                <div style="font-size: 8px; color: #333; line-height: 1.4; margin-top: 5px;">
+                    <span class="bold">Detail Pembayaran Rekening:</span><br>
                     Pilihan #1: BRI 6965 01 003981 53 8<br>
                     Pilihan #2: Mandiri 1380019031454<br>
                     Pilihan #3: BNI 0899192812<br>
-                    <br>
-                    Minimal DP 10% Dulu Baru Akan Di Produksi
-                </td>
-                <td style="padding: 6px 0; font-size: 10px; color: #000; line-height: 1.6; text-align: left; font-weight: 700; vertical-align: top;">
-                    @if($company_instagram)
-                        Instagram : {{ '@' . ltrim($company_instagram, '@') }}
+                    <span class="bold">Minimal DP 10% Dulu Baru Akan Di Produksi.</span>
+                </div>
+            </td>
+            <!-- Right Side: Totals Summary -->
+            <td style="width: 45%;">
+                <table class="totals-table">
+                    <tr>
+                        <td style="width: 50%;">Subtotal</td>
+                        <td style="width: 50%; text-align: right;">{{ number_format($subtotal, 2, ',', '.') }}</td>
+                    </tr>
+                    @if($dp_paid > 0)
+                    <tr>
+                        <td>DP Sudah Dibayar</td>
+                        <td style="text-align: right;">-{{ number_format($dp_paid, 2, ',', '.') }}</td>
+                    </tr>
                     @endif
-                </td>
-            </tr>
-        </tbody>
+                    <tr class="totals-bg">
+                        <td>TOTAL</td>
+                        <td style="text-align: right;">{{ number_format($subtotal, 2, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="bold">Sisa Tagihan</td>
+                        <td style="text-align: right;" class="bold">{{ number_format($sisa_bayar, 2, ',', '.') }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
     </table>
 
-    {{-- ── FOOTER ── --}}
-    <div class="footer">
-        <div class="footer-left">
-            Dokumen ini diterbitkan secara digital oleh sistem {{ $company_name }}.
-        </div>
-
-    </div>
+    <!-- Footer Section -->
+    <table class="footer-section">
+        <tr>
+            <td style="width: 50%; border-top: 1px solid #ddd; padding-top: 3px;">
+                Sales Order #{{ $order->order_number }}
+            </td>
+            <td style="width: 50%; text-align: right; border-top: 1px solid #ddd; padding-top: 3px;">
+                Page 1 of 1
+            </td>
+        </tr>
+    </table>
 
 </body>
 </html>
