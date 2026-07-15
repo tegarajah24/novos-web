@@ -368,9 +368,9 @@
                 <tr>
                     <td colspan="5" class="text-center" style="font-style: italic; color: #999; padding: 15px;">Belum ada rincian item pesanan</td>
                 </tr>
+                @endforelse
             </tbody>
         </table>
-
         <!-- Bottom Section: Notes & Spelled-Out on left, Summary/Totals on right (Aligned column widths) -->
         <table class="bottom-table">
             <tr>
