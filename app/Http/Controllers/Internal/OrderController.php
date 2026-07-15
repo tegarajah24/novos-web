@@ -372,11 +372,7 @@ class OrderController extends Controller
             }
         }
 
-        $deadlineDays = match ($order->designRequest?->priority) {
-            'super_express' => 2,
-            'express'       => 6,
-            default         => 14,
-        };
+        $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
 
         $attributesSchema = [];
         $categoryName = null;
@@ -1047,11 +1043,7 @@ class OrderController extends Controller
         $sheet->getRowDimension(2)->setRowHeight(20);
 
         // Specs Fields mapping
-        $deadlineDays = match ($order->designRequest?->priority) {
-            'super_express' => 2,
-            'express'       => 6,
-            default         => 14,
-        };
+        $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
 
         $leftFields = [
             ['label1' => 'Jenis',            'val1' => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog', 'label2' => 'Bahan',            'val2' => $order->designRequest?->material ?? '-'],
@@ -1585,11 +1577,7 @@ class OrderController extends Controller
         $bdrThinAll    = ['borders' => ['allBorders' => ['borderStyle' => $BORDER_THIN,  'color' => $BLACK]]];
 
         $designFiles = $order->designRequest?->design_files ?? [];
-        $deadlineDays = match ($order->designRequest?->priority) {
-            'super_express' => 2,
-            'express'       => 6,
-            default         => 14,
-        };
+        $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
 
         // ═══════════════════════════════════════════════════════════════
         // SHEET 1 — "depan"  (Portrait A4)

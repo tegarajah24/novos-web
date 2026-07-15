@@ -90,7 +90,7 @@ class ProductionController extends Controller
                     'team_name'         => $dr?->team_name ?? 'Jersey Custom',
                     'status'            => $order->status,
                     'production_stage'  => $stage,
-                    'deadline'          => $order->created_at->addDays(7)->format('d M Y'),
+                    'deadline'          => $order->created_at->copy()->addDays(\App\Models\Setting::getDeadlineDaysForPriority($priority))->format('d M Y'),
                     'priority'          => $priority,
                     'material'          => $dr?->material ?? '-',
                     'collar'            => $dr?->collar_style ?? '-',
