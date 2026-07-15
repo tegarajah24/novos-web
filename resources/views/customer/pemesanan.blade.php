@@ -367,7 +367,6 @@
                         >
                     </div>
                     <div x-show="showDetailSponsorField" x-transition x-cloak>
-                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Detail Sponsor</label>
                         <input
                             type="text"
@@ -2197,7 +2196,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         get selectedAddress() {
             if (!this.addresses) return null;
-            return this.addresses.find(a => a.id === this.selectedAddressId) || null;
+            return this.addresses.find(a => a.id === this.selectedAddressId) || this.addresses.find(a => a.is_primary) || this.addresses[0] || null;
         },
 
         get prioritasText() {
