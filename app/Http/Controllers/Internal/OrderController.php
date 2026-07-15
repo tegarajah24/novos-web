@@ -356,21 +356,6 @@ class OrderController extends Controller
             ];
         }
 
-        $itemDetails = [];
-        if ($order->itemDetails && $order->itemDetails->isNotEmpty()) {
-            foreach ($order->itemDetails as $detail) {
-                $itemDetails[] = [
-                    'id'            => $detail->id,
-                    'no_punggung'   => $detail->no_punggung,
-                    'nama_punggung' => $detail->nama_punggung,
-                    'model_lengan'  => $detail->model_lengan,
-                    'size'          => $detail->size,
-                    'keterangan'    => $detail->keterangan,
-                    'customizations'=> $detail->customizations ?? [],
-                    'price'         => (float) ($detail->price ?? 0),
-                ];
-            }
-        }
         $getMajority = function ($attributeKey, $fallback) use ($order) {
             if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
                 return $fallback;
@@ -406,6 +391,52 @@ class OrderController extends Controller
         $majorityKerah = $getMajority('kerah', $order->designRequest?->collar_style ?? '-');
         $majorityPotongan = $getMajority('jenis_potongan', $order->designRequest?->jenis_potongan ?? '-');
         $majorityLengan = $getMajority('lengan_jahitan', $order->designRequest?->lengan_jahitan ?? '-');
+
+        $itemDetails = [];
+        if ($order->itemDetails && $order->itemDetails->isNotEmpty()) {
+            foreach ($order->itemDetails as $detail) {
+                // Determine deviations
+                $diffs = [];
+
+                $itemBahan = $detail->customizations['bahan'] ?? null;
+                if ($itemBahan && strtoupper(trim($itemBahan)) !== $majorityBahan) {
+                    $diffs[] = ucwords(strtolower(trim($itemBahan)));
+                }
+
+                $itemKerah = $detail->customizations['kerah'] ?? null;
+                if ($itemKerah && strtoupper(trim($itemKerah)) !== $majorityKerah) {
+                    $diffs[] = ucwords(strtolower(trim($itemKerah)));
+                }
+
+                $itemPotongan = $detail->customizations['jenis_potongan'] ?? null;
+                if ($itemPotongan && strtoupper(trim($itemPotongan)) !== $majorityPotongan) {
+                    $diffs[] = ucwords(strtolower(trim($itemPotongan)));
+                }
+
+                $itemLengan = $detail->customizations['lengan_jahitan'] ?? null;
+                if ($itemLengan && strtoupper(trim($itemLengan)) !== $majorityLengan) {
+                    $diffs[] = ucwords(strtolower(trim($itemLengan)));
+                }
+
+                if ($detail->keterangan) {
+                    $diffs[] = trim($detail->keterangan);
+                }
+
+                $keteranganStr = !empty($diffs) ? implode(', ', $diffs) : '-';
+
+                $itemDetails[] = [
+                    'id'            => $detail->id,
+                    'no_punggung'   => $detail->no_punggung,
+                    'nama_punggung' => $detail->nama_punggung,
+                    'model_lengan'  => $detail->model_lengan,
+                    'size'          => $detail->size,
+                    'keterangan'    => $detail->keterangan,
+                    'keterangan_simple' => $keteranganStr,
+                    'customizations'=> $detail->customizations ?? [],
+                    'price'         => (float) ($detail->price ?? 0),
+                ];
+            }
+        }
 
         $customizations = $order->designRequest?->customizations ?? [];
         if (isset($customizations['bahan'])) $customizations['bahan'] = $majorityBahan;

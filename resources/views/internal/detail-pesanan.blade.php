@@ -248,34 +248,23 @@ if (!empty($order['item_details'])) {
                     <table class="w-full text-sm">
                         <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
                             <tr>
-                                <th class="px-3 py-2 text-left font-semibold">No Punggung</th>
+                                <th class="px-3 py-2 text-left font-semibold">No</th>
                                 <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
-                                <th class="px-3 py-2 text-left font-semibold">Model Lengan</th>
+                                <th class="px-3 py-2 text-left font-semibold">NPG</th>
                                 <th class="px-3 py-2 text-left font-semibold">Size</th>
-                                <th class="px-3 py-2 text-left font-semibold">Atribut / Keterangan</th>
+                                <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
                                 <th class="px-3 py-2 text-right font-semibold">Harga</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @foreach($order['item_details'] as $detail)
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-3 py-2 text-gray-800 font-medium">{{ $detail['no_punggung'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $detail['nama_punggung'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $detail['model_lengan'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-800 font-medium">{{ $loop->iteration }}</td>
+                                <td class="px-3 py-2 text-gray-700 font-medium">{{ $detail['nama_punggung'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-700">{{ $detail['no_punggung'] ?? '-' }}</td>
                                 <td class="px-3 py-2 text-gray-700">{{ $detail['size'] ?? '-' }}</td>
                                 <td class="px-3 py-2 text-gray-700">
-                                    @if(!empty($detail['customizations']))
-                                        <div class="flex flex-wrap gap-1 mb-1">
-                                            @foreach($detail['customizations'] as $k => $v)
-                                                @if($v !== '')
-                                                    <span class="inline-block bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px]"><strong class="text-gray-500">{{ ucwords(str_replace('_', ' ', $k)) }}:</strong> {{ $v }}</span>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                    @if($detail['keterangan'])
-                                        <div class="text-xs text-gray-500 italic">{{ $detail['keterangan'] }}</div>
-                                    @endif
+                                    {{ $detail['keterangan_simple'] ?? '-' }}
                                 </td>
                                 <td class="px-3 py-2 text-right font-medium text-gray-900">{{ 'Rp ' . number_format($detail['price'] ?? 0, 0, ',', '.') }}</td>
                             </tr>
