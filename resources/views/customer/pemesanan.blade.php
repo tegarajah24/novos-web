@@ -2645,15 +2645,52 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             if (this.loading) return;
             this.loading = true;
 
-            // Generate catatan legacy from items array
-            this.form.catatan = this.items.map(item => {
+            const specKeys = ['kerah', 'bahan', 'jenis_potongan', 'lengan_jahitan'];
+
+            // Build compiled items first
+            const compiledItems = this.items.map(item => {
                 const compiled = Object.assign({}, this.form.customizations, item.customizations);
-                const customParts = Object.entries(compiled)
-                    .filter(([k, v]) => v !== undefined && v !== null && v !== '')
+                return {
+                    no: item.no,
+                    nama: item.nama,
+                    size: item.size,
+                    model_lengan: compiled.lengan_jahitan || compiled.model_lengan || item.model_lengan || '-',
+                    customizations: compiled
+                };
+            });
+
+            // Compute majority values for spec attributes
+            const majority = {};
+            specKeys.forEach(key => {
+                const counts = {};
+                compiledItems.forEach(item => {
+                    const val = item.customizations[key] || '';
+                    if (val) {
+                        counts[val] = (counts[val] || 0) + 1;
+                    }
+                });
+                let maxCount = 0;
+                let maxVal = '';
+                Object.entries(counts).forEach(([val, count]) => {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        maxVal = val;
+                    }
+                });
+                majority[key] = maxVal;
+            });
+
+            // Generate catatan legacy — only include minority customizations in keterangan
+            this.form.catatan = compiledItems.map(item => {
+                const customParts = Object.entries(item.customizations)
+                    .filter(([k, v]) => {
+                        if (v === undefined || v === null || v === '') return false;
+                        if (specKeys.includes(k) && majority[k] && v === majority[k]) return false;
+                        return true;
+                    })
                     .map(([k, v]) => v)
                     .join(', ');
-                const modelLengan = compiled.lengan_jahitan || compiled.model_lengan || item.model_lengan || '-';
-                return `${item.no || '-'}, ${item.nama || '-'}, ${modelLengan}, ${item.size || 'M'}${customParts ? ', ' + customParts : ''}`;
+                return `${item.no || '-'}, ${item.nama || '-'}, ${item.model_lengan || '-'}, ${item.size || 'M'}${customParts ? ', ' + customParts : ''}`;
             }).join('\n');
 
             const getFirstImage = () => {
@@ -2674,17 +2711,12 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     nama_artikel: this.form.nama_artikel,
                     nama_pemesan: this.form.nama_pemesan,
                     detail_sponsor: this.form.detail_sponsor,
+                    kerah: majority.kerah || '',
+                    bahan: majority.bahan || '',
+                    jenis_potongan: majority.jenis_potongan || '',
+                    lengan_jahitan: majority.lengan_jahitan || '',
                     customizations: this.form.customizations || {},
-                    items: this.items.map(item => {
-                        const compiled = Object.assign({}, this.form.customizations, item.customizations);
-                        return {
-                            no: item.no,
-                            nama: item.nama,
-                            size: item.size,
-                            model_lengan: compiled.lengan_jahitan || compiled.model_lengan || item.model_lengan || '-',
-                            customizations: compiled
-                        };
-                    }),
+                    items: compiledItems,
                     catatan: this.form.catatan,
                     total_qty: this.form.total_qty,
                     prioritas: this.prioritas,

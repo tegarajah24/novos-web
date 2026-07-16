@@ -455,7 +455,7 @@
                                             <template x-if="item.design_data">
                                                 <div>
                                                     <p class="text-sm font-semibold text-gray-900 truncate" x-text="'Custom: ' + (item.design_data.team_name || 'Pesanan')"></p>
-                                                    <p class="text-xs text-gray-400 truncate" x-text="item.design_data.bahan + ' | ' + item.design_data.kerah"></p>
+                                                    <p class="text-xs text-gray-400 truncate" x-text="getMajoritySpec(item).bahan + ' | ' + getMajoritySpec(item).kerah"></p>
                                                 </div>
                                             </template>
                                             <template x-if="!item.design_data">
@@ -542,23 +542,23 @@
                                                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
                                                             Spesifikasi Jersey
                                                         </p>
-                                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
-                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Jenis Kerah</span>
-                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.kerah || '-'"></span>
-                                                            </div>
-                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
-                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Jenis Potongan</span>
-                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.jenis_potongan || '-'"></span>
-                                                            </div>
-                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
-                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Bahan Jersey</span>
-                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.bahan || '-'"></span>
-                                                            </div>
-                                                            <div class="flex gap-2 py-1.5 border-b border-gray-100">
-                                                                <span class="text-xs text-gray-500 w-32 shrink-0">Model Lengan</span>
-                                                                <span class="text-xs font-medium text-gray-800" x-text="item.design_data.lengan_jahitan || '-'"></span>
-                                                            </div>
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+                                                             <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                 <span class="text-xs text-gray-500 w-32 shrink-0">Jenis Kerah</span>
+                                                                 <span class="text-xs font-medium text-gray-800" x-text="getMajoritySpec(item).kerah || '-'"></span>
+                                                             </div>
+                                                             <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                 <span class="text-xs text-gray-500 w-32 shrink-0">Jenis Potongan</span>
+                                                                 <span class="text-xs font-medium text-gray-800" x-text="getMajoritySpec(item).jenis_potongan || '-'"></span>
+                                                             </div>
+                                                             <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                 <span class="text-xs text-gray-500 w-32 shrink-0">Bahan Jersey</span>
+                                                                 <span class="text-xs font-medium text-gray-800" x-text="getMajoritySpec(item).bahan || '-'"></span>
+                                                             </div>
+                                                             <div class="flex gap-2 py-1.5 border-b border-gray-100">
+                                                                 <span class="text-xs text-gray-500 w-32 shrink-0">Model Lengan</span>
+                                                                 <span class="text-xs font-medium text-gray-800" x-text="getMajoritySpec(item).lengan_jahitan || '-'"></span>
+                                                             </div>
                                                             <div class="flex gap-2 py-1.5 border-b border-gray-100">
                                                                 <span class="text-xs text-gray-500 w-32 shrink-0">Total Quantity</span>
                                                                 <span class="text-xs font-semibold text-[#1a237e]" x-text="(item.design_data.total_qty || item.qty || '-') + ' pcs'"></span>
@@ -648,11 +648,11 @@
                                                                                     <span class="inline-block bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded" x-text="detail.size || '-'"></span>
                                                                                 </td>
                                                                                 <td class="px-3 py-2 text-gray-500">
-                                                                                    <template x-if="detail.customizations && Object.keys(detail.customizations).length > 0">
-                                                                                        <span x-text="Object.entries(detail.customizations).filter(([k,v]) => v !== undefined && v !== null && v !== '').map(([k,v]) => v).join(', ')"></span>
-                                                                                    </template>
-                                                                                    <template x-if="!detail.customizations || Object.keys(detail.customizations).length === 0">-</template>
-                                                                                </td>
+                                                                                     <template x-if="detail.customizations && Object.keys(detail.customizations).length > 0 && getMinorityCustomizations(item, detail)">
+                                                                                         <span x-text="getMinorityCustomizations(item, detail)"></span>
+                                                                                     </template>
+                                                                                     <template x-if="!detail.customizations || Object.keys(detail.customizations).length === 0 || !getMinorityCustomizations(item, detail)">-</template>
+                                                                                 </td>
                                                                             </tr>
                                                                         </template>
                                                                     </tbody>
@@ -1952,13 +1952,50 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
 
         // Parse string catatan CSV menjadi array baris tabel
         // Format: NoPunggung,NamaPunggung,ModelLengan,Size[,Keterangan] per pemain
+        getMajoritySpec(item) {
+            const specKeys = ['kerah', 'bahan', 'jenis_potongan', 'lengan_jahitan'];
+            const result = {};
+            specKeys.forEach(key => {
+                if (item.design_data[key]) {
+                    result[key] = item.design_data[key];
+                    return;
+                }
+                if (!item.design_data.items || item.design_data.items.length === 0) {
+                    result[key] = '-';
+                    return;
+                }
+                const counts = {};
+                item.design_data.items.forEach(detail => {
+                    const val = detail.customizations?.[key] || '';
+                    if (val) counts[val] = (counts[val] || 0) + 1;
+                });
+                let maxCount = 0, maxVal = '';
+                Object.entries(counts).forEach(([val, count]) => {
+                    if (count > maxCount) { maxCount = count; maxVal = val; }
+                });
+                result[key] = maxVal || '-';
+            });
+            return result;
+        },
+
+        getMinorityCustomizations(item, detail) {
+            if (!detail.customizations || Object.keys(detail.customizations).length === 0) return '';
+            const specKeys = ['kerah', 'bahan', 'jenis_potongan', 'lengan_jahitan'];
+            const majority = this.getMajoritySpec(item);
+            return Object.entries(detail.customizations)
+                .filter(([k, v]) => {
+                    if (v === undefined || v === null || v === '') return false;
+                    if (specKeys.includes(k) && majority[k] && majority[k] !== '-' && v === majority[k]) return false;
+                    return true;
+                })
+                .map(([k, v]) => v)
+                .join(', ');
+        },
+
         parseCatatan(catatan) {
             if (!catatan) return [];
             const parts = catatan.split(',').map(s => s.trim());
             const rows = [];
-            // Coba deteksi apakah per 5 field (dengan keterangan) atau 4 field
-            // Heuristik: cek apakah elemen ke-4 (index 4) adalah angka/noPunggung atau teks
-            // Kita coba parse dengan greedy: ambil per 4, field ke-5 jika bukan angka/noPunggung = keterangan
             let i = 0;
             while (i < parts.length) {
                 if (!parts[i]) { i++; continue; }
@@ -1966,7 +2003,6 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
                 const nama = parts[i+1] || '-';
                 const model= parts[i+2] || '-';
                 const size = parts[i+3] || '-';
-                // Cek apakah parts[i+4] adalah keterangan atau no punggung berikutnya
                 let ket = '-';
                 let step = 4;
                 if (parts[i+4] !== undefined) {
