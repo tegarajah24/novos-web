@@ -169,7 +169,6 @@
                                             <tr>
                                                 <th class="px-3 py-2 text-left font-semibold">No Punggung</th>
                                                 <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
-                                                <th class="px-3 py-2 text-left font-semibold">Model Lengan</th>
                                                 <th class="px-3 py-2 text-left font-semibold">Size</th>
                                                 <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
                                             </tr>
@@ -177,11 +176,10 @@
                                         <tbody class="divide-y divide-gray-100 bg-white">
                                             <template x-for="(d, i) in selectedOrder?.item_details || []" :key="i">
                                                 <tr class="hover:bg-gray-50 transition-colors">
-                                                    <td class="px-3 py-2 text-gray-800 font-medium" x-text="d.no_punggung"></td>
-                                                    <td class="px-3 py-2 text-gray-700" x-text="d.nama_punggung"></td>
-                                                    <td class="px-3 py-2 text-gray-700" x-text="d.model_lengan"></td>
+                                                    <td class="px-3 py-2 text-gray-800 font-medium" x-text="d.no_punggung || '-'"></td>
+                                                    <td class="px-3 py-2 text-gray-700" x-text="d.nama_punggung || '-'"></td>
                                                     <td class="px-3 py-2 text-gray-700" x-text="d.size"></td>
-                                                    <td class="px-3 py-2 text-gray-700" x-text="d.keterangan"></td>
+                                                    <td class="px-3 py-2 text-gray-700" x-text="d.keterangan || '-'"></td>
                                                 </tr>
                                             </template>
                                         </tbody>

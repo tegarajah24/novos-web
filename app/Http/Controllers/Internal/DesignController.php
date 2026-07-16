@@ -60,13 +60,59 @@ class DesignController extends Controller
                     ];
                 }
 
-                $itemDetails = $order->itemDetails->map(fn($d) => [
-                    'no_punggung'   => $d->no_punggung,
-                    'nama_punggung' => $d->nama_punggung,
-                    'model_lengan'  => $d->model_lengan,
-                    'size'          => $d->size,
-                    'keterangan'    => $d->keterangan,
-                ])->values()->toArray();
+                $getMajority = function ($attributeKey, $fallback) use ($order, $dr) {
+                    if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
+                        return $fallback;
+                    }
+                    $counts = [];
+                    foreach ($order->itemDetails as $detail) {
+                        $val = $detail->customizations[$attributeKey] ?? null;
+                        if (!$val) {
+                            if ($attributeKey === 'bahan') $val = $dr?->material;
+                            elseif ($attributeKey === 'kerah') $val = $dr?->collar_style;
+                            elseif ($attributeKey === 'jenis_potongan') $val = $dr?->jenis_potongan;
+                            elseif ($attributeKey === 'lengan_jahitan') $val = $dr?->lengan_jahitan;
+                        }
+                        $val = $val ? strtoupper(trim($val)) : '-';
+                        if ($val === '-') continue;
+                        $counts[$val] = ($counts[$val] ?? 0) + 1;
+                    }
+                    if (empty($counts)) return $fallback;
+                    arsort($counts);
+                    return key($counts);
+                };
+
+                $majorityBahan = $getMajority('bahan', $dr?->material ?? '-');
+                $majorityKerah = $getMajority('kerah', $dr?->collar_style ?? '-');
+                $majorityPotongan = $getMajority('jenis_potongan', $dr?->jenis_potongan ?? '-');
+                $majorityLengan = $getMajority('lengan_jahitan', $dr?->lengan_jahitan ?? '-');
+
+                $specKeys = ['bahan', 'kerah', 'jenis_potongan', 'lengan_jahitan'];
+                $majorityMap = [
+                    'bahan'          => $majorityBahan,
+                    'kerah'          => $majorityKerah,
+                    'jenis_potongan' => $majorityPotongan,
+                    'lengan_jahitan' => $majorityLengan,
+                ];
+
+                $itemDetails = $order->itemDetails->map(function ($d) use ($specKeys, $majorityMap) {
+                    $diffs = [];
+                    foreach ($specKeys as $key) {
+                        $val = $d->customizations[$key] ?? null;
+                        if ($val && strtoupper(trim($val)) !== ($majorityMap[$key] ?? '')) {
+                            $diffs[] = ucwords(strtolower(trim($val)));
+                        }
+                    }
+                    if (!empty($d->keterangan)) {
+                        $diffs[] = trim($d->keterangan);
+                    }
+                    return [
+                        'no_punggung'   => $d->no_punggung,
+                        'nama_punggung' => $d->nama_punggung,
+                        'size'          => $d->size,
+                        'keterangan'    => !empty($diffs) ? implode(', ', $diffs) : '-',
+                    ];
+                })->values()->toArray();
 
                 return [
                     'id'                => $order->id,
