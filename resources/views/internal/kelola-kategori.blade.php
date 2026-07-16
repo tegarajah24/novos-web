@@ -262,6 +262,20 @@
                                         </div>
                                     </div>
 
+                                    {{-- System Tag --}}
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Tag</label>
+                                        <select x-model="attr.system_tag"
+                                            class="rounded-lg border-gray-300 text-xs px-3 py-2 focus:ring-purple-500 focus:border-purple-500">
+                                            <option value="">— Tidak ada —</option>
+                                            <option value="is_fabric_type">Bahan</option>
+                                            <option value="is_collar_type">Kerah</option>
+                                            <option value="is_cut_type">Potongan</option>
+                                            <option value="is_sleeve_joint_type">Lengan Jahitan</option>
+                                            <option value="is_sleeve_type">Lengan</option>
+                                        </select>
+                                    </div>
+
                                     {{-- Depends On --}}
                                     <div class="mb-3">
                                         <label class="block text-xs font-medium text-gray-500 mb-1">
@@ -302,6 +316,13 @@
                                                                 class="w-full rounded-lg border-gray-200 bg-white pl-7 pr-2 py-1.5 text-xs focus:ring-[#1a237e] focus:border-[#1a237e] disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                                                                 placeholder="+ Harga">
                                                         </div>
+                                                        <select x-show="attr.system_tag === 'is_sleeve_type'"
+                                                            x-model="opt.sleeve"
+                                                            class="w-20 shrink-0 rounded-lg border-gray-200 bg-white text-[10px] px-1.5 py-1.5 focus:ring-[#1a237e] focus:border-[#1a237e]">
+                                                            <option value="">—</option>
+                                                            <option value="short">Pendek</option>
+                                                            <option value="long">Panjang</option>
+                                                        </select>
                                                         <button @click="removeOption(attr, oi)"
                                                             class="text-gray-300 hover:text-red-500 transition-colors p-1" title="Hapus opsi">
                                                             <i data-lucide="x" class="w-3 h-3"></i>
@@ -553,9 +574,11 @@ function kategoriApp() {
                     type:             attr.type || 'select',
                     required:         attr.required !== false,
                     reference_image:  attr.reference_image || '',
+                    system_tag:       attr.system_tag || '',
                     options:          (attr.options || []).map(o => ({ 
                         value: o.value || '',
-                        price_modifier: Number(o.price_modifier) || 0
+                        price_modifier: Number(o.price_modifier) || 0,
+                        sleeve: o.sleeve || '',
                     })),
                     // Pisahkan depends_on jadi 2 field agar mudah di-bind Alpine
                     depends_on_id:    attr.depends_on?.attribute_id || '',
@@ -577,7 +600,8 @@ function kategoriApp() {
                 type: 'select',
                 required: true,
                 reference_image: '',
-                options: [{ value: '', price_modifier: 0 }],
+                system_tag: '',
+                options: [{ value: '', price_modifier: 0, sleeve: '' }],
                 depends_on_id: '',
                 depends_on_value: '',
             });
@@ -595,7 +619,7 @@ function kategoriApp() {
 
         addOption(attr) {
             if (!attr.options) attr.options = [];
-            attr.options.push({ value: '', price_modifier: 0 });
+            attr.options.push({ value: '', price_modifier: 0, sleeve: '' });
             this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
         },
 
@@ -641,9 +665,11 @@ function kategoriApp() {
                     type:           attr.type,
                     required:       !!attr.required,
                     reference_image: attr.reference_image || '',
+                    system_tag:     attr.system_tag || '',
                     options:        (attr.options || []).filter(o => o.value.trim()).map(o => ({ 
                         value: o.value.trim(),
-                        price_modifier: Number(o.price_modifier) || 0
+                        price_modifier: Number(o.price_modifier) || 0,
+                        sleeve: o.sleeve || '',
                     })),
                 };
                 if (attr.depends_on_id && attr.depends_on_value) {

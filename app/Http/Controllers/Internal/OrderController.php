@@ -356,41 +356,24 @@ class OrderController extends Controller
             ];
         }
 
-        $getMajority = function ($attributeKey, $fallback) use ($order) {
-            if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
-                return $fallback;
-            }
-            $counts = [];
-            foreach ($order->itemDetails as $detail) {
-                $val = $detail->customizations[$attributeKey] ?? null;
-                if (!$val) {
-                    if ($attributeKey === 'bahan') {
-                        $val = $order->designRequest?->material;
-                    } elseif ($attributeKey === 'kerah') {
-                        $val = $order->designRequest?->collar_style;
-                    } elseif ($attributeKey === 'jenis_potongan') {
-                        $val = $order->designRequest?->jenis_potongan;
-                    } elseif ($attributeKey === 'lengan_jahitan') {
-                        $val = $order->designRequest?->lengan_jahitan;
+        $spkFields = $this->resolveSpkFields($order);
+        $majorityBahan = $spkFields['bahan'] ?? strtoupper(trim($order->designRequest?->material ?? '-'));
+        $majorityKerah = $spkFields['kerah'] ?? strtoupper(trim($order->designRequest?->collar_style ?? '-'));
+        $majorityPotongan = $spkFields['jenis_potongan'] ?? strtoupper(trim($order->designRequest?->jenis_potongan ?? '-'));
+        $majorityLengan = $spkFields['lengan_jahitan'] ?? strtoupper(trim($order->designRequest?->lengan_jahitan ?? '-'));
+        $majoritySleeveType = $spkFields['lengan'] ?? 'short';
+
+        // Build sleeveOptionMap once for diff comparison
+        $sleeveOptionMap = [];
+        foreach (\App\Models\Category::all() as $_cat) {
+            foreach (($_cat->attributes_schema ?? []) as $_a) {
+                if (($_a['system_tag'] ?? '') === 'is_sleeve_type') {
+                    foreach (($_a['options'] ?? []) as $_o) {
+                        if (!empty($_o['sleeve'])) $sleeveOptionMap[$_o['value']] = $_o['sleeve'];
                     }
                 }
-                $val = $val ? strtoupper(trim($val)) : '-';
-                if ($val === '-') {
-                    continue;
-                }
-                $counts[$val] = ($counts[$val] ?? 0) + 1;
             }
-            if (empty($counts)) {
-                return $fallback;
-            }
-            arsort($counts);
-            return key($counts);
-        };
-
-        $majorityBahan = $getMajority('bahan', $order->designRequest?->material ?? '-');
-        $majorityKerah = $getMajority('kerah', $order->designRequest?->collar_style ?? '-');
-        $majorityPotongan = $getMajority('jenis_potongan', $order->designRequest?->jenis_potongan ?? '-');
-        $majorityLengan = $getMajority('lengan_jahitan', $order->designRequest?->lengan_jahitan ?? '-');
+        }
 
         $itemDetails = [];
         if ($order->itemDetails && $order->itemDetails->isNotEmpty()) {
@@ -416,6 +399,11 @@ class OrderController extends Controller
                 $itemLengan = $detail->customizations['lengan_jahitan'] ?? null;
                 if ($itemLengan && strtoupper(trim($itemLengan)) !== $majorityLengan) {
                     $diffs[] = ucwords(strtolower(trim($itemLengan)));
+                }
+
+                $itemSleeveVal = $detail->customizations['lengan'] ?? null;
+                if ($itemSleeveVal && isset($sleeveOptionMap[$itemSleeveVal]) && $sleeveOptionMap[$itemSleeveVal] !== $majoritySleeveType) {
+                    $diffs[] = $sleeveOptionMap[$itemSleeveVal] === 'long' ? 'Lengan Panjang' : 'Lengan Pendek';
                 }
 
                 if ($detail->keterangan) {
@@ -1108,14 +1096,15 @@ class OrderController extends Controller
         ]);
         $sheet->getRowDimension(2)->setRowHeight(20);
 
-        // Specs Fields mapping
+        // Specs Fields mapping — tag-driven
+        $spkFields1 = $this->resolveSpkFields($order);
         $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
 
         $leftFields = [
-            ['label1' => 'Jenis',            'val1' => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog', 'label2' => 'Bahan',            'val2' => $order->designRequest?->material ?? '-'],
-            ['label1' => 'Nama Tim',         'val1' => $order->designRequest?->team_name ?? '-',                   'label2' => 'Kerah',            'val2' => $order->designRequest?->collar_style ?? '-'],
-            ['label1' => 'Nama Artikel',     'val1' => $order->designRequest?->nama_artikel ?? '-',                'label2' => 'Jenis Potongan',   'val2' => $order->designRequest?->jenis_potongan ?? '-'],
-            ['label1' => 'Nama Pemesan',     'val1' => $order->designRequest?->nama_pemesan ?? '-',                'label2' => 'Lengan & Jahitan', 'val2' => $order->designRequest?->lengan_jahitan ?? '-'],
+            ['label1' => 'Jenis',            'val1' => $order->designRequest ? 'Jersey Custom' : 'Produk Katalog', 'label2' => 'Bahan',            'val2' => $spkFields1['bahan'] ?? ($order->designRequest?->material ?? '-')],
+            ['label1' => 'Nama Tim',         'val1' => $order->designRequest?->team_name ?? '-',                   'label2' => 'Kerah',            'val2' => $spkFields1['kerah'] ?? ($order->designRequest?->collar_style ?? '-')],
+            ['label1' => 'Nama Artikel',     'val1' => $order->designRequest?->nama_artikel ?? '-',                'label2' => 'Jenis Potongan',   'val2' => $spkFields1['jenis_potongan'] ?? ($order->designRequest?->jenis_potongan ?? '-')],
+            ['label1' => 'Nama Pemesan',     'val1' => $order->designRequest?->nama_pemesan ?? '-',                'label2' => 'Lengan & Jahitan', 'val2' => $spkFields1['lengan_jahitan'] ?? ($order->designRequest?->lengan_jahitan ?? '-')],
             ['label1' => 'Detail Sponsor',   'val1' => $order->designRequest?->detail_sponsor ?? '-',              'label2' => 'Prioritas',        'val2' => $order->designRequest?->priority === 'express' ? 'Express' : ($order->designRequest?->priority === 'super_express' ? 'Super Express' : 'Normal')],
             ['label1' => 'Tanggal Masuk',    'val1' => $order->created_at->format('j M Y'),                        'label2' => 'Deadline',         'val2' => $order->created_at->copy()->addDays($deadlineDays)->format('j M Y')],
             ['label1' => 'Total Qty',        'val1' => $order->orderItems->sum('qty') . ' pcs',                    'label2' => '',                 'val2' => ''],
@@ -1177,10 +1166,36 @@ class OrderController extends Controller
             ]
         ];
 
+        // ── Build sleeve type lookup from system_tag ──
+        $sleeveAttrIds = [];
+        $sleeveOptionMap = [];
+        foreach (\App\Models\Category::all() as $_cat) {
+            foreach (($_cat->attributes_schema ?? []) as $_attr) {
+                if (($_attr['system_tag'] ?? '') === 'is_sleeve_type') {
+                    $sleeveAttrIds[] = $_attr['id'];
+                    foreach (($_attr['options'] ?? []) as $_opt) {
+                        if (!empty($_opt['sleeve'])) {
+                            $sleeveOptionMap[$_attr['id']][$_opt['value']] = $_opt['sleeve'];
+                        }
+                    }
+                }
+            }
+        }
+
         foreach ($order->itemDetails as $detail) {
             $sizeStr = strtoupper(trim($detail->size ?? ''));
             $modelLengan = strtolower(trim($detail->model_lengan ?? ''));
-            $sleeveType = (str_contains($modelLengan, 'long')) ? 'long' : 'short';
+            $sleeveType = 'short';
+            foreach ($sleeveAttrIds as $_aid) {
+                $val = $detail->customizations[$_aid] ?? null;
+                if ($val !== null && isset($sleeveOptionMap[$_aid][$val])) {
+                    $sleeveType = $sleeveOptionMap[$_aid][$val];
+                    break;
+                }
+            }
+            if ($sleeveType === 'short' && str_contains($modelLengan, 'long')) {
+                $sleeveType = 'long';
+            }
 
             if (str_contains(strtolower($sizeStr), 'anak')) {
                 $cleanSize = trim(str_replace('ANAK', '', $sizeStr));
@@ -1646,41 +1661,24 @@ class OrderController extends Controller
         $designFiles = $order->designRequest?->design_files ?? [];
         $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
 
-        $getMajority = function ($attributeKey, $fallback) use ($order) {
-            if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
-                return $fallback;
-            }
-            $counts = [];
-            foreach ($order->itemDetails as $detail) {
-                $val = $detail->customizations[$attributeKey] ?? null;
-                if (!$val) {
-                    if ($attributeKey === 'bahan') {
-                        $val = $order->designRequest?->material;
-                    } elseif ($attributeKey === 'kerah') {
-                        $val = $order->designRequest?->collar_style;
-                    } elseif ($attributeKey === 'jenis_potongan') {
-                        $val = $order->designRequest?->jenis_potongan;
-                    } elseif ($attributeKey === 'lengan_jahitan') {
-                        $val = $order->designRequest?->lengan_jahitan;
+        $spkFields2 = $this->resolveSpkFields($order);
+        $majorityBahan = $spkFields2['bahan'] ?? strtoupper(trim($order->designRequest?->material ?? '-'));
+        $majorityKerah = $spkFields2['kerah'] ?? strtoupper(trim($order->designRequest?->collar_style ?? '-'));
+        $majorityPotongan = $spkFields2['jenis_potongan'] ?? strtoupper(trim($order->designRequest?->jenis_potongan ?? '-'));
+        $majorityLengan = $spkFields2['lengan_jahitan'] ?? strtoupper(trim($order->designRequest?->lengan_jahitan ?? '-'));
+        $majoritySleeveType2 = $spkFields2['lengan'] ?? 'short';
+
+        // Sleeve option map for diff comparison
+        $sleeveOptionMap2 = [];
+        foreach (\App\Models\Category::all() as $_cat) {
+            foreach (($_cat->attributes_schema ?? []) as $_a) {
+                if (($_a['system_tag'] ?? '') === 'is_sleeve_type') {
+                    foreach (($_a['options'] ?? []) as $_o) {
+                        if (!empty($_o['sleeve'])) $sleeveOptionMap2[$_o['value']] = $_o['sleeve'];
                     }
                 }
-                $val = $val ? strtoupper(trim($val)) : '-';
-                if ($val === '-') {
-                    continue;
-                }
-                $counts[$val] = ($counts[$val] ?? 0) + 1;
             }
-            if (empty($counts)) {
-                return $fallback;
-            }
-            arsort($counts);
-            return key($counts);
-        };
-
-        $majorityBahan = $getMajority('bahan', $order->designRequest?->material ?? '-');
-        $majorityKerah = $getMajority('kerah', $order->designRequest?->collar_style ?? '-');
-        $majorityPotongan = $getMajority('jenis_potongan', $order->designRequest?->jenis_potongan ?? '-');
-        $majorityLengan = $getMajority('lengan_jahitan', $order->designRequest?->lengan_jahitan ?? '-');
+        }
 
         // ═══════════════════════════════════════════════════════════════
         // SHEET 1 — "depan"  (Portrait A4)
@@ -1801,21 +1799,48 @@ class OrderController extends Controller
             $list = ($g === 'dewasa') ? $dewasaSizes : $anakSizes;
             foreach ($list as $sz) { $grid[$g]['short'][$sz] = 0; $grid[$g]['long'][$sz] = 0; }
         }
-        foreach ($order->orderItems as $item) {
-            $sz = strtoupper(trim($item->size));
-            $isLong = str_contains($sz, 'PANJANG');
-            if ($isLong) $sz = trim(str_replace(['LENGAN PANJANG', 'PANJANG'], '', $sz));
-            $model = $isLong ? 'long' : 'short';
+
+        // ── Build sleeve type lookup from system_tag ──
+        $sleeveAttrIds2 = [];
+        $sleeveOptionMap2 = [];
+        foreach (\App\Models\Category::all() as $_cat) {
+            foreach (($_cat->attributes_schema ?? []) as $_attr) {
+                if (($_attr['system_tag'] ?? '') === 'is_sleeve_type') {
+                    $sleeveAttrIds2[] = $_attr['id'];
+                    foreach (($_attr['options'] ?? []) as $_opt) {
+                        if (!empty($_opt['sleeve'])) {
+                            $sleeveOptionMap2[$_attr['id']][$_opt['value']] = $_opt['sleeve'];
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($order->itemDetails as $detail) {
+            $sz = strtoupper(trim($detail->size ?? ''));
+            $sleeveType = 'short';
+            foreach ($sleeveAttrIds2 as $_aid) {
+                $val = $detail->customizations[$_aid] ?? null;
+                if ($val !== null && isset($sleeveOptionMap2[$_aid][$val])) {
+                    $sleeveType = $sleeveOptionMap2[$_aid][$val];
+                    break;
+                }
+            }
+            if ($sleeveType === 'short' && str_contains($sz, 'PANJANG')) {
+                $sleeveType = 'long';
+                $sz = trim(str_replace(['LENGAN PANJANG', 'PANJANG'], '', $sz));
+            }
+            $model = $sleeveType;
             if (in_array($sz, $dewasaSizes)) {
-                $grid['dewasa'][$model][$sz] += $item->qty;
+                $grid['dewasa'][$model][$sz] += 1;
             } elseif (in_array($sz, $anakSizes)) {
-                $grid['anak'][$model][$sz] += $item->qty;
+                $grid['anak'][$model][$sz] += 1;
             } elseif (in_array('KIDS_' . $sz, $anakSizes)) {
-                $grid['anak'][$model]['KIDS_' . $sz] += $item->qty;
+                $grid['anak'][$model]['KIDS_' . $sz] += 1;
             } elseif ($sz === 'XXL') {
-                $grid['dewasa'][$model]['2XL'] += $item->qty;
+                $grid['dewasa'][$model]['2XL'] += 1;
             } elseif ($sz === 'XXXL') {
-                $grid['dewasa'][$model]['3XL'] += $item->qty;
+                $grid['dewasa'][$model]['3XL'] += 1;
             }
         }
 
@@ -2054,6 +2079,11 @@ class OrderController extends Controller
                 $itemLengan = $detail->customizations['lengan_jahitan'] ?? null;
                 if ($itemLengan && strtoupper(trim($itemLengan)) !== $majorityLengan) {
                     $diffs[] = ucwords(strtolower(trim($itemLengan)));
+                }
+
+                $itemSleeveVal = $detail->customizations['lengan'] ?? null;
+                if ($itemSleeveVal && isset($sleeveOptionMap2[$itemSleeveVal]) && $sleeveOptionMap2[$itemSleeveVal] !== $majoritySleeveType2) {
+                    $diffs[] = $sleeveOptionMap2[$itemSleeveVal] === 'long' ? 'Lengan Panjang' : 'Lengan Pendek';
                 }
 
                 if ($detail->keterangan) {
@@ -2433,5 +2463,85 @@ class OrderController extends Controller
         });
 
         return response()->json(['success' => true, 'message' => 'Detail item pesanan & harga invoice berhasil diperbarui.']);
+    }
+
+    /**
+     * Resolve SPK field values from itemDetails.customizations via system_tag.
+     * Returns ['attrId' => majorityValue, ...] + 'lengan' => 'long'|'short'.
+     */
+    private function resolveSpkFields(Order $order): array
+    {
+        $tagToAttrId = [];
+        $sleeveOptionMap = [];
+
+        foreach (\App\Models\Category::all() as $cat) {
+            foreach (($cat->attributes_schema ?? []) as $attr) {
+                $tag = $attr['system_tag'] ?? '';
+                if ($tag && !isset($tagToAttrId[$tag])) {
+                    $tagToAttrId[$tag] = $attr['id'];
+                }
+                if ($tag === 'is_sleeve_type') {
+                    foreach (($attr['options'] ?? []) as $opt) {
+                        if (!empty($opt['sleeve'])) {
+                            $sleeveOptionMap[$attr['id']][$opt['value']] = $opt['sleeve'];
+                        }
+                    }
+                }
+            }
+        }
+
+        $tagToColumn = [
+            'is_fabric_type'       => 'material',
+            'is_collar_type'       => 'collar_style',
+            'is_cut_type'          => 'jenis_potongan',
+            'is_sleeve_joint_type' => 'lengan_jahitan',
+        ];
+
+        $results = [];
+        foreach ($tagToAttrId as $tag => $attrId) {
+            if ($tag === 'is_sleeve_type') {
+                $results[$attrId] = $this->resolveMajoritySleeve($order, $attrId, $sleeveOptionMap[$attrId] ?? []);
+                continue;
+            }
+            $col = $tagToColumn[$tag] ?? null;
+            $fallback = $col && $order->designRequest ? ($order->designRequest->{$col} ?? '-') : '-';
+            $results[$attrId] = $this->resolveMajorityValue($order, $attrId, $fallback);
+        }
+
+        return $results;
+    }
+
+    private function resolveMajorityValue(Order $order, string $attrId, string $fallback): string
+    {
+        if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
+            return strtoupper(trim($fallback));
+        }
+        $counts = [];
+        foreach ($order->itemDetails as $detail) {
+            $val = $detail->customizations[$attrId] ?? null;
+            if (!$val) $val = $fallback;
+            $val = $val ? strtoupper(trim($val)) : '-';
+            if ($val === '-') continue;
+            $counts[$val] = ($counts[$val] ?? 0) + 1;
+        }
+        if (empty($counts)) return strtoupper(trim($fallback));
+        arsort($counts);
+        return key($counts);
+    }
+
+    private function resolveMajoritySleeve(Order $order, string $attrId, array $optionMap): string
+    {
+        if (!$order->itemDetails || $order->itemDetails->isEmpty()) {
+            return 'short';
+        }
+        $counts = ['long' => 0, 'short' => 0];
+        foreach ($order->itemDetails as $detail) {
+            $val = $detail->customizations[$attrId] ?? null;
+            if ($val !== null && isset($optionMap[$val])) {
+                $counts[$optionMap[$val]]++;
+            }
+        }
+        if ($counts['long'] === 0 && $counts['short'] === 0) return 'short';
+        return $counts['long'] > $counts['short'] ? 'long' : 'short';
     }
 }
