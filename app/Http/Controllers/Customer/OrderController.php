@@ -389,6 +389,27 @@ class OrderController extends Controller
                             'subtotal'       => $totalQty * $pricePerItem,
                         ]);
                     }
+
+                    $designItems = $item->design_data['items'] ?? [];
+                    foreach ($designItems as $it) {
+                        $rowCustom = $it['customizations'] ?? [];
+                        if (is_string($rowCustom)) {
+                            $rowCustom = json_decode($rowCustom, true) ?? [];
+                        }
+                        if (($rowCustom['set_bawahan'] ?? '') === 'Ya' && !empty($rowCustom['tipe_bawahan'])) {
+                            $rowCustom['size_bawahan'] = $it['size'] ?? 'M';
+                        }
+                        $modelLengan = $rowCustom['lengan_jahitan'] ?? $rowCustom['lengan'] ?? ($it['model_lengan'] ?? null);
+                        OrderItemDetail::create([
+                            'order_id'       => $order->id,
+                            'no_punggung'    => $it['no'] ?? null,
+                            'nama_punggung'  => $it['nama'] ?? null,
+                            'model_lengan'   => $modelLengan,
+                            'size'           => $it['size'] ?? 'M',
+                            'customizations' => $rowCustom,
+                            'price'          => $pricePerItem,
+                        ]);
+                    }
                 } else {
                     $orderItem = OrderItem::create([
                         'order_id'       => $order->id,
