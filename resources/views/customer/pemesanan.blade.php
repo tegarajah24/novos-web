@@ -1831,6 +1831,12 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     localStorage.removeItem('pesanan_draft');
                     return;
                 }
+                // Draft expired jika lebih dari 7 hari — clear silently
+                const DRAFT_EXPIRY_MS = 3 * 24 * 60 * 60 * 1000;
+                if (new Date() - new Date(data.savedAt) > DRAFT_EXPIRY_MS) {
+                    localStorage.removeItem('pesanan_draft');
+                    return;
+                }
                 const savedTime = new Date(data.savedAt);
                 const now = new Date();
                 const diffMin = Math.floor((now - savedTime) / 60000);
