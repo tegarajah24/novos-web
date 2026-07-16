@@ -116,6 +116,7 @@
     </div>
 
     {{-- Modal Tambah --}}
+    <template x-teleport="body">
     <div id="modalTambah" class="modal-wrapper fixed inset-0 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal(event,'modalTambah')">
         <div class="modal-backdrop fixed inset-0 bg-black/40"></div>
         <div class="modal-card bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -180,8 +181,10 @@
             </form>
         </div>
     </div>
+    </template>
 
     {{-- Modal Edit --}}
+    <template x-teleport="body">
     <div id="modalEdit" class="modal-wrapper fixed inset-0 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal(event,'modalEdit')">
         <div class="modal-backdrop fixed inset-0 bg-black/40"></div>
         <div class="modal-card bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -253,8 +256,10 @@
             </form>
         </div>
     </div>
+    </template>
 
     {{-- Modal Detail --}}
+    <template x-teleport="body">
     <div id="modalDetail" class="modal-wrapper fixed inset-0 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal(event,'modalDetail')">
         <div class="modal-backdrop fixed inset-0 bg-black/40"></div>
         <div class="modal-card bg-white rounded-2xl shadow-xl w-full max-w-md">
@@ -296,6 +301,7 @@
             </div>
         </div>
     </div>
+    </template>
 
     {{-- Scripts --}}
     <script>
