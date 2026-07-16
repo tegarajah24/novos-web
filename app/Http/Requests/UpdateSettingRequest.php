@@ -31,6 +31,10 @@ class UpdateSettingRequest extends FormRequest
             'prioritas_super_express_estimasi' => 'nullable|string|max:255',
             'prioritas_super_express_biaya'    => 'nullable|numeric|min:0',
             'prioritas_super_express_status'   => 'nullable|string|in:active,inactive',
+            'about_story'  => 'nullable|string|max:5000',
+            'about_visi'   => 'nullable|string|max:1000',
+            'about_misi'   => 'nullable|array',
+            'about_misi.*' => 'nullable|string|max:255',
         ];
     }
 }

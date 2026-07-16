@@ -222,6 +222,46 @@
                     </div>
                 </div>
 
+                {{-- Konten Halaman Tentang Kami --}}
+                <div class="border-t border-gray-100 pt-5">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4">Konten Halaman Tentang Kami</h4>
+                    <div class="space-y-5">
+                        {{-- Cerita di Balik Novos --}}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">Cerita di Balik Novos</label>
+                            <textarea x-model="form.about_story" rows="6" placeholder="Cerita singkat tentang brand..."
+                                      class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]"></textarea>
+                        </div>
+                        {{-- Visi --}}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">Visi</label>
+                            <textarea x-model="form.about_visi" rows="3" placeholder="Visi perusahaan..."
+                                      class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]"></textarea>
+                        </div>
+                        {{-- Misi --}}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">Misi</label>
+                            <div class="space-y-2">
+                                <template x-for="(item, index) in form.about_misi" :key="index">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0"></span>
+                                        <input type="text" x-model="form.about_misi[index]" placeholder="Poin misi..."
+                                               class="flex-1 rounded-xl border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                        <button type="button" @click="form.about_misi.splice(index, 1)"
+                                                class="text-gray-400 hover:text-red-500 transition-colors p-1">
+                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                                <button type="button" @click="form.about_misi.push('')"
+                                        class="inline-flex items-center gap-1.5 text-xs font-medium text-[#1a237e] hover:text-[#283593] transition-colors mt-1">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Misi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-1">
                     <button type="submit" :disabled="saving"
                             class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all active:scale-95 disabled:opacity-50 shadow-md shadow-[#1a237e]/20">
@@ -636,6 +676,9 @@ function settingApp() {
             prioritas_super_express_estimasi: '1-2 hari kerja',
             prioritas_super_express_biaya: 150000,
             prioritas_super_express_status: 'active',
+            about_story: '',
+            about_visi: '',
+            about_misi: [],
         },
 
         appearance: { ...DEFAULT_APPEARANCE },
@@ -888,6 +931,10 @@ function settingApp() {
             this.form.prioritas_super_express_estimasi = @json($settings['prioritas_super_express_estimasi'] ?? '1-2 hari kerja');
             this.form.prioritas_super_express_biaya = @json($settings['prioritas_super_express_biaya'] ?? 150000);
             this.form.prioritas_super_express_status = @json($settings['prioritas_super_express_status'] ?? 'active');
+
+            this.form.about_story = @json($settings['about_story'] ?? '');
+            this.form.about_visi  = @json($settings['about_visi'] ?? '');
+            this.form.about_misi  = @json(!empty($settings['about_misi']) ? json_decode($settings['about_misi'], true) : []);
 
             this.isMobile = window.innerWidth < 768;
             this.showToc = !this.isMobile;

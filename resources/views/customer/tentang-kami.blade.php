@@ -39,15 +39,19 @@
         {{-- Cerita di Balik Novos --}}
         <h2 class="text-2xl font-bold text-gray-900 mb-6" data-aos="fade-up" data-aos-delay="100">Cerita di Balik Novos</h2>
         <div class="space-y-4 text-gray-600 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
-            <p>
-                <strong class="text-gray-900">Novos</strong> lahir dari kegelisahan para founder-nya yang merupakan pegiat olahraga di Purwokerto. Mereka merasa sulit mendapatkan jersey custom berkualitas tinggi dengan harga yang masuk akal tanpa harus memesan dari luar kota. Proses yang rumit, komunikasi yang tidak jelas, dan hasil yang tidak sesuai ekspektasi menjadi masalah yang terus berulang.
-            </p>
-            <p>
-                Nama <strong class="text-gray-900">"Novos"</strong> berasal dari Bahasa Latin yang berarti <em>"baru"</em> atau <em>"pembaruan"</em>. Filosofi ini menjadi semangat kami untuk <strong class="text-gray-900">memperbarui cara orang memesan jersey custom</strong> — dari proses yang rumit menjadi mudah, dari harga yang mahal menjadi terjangkau, dari kualitas standar menjadi premium.
-            </p>
-            <p>
-                Berdiri sejak tahun 2022, Novos fokus menyediakan jersey olahraga berkualitas tinggi untuk berbagai cabang olahraga seperti sepak bola, futsal, basket, voli, hingga running. Setiap jersey yang kami produksi menggunakan bahan <strong class="text-gray-900">Dryfit Premium</strong> yang nyaman dipakai, ringan, dan cepat kering.
-            </p>
+            @if($aboutStory)
+                {!! nl2br(e($aboutStory)) !!}
+            @else
+                <p>
+                    <strong class="text-gray-900">Novos</strong> lahir dari kegelisahan para founder-nya yang merupakan pegiat olahraga di Purwokerto. Mereka merasa sulit mendapatkan jersey custom berkualitas tinggi dengan harga yang masuk akal tanpa harus memesan dari luar kota. Proses yang rumit, komunikasi yang tidak jelas, dan hasil yang tidak sesuai ekspektasi menjadi masalah yang terus berulang.
+                </p>
+                <p>
+                    Nama <strong class="text-gray-900">"Novos"</strong> berasal dari Bahasa Latin yang berarti <em>"baru"</em> atau <em>"pembaruan"</em>. Filosofi ini menjadi semangat kami untuk <strong class="text-gray-900">memperbarui cara orang memesan jersey custom</strong> — dari proses yang rumit menjadi mudah, dari harga yang mahal menjadi terjangkau, dari kualitas standar menjadi premium.
+                </p>
+                <p>
+                    Berdiri sejak tahun 2022, Novos fokus menyediakan jersey olahraga berkualitas tinggi untuk berbagai cabang olahraga seperti sepak bola, futsal, basket, voli, hingga running. Setiap jersey yang kami produksi menggunakan bahan <strong class="text-gray-900">Dryfit Premium</strong> yang nyaman dipakai, ringan, dan cepat kering.
+                </p>
+            @endif
         </div>
     </div>
 </div>
@@ -61,7 +65,7 @@
                 <div class="p-8 md:p-10 flex flex-col" data-aos="fade-up" data-aos-delay="100">
                     <h2 class="text-xl font-bold text-gray-900 mb-3">Visi</h2>
                     <p class="text-gray-600 leading-relaxed flex-1">
-                        Menjadi platform jersey custom nomor satu di Indonesia yang dikenal dengan kualitas terbaik, desain inovatif, dan pelayanan yang memuaskan.
+                        {{ $aboutVisi ?: 'Menjadi platform jersey custom nomor satu di Indonesia yang dikenal dengan kualitas terbaik, desain inovatif, dan pelayanan yang memuaskan.' }}
                     </p>
                 </div>
 
@@ -74,22 +78,33 @@
                 <div class="p-8 md:p-10 flex flex-col" data-aos="fade-up" data-aos-delay="200">
                     <h2 class="text-xl font-bold text-gray-900 mb-3">Misi</h2>
                     <ul class="space-y-3 text-gray-600 flex-1">
-                        <li class="flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
-                            <span>Menyediakan jersey custom berkualitas tinggi dengan bahan terbaik</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
-                            <span>Memberikan kemudahan pemesanan melalui sistem online yang transparan</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
-                            <span>Mendukung pelaku olahraga, komunitas, dan bisnis lokal</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
-                            <span>Terus berinovasi dalam desain dan teknologi produksi</span>
-                        </li>
+                        @if($aboutMisi && count($aboutMisi) > 0)
+                            @foreach($aboutMisi as $m)
+                                @if(!empty(trim($m)))
+                                <li class="flex items-start gap-3">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
+                                    <span>{{ $m }}</span>
+                                </li>
+                                @endif
+                            @endforeach
+                        @else
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
+                                <span>Menyediakan jersey custom berkualitas tinggi dengan bahan terbaik</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
+                                <span>Memberikan kemudahan pemesanan melalui sistem online yang transparan</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
+                                <span>Mendukung pelaku olahraga, komunitas, dan bisnis lokal</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mt-2.5"></span>
+                                <span>Terus berinovasi dalam desain dan teknologi produksi</span>
+                            </li>
+                        @endif
                     </ul>
                 </div>
             </div>

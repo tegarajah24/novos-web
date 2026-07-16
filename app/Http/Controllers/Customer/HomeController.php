@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 
 class HomeController extends Controller
@@ -94,6 +95,11 @@ class HomeController extends Controller
             ->whereHas('role', fn($q) => $q->whereIn('name', Role::internalNames()))
             ->orderBy('created_at')
             ->get();
-        return view('customer.tentang-kami', compact('tim'));
+
+        $aboutStory = Setting::get('about_story');
+        $aboutVisi  = Setting::get('about_visi');
+        $aboutMisi  = Setting::get('about_misi') ? json_decode(Setting::get('about_misi'), true) : null;
+
+        return view('customer.tentang-kami', compact('tim', 'aboutStory', 'aboutVisi', 'aboutMisi'));
     }
 }

@@ -20,7 +20,7 @@ class SettingController extends Controller
         $data = $request->validated();
 
         foreach ($data as $key => $value) {
-            Setting::set($key, $value);
+            Setting::set($key, is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value);
         }
 
         return response()->json([
