@@ -447,22 +447,16 @@ class OrderController extends Controller
         $deadlineDays = \App\Models\Setting::getDeadlineDaysForPriority($order->designRequest?->priority);
 
         $attributesSchema = [];
-        $categoryName = null;
         if ($order->designRequest) {
-            $checkCustomizations = $order->designRequest->customizations ?? [];
-            if (isset($checkCustomizations['model_jaket']) || isset($checkCustomizations['bahan_jaket'])) {
-                $categoryName = 'Jaket';
-            } elseif (isset($checkCustomizations['model_bawahan']) || isset($checkCustomizations['bahan_bawahan'])) {
-                $categoryName = 'Bawahan';
-            } else {
-                $categoryName = 'Jersey';
+            $merged = [];
+            foreach (\App\Models\Category::all() as $cat) {
+                foreach (($cat->attributes_schema ?? []) as $attr) {
+                    if (!isset($merged[$attr['id']])) {
+                        $merged[$attr['id']] = $attr;
+                    }
+                }
             }
-        }
-        if ($categoryName) {
-            $category = \App\Models\Category::where('name', $categoryName)->first();
-            if ($category) {
-                $attributesSchema = $category->attributes_schema ?? [];
-            }
+            $attributesSchema = array_values($merged);
         }
 
         $order = [

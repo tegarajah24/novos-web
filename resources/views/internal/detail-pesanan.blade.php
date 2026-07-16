@@ -362,7 +362,7 @@ if (!empty($order['item_details'])) {
                                         <th class="px-3 py-3 font-semibold w-24">No Punggung</th>
                                         <th class="px-3 py-3 font-semibold w-40">Nama Punggung</th>
                                         <th class="px-3 py-3 font-semibold w-24">Size</th>
-                                        <th class="px-3 py-3 font-semibold">Customizations</th>
+                                        <th class="px-3 py-3 font-semibold">Keterangan</th>
                                         <th class="px-3 py-3 font-semibold w-48">Harga (Rp)</th>
                                     </tr>
                                 </thead>
