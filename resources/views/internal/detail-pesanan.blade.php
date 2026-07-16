@@ -359,11 +359,12 @@ if (!empty($order['item_details'])) {
                             <table class="w-full text-sm text-left">
                                 <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
                                     <tr>
-                                        <th class="px-3 py-3 font-semibold w-24">No Punggung</th>
-                                        <th class="px-3 py-3 font-semibold w-40">Nama Punggung</th>
-                                        <th class="px-3 py-3 font-semibold w-24">Size</th>
+                                        <th class="px-3 py-3 font-semibold w-20">No Punggung</th>
+                                        <th class="px-3 py-3 font-semibold w-36">Nama Punggung</th>
+                                        <th class="px-3 py-3 font-semibold w-20">Size</th>
                                         <th class="px-3 py-3 font-semibold">Keterangan</th>
-                                        <th class="px-3 py-3 font-semibold w-48">Harga (Rp)</th>
+                                        <th class="px-3 py-3 font-semibold w-44">Harga (Rp)</th>
+                                        <th class="px-3 py-3 font-semibold w-16"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100 bg-white">
@@ -378,25 +379,8 @@ if (!empty($order['item_details'])) {
                                             <td class="px-3 py-2">
                                                 <input type="text" x-model="item.size" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] outline-none">
                                             </td>
-                                            <td class="px-3 py-2 space-y-1">
-                                                <div class="grid grid-cols-2 gap-2">
-                                                    @foreach($attributesSchema as $attr)
-                                                        <div>
-                                                            <span class="text-[10px] text-gray-400 font-semibold block">{{ $attr['name'] }}</span>
-                                                            @if(!empty($attr['options']))
-                                                                <select x-model="item.customizations['{{ $attr['id'] }}']" class="w-full px-1.5 py-0.5 text-xs border border-gray-200 rounded bg-white">
-                                                                    <option value="">-</option>
-                                                                    @foreach($attr['options'] as $opt)
-                                                                        @php $val = is_array($opt) ? ($opt['value'] ?? '') : $opt; @endphp
-                                                                        <option value="{{ $val }}">{{ $val }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            @else
-                                                                <input type="text" x-model="item.customizations['{{ $attr['id'] }}']" class="w-full px-1.5 py-0.5 text-xs border border-gray-200 rounded">
-                                                            @endif
-                                                        </div>
-                                                    @endforeach
-                                                </div>
+                                            <td class="px-3 py-2">
+                                                <span class="text-xs text-gray-500" x-text="getKeteranganSummary(item) || '-'"></span>
                                             </td>
                                             <td class="px-3 py-2">
                                                 <div class="relative rounded-md shadow-sm">
@@ -413,6 +397,12 @@ if (!empty($order['item_details'])) {
                                                         placeholder="85000"
                                                     >
                                                 </div>
+                                            </td>
+                                            <td class="px-3 py-2 text-center">
+                                                <button @click="openItemAttrModal(idx)" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-[#1a237e] bg-[#1a237e]/10 hover:bg-[#1a237e]/20 rounded-lg transition-colors">
+                                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                    Edit
+                                                </button>
                                             </td>
                                         </tr>
                                     </template>
@@ -432,6 +422,54 @@ if (!empty($order['item_details'])) {
                             <button @click="saveItems()" :disabled="loading" class="px-5 py-2 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#0d124a] rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
                                 <svg x-show="loading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                                 Simpan Item & Update Invoice
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </template>
+
+            {{-- Modal Edit Atribut Per Item --}}
+            <template x-teleport="body">
+            <div x-show="attrModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
+                <div class="flex items-center justify-center min-h-screen px-4">
+                    <div x-show="attrModalOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" @click="attrModalOpen = false"></div>
+                    <div x-show="attrModalOpen" x-transition.scale.origin.bottom class="relative w-full max-w-lg p-6 my-8 bg-white rounded-2xl shadow-2xl border border-gray-200">
+                        <div class="flex items-center justify-between mb-5">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">Edit Keterangan Item</h3>
+                                <p class="text-xs text-gray-500 mt-0.5" x-text="attrModalItem ? (attrModalItem.nama_punggung || 'Baris ' + (attrModalIdx + 1)) : ''"></p>
+                            </div>
+                            <button @click="attrModalOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <template x-if="attrModalItem">
+                            <div class="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                                @foreach($attributesSchema as $attr)
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">{{ $attr['name'] }}</label>
+                                    @if(!empty($attr['options']))
+                                        <select x-model="attrModalItem.customizations['{{ $attr['id'] }}']" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                            <option value="">- Pilih -</option>
+                                            @foreach($attr['options'] as $opt)
+                                                @php $val = is_array($opt) ? ($opt['value'] ?? '') : $opt; @endphp
+                                                <option value="{{ $val }}">{{ $val }}</option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <input type="text" x-model="attrModalItem.customizations['{{ $attr['id'] }}']" placeholder="Masukkan {{ $attr['name'] }}" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] outline-none transition-all">
+                                    @endif
+                                </div>
+                                @endforeach
+                            </div>
+                        </template>
+                        <div class="flex justify-end gap-3 mt-5 pt-4 border-t border-gray-100">
+                            <button @click="attrModalOpen = false" class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                                Batal
+                            </button>
+                            <button @click="attrModalOpen = false" class="px-5 py-2 text-sm font-semibold text-white bg-[#1a237e] hover:bg-[#0d124a] rounded-lg transition-colors">
+                                Selesai
                             </button>
                         </div>
                     </div>
@@ -1210,6 +1248,9 @@ function updateStatusSection() {
         return {
             editModalOpen: false,
             itemsModalOpen: false,
+            attrModalOpen: false,
+            attrModalItem: null,
+            attrModalIdx: null,
             loading: false,
             items: [],
             form: {
@@ -1252,6 +1293,19 @@ function updateStatusSection() {
                 if (val > 0 && val < 1000) {
                     this.items[index].price = val * 1000;
                 }
+            },
+            openItemAttrModal(idx) {
+                this.attrModalIdx = idx;
+                this.attrModalItem = this.items[idx];
+                this.attrModalOpen = true;
+            },
+            getKeteranganSummary(item) {
+                if (!item.customizations) return '';
+                const labels = @json(array_map(fn($a) => ['id' => $a['id'], 'name' => $a['name']], $attributesSchema));
+                return labels
+                    .filter(l => item.customizations[l.id] && item.customizations[l.id] !== '' && item.customizations[l.id] !== '-')
+                    .map(l => item.customizations[l.id])
+                    .join(', ');
             },
             async saveItems() {
                 this.loading = true;
