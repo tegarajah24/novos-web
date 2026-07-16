@@ -973,14 +973,26 @@ if (!empty($order['item_details'])) {
             </template>
             <template x-if="!loading && allowedStatuses.length > 0">
                 <div class="space-y-3">
-                    <div>
+                    <div x-data="{ open: false }" @click.away="open = false" class="relative">
                         <label class="block text-xs text-gray-500 mb-1.5 font-medium">Status Baru</label>
-                        <select x-model="selectedStatus" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30">
-                            <option value="">-- Pilih Status --</option>
-                            <template x-for="s in allowedStatuses" :key="s.value">
-                                <option :value="s.value" x-text="s.label"></option>
-                            </template>
-                        </select>
+                        <button type="button" @click="open = !open"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-left bg-white flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 transition-colors hover:border-gray-300">
+                            <span :class="selectedStatus ? 'text-gray-700' : 'text-gray-400'" x-text="selectedStatus ? allowedStatuses.find(s => s.value === selectedStatus)?.label : '-- Pilih Status --'"></span>
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95 -translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                            <div class="max-h-48 overflow-y-auto">
+                                <template x-for="s in allowedStatuses" :key="s.value">
+                                    <button type="button" @click="selectedStatus = s.value; open = false"
+                                        class="w-full px-3 py-2 text-sm text-left hover:bg-[#1a237e]/5 transition-colors flex items-center gap-2"
+                                        :class="selectedStatus === s.value ? 'bg-[#1a237e]/10 text-[#1a237e] font-semibold' : 'text-gray-700'">
+                                        <svg x-show="selectedStatus === s.value" class="w-4 h-4 text-[#1a237e] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                        <span x-text="s.label"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs text-gray-500 mb-1.5 font-medium">Catatan</label>
