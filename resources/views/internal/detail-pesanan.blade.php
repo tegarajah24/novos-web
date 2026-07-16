@@ -344,6 +344,7 @@ if (!empty($order['item_details'])) {
             @endif
 
             {{-- Kelola Item & Harga Modal --}}
+            <template x-teleport="body">
             <div x-show="itemsModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
                 <div class="flex items-center justify-center min-h-screen px-4">
                     <div x-show="itemsModalOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" @click="itemsModalOpen = false"></div>
@@ -436,7 +437,9 @@ if (!empty($order['item_details'])) {
                     </div>
                 </div>
             </div>
+            </template>
             {{-- Edit Modal --}}
+            <template x-teleport="body">
             <div x-show="editModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
                 <div class="flex items-center justify-center min-h-screen px-4">
                     <div x-show="editModalOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" @click="editModalOpen = false"></div>
@@ -515,6 +518,7 @@ if (!empty($order['item_details'])) {
                     </div>
                 </div>
             </div>
+            </template>
         </div>
 
         {{-- File Desain Customer --}}
@@ -673,8 +677,9 @@ if (!empty($order['item_details'])) {
                         @endforelse
                     </tbody>
                 </table>
+                </div>
             </div>
-        </div>
+            </template>
         </div>
 
         {{-- ── TAB SPK CONTENT ── --}}
