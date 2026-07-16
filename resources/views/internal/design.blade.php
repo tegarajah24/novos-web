@@ -348,7 +348,7 @@ function designApp() {
                     window.lucide.createIcons({ icons: window.lucide.icons });
                 }
                 this.initFilePond();
-            }, 100);
+            }, 300);
         },
 
         initFilePond() {

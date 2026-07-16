@@ -1,0 +1,6 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "commit_message": {
+    "prompt": "Generate pesan commit menggunakan bahasa indonesia. pakai format yang standar dipakai"
+  }
+}
