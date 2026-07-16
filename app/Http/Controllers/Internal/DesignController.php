@@ -130,6 +130,7 @@ class DesignController extends Controller
                     'pattern'           => $dr?->motif ?? '-',
                     'jenis_potongan'    => $dr?->jenis_potongan ?? '-',
                     'lengan_jahitan'    => $dr?->lengan_jahitan ?? '-',
+                    'total_qty'         => $order->itemDetails->count(),
                     'notes'             => (function () use ($dr, $order) {
                         $raw = $dr?->additional_notes ?? $order->notes ?? '';
                         if (!$raw) return 'Tidak ada catatan';

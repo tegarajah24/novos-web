@@ -233,8 +233,8 @@
                                         <div class="min-w-0">
                                             <p class="text-xs text-gray-400 mb-0.5">
                                                 <span x-text="h.date + ' — ' + h.user"></span>
-                                                <span class="inline-block ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium"
-                                                      :class="h.origin === 'Customer' ? 'bg-blue-100 text-blue-700' : (h.origin === 'Design' ? 'bg-purple-100 text-purple-700' : (h.origin?.includes('Produksi') ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'))">
+                                                <span class="inline-block ml-1 font-semibold text-[11px]"
+                                                      :class="h.origin === 'Customer' ? 'text-blue-600' : (h.origin === 'Design' ? 'text-purple-600' : (h.origin?.includes('Produksi') ? 'text-amber-600' : 'text-gray-500'))">
                                                     <span x-text="'[' + (h.origin || 'Sistem') + ']'"></span>
                                                 </span>
                                             </p>
