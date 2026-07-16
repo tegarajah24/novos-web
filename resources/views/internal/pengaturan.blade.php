@@ -262,6 +262,51 @@
                     </div>
                 </div>
 
+                {{-- Background Hero --}}
+                <div class="border-t border-gray-100 pt-5">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4">Background Hero</h4>
+                    <p class="text-xs text-gray-500 mb-4">Gambar akan dikompres otomatis (JPEG 80%, max 1920px lebar). Format: JPG, PNG, WebP. Maks 5MB.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <template x-for="(hero, heroIdx) in heroTargets" :key="hero.key">
+                            <div class="border border-gray-200 rounded-xl p-4 space-y-3">
+                                <label class="block text-xs font-semibold text-gray-700" x-text="hero.label"></label>
+                                <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100 border border-dashed border-gray-300 cursor-pointer group"
+                                     @click="hero.value && window.openPhotoSwipe([{ src: hero.preview || hero.fallback, width: 1920, height: 1080 }], 0)">
+                                    <img :src="hero.preview || hero.fallback" class="w-full h-full object-cover transition-transform group-hover:scale-105" :alt="hero.label">
+                                    <div x-show="hero.value" class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                        <svg class="w-8 h-8 text-white drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/></svg>
+                                    </div>
+                                    <div x-show="hero.uploading" class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                        <svg class="animate-spin w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                    </div>
+                                </div>
+                                <div class="filepond-wrapper">
+                                    <input type="file" class="filepond hero-pond" :id="'hero-pond-' + hero.target"
+                                           accept="image/jpeg,image/png,image/webp"
+                                           data-max-file-size="5MB" data-allow-multiple="false"
+                                           :data-label-idle="'Pilih atau seret gambar untuk ' + hero.label">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" @click="uploadHero(hero)" :disabled="hero.uploading"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#1a237e] hover:bg-[#283593] rounded-lg transition-colors disabled:opacity-50">
+                                        <template x-if="hero.uploading">
+                                            <svg class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                        </template>
+                                        <template x-if="!hero.uploading">
+                                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                        </template>
+                                        Unggah
+                                    </button>
+                                    <button type="button" x-show="hero.value" @click="removeHero(hero)"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
                 <div class="pt-1">
                     <button type="submit" :disabled="saving"
                             class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all active:scale-95 disabled:opacity-50 shadow-md shadow-[#1a237e]/20">
@@ -681,6 +726,12 @@ function settingApp() {
             about_misi: [],
         },
 
+        heroTargets: [
+            { target: 'beranda', key: 'hero_beranda_bg', label: 'Beranda', fallback: '{{ asset("images/hero-bg.png") }}', value: '', preview: '', uploading: false },
+            { target: 'tentang', key: 'hero_tentang_bg', label: 'Tentang Kami', fallback: '{{ asset("images/bg-tentang.png") }}', value: '', preview: '', uploading: false },
+            { target: 'katalog', key: 'hero_katalog_bg', label: 'Katalog', fallback: '{{ asset("images/hero-katalog.png") }}', value: '', preview: '', uploading: false },
+        ],
+
         appearance: { ...DEFAULT_APPEARANCE },
 
         themeOptions: [
@@ -936,6 +987,12 @@ function settingApp() {
             this.form.about_visi  = @json($settings['about_visi'] ?? '');
             this.form.about_misi  = @json(!empty($settings['about_misi']) ? json_decode($settings['about_misi'], true) : []);
 
+            this.heroTargets.forEach(h => {
+                const v = @json($settings) [h.key] || '';
+                h.value = v;
+                if (v) h.preview = '{{ asset("storage/hero-backgrounds/") }}/' + v;
+            });
+
             this.isMobile = window.innerWidth < 768;
             this.showToc = !this.isMobile;
             if (this.isMobile) {
@@ -972,7 +1029,14 @@ function settingApp() {
             }
 
             this.applyAll();
-            this.$nextTick(() => lucide.createIcons({ icons: window.lucide.icons }));
+            this.$nextTick(() => {
+                lucide.createIcons({ icons: window.lucide.icons });
+                if (window.FilePond) {
+                    document.querySelectorAll('.hero-pond').forEach(el => {
+                        if (!FilePond.find(el)) FilePond.parse(el);
+                    });
+                }
+            });
             const mq = window.matchMedia('(prefers-color-scheme: dark)');
             mq.addEventListener('change', () => {
                 if (this.appearance.theme === 'auto') {
@@ -1011,6 +1075,48 @@ function settingApp() {
                 else Notify.error(data.message || 'Gagal menyimpan.');
             } catch(e) { Notify.error('Terjadi kesalahan server.'); }
             finally { this.saving = false; }
+        },
+
+        async uploadHero(hero) {
+            const pond = FilePond.find(document.querySelector('#hero-pond-' + hero.target));
+            if (!pond || pond.getFiles().length === 0) return;
+            const fileItem = pond.getFiles()[0];
+            if (!(fileItem.file instanceof File)) return;
+            hero.uploading = true;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const fd = new FormData();
+            fd.append('file', fileItem.file, fileItem.file.name);
+            fd.append('target', hero.target);
+            try {
+                const res = await fetch('{{ route("staf.pengaturan.upload-hero") }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+                    body: fd,
+                });
+                const data = await res.json();
+                if (data.success) {
+                    hero.value = data.value;
+                    hero.preview = data.url;
+                    this.form[hero.key] = data.value;
+                    pond.removeFiles();
+                    Notify.success(data.message);
+                } else {
+                    Notify.error(data.message || 'Gagal mengunggah gambar.');
+                }
+            } catch(e) {
+                Notify.error('Terjadi kesalahan saat mengunggah.');
+            } finally {
+                hero.uploading = false;
+            }
+        },
+
+        async removeHero(hero) {
+            const pond = FilePond.find(document.querySelector('#hero-pond-' + hero.target));
+            if (pond) pond.removeFiles();
+            hero.value = '';
+            hero.preview = '';
+            this.form[hero.key] = '';
+            Notify.success('Gambar dihapus. Klik Simpan untuk menyimpan perubahan.');
         },
 
         applyTheme(val) {

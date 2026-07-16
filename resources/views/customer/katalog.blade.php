@@ -205,7 +205,8 @@ function katalogData() {
     {{-- Hero --}}
     <section class="relative w-full bg-[#0f2040] overflow-hidden" style="min-height:400px">
         <div class="absolute inset-0 z-0">
-            <img src="{{ asset('images/hero-katalog.png') }}" alt=""
+            @php $heroBg = \App\Models\Setting::get('hero_katalog_bg'); @endphp
+            <img src="{{ $heroBg ? asset('storage/hero-backgrounds/' . $heroBg) : asset('images/hero-katalog.png') }}" alt=""
                  class="w-full h-full object-cover opacity-[0.50]">
         </div>
         <div class="absolute inset-0 opacity-[0.03] z-[1]"

@@ -35,6 +35,9 @@ class UpdateSettingRequest extends FormRequest
             'about_visi'   => 'nullable|string|max:1000',
             'about_misi'   => 'nullable|array',
             'about_misi.*' => 'nullable|string|max:255',
+            'hero_beranda_bg'  => 'nullable|string|max:255',
+            'hero_tentang_bg'  => 'nullable|string|max:255',
+            'hero_katalog_bg'  => 'nullable|string|max:255',
         ];
     }
 }

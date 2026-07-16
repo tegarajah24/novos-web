@@ -104,6 +104,7 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
 
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
         Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
+        Route::post('/pengaturan/upload-hero', [SettingController::class, 'uploadHero'])->name('pengaturan.upload-hero');
     });
 
 // Poster management — Super Admin only
