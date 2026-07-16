@@ -1740,7 +1740,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     const state = JSON.parse(savedState);
                     this.mode = state.mode || 'single';
                     this.step = state.step;
-                    this.subStep = state.step === 2 ? 1 : (state.subStep || 1);
+                    this.subStep = (state.step === 2 && state.mode !== 'cart_checkout') ? 1 : (state.subStep || 1);
                     this.prioritas = state.prioritas || 'normal';
                     this.selectedAddressId = state.selectedAddressId || null;
 
