@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Base background: near-white with very subtle indigo tint -->
+    <linearGradient id="bgBase" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#EEF0FA"/>
+      <stop offset="35%"  stop-color="#F7F8FD"/>
+      <stop offset="65%"  stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EEF0FA"/>
+    </linearGradient>
+
+    <!-- Top wave gradients: navy → indigo → light indigo (left→right, fading) -->
+    <linearGradient id="wT1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#1a237e" stop-opacity="0.15"/>
+      <stop offset="45%"  stop-color="#3949AB" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#7986CB" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="wT2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#283593" stop-opacity="0.13"/>
+      <stop offset="55%"  stop-color="#3F51B5" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#9FA8DA" stop-opacity="0.01"/>
+    </linearGradient>
+    <linearGradient id="wT3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#3949AB" stop-opacity="0.11"/>
+      <stop offset="60%"  stop-color="#5C6BC0" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#C5CAE9" stop-opacity="0.01"/>
+    </linearGradient>
+    <linearGradient id="wT4" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#5C6BC0" stop-opacity="0.09"/>
+      <stop offset="65%"  stop-color="#9FA8DA" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#E8EAF6" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Bottom wave gradients: navy → indigo → light indigo (right→left, fading) -->
+    <linearGradient id="wB1" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%"   stop-color="#1a237e" stop-opacity="0.15"/>
+      <stop offset="45%"  stop-color="#3949AB" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#7986CB" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="wB2" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%"   stop-color="#283593" stop-opacity="0.13"/>
+      <stop offset="55%"  stop-color="#3F51B5" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#9FA8DA" stop-opacity="0.01"/>
+    </linearGradient>
+    <linearGradient id="wB3" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%"   stop-color="#3949AB" stop-opacity="0.11"/>
+      <stop offset="60%"  stop-color="#5C6BC0" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#C5CAE9" stop-opacity="0.01"/>
+    </linearGradient>
+    <linearGradient id="wB4" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%"   stop-color="#5C6BC0" stop-opacity="0.09"/>
+      <stop offset="65%"  stop-color="#9FA8DA" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#E8EAF6" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Blur filters -->
+    <filter id="blur6" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="blur14" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <!-- ── Base background ── -->
+  <rect width="1440" height="900" fill="url(#bgBase)"/>
+
+  <!-- White negative space center -->
+  <ellipse cx="720" cy="450" rx="620" ry="360" fill="white" opacity="0.55" filter="url(#blur14)"/>
+  <ellipse cx="720" cy="450" rx="430" ry="240" fill="white" opacity="0.75" filter="url(#blur6)"/>
+  <ellipse cx="720" cy="450" rx="280" ry="155" fill="white" opacity="0.92"/>
+
+  <!-- ══════════════════════════════
+       TOP WAVE RIBBONS
+       ══════════════════════════════ -->
+
+  <!-- T1 — outermost/darkest -->
+  <path d="M -60,-60
+           C  85, 12  220,-18  385, 95
+           C 550,208  710, 88  930,162
+           C1150,236 1325,128 1510,182
+           L1510,-60 Z"
+        fill="url(#wT1)"/>
+
+  <!-- T2 -->
+  <path d="M -60,-60
+           C  72, 58  208, 32  372,152
+           C 536,272  696,155  916,228
+           C1136,301 1312,198 1510,245
+           L1510,-60 Z"
+        fill="url(#wT2)"/>
+
+  <!-- T3 -->
+  <path d="M -60,-60
+           C  58,102  192, 82  354,212
+           C 516,342  676,228  895,302
+           C1114,376 1295,272 1510,312
+           L1510,-60 Z"
+        fill="url(#wT3)"/>
+
+  <!-- T4 — innermost/lightest -->
+  <path d="M -60,-60
+           C  45,148  175,132  338,272
+           C 501,412  658,298  878,372
+           C1098,446 1280,342 1510,375
+           L1510,-60 Z"
+        fill="url(#wT4)"/>
+
+  <!-- Top sheen/highlight (white gleam on crest) -->
+  <path d="M -60, 18
+           C  90, 72  222, 42  385,155
+           C 548,268  708,142  918,212
+           C1108,272 1285,172 1510,218
+           L1510,-60 L-60,-60 Z"
+        fill="rgba(255,255,255,0.06)" filter="url(#blur6)"/>
+
+  <!-- ══════════════════════════════
+       BOTTOM WAVE RIBBONS
+       ══════════════════════════════ -->
+
+  <!-- B1 — outermost/darkest -->
+  <path d="M 1510,960
+           C1328,885 1145,910  962,805
+           C 779,700  596,815  375,745
+           C 154,675  -50,778  -60,960 Z"
+        fill="url(#wB1)"/>
+
+  <!-- B2 -->
+  <path d="M 1510,960
+           C1335,870 1152,895  968,770
+           C 784,645  601,758  380,688
+           C 159,618  -50,732  -60,960 Z"
+        fill="url(#wB2)"/>
+
+  <!-- B3 -->
+  <path d="M 1510,960
+           C1342,854 1158,880  974,734
+           C 790,588  607,702  386,632
+           C 218,577   55,618  -60,683
+           L-60,960 Z"
+        fill="url(#wB3)"/>
+
+  <!-- B4 — innermost/lightest -->
+  <path d="M 1510,960
+           C1350,840 1166,864  982,698
+           C 798,532  615,646  394,576
+           C 226,520   60,558  -60,616
+           L-60,960 Z"
+        fill="url(#wB4)"/>
+
+  <!-- Bottom sheen/highlight -->
+  <path d="M 1510,878
+           C1315,808 1132,836  950,716
+           C 820,636  698,648  578,658
+           C 458,668  338,658  198,628
+           C  98,608   18,622  -60,658
+           L-60,960 L1510,960 Z"
+        fill="rgba(255,255,255,0.05)" filter="url(#blur6)"/>
+</svg>

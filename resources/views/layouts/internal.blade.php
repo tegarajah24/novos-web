@@ -46,6 +46,25 @@
             color: #212121;
         }
 
+        /* ── Background decorative SVG layers ── */
+        .bg-svg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            object-fit: cover;
+        }
+        .bg-svg-dark { display: none; }
+        /* Keep content above the background layers */
+        body.internal-body > .flex-1,
+        body.internal-body > .contents,
+        body.internal-body > aside {
+            position: relative;
+            z-index: 1;
+        }
+
         /* ── Dynamic Brand Color Mappings ── */
         .bg-\[\#1a237e\] { background-color: var(--color-primary) !important; }
         .bg-\[\#1a237e\]\/5 { background-color: rgba(var(--color-primary-rgb), 0.05) !important; }
@@ -226,6 +245,10 @@
             background: linear-gradient(135deg, #0e111a 0%, #121422 50%, #0e121d 100%) !important;
             color: #cbd5e1 !important;
         }
+
+        /* Swap to dark SVG background */
+        body.theme-dark .bg-svg { display: none; }
+        body.theme-dark .bg-svg-dark { display: block; }
         body.theme-dark input,
         body.theme-dark textarea,
         body.theme-dark select {
@@ -659,6 +682,10 @@
     }
 })();
 </script>
+
+    {{-- Background decorative SVG — light & dark variants --}}
+    <img class="bg-svg" src="{{ asset('images/bg-internal.svg') }}" alt="" aria-hidden="true">
+    <img class="bg-svg bg-svg-dark" src="{{ asset('images/bg-internal-dark.svg') }}" alt="" aria-hidden="true">
 
     <!-- Sidebar -->
     @include('components.sidebar')
