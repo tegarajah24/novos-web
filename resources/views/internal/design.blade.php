@@ -204,29 +204,49 @@
             
             <div x-show="isDetailOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" aria-hidden="true"></div>
 
-            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-7xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
+            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-7xl p-4 sm:p-6 my-4 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
                 
                 {{-- Header Modal --}}
-                <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center mb-4 sm:mb-6 bg-white -mx-4 -mt-4 p-4 sm:-mx-6 sm:-mt-6 sm:p-6 border-b border-gray-200">
                     <div>
-                        <div class="flex items-center gap-3 mb-1">
-                            <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-bold border border-amber-200">Di Design</span>
-                            <h3 class="text-xl font-bold text-gray-900">Detail Pesanan: <span x-text="selectedOrder?.order_id" class="text-[#1a237e]"></span></h3>
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-amber-100 text-amber-700 text-[10px] sm:text-xs font-bold border border-amber-200">Di Design</span>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900">Detail Pesanan: <span x-text="selectedOrder?.order_id" class="text-[#1a237e]"></span></h3>
                         </div>
-                        <p class="text-sm text-gray-500 flex items-center gap-1.5">
-                            <i data-lucide="user" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer"></span> 
-                            &bull; <i data-lucide="phone" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer_contact"></span>
+                        <p class="text-xs sm:text-sm text-gray-500 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer"></span></span>
+                            <span class="hidden sm:inline">&bull;</span>
+                            <span class="flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer_contact"></span></span>
                         </p>
                     </div>
                     <button @click="closeModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                        <i data-lucide="x" class="w-6 h-6"></i>
+                        <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    {{-- KIRI: Spesifikasi & Referensi (2 Kolom) --}}
-                    <div class="lg:col-span-2 space-y-6">
+                {{-- Scrollable Content Area --}}
+                <div class="max-h-[70vh] lg:max-h-[75vh] overflow-y-auto -mx-4 px-4 sm:-mx-6 sm:px-6">
+
+                    {{-- Tabs on Mobile --}}
+                    <div class="flex border border-gray-200 mb-4 lg:hidden p-1 bg-gray-50 rounded-xl">
+                        <button @click="mobileTab = 'info'" 
+                                :class="mobileTab === 'info' ? 'bg-white text-[#1a237e] shadow-sm font-bold' : 'text-gray-500 hover:text-gray-700'" 
+                                class="flex-1 py-1.5 px-3 rounded-lg text-center text-xs transition-all flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Info Pesanan
+                        </button>
+                        <button @click="mobileTab = 'tindakan'" 
+                                :class="mobileTab === 'tindakan' ? 'bg-white text-[#1a237e] shadow-sm font-bold' : 'text-gray-500 hover:text-gray-700'" 
+                                class="flex-1 py-1.5 px-3 rounded-lg text-center text-xs transition-all flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                            Penyelesaian
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                        
+                        {{-- KIRI: Spesifikasi & Referensi (2 Kolom) --}}
+                        <div class="lg:col-span-2 space-y-4 sm:space-y-6" :class="mobileTab === 'info' ? 'block' : 'hidden lg:block'">
                         
                         {{-- Spesifikasi Produk --}}
                         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
@@ -437,6 +457,7 @@
 
                     </div>
                 </div>
+                </div>
 
             </div>
         </div>
@@ -451,6 +472,7 @@ function designApp() {
         selectedOrder: null,
         isItemsExpanded: false,
         updateStatus: '',
+        mobileTab: 'info',
         pondRefs: {},
 
         orders: @json($orders),
@@ -458,6 +480,7 @@ function designApp() {
         openDetail(order) {
             this.selectedOrder = order;
             this.updateStatus = '';
+            this.mobileTab = 'info';
             this.isItemsExpanded = false;
             this.isDetailOpen = true;
 
