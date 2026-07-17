@@ -339,33 +339,46 @@ if (!empty($order['item_details'])) {
                     </button>
                     @endif
                 </div>
-                <div class="overflow-x-auto rounded-lg border border-gray-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
-                            <tr>
-                                <th class="px-3 py-2 text-left font-semibold">No</th>
-                                <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
-                                <th class="px-3 py-2 text-left font-semibold">NPG</th>
-                                <th class="px-3 py-2 text-left font-semibold">Size</th>
-                                <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
-                                <th class="px-3 py-2 text-right font-semibold">Harga</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach($order['item_details'] as $detail)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-3 py-2 text-gray-800 font-medium">{{ $loop->iteration }}</td>
-                                <td class="px-3 py-2 text-gray-700 font-medium">{{ $detail['nama_punggung'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $detail['no_punggung'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $detail['size'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">
-                                    {{ $detail['keterangan_simple'] ?? '-' }}
-                                </td>
-                                <td class="px-3 py-2 text-right font-medium text-gray-900">{{ 'Rp ' . number_format($detail['price'] ?? 0, 0, ',', '.') }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div x-data="{ expandedAll: false }" class="rounded-lg border border-gray-200 overflow-hidden">
+                    @if(count($order['item_details']) > 5)
+                    <button @click="expandedAll = !expandedAll" class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-[#1a237e] hover:bg-gray-50 transition-colors border-b border-gray-100">
+                        <span x-text="expandedAll ? 'Sembunyikan' : 'Lihat Semua ({{ count($order['item_details']) }})'"></span>
+                        <svg class="w-3 h-3 transition-transform duration-300" :class="expandedAll ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    @endif
+                    <div :style="expandedAll ? 'max-height: 10000px' : 'max-height: 250px'" class="overflow-y-auto transition-all duration-300 ease-in-out relative">
+                        <div class="divide-y divide-gray-100">
+                        @foreach($order['item_details'] as $detail)
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center gap-2 min-w-0 flex-1">
+                                    <span class="text-xs font-semibold text-gray-800 shrink-0">{{ $detail['no_punggung'] ?? $loop->iteration }}</span>
+                                    <span class="text-xs text-gray-600 truncate">{{ $detail['nama_punggung'] ?? '-' }}</span>
+                                    <span class="text-[11px] text-gray-400 shrink-0">{{ $detail['size'] ? 'Size ' . $detail['size'] : '' }}</span>
+                                </div>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 shrink-0 ml-2" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="px-3 pb-3 space-y-1.5">
+                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                    <span class="text-gray-400 font-medium w-20 shrink-0">Nama</span>
+                                    <span>{{ $detail['nama_punggung'] ?? '-' }}</span>
+                                </div>
+                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                    <span class="text-gray-400 font-medium w-20 shrink-0">Ket</span>
+                                    <span>{{ $detail['keterangan_simple'] ?? '-' }}</span>
+                                </div>
+                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                    <span class="text-gray-400 font-medium w-20 shrink-0">Harga</span>
+                                    <span class="font-semibold text-gray-900">{{ 'Rp ' . number_format($detail['price'] ?? 0, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                        </div>
+                        @if(count($order['item_details']) > 5)
+                        <div x-show="!expandedAll" class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none z-10"></div>
+                        @endif
+                    </div>
                 </div>
             </div>
             @endif
