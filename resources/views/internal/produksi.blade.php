@@ -45,20 +45,20 @@
             <table class="w-full text-left text-sm text-gray-600">
                 <thead class="bg-gray-50 border-b border-gray-200 text-gray-500">
                     <tr>
-                        <th class="px-2 xl:px-6 py-2 xl:py-4 font-medium">ID Pesanan</th>
-                        <th class="px-2 xl:px-6 py-2 xl:py-4 font-medium">Customer</th>
-                        <th class="hidden xl:table-cell px-6 py-4 font-medium">Tim / Produk</th>
-                        <th class="hidden xl:table-cell px-6 py-4 text-center font-medium">Total Qty</th>
-                        <th class="hidden xl:table-cell px-6 py-4 font-medium">Deadline</th>
-                        <th class="hidden xl:table-cell px-6 py-4 font-medium">Prioritas</th>
-                        <th class="px-2 xl:px-6 py-2 xl:py-4 text-right font-medium">Aksi</th>
+                        <th class="px-6 py-4 font-medium">ID Pesanan</th>
+                        <th class="px-6 py-4 font-medium">Customer</th>
+                        <th class="px-6 py-4 font-medium">Tim / Produk</th>
+                        <th class="px-6 py-4 text-center font-medium">Total Qty</th>
+                        <th class="px-6 py-4 font-medium">Deadline</th>
+                        <th class="px-6 py-4 font-medium">Prioritas</th>
+                        <th class="px-6 py-4 text-right font-medium">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     <template x-if="filteredOrders().length === 0">
                         <tr>
-                            <td colspan="7" class="px-2 xl:px-6 py-8 xl:py-12 text-center text-gray-500">
-                                <i data-lucide="check-circle-2" class="w-8 h-8 xl:w-10 xl:h-10 mx-auto text-green-400 mb-2"></i>
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <i data-lucide="check-circle-2" class="w-10 h-10 mx-auto text-green-400 mb-2"></i>
                                 <p class="font-medium text-gray-800">Tidak ada antrean di divisi ini.</p>
                                 <p class="text-xs mt-1 text-gray-400" x-text="activeTab === 'printing' ? 'Semua pesanan selesai diprint!' : (activeTab === 'press' ? 'Semua pesanan selesai dipress!' : (activeTab === 'jahit' ? 'Semua pesanan selesai dijahit!' : 'Semua pesanan lolos QC!'))"></p>
                             </td>
@@ -66,21 +66,21 @@
                     </template>
                     <template x-for="order in filteredOrders()" :key="order.id">
                         <tr class="hover:bg-indigo-50/30 transition-colors cursor-pointer group" @click="openDetail(order)">
-                            <td class="px-2 xl:px-6 py-2.5 xl:py-4">
-                                <span class="font-bold text-[#1a237e] group-hover:underline text-xs xl:text-sm" x-text="order.order_id"></span>
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-[#1a237e] group-hover:underline" x-text="order.order_id"></span>
                             </td>
-                            <td class="px-2 xl:px-6 py-2.5 xl:py-4 font-semibold text-gray-900 truncate max-w-[120px] xl:max-w-none text-xs xl:text-sm" x-text="order.customer"></td>
-                            <td class="hidden xl:table-cell px-6 py-4" x-text="order.team_name"></td>
-                            <td class="hidden xl:table-cell px-6 py-4 text-center">
+                            <td class="px-6 py-4 font-semibold text-gray-900" x-text="order.customer"></td>
+                            <td class="px-6 py-4" x-text="order.team_name"></td>
+                            <td class="px-6 py-4 text-center">
                                 <span class="font-bold text-gray-900 bg-gray-100 px-2.5 py-1 rounded-md text-xs border border-gray-200" x-text="order.total_qty + ' pcs'"></span>
                             </td>
-                            <td class="hidden xl:table-cell px-6 py-4">
+                            <td class="px-6 py-4">
                                 <div class="flex items-center gap-1.5 text-gray-500">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                                     <span x-text="order.deadline"></span>
                                 </div>
                             </td>
-                            <td class="hidden xl:table-cell px-6 py-4">
+                            <td class="px-6 py-4">
                                 <span x-show="order.priority === 'express' || order.priority === 'super_express'" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-50 text-red-700 text-xs font-semibold border border-red-100">
                                     <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> <span x-text="order.priority === 'super_express' ? 'Super Express' : 'Express'"></span>
                                 </span>
@@ -88,11 +88,8 @@
                                     Normal
                                 </span>
                             </td>
-                            <td class="px-2 xl:px-6 py-2.5 xl:py-4 text-right">
-                                <button @click.stop="openDetail(order)" class="xl:hidden p-1.5 bg-white border border-gray-300 rounded-lg text-gray-400 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                                </button>
-                                <button @click.stop="openDetail(order)" class="hidden xl:inline-flex px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors items-center gap-1.5 ml-auto">
+                            <td class="px-6 py-4 text-right">
+                                <button @click.stop="openDetail(order)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 text-xs font-medium hover:bg-gray-50 hover:text-[#1a237e] hover:border-[#1a237e] transition-colors flex items-center gap-1.5 ml-auto">
                                     Lihat Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
                             </td>
