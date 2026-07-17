@@ -156,7 +156,7 @@ if (!empty($order['item_details'])) {
 <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
 
     {{-- ── KOLOM KIRI ─────────────────────────────────────────────── --}}
-    <div class="flex-1 min-w-0 overflow-hidden">
+    <div class="flex-1 min-w-0 overflow-hidden w-full">
         <div x-show="activeTab === 'detail'" class="space-y-5">
             {{-- Info Pesanan --}}
         @php
