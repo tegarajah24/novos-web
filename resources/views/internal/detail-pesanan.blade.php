@@ -121,7 +121,23 @@ if (!empty($order['item_details'])) {
 </div>
 
 {{-- Tabs Navigation --}}
-<div class="sticky top-0 z-40 bg-white/90 backdrop-blur-md pt-2 pb-3 -mx-4 px-4 border-b border-gray-100">
+{{-- Desktop --}}
+<div class="hidden lg:flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+    <button @click="activeTab = 'detail'"
+        :class="activeTab === 'detail' ? 'bg-[#1a237e] text-white shadow-sm font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-semibold'"
+        class="flex-1 px-5 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Detail Pesanan
+    </button>
+    <button @click="activeTab = 'spk'"
+        :class="activeTab === 'spk' ? 'bg-[#1a237e] text-white shadow-sm font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-semibold'"
+        class="flex-1 px-5 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Surat Perintah Kerja (SPK)
+    </button>
+</div>
+{{-- Mobile Sticky --}}
+<div class="lg:hidden sticky top-0 z-40 bg-white/90 backdrop-blur-md pt-2 pb-3 -mx-4 px-4 border-b border-gray-100">
     <div class="flex p-1 bg-gray-100 rounded-xl max-w-sm">
         <button @click="activeTab = 'detail'"
             :class="activeTab === 'detail' ? 'bg-white text-[#1a237e] shadow-sm font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium'"
