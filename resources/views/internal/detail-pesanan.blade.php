@@ -121,8 +121,7 @@ if (!empty($order['item_details'])) {
 </div>
 
 {{-- Tabs Navigation --}}
-{{-- Desktop --}}
-<div class="hidden lg:flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+<div class="flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
     <button @click="activeTab = 'detail'"
         :class="activeTab === 'detail' ? 'bg-[#1a237e] text-white shadow-sm font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-semibold'"
         class="flex-1 px-5 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
@@ -136,23 +135,6 @@ if (!empty($order['item_details'])) {
         Surat Perintah Kerja (SPK)
     </button>
 </div>
-{{-- Mobile Sticky --}}
-<div class="lg:hidden sticky top-0 z-40 bg-white/90 backdrop-blur-md pt-2 pb-3 -mx-4 px-4 border-b border-gray-100">
-    <div class="flex p-1 bg-gray-100 rounded-xl max-w-sm">
-        <button @click="activeTab = 'detail'"
-            :class="activeTab === 'detail' ? 'bg-white text-[#1a237e] shadow-sm font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium'"
-            class="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm transition-all">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-            Detail
-        </button>
-        <button @click="activeTab = 'spk'"
-            :class="activeTab === 'spk' ? 'bg-white text-[#1a237e] shadow-sm font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium'"
-            class="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm transition-all">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            SPK
-        </button>
-    </div>
-</div>
 
 {{-- 2-COLUMN LAYOUT --}}
 <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
@@ -161,54 +143,31 @@ if (!empty($order['item_details'])) {
     <div class="flex-1 min-w-0">
         <div x-show="activeTab === 'detail'" class="space-y-5">
             {{-- Info Pesanan (Stepper) --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 lg:p-6">
-            <h3 class="font-semibold text-gray-900 mb-4 lg:mb-6 flex items-center gap-2 text-sm">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h3 class="font-semibold text-gray-900 mb-6 flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                 </svg>
                 Info Pesanan
             </h3>
 
-            {{-- Mobile Compact Status --}}
-            @php
-                $currentStep = collect($steps)->firstWhere('current', true);
-                $nextStep = null;
-                $foundCurrent = false;
-                foreach($steps as $s) {
-                    if($s['current']) { $foundCurrent = true; continue; }
-                    if(!$foundCurrent && !$s['done']) { $nextStep = $s; break; }
-                }
-                $doneSteps = collect($steps)->filter(fn($s)=>$s['done'])->count();
-            @endphp
-            <div class="lg:hidden">
-                <div class="flex items-center gap-3 bg-[#1a237e]/5 rounded-xl p-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-[#1a237e] border-4 border-[#1a237e]/20 flex items-center justify-center shadow-md shadow-[#1a237e]/25 shrink-0">
-                        <div class="w-3 h-3 rounded-full bg-white"></div>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-xs text-gray-500">Status Saat Ini</p>
-                        <p class="text-sm font-bold text-[#1a237e]">{{ $currentStep['label'] ?? '-' }}</p>
-                    </div>
-                    <span class="ml-auto text-xs font-bold text-[#1a237e] bg-[#1a237e]/10 px-2 py-1 rounded-lg">{{ $doneSteps }}/{{ count($steps) }}</span>
-                </div>
-                @if($nextStep)
-                <div class="flex items-center gap-2.5 text-xs text-gray-500">
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                    <span>Selanjutnya: <span class="font-semibold text-gray-700">{{ $nextStep['label'] }}</span></span>
-                </div>
-                @endif
-            </div>
-
-            {{-- Desktop Full Stepper --}}
-            <div class="hidden lg:block relative flex items-start">
-                <div class="absolute top-4 left-4 right-4 h-0.5 bg-gray-200 z-0" style="left: calc(100% / {{ count($steps) * 2 }}); right: calc(100% / {{ count($steps) * 2 }});">
+            {{-- Stepper --}}
+            <div class="relative flex flex-col md:flex-row items-start md:items-start">
+                {{-- Connector line (behind circles) - horizontal on desktop, vertical on mobile --}}
+                <div class="hidden md:block absolute top-4 left-4 right-4 h-0.5 bg-gray-200 z-0" style="left: calc(100% / {{ count($steps) * 2 }}); right: calc(100% / {{ count($steps) * 2 }});">
                     @php $doneCount = collect($steps)->filter(fn($s)=>$s['done'])->count(); @endphp
                     <div class="h-full bg-[#1a237e] transition-all" style="width: {{ max(0, (($doneCount - 1) / (count($steps) - 1)) * 100) }}%"></div>
                 </div>
+                <div class="md:hidden absolute top-0 bottom-0 left-4 w-0.5 bg-gray-200 z-0">
+                    @php $doneCount = collect($steps)->filter(fn($s)=>$s['done'])->count(); @endphp
+                    <div class="w-full bg-[#1a237e] transition-all" style="height: {{ max(0, (($doneCount - 1) / (count($steps) - 1)) * 100) }}%"></div>
+                </div>
 
-                <div class="relative z-10 flex w-full justify-between">
+                {{-- Steps --}}
+                <div class="relative z-10 flex flex-col md:flex-row w-full md:justify-between gap-4 md:gap-0">
                 @foreach($steps as $idx => $step)
-                <div class="flex flex-col items-center">
+                <div class="flex items-center gap-3 md:flex-col md:items-center" style="{{ null }}">
+                    {{-- Circle --}}
                     @if($step['current'])
                     <div class="w-8 h-8 rounded-full bg-[#1a237e] border-4 border-[#1a237e]/20 flex items-center justify-center shadow-md shadow-[#1a237e]/25 shrink-0">
                         <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
@@ -224,7 +183,9 @@ if (!empty($order['item_details'])) {
                         <div class="w-2 h-2 rounded-full bg-gray-300"></div>
                     </div>
                     @endif
-                    <div class="text-center px-1 mt-2">
+
+                    {{-- Label + Date --}}
+                    <div class="md:text-center md:px-1">
                         <p class="text-xs font-semibold leading-tight {{ $step['done'] || $step['current'] ? 'text-gray-800' : 'text-gray-400' }}">
                             {{ $step['label'] }}
                         </p>
@@ -241,20 +202,14 @@ if (!empty($order['item_details'])) {
         </div>
 
         {{-- Info Customer --}}
-        <div x-data="{ open: false }" class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <button @click="open = !open" class="lg:hidden w-full flex items-center justify-between p-4 cursor-pointer">
-                <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    Info Customer
-                </h3>
-                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div class="hidden lg:flex items-center justify-between p-6">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     Info Customer
                 </h3>
                 <div class="flex items-center gap-2">
+                    {{-- Tombol WA ke customer --}}
                     @php
                         $custPhone = preg_replace('/[^0-9]/', '', $order['customer']['phone'] ?? '');
                         if (str_starts_with($custPhone, '0')) { $custPhone = '62' . substr($custPhone, 1); }
@@ -267,43 +222,30 @@ if (!empty($order['item_details'])) {
                     @endif
                 </div>
             </div>
-            <div x-show="open" x-transition.duration.200ms x-cloak class="lg:!block">
-            <div class="px-4 pb-4 lg:px-6 lg:pb-6 lg:pt-0">
-                    <div class="grid grid-cols-[80px_1fr] gap-2 items-center">
-                        <span class="text-gray-400 text-xs font-medium">Nama</span>
-                        <span class="font-medium text-gray-800">{{ $order['customer']['name'] }}</span>
-                    </div>
-                    <div class="grid grid-cols-[80px_1fr] gap-2 items-center">
-                        <span class="text-gray-400 text-xs font-medium">Email</span>
-                        <span class="font-medium text-[#1a237e]">{{ $order['customer']['email'] }}</span>
-                    </div>
-                    <div class="grid grid-cols-[80px_1fr] gap-2 items-center">
-                        <span class="text-gray-400 text-xs font-medium">No HP</span>
-                        <span class="font-medium text-gray-800">{{ $order['customer']['phone'] }}</span>
-                    </div>
+            {{-- Grid 2 kolom: label fixed-width, value rapat di sebelahnya --}}
+            <div class="space-y-2 text-sm">
+                <div class="grid grid-cols-[80px_1fr] gap-2 items-center">
+                    <span class="text-gray-400 text-xs font-medium">Nama</span>
+                    <span class="font-medium text-gray-800">{{ $order['customer']['name'] }}</span>
                 </div>
-            </div>
+                <div class="grid grid-cols-[80px_1fr] gap-2 items-center">
+                    <span class="text-gray-400 text-xs font-medium">Email</span>
+                    <span class="font-medium text-[#1a237e]">{{ $order['customer']['email'] }}</span>
+                </div>
+                <div class="grid grid-cols-[80px_1fr] gap-2 items-center">
+                    <span class="text-gray-400 text-xs font-medium">No HP</span>
+                    <span class="font-medium text-gray-800">{{ $order['customer']['phone'] }}</span>
+                </div>
             </div>
         </div>
 
 
         {{-- Detail Produk --}}
-        <div x-data="editProduk()" class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            {{-- Mobile Toggle --}}
-            <button @click="accordionOpen = !accordionOpen" class="lg:hidden w-full flex items-center justify-between p-4 cursor-pointer">
-                <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                    Detail Produk
-                </h3>
-                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 shrink-0" :class="{ 'rotate-180': accordionOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            {{-- Desktop Header --}}
-            <div class="hidden lg:flex items-center justify-between p-6">
-                <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                    Detail Produk
-                </h3>
-                <div class="flex items-center gap-2">
+        <div x-data="editProduk()" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm">
+                <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                Detail Produk
+                <div class="ml-auto flex items-center gap-2">
                     <a href="{{ route('staf.pesanan.export-excel', $order['order_id']) }}"
                        class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -316,9 +258,7 @@ if (!empty($order['item_details'])) {
                         Edit
                     </button>
                 </div>
-            </div>
-            <div x-show="accordionOpen" x-transition.duration.200ms x-cloak class="lg:!block">
-            <div class="px-4 pb-4 lg:px-6 lg:pb-6 lg:pt-0">
+            </h3>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 md:gap-x-8 gap-y-2.5 text-sm mb-4">
                 <div><span class="text-gray-500 text-xs">Jenis</span><div class="font-medium text-gray-900">{{ $order['product']['type'] }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-medium text-gray-900" x-text="form.team_name || 'Jersey Custom'">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
@@ -376,8 +316,7 @@ if (!empty($order['item_details'])) {
                     </button>
                     @endif
                 </div>
-                {{-- Desktop Table --}}
-                <div class="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
                     <table class="w-full text-sm">
                         <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
                             <tr>
@@ -396,33 +335,17 @@ if (!empty($order['item_details'])) {
                                 <td class="px-3 py-2 text-gray-700 font-medium">{{ $detail['nama_punggung'] ?? '-' }}</td>
                                 <td class="px-3 py-2 text-gray-700">{{ $detail['no_punggung'] ?? '-' }}</td>
                                 <td class="px-3 py-2 text-gray-700">{{ $detail['size'] ?? '-' }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $detail['keterangan_simple'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-700">
+                                    {{ $detail['keterangan_simple'] ?? '-' }}
+                                </td>
                                 <td class="px-3 py-2 text-right font-medium text-gray-900">{{ 'Rp ' . number_format($detail['price'] ?? 0, 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                {{-- Mobile Cards --}}
-                <div class="md:hidden space-y-2">
-                    @foreach($order['item_details'] as $detail)
-                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                        <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs font-bold text-gray-800">#{{ $loop->iteration }} — {{ $detail['nama_punggung'] ?? '-' }}</span>
-                            <span class="text-sm font-bold text-[#1a237e]">{{ 'Rp ' . number_format($detail['price'] ?? 0, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-x-3 gap-y-1 text-xs">
-                            <div><span class="text-gray-400">NPG</span> <span class="font-medium text-gray-700">{{ $detail['no_punggung'] ?? '-' }}</span></div>
-                            <div><span class="text-gray-400">Size</span> <span class="font-medium text-gray-700">{{ $detail['size'] ?? '-' }}</span></div>
-                            <div class="col-span-3"><span class="text-gray-400">Ket:</span> <span class="font-medium text-gray-700">{{ $detail['keterangan_simple'] ?? '-' }}</span></div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
             </div>
             @endif
-            </div>
-            </div>
 
             {{-- Kelola Item & Harga Modal --}}
             <template x-teleport="body">
@@ -658,22 +581,7 @@ if (!empty($order['item_details'])) {
                 ->values()
                 ->toArray();
         @endphp
-        <div x-data="{ open: false }" class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <button @click="open = !open" class="lg:hidden w-full flex items-center justify-between p-4 cursor-pointer">
-                <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    File Desain
-                </h3>
-                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div class="hidden lg:flex items-center p-6">
-                <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    File Desain
-                </h3>
-            </div>
-            <div x-show="open" x-transition.duration.200ms x-cloak class="lg:!block">
-            <div class="px-4 pb-4 lg:px-6 lg:pb-6 lg:pt-0">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             {{-- Logo Tim --}}
             <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -748,26 +656,16 @@ if (!empty($order['item_details'])) {
                 <div class="col-span-3 py-6 text-center text-gray-400 text-sm">Belum ada referensi desain.</div>
                 @endforelse
             </div>
-            </div>
-            </div>
         </div>
+
         {{-- History Catatan --}}
-        <div x-data="{ open: false }" class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <button @click="open = !open" class="lg:hidden w-full flex items-center justify-between p-4 cursor-pointer">
-                <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    History Catatan
-                </h3>
-                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div class="hidden lg:flex items-center p-6">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
                 <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     History Catatan
                 </h3>
             </div>
-            <div x-show="open" x-transition.duration.200ms x-cloak class="lg:!block">
-            <div class="px-4 pb-4 lg:px-6 lg:pb-6 lg:pt-0">
             <div class="space-y-3">
                 @forelse($order['history_notes'] as $i => $h)
                 <div class="flex gap-3">
@@ -786,77 +684,44 @@ if (!empty($order['item_details'])) {
                 <p class="text-sm text-gray-400 text-center py-2">Belum ada catatan.</p>
                 @endforelse
             </div>
-            </div>
-            </div>
         </div>
-
-        {{-- Riwayat Status --}}
-        <div x-data="{ open: false }" class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <button @click="open = !open" class="lg:hidden w-full flex items-center justify-between p-4 cursor-pointer">
-                <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                    Riwayat Status
-                </h3>
-                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div class="hidden lg:flex items-center p-6">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100">
                 <h3 class="font-semibold text-gray-900 flex items-center gap-2 text-sm">
                     <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                     Riwayat Status
                 </h3>
             </div>
-            <div x-show="open" x-transition.duration.200ms x-cloak class="lg:!block">
-            <div class="px-4 pb-4 lg:px-6 lg:pb-6 lg:pt-0">
-                {{-- Desktop Table --}}
-                <div class="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
-                            <tr>
-                                <th class="px-4 py-2.5 text-left font-semibold">Tanggal</th>
-                                <th class="px-4 py-2.5 text-left font-semibold">Status</th>
-                                <th class="px-4 py-2.5 text-left font-semibold">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @forelse($order['status_history'] as $sh)
-                            @php
-                            $st = match($sh['status']) { 'menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','siap_cetak'=>'indigo','menunggu_spk'=>'yellow','tahap_produksi'=>'purple','selesai'=>'green','dibatalkan'=>'red',default=>'gray' };
-                            $sl = match($sh['status']) { 'menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','siap_cetak'=>'Siap Cetak','menunggu_spk'=>'Menunggu SPK','tahap_produksi'=>'Produksi','selesai'=>'Selesai','dibatalkan'=>'Dibatalkan',default=>$sh['status'] };
-                            @endphp
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 text-gray-700">{{ $sh['date'] }}</td>
-                                <td class="px-4 py-3"><x-badge type="{{ $st }}">{{ $sl }}</x-badge></td>
-                                <td class="px-4 py-3 text-gray-700">{{ $sh['note'] }}</td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3" class="px-4 py-8 text-center text-gray-400 text-sm">Belum ada riwayat status.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                {{-- Mobile Cards --}}
-                <div class="md:hidden space-y-3">
-                    @forelse($order['status_history'] as $sh)
-                    @php
-                    $st = match($sh['status']) { 'menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','siap_cetak'=>'indigo','menunggu_spk'=>'yellow','tahap_produksi'=>'purple','selesai'=>'green','dibatalkan'=>'red',default=>'gray' };
-                    $sl = match($sh['status']) { 'menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','siap_cetak'=>'Siap Cetak','menunggu_spk'=>'Menunggu SPK','tahap_produksi'=>'Produksi','selesai'=>'Selesai','dibatalkan'=>'Dibatalkan',default=>$sh['status'] };
-                    @endphp
-                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                        <div class="flex items-center justify-between mb-1.5">
-                            <x-badge type="{{ $st }}">{{ $sl }}</x-badge>
-                            <span class="text-xs text-gray-400">{{ $sh['date'] }}</span>
-                        </div>
-                        <p class="text-sm text-gray-700">{{ $sh['note'] }}</p>
-                    </div>
-                    @empty
-                    <p class="text-sm text-gray-400 text-center py-4">Belum ada riwayat status.</p>
-                    @endforelse
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-semibold">Tanggal</th>
+                            <th class="px-6 py-3 text-left font-semibold">Status</th>
+                            <th class="px-6 py-3 text-left font-semibold">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($order['status_history'] as $sh)
+                        @php
+                        $st = match($sh['status']) { 'menunggu_pembayaran'=>'orange','tahap_desain'=>'blue','menunggu_acc'=>'orange','siap_cetak'=>'indigo','menunggu_spk'=>'yellow','tahap_produksi'=>'purple','selesai'=>'green','dibatalkan'=>'red',default=>'gray' };
+                        $sl = match($sh['status']) { 'menunggu_pembayaran'=>'Menunggu Pembayaran','tahap_desain'=>'Tahap Desain','menunggu_acc'=>'Menunggu ACC','siap_cetak'=>'Siap Cetak','menunggu_spk'=>'Menunggu SPK','tahap_produksi'=>'Produksi','selesai'=>'Selesai','dibatalkan'=>'Dibatalkan',default=>$sh['status'] };
+                        @endphp
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-3.5 text-gray-700">{{ $sh['date'] }}</td>
+                            <td class="px-6 py-3.5"><x-badge type="{{ $st }}">{{ $sl }}</x-badge></td>
+                            <td class="px-6 py-3.5 text-gray-700">{{ $sh['note'] }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-8 text-center text-gray-400 text-sm">Belum ada riwayat status.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
                 </div>
             </div>
-            </div>
-            </div>
+            </template>
         </div>
 
         {{-- ── TAB SPK CONTENT ── --}}
@@ -1385,7 +1250,6 @@ function updateStatusSection() {
     function editProduk() {
         const p = __product;
         return {
-            accordionOpen: true,
             editModalOpen: false,
             itemsModalOpen: false,
             attrModalOpen: false,
