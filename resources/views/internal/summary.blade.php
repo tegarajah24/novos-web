@@ -272,7 +272,7 @@ new Chart(document.getElementById('chartTop5'), {
                 data: @json($topMaterialData),
                 backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'],
                 borderRadius:6,
-                barPercentage:0.7,
+                barPercentage:0.6,
                 categoryPercentage:0.85
             }
         ]
@@ -280,32 +280,49 @@ new Chart(document.getElementById('chartTop5'), {
     options:{
         ...chartDefaults,
         indexAxis:'y',
+        layout:{padding:{right:10}},
         plugins:{...chartDefaults.plugins, legend:{display:false}},
-        animation:{
-            x:{from:0,duration:1200,easing:'easeOutQuart',delay:(ctx)=>ctx.dataIndex*150}
-        },
         scales:{
-            x:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},border:{display:false},ticks:{font:{size:11}}},
-            y:{grid:{display:false},border:{display:false},ticks:{crossAlign:'far',padding:10,font:{size:12,family:"'Poppins',sans-serif"}}}
+            x:{display:false, beginAtZero:true},
+            y:{display:false}
         },
         hover:{mode:'nearest',intersect:true}
     },
     plugins:[
-
         {
-            id:'valueLabels',
+            id:'barLabels',
             afterDraw(chart){
                 var ctx=chart.ctx;
                 var meta=chart.getDatasetMeta(0);
                 if (!meta || !meta.data) return;
+                var area=chart.chartArea;
                 meta.data.forEach(function(bar,index){
                     var value=chart.data.datasets[0].data[index];
+                    var label=chart.data.labels[index];
+                    var maxLen=20;
+                    var displayLabel=label.length>maxLen?label.substring(0,maxLen)+'…':label;
+                    var barW=bar.width;
+                    var barX=bar.x;
+                    var barY=bar.y;
                     ctx.save();
-                    ctx.fillStyle='#1a237e';
-                    ctx.font="bold 11px Poppins, sans-serif";
-                    ctx.textAlign='left';
                     ctx.textBaseline='middle';
-                    ctx.fillText(value+' terjual',bar.x+6,bar.y);
+                    if(barW>120){
+                        ctx.textAlign='left';
+                        ctx.font="600 11px Poppins, sans-serif";
+                        ctx.fillStyle='rgba(255,255,255,0.85)';
+                        ctx.fillText(displayLabel,barX-barW+10,barY-1);
+                        ctx.font="bold 12px Poppins, sans-serif";
+                        ctx.fillStyle='#fff';
+                        ctx.fillText(value,barX-barW+10,barY+13);
+                    }else{
+                        ctx.textAlign='left';
+                        ctx.font="600 11px Poppins, sans-serif";
+                        ctx.fillStyle='#374151';
+                        ctx.fillText(displayLabel,barX+8,barY-1);
+                        ctx.font="bold 12px Poppins, sans-serif";
+                        ctx.fillStyle='#1a237e';
+                        ctx.fillText(value,barX+8,barY+13);
+                    }
                     ctx.restore();
                 });
             }
