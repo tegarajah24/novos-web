@@ -826,27 +826,27 @@ if (!empty($order['item_details'])) {
                     Mockup Jersey Final (Untuk SPK)
                 </h3>
 
-                <div class="flex flex-wrap gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <template x-if="mockupDepan">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: mockupDepan.url, name: 'Mockup Depan'}], 0)">
                             <img :src="mockupDepan.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!mockupDepan">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
-                            <p class="text-xs text-gray-400">Belum ada mockup depan</p>
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[3/4] flex items-center justify-center">
+                            <p class="text-[11px] text-gray-400 text-center">Belum ada mockup depan</p>
                         </div>
                     </template>
                     <template x-if="mockupBelakang">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: mockupBelakang.url, name: 'Mockup Belakang'}], 0)">
                             <img :src="mockupBelakang.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!mockupBelakang">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
-                            <p class="text-xs text-gray-400">Belum ada mockup belakang</p>
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[3/4] flex items-center justify-center">
+                            <p class="text-[11px] text-gray-400 text-center">Belum ada mockup belakang</p>
                         </div>
                     </template>
                 </div>
@@ -859,27 +859,27 @@ if (!empty($order['item_details'])) {
                     Detail Tampak Depan & Tampak Belakang Zoom
                 </h3>
 
-                <div class="flex flex-wrap gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <template x-if="detailDepan">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: detailDepan.url, name: 'Detail Depan'}], 0)">
                             <img :src="detailDepan.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!detailDepan">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
-                            <p class="text-xs text-gray-400">Belum ada detail depan</p>
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[3/4] flex items-center justify-center">
+                            <p class="text-[11px] text-gray-400 text-center">Belum ada detail depan</p>
                         </div>
                     </template>
                     <template x-if="detailBelakang">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: detailBelakang.url, name: 'Detail Belakang'}], 0)">
                             <img :src="detailBelakang.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!detailBelakang">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
-                            <p class="text-xs text-gray-400">Belum ada detail belakang</p>
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl aspect-[3/4] flex items-center justify-center">
+                            <p class="text-[11px] text-gray-400 text-center">Belum ada detail belakang</p>
                         </div>
                     </template>
                 </div>
