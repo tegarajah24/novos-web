@@ -137,7 +137,7 @@ if (!empty($order['item_details'])) {
 </div>
 
 {{-- 2-COLUMN LAYOUT --}}
-<div class="flex gap-6 items-start">
+<div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
 
     {{-- ── KOLOM KIRI ─────────────────────────────────────────────── --}}
     <div class="flex-1 min-w-0">
@@ -152,36 +152,40 @@ if (!empty($order['item_details'])) {
             </h3>
 
             {{-- Stepper --}}
-            <div class="relative flex items-start">
-                {{-- Connector line (behind circles) --}}
-                <div class="absolute top-4 left-4 right-4 h-0.5 bg-gray-200 z-0" style="left: calc(100% / {{ count($steps) * 2 }}); right: calc(100% / {{ count($steps) * 2 }});">
+            <div class="relative flex flex-col md:flex-row items-start md:items-start">
+                {{-- Connector line (behind circles) - horizontal on desktop, vertical on mobile --}}
+                <div class="hidden md:block absolute top-4 left-4 right-4 h-0.5 bg-gray-200 z-0" style="left: calc(100% / {{ count($steps) * 2 }}); right: calc(100% / {{ count($steps) * 2 }});">
                     @php $doneCount = collect($steps)->filter(fn($s)=>$s['done'])->count(); @endphp
                     <div class="h-full bg-[#1a237e] transition-all" style="width: {{ max(0, (($doneCount - 1) / (count($steps) - 1)) * 100) }}%"></div>
                 </div>
+                <div class="md:hidden absolute top-0 bottom-0 left-4 w-0.5 bg-gray-200 z-0">
+                    @php $doneCount = collect($steps)->filter(fn($s)=>$s['done'])->count(); @endphp
+                    <div class="w-full bg-[#1a237e] transition-all" style="height: {{ max(0, (($doneCount - 1) / (count($steps) - 1)) * 100) }}%"></div>
+                </div>
 
                 {{-- Steps --}}
-                <div class="relative z-10 flex w-full justify-between">
+                <div class="relative z-10 flex flex-col md:flex-row w-full md:justify-between gap-4 md:gap-0">
                 @foreach($steps as $idx => $step)
-                <div class="flex flex-col items-center" style="width: {{ 100 / count($steps) }}%">
+                <div class="flex items-center gap-3 md:flex-col md:items-center" style="{{ null }}">
                     {{-- Circle --}}
                     @if($step['current'])
-                    <div class="w-8 h-8 rounded-full bg-[#1a237e] border-4 border-[#1a237e]/20 flex items-center justify-center shadow-md shadow-[#1a237e]/25">
+                    <div class="w-8 h-8 rounded-full bg-[#1a237e] border-4 border-[#1a237e]/20 flex items-center justify-center shadow-md shadow-[#1a237e]/25 shrink-0">
                         <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
                     </div>
                     @elseif($step['done'])
-                    <div class="w-8 h-8 rounded-full bg-[#1a237e] flex items-center justify-center">
+                    <div class="w-8 h-8 rounded-full bg-[#1a237e] flex items-center justify-center shrink-0">
                         <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                         </svg>
                     </div>
                     @else
-                    <div class="w-8 h-8 rounded-full bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 border-2 border-gray-300 flex items-center justify-center shrink-0">
                         <div class="w-2 h-2 rounded-full bg-gray-300"></div>
                     </div>
                     @endif
 
                     {{-- Label + Date --}}
-                    <div class="mt-3 text-center px-1">
+                    <div class="md:text-center md:px-1">
                         <p class="text-xs font-semibold leading-tight {{ $step['done'] || $step['current'] ? 'text-gray-800' : 'text-gray-400' }}">
                             {{ $step['label'] }}
                         </p>
@@ -255,7 +259,7 @@ if (!empty($order['item_details'])) {
                     </button>
                 </div>
             </h3>
-            <div class="grid grid-cols-3 gap-x-8 gap-y-2.5 text-sm mb-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 md:gap-x-8 gap-y-2.5 text-sm mb-4">
                 <div><span class="text-gray-500 text-xs">Jenis</span><div class="font-medium text-gray-900">{{ $order['product']['type'] }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-medium text-gray-900" x-text="form.team_name || 'Jersey Custom'">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
                 <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-medium text-gray-900" :class="{ 'text-gray-400 italic': !form.nama_artikel }" x-text="form.nama_artikel || 'Belum diisi'">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
@@ -883,7 +887,7 @@ if (!empty($order['item_details'])) {
     </div>
 
     {{-- ── KOLOM KANAN ─────────────────────────────────────────────── --}}
-    <div class="w-80 shrink-0 space-y-5">
+    <div class="w-full lg:w-80 shrink-0 space-y-5">
 
         {{-- Pembayaran --}}
         @php
