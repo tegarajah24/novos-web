@@ -38,6 +38,10 @@
         }
 
         * { font-family: var(--font-family-base), sans-serif; font-size: var(--font-size-base); }
+
+        @media (max-width: 767px) {
+            :root { --font-size-base: 14px !important; }
+        }
         [x-cloak] { display: none !important; }
 
         body.internal-body {
