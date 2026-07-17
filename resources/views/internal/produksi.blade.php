@@ -356,7 +356,7 @@
                                     </tbody>
                                 </table>
 
-                                {{-- Mobile: Accordion --}}
+                                {{-- Mobile: Accordion per item --}}
                                 <div class="xl:hidden">
                                     <template x-if="!selectedOrder?.item_details || selectedOrder.item_details.length === 0">
                                         <div class="px-3 py-6 text-center text-gray-400 text-sm">Tidak ada detail item.</div>
@@ -364,19 +364,20 @@
                                     <template x-for="(detail, idx) in selectedOrder?.item_details || []" :key="idx">
                                         <div x-data="{ open: false }" class="border-b border-gray-100 last:border-b-0">
                                             <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors">
-                                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                                <div class="flex items-center gap-2 min-w-0 flex-1">
                                                     <span class="text-xs font-semibold text-gray-800 shrink-0" x-text="detail.no_punggung ?? '-'"></span>
-                                                    <span class="text-xs text-gray-500" x-text="detail.size ? 'Size ' + detail.size : ''"></span>
+                                                    <span class="text-xs text-gray-600 truncate" x-text="detail.nama_punggung ?? '-'"></span>
+                                                    <span class="text-[11px] text-gray-400 shrink-0" x-text="detail.size ? 'Size ' + detail.size : ''"></span>
                                                 </div>
-                                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 shrink-0" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 shrink-0 ml-2" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                             </button>
                                             <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="px-3 pb-3 space-y-1.5">
-                                                <div class="flex items-center gap-2 text-xs text-gray-600">
-                                                    <span class="text-gray-400 font-medium w-24 shrink-0">Nama Punggung</span>
+                                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                                    <span class="text-gray-400 font-medium w-20 shrink-0">Nama</span>
                                                     <span x-text="detail.nama_punggung ?? '-'"></span>
                                                 </div>
-                                                <div class="flex items-center gap-2 text-xs text-gray-600">
-                                                    <span class="text-gray-400 font-medium w-24 shrink-0">Keterangan</span>
+                                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                                    <span class="text-gray-400 font-medium w-20 shrink-0">Ket</span>
                                                     <span x-text="detail.keterangan ?? '-'"></span>
                                                 </div>
                                             </div>
