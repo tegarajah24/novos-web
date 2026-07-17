@@ -264,8 +264,14 @@
 {{-- ─── CHART.JS ────────────────────────────────────────────────────────── --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const weeks = @json($chartWeeks);
-const chartDefaults = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{ family:"'Poppins',sans-serif", size:11 }}}}, scales:{ x:{ grid:{display:false}, border:{display:false}}, y:{ grid:{color:'#f3f4f6'}, border:{display:false}}}};
+function initSummaryCharts() {
+    if (typeof Chart === 'undefined') {
+        setTimeout(initSummaryCharts, 100);
+        return;
+    }
+
+var weeks = @json($chartWeeks);
+var chartDefaults = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{ family:"'Poppins',sans-serif", size:11 }}}}, scales:{ x:{ grid:{display:false}, border:{display:false}}, y:{ grid:{color:'#f3f4f6'}, border:{display:false}}}};
 
 new Chart(document.getElementById('chartRevenue'), {
     type:'line',
@@ -315,11 +321,11 @@ new Chart(document.getElementById('chartTop5'), {
         {
             id:'valueLabels',
             afterDraw(chart){
-                const ctx=chart.ctx;
-                const meta=chart.getDatasetMeta(0);
+                var ctx=chart.ctx;
+                var meta=chart.getDatasetMeta(0);
                 if (!meta || !meta.data) return;
-                meta.data.forEach((bar,index)=>{
-                    const value=chart.data.datasets[0].data[index];
+                meta.data.forEach(function(bar,index){
+                    var value=chart.data.datasets[0].data[index];
                     ctx.save();
                     ctx.fillStyle='#1a237e';
                     ctx.font="bold 11px Poppins, sans-serif";
@@ -338,6 +344,14 @@ new Chart(document.getElementById('chartDist'), {
     data:{ labels:@json($distLabels), datasets:[{ data:@json($distData), backgroundColor:['#1a237e','#38bdf8'], borderWidth:3, borderColor:'#fff', hoverOffset:4 }]},
     options:{ responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{ position:'bottom', labels:{ padding:20, usePointStyle:true, pointStyle:'circle', font:{ family:"'Poppins',sans-serif", size:12 }}}}}
 });
+
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSummaryCharts);
+} else {
+    initSummaryCharts();
+}
 
 function summaryFilter() {
     return {
