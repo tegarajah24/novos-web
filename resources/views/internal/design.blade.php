@@ -115,6 +115,10 @@
                                       class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 text-[10px] font-bold border border-orange-200">
                                     <i data-lucide="zap" class="w-2.5 h-2.5"></i> Express
                                 </span>
+                                <span x-show="order.priority === 'normal'"
+                                      class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[10px] font-bold border border-gray-200">
+                                    Normal
+                                </span>
                                 <div class="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300"
                                      :class="open ? 'bg-[#1a237e] rotate-180' : 'bg-gray-100'">
                                     <svg class="w-3.5 h-3.5 transition-colors duration-300" :class="open ? 'text-white' : 'text-gray-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
