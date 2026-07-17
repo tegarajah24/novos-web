@@ -38,6 +38,10 @@ class UpdateSettingRequest extends FormRequest
             'hero_beranda_bg'  => 'nullable|string|max:255',
             'hero_tentang_bg'  => 'nullable|string|max:255',
             'hero_katalog_bg'  => 'nullable|string|max:255',
+            'bank_accounts' => 'nullable|array',
+            'bank_accounts.*.bank_name' => 'nullable|string|max:100',
+            'bank_accounts.*.account_name' => 'nullable|string|max:255',
+            'bank_accounts.*.account_number' => 'nullable|string|max:100',
         ];
     }
 }
