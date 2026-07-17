@@ -1383,6 +1383,41 @@
                         </div>
                     </template>
 
+                    <template x-if="mode === 'katalog_direct'">
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Nama Produk</span>
+                                <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Kategori</span>
+                                <span class="font-medium text-gray-900" x-text="catalogProduct?.kategori || form.nama_artikel || '-'"></span>
+                            </div>
+                            <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                                <div class="contents">
+                                    <template x-for="keyName in Object.keys(form.customizations)" :key="keyName">
+                                        <div class="flex justify-between" x-show="form.customizations[keyName]">
+                                            <span class="text-gray-500" x-text="keyName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                                            <span class="font-medium text-gray-900" x-text="form.customizations[keyName] || '-'"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Ukuran</span>
+                                <span class="font-medium text-gray-900" x-text="form.size || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Jumlah</span>
+                                <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Harga per pcs</span>
+                                <span class="font-medium text-gray-900" x-text="formatRupiah(basePricePerPcs)"></span>
+                            </div>
+                        </div>
+                    </template>
+
                     <div class="space-y-3 text-sm mt-3 pt-3 border-t border-gray-100">
                         <template x-if="biayaPrioritas > 0">
                             <div class="flex justify-between">
@@ -1528,6 +1563,33 @@
                         <div class="flex justify-between">
                             <span class="text-gray-500">Total Produk</span>
                             <span class="font-medium text-gray-900" x-text="cartItemsToCheckout.length + ' item'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Prioritas</span>
+                            <span class="font-medium text-gray-900 capitalize" x-text="prioritasText"></span>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="mode === 'katalog_direct'">
+                    <div class="space-y-2.5 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Nama Produk</span>
+                            <span class="font-medium text-gray-900" x-text="form.team_name || '-'"></span>
+                        </div>
+                        <template x-if="form.customizations && Object.keys(form.customizations).length > 0">
+                            <div class="contents">
+                                <template x-for="keyName in Object.keys(form.customizations)" :key="keyName">
+                                    <div class="flex justify-between" x-show="form.customizations[keyName]">
+                                        <span class="text-gray-500" x-text="keyName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                                        <span class="font-medium text-gray-900" x-text="form.customizations[keyName] || '-'"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Jumlah</span>
+                            <span class="font-medium text-gray-900" x-text="totalQty + ' pcs'"></span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Prioritas</span>
