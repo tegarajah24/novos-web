@@ -10,32 +10,8 @@
     }
     /* Hide scrollbar for IE, Edge and Firefox */
     .scrollbar-hide {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-    }
-    .stats-dots {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        margin-top: -1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    @media (min-width: 1024px) {
-        .stats-dots {
-            display: none;
-        }
-    }
-    .stats-dots .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background-color: #d1d5db;
-        transition: all 0.3s ease;
-        cursor: default;
-    }
-    .stats-dots .dot.active {
-        width: 20px;
-        background-color: #1a237e;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 </style>
 @endpush
@@ -70,246 +46,224 @@ function statusBadgeType($status) {
 
     <!-- Stats Row -->
     @if($isDesign)
-    <div class="relative" id="stats-scroll-design">
-    <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-6 mb-8">
 
-            <!-- Card D1: Menunggu Desain -->
-            <a href="{{ route('staf.daftar-pesanan') }}?status=dikonfirmasi" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-purple-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                    </div>
+        <!-- Card D1: Menunggu Desain -->
+        <a href="{{ route('staf.daftar-pesanan') }}?status=dikonfirmasi" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-purple-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
                 </div>
-                <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $designWaiting }}">0</h3>
-                <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Desain</p>
-            </a>
+            </div>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $designWaiting }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Menunggu Desain</p>
+        </a>
 
         <!-- Card D2: Sedang Di Desain -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=di_design" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col hover:shadow-xl hover:border-blue-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3 md:mb-4">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=di_design" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-blue-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>
             </div>
-            <h3 class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $designInProgress }}">0</h3>
-            <p class="text-gray-500 text-xs md:text-sm mt-1.5 md:mt-2 font-medium">Sedang Di Desain</p>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $designInProgress }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Sedang Di Desain</p>
         </a>
 
         <!-- Card D3: Menunggu ACC -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=disetujui" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col hover:shadow-xl hover:border-orange-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3 md:mb-4">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=disetujui" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-orange-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
             </div>
-            <h3 class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $designWaitingAcc }}">0</h3>
-            <p class="text-gray-500 text-xs md:text-sm mt-1.5 md:mt-2 font-medium">Menunggu ACC</p>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $designWaitingAcc }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Menunggu ACC</p>
         </a>
 
         <!-- Card D4: Selesai Hari Ini -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=selesai&date_from={{ now()->format('Y-m-d') }}&date_to={{ now()->format('Y-m-d') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col hover:shadow-xl hover:border-green-300/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3 md:mb-4">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=selesai&date_from={{ now()->format('Y-m-d') }}&date_to={{ now()->format('Y-m-d') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-green-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
             </div>
-            <h3 class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
-            <p class="text-gray-500 text-xs md:text-sm mt-1.5 md:mt-2 font-medium">Selesai Hari Ini</p>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Selesai Hari Ini</p>
         </a>
 
-        </div>
-        <div class="stats-dots" id="stats-dots-design">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-        </div>
     </div>
 
     @elseif($isProduction)
-    <div class="relative" id="stats-scroll-production">
-    <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-6 mb-8">
 
-            <!-- Card P1: Total Pesanan -->
-            <a href="{{ route('staf.daftar-pesanan') }}" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-[#1a237e] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
-                    </div>
-                <div class="flex items-center gap-1 text-xs font-semibold {{ $totalTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
+        <!-- Card P1: Total Pesanan -->
+        <a href="{{ route('staf.daftar-pesanan') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-[#1a237e] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                </div>
+                <div class="flex items-center gap-1 text-[10px] lg:text-xs font-semibold {{ $totalTrend >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 lg:px-2 py-0.5 rounded-full">
                     @if($totalTrend >= 0)
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
                     @endif
                     <span>{{ $totalTrend >= 0 ? '+'.$totalTrend : $totalTrend }}</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $totalOrders }}">0</h3>
-            <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $totalOrders }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Total Pesanan</p>
         </a>
 
         <!-- Card P2: Antrian Cetak -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=siap_cetak" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-red-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=siap_cetak" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-red-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-red-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $printQueue }}">0</h3>
-            <p class="text-gray-500 text-sm mt-2 font-medium">Antrian Cetak</p>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $printQueue }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Antrian Cetak</p>
         </a>
 
         <!-- Card P3: Sedang Diproduksi -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=diproduksi" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-purple-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=diproduksi" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-purple-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $sewingQueue }}">0</h3>
-            <p class="text-gray-500 text-sm mt-2 font-medium">Sedang Diproduksi</p>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $sewingQueue }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Sedang Diproduksi</p>
         </a>
 
         <!-- Card P4: Selesai Hari Ini -->
-        <a href="{{ route('staf.daftar-pesanan') }}?status=selesai&date_from={{ now()->format('Y-m-d') }}&date_to={{ now()->format('Y-m-d') }}" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-green-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <a href="{{ route('staf.daftar-pesanan') }}?status=selesai&date_from={{ now()->format('Y-m-d') }}&date_to={{ now()->format('Y-m-d') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-green-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div class="flex items-center gap-1 text-xs font-semibold {{ $completedTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
+                <div class="flex items-center gap-1 text-[10px] lg:text-xs font-semibold {{ $completedTrend >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 lg:px-2 py-0.5 rounded-full">
                     @if($completedTrend >= 0)
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
                     @endif
                     <span>{{ $completedTrend >= 0 ? '+'.$completedTrend : $completedTrend }}</span>
                 </div>
             </div>
-            <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
-            <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Selesai Hari Ini</p>
         </a>
 
-        </div>
-        <div class="stats-dots" id="stats-dots-production">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-        </div>
     </div>
 
     @else
-    <div class="relative" id="stats-scroll-default">
-    <div class="grid grid-flow-col auto-cols-[calc(50%-0.375rem)] lg:grid-flow-row lg:grid-cols-4 gap-3 lg:gap-6 mb-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-6 mb-8">
 
-            <!-- Card 1: Total Pesanan -->
-            <a href="{{ route('staf.daftar-pesanan') }}" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-[#1a237e] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        {{-- Clipboard List icon (Heroicons) --}}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
-                    </div>
-                    <div class="flex items-center gap-1 text-xs font-semibold {{ $totalTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
-                        @if($totalTrend >= 0)
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                        @else
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-                        @endif
-                        <span>{{ $totalTrend >= 0 ? '+'.$totalTrend : $totalTrend }}</span>
-                    </div>
+        <!-- Card 1: Total Pesanan -->
+        <a href="{{ route('staf.daftar-pesanan') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-[#1a237e] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
                 </div>
-                <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $totalOrders }}">0</h3>
-                <p class="text-gray-500 text-sm mt-2 font-medium">Total Pesanan</p>
-            </a>
-
-            <!-- Card 2: Menunggu Pembayaran -->
-            <a href="{{ route('staf.daftar-pesanan') }}?status=menunggu_pembayaran" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-orange-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        {{-- Clock icon (Heroicons) --}}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="flex items-center gap-1 text-xs font-semibold {{ $pendingTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
-                        @if($pendingTrend >= 0)
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                        @else
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-                        @endif
-                        <span>{{ $pendingTrend >= 0 ? '+'.$pendingTrend : $pendingTrend }}</span>
-                    </div>
+                <div class="flex items-center gap-1 text-[10px] lg:text-xs font-semibold {{ $totalTrend >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 lg:px-2 py-0.5 rounded-full">
+                    @if($totalTrend >= 0)
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    @else
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    @endif
+                    <span>{{ $totalTrend >= 0 ? '+'.$totalTrend : $totalTrend }}</span>
                 </div>
-                <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $pendingOrders }}">0</h3>
-                <p class="text-gray-500 text-sm mt-2 font-medium">Menunggu Pembayaran</p>
-            </a>
+            </div>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $totalOrders }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Total Pesanan</p>
+        </a>
 
-            <!-- Card 3: Sedang Diproses -->
-            <a href="{{ route('staf.daftar-pesanan') }}?status=tahap_produksi" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-blue-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        {{-- Cog / Settings icon (Heroicons) --}}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <div class="flex items-center gap-1 text-xs font-semibold {{ $processTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
-                        @if($processTrend >= 0)
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                        @else
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-                        @endif
-                        <span>{{ $processTrend >= 0 ? '+'.$processTrend : $processTrend }}</span>
-                    </div>
+        <!-- Card 2: Menunggu Pembayaran -->
+        <a href="{{ route('staf.daftar-pesanan') }}?status=menunggu_pembayaran" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-orange-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </div>
-                <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $inProcessOrders }}">0</h3>
-                <p class="text-gray-500 text-sm mt-2 font-medium">Sedang Diproses</p>
-            </a>
-
-            <!-- Card 4: Selesai Hari Ini -->
-            <a href="{{ route('staf.daftar-pesanan') }}?status=selesai&date_from={{ now()->format('Y-m-d') }}&date_to={{ now()->format('Y-m-d') }}" class="snap-start bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 flex flex-col hover:shadow-xl hover:border-green-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        {{-- Check Circle icon (Heroicons) --}}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="flex items-center gap-1 text-xs font-semibold {{ $completedTrend >= 0 ? 'text-emerald-500 bg-emerald-50' : 'text-red-500 bg-red-50' }} px-2 py-1 rounded-full">
-                        @if($completedTrend >= 0)
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                        @else
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-                        @endif
-                        <span>{{ $completedTrend >= 0 ? '+'.$completedTrend : $completedTrend }}</span>
-                    </div>
+                <div class="flex items-center gap-1 text-[10px] lg:text-xs font-semibold {{ $pendingTrend >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 lg:px-2 py-0.5 rounded-full">
+                    @if($pendingTrend >= 0)
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    @else
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    @endif
+                    <span>{{ $pendingTrend >= 0 ? '+'.$pendingTrend : $pendingTrend }}</span>
                 </div>
-                <h3 class="text-4xl font-bold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
-                <p class="text-gray-500 text-sm mt-2 font-medium">Selesai Hari Ini</p>
-            </a>
+            </div>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $pendingOrders }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Menunggu Pembayaran</p>
+        </a>
 
-        </div>
-        <div class="stats-dots" id="stats-dots-default">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-        </div>
+        <!-- Card 3: Sedang Diproses -->
+        <a href="{{ route('staf.daftar-pesanan') }}?status=tahap_produksi" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-blue-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <div class="flex items-center gap-1 text-[10px] lg:text-xs font-semibold {{ $processTrend >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 lg:px-2 py-0.5 rounded-full">
+                    @if($processTrend >= 0)
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    @else
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    @endif
+                    <span>{{ $processTrend >= 0 ? '+'.$processTrend : $processTrend }}</span>
+                </div>
+            </div>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $inProcessOrders }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Sedang Diproses</p>
+        </a>
+
+        <!-- Card 4: Selesai Hari Ini -->
+        <a href="{{ route('staf.daftar-pesanan') }}?status=selesai&date_from={{ now()->format('Y-m-d') }}&date_to={{ now()->format('Y-m-d') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 flex flex-col justify-between hover:shadow-xl hover:border-green-300/50 lg:hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 lg:w-5 lg:h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="flex items-center gap-1 text-[10px] lg:text-xs font-semibold {{ $completedTrend >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 lg:px-2 py-0.5 rounded-full">
+                    @if($completedTrend >= 0)
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    @else
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 lg:w-3 lg:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    @endif
+                    <span>{{ $completedTrend >= 0 ? '+'.$completedTrend : $completedTrend }}</span>
+                </div>
+            </div>
+            <h3 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight stats-counter" data-target="{{ $completedToday }}">0</h3>
+            <p class="text-gray-500 text-xs lg:text-sm mt-1 lg:mt-1.5 font-medium">Selesai Hari Ini</p>
+        </a>
+
     </div>
     @endif
 
@@ -658,49 +612,6 @@ function statusBadgeType($status) {
         } else {
             initDashboardCharts();
         }
-
-        // Stats page indicator dots (2 dots = 2 groups of 2 cards each)
-        function initStatsDots(containerId, dotsId) {
-            var container = document.getElementById(containerId);
-            var dotsContainer = document.getElementById(dotsId);
-            if (!container || !dotsContainer) return;
-            var dots = dotsContainer.querySelectorAll('.dot');
-            if (!dots.length) return;
-
-            // Only run on mobile
-            if (window.innerWidth >= 1024) return;
-
-            function update() {
-                var scrollEl = container.querySelector('.grid');
-                if (!scrollEl) return;
-                var cards = scrollEl.querySelectorAll('.snap-start');
-                if (!cards.length) return;
-                var containerLeft = scrollEl.getBoundingClientRect().left;
-                var closestCard = 0;
-                var minDist = Infinity;
-                cards.forEach(function(card, i) {
-                    var dist = Math.abs(card.getBoundingClientRect().left - containerLeft);
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closestCard = i;
-                    }
-                });
-                // Map card index to group index (2 cards per group)
-                var activeGroup = Math.floor(closestCard / 2);
-                dots.forEach(function(d, i) {
-                    d.classList.toggle('active', i === activeGroup);
-                });
-            }
-
-            var scrollEl = container.querySelector('.grid');
-            if (scrollEl) scrollEl.addEventListener('scroll', update);
-            window.addEventListener('resize', update);
-            update();
-        }
-
-        initStatsDots('stats-scroll-design', 'stats-dots-design');
-        initStatsDots('stats-scroll-production', 'stats-dots-production');
-        initStatsDots('stats-scroll-default', 'stats-dots-default');
     </script>
 
 @endsection
