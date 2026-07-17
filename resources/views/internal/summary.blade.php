@@ -1,43 +1,7 @@
 @extends('layouts.internal')
 @section('title', 'Summary')
 
-@push('styles')
-<style>
-    /* Sembunyikan scrollbar untuk Chrome, Safari dan Opera */
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-    }
-    /* Sembunyikan scrollbar untuk IE, Edge dan Firefox */
-    .scrollbar-hide {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-    }
-    .stats-dots {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        margin-top: 12px;
-        margin-bottom: 12px;
-    }
-    @media (min-width: 1024px) {
-        .stats-dots {
-            display: none;
-        }
-    }
-    .stats-dots .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background-color: #d1d5db;
-        transition: all 0.3s ease;
-        cursor: default;
-    }
-    .stats-dots .dot.active {
-        width: 20px;
-        background-color: #1a237e;
-    }
-</style>
-@endpush
+
 
 @section('topbar-left')
     <h1 class="text-xl font-bold text-[#1a237e]">Summary</h1>
@@ -45,49 +9,59 @@
 
 @section('internal-content')
 
-{{-- ─── KPI SUMMARY CARDS ────────────────────────────────────────────────── --}}
-<div class="relative mb-5" id="summary-stats-scroll">
-    <div class="grid grid-flow-col auto-cols-[calc(50%-0.625rem)] lg:grid-flow-row lg:grid-cols-4 gap-5 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
-        @foreach($kpi1 as $k)
-        <a href="{{ $k['url'] }}" class="snap-start bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 lg:hover:shadow-md lg:hover:-translate-y-1 lg:hover:border-[#1a237e]/30 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3">
-                <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center lg:group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
+@php
+$allKpi = array_merge($kpi1, $kpi2);
+$topKpi = array_slice($allKpi, 0, 4);
+$moreKpi = array_slice($allKpi, 4);
+@endphp
+
+<div class="mb-5" x-data="{ showMore: false }" x-init="$nextTick(() => { if (window.innerWidth >= 1024) showMore = true })">
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-6 mb-3">
+        @foreach($topKpi as $k)
+        <a href="{{ $k['url'] }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 transition-all duration-200 hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 cursor-pointer group flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-4.5 h-4.5 lg:w-5 lg:h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
                 </div>
                 <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
                     @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
                     {{ $k['c'] }}
                 </span>
             </div>
-            <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
-            <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
+            <div>
+                <h3 class="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">{{ $k['v'] }}</h3>
+                <p class="text-xs lg:text-sm text-gray-500 mt-1 font-medium">{{ $k['l'] }}</p>
+            </div>
         </a>
         @endforeach
 
-        @foreach($kpi2 as $k)
-        <a href="{{ $k['url'] }}" class="snap-start bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 lg:hover:shadow-md lg:hover:-translate-y-1 lg:hover:border-[#1a237e]/30 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3">
-                <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center lg:group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
+        @foreach($moreKpi as $k)
+        <a href="{{ $k['url'] }}" x-show="showMore" x-transition x-cloak class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 transition-all duration-200 hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 cursor-pointer group flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-4.5 h-4.5 lg:w-5 lg:h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
                 </div>
                 <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
                     @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
                     {{ $k['c'] }}
                 </span>
             </div>
-            <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
-            <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
+            <div>
+                <h3 class="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">{{ $k['v'] }}</h3>
+                <p class="text-xs lg:text-sm text-gray-500 mt-1 font-medium">{{ $k['l'] }}</p>
+            </div>
         </a>
         @endforeach
     </div>
-    
-    {{-- Pagination dots for 4 groups of 2 cards --}}
-    <div class="stats-dots" id="summary-stats-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+
+    @if(count($moreKpi))
+    <div class="flex justify-center lg:hidden">
+        <button @click="showMore = !showMore" class="inline-flex items-center gap-1 py-2 text-sm font-medium text-[#1a237e]/70 hover:text-[#1a237e] transition-colors">
+            <span x-text="showMore ? 'Sembunyikan' : 'Lihat 4 Metrik Lainnya'">Lihat 4 Metrik Lainnya</span>
+            <svg class="w-4 h-4 transition-transform duration-300" :class="showMore ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
     </div>
+    @endif
 </div>
 
 {{-- ─── FILTER PANEL ──────────────────────────────────────────────────── --}}
@@ -379,46 +353,6 @@ function summaryFilter() {
     }
 }
 
-// Stats page indicator dots for Summary page (4 groups of 2 cards)
-function initSummaryStatsDots(containerId, dotsId) {
-    var container = document.getElementById(containerId);
-    var dotsContainer = document.getElementById(dotsId);
-    if (!container || !dotsContainer) return;
-    var dots = dotsContainer.querySelectorAll('.dot');
-    if (!dots.length) return;
-
-    // Only run on mobile
-    if (window.innerWidth >= 1024) return;
-
-    function update() {
-        var scrollEl = container.querySelector('.grid');
-        if (!scrollEl) return;
-        var cards = scrollEl.querySelectorAll('.snap-start');
-        if (!cards.length) return;
-        var containerLeft = scrollEl.getBoundingClientRect().left;
-        var closestCard = 0;
-        var minDist = Infinity;
-        cards.forEach(function(card, i) {
-            var dist = Math.abs(card.getBoundingClientRect().left - containerLeft);
-            if (dist < minDist) {
-                minDist = dist;
-                closestCard = i;
-            }
-        });
-        // Map card index to group index (2 cards per group)
-        var activeGroup = Math.floor(closestCard / 2);
-        dots.forEach(function(d, i) {
-            d.classList.toggle('active', i === activeGroup);
-        });
-    }
-
-    var scrollEl = container.querySelector('.grid');
-    if (scrollEl) scrollEl.addEventListener('scroll', update);
-    window.addEventListener('resize', update);
-    update();
-}
-
-initSummaryStatsDots('summary-stats-scroll', 'summary-stats-dots');
 if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons({ icons: window.lucide.icons });
 </script>
 @endsection
