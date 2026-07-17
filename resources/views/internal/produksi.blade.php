@@ -10,8 +10,8 @@
 <div x-data="produksiApp()" x-init="init()">
 
 
-    {{-- Tabs Navigation --}}
-    <div class="flex max-w-5xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+    {{-- Tabs Navigation (hidden on mobile, shown on desktop) --}}
+    <div class="hidden xl:flex max-w-5xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="tab in tabs" :key="tab.key">
             <button @click="activeTab = tab.key"
                 :class="activeTab === tab.key ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
@@ -672,6 +672,21 @@ function produksiApp() {
         })),
 
         init() {
+            if (location.hash.startsWith('#produksi=')) {
+                var tab = location.hash.replace('#produksi=', '');
+                if (this.tabs.some(function(t) { return t.key === tab; })) {
+                    this.activeTab = tab;
+                }
+            }
+            var self = this;
+            window.addEventListener('hashchange', function() {
+                if (location.hash.startsWith('#produksi=')) {
+                    var tab = location.hash.replace('#produksi=', '');
+                    if (self.tabs.some(function(t) { return t.key === tab; })) {
+                        self.activeTab = tab;
+                    }
+                }
+            });
             this.$watch('activeTab', value => {
                 this.$nextTick(() => {
                     if (window.lucide) window.lucide.createIcons({ icons: window.lucide.icons });
