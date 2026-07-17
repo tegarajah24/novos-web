@@ -891,7 +891,7 @@
         </header>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto p-8 animate-entrance">
+        <main class="flex-1 overflow-y-auto p-4 animate-entrance">
             @include('components.alert')
             @yield('internal-content')
         </main>
