@@ -10,8 +10,8 @@
 <div x-data="produksiApp()" x-init="init()">
 
 
-    {{-- Tabs Navigation --}}
-    <div class="flex max-w-5xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
+    {{-- Tabs Navigation (hidden on mobile, shown on desktop) --}}
+    <div class="hidden xl:flex max-w-5xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="tab in tabs" :key="tab.key">
             <button @click="activeTab = tab.key"
                 :class="activeTab === tab.key ? 'bg-[#1a237e] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
@@ -41,7 +41,7 @@
                 </span>
             </div>
         </div>
-        <div class="overflow-x-auto">
+        <div class="hidden xl:block overflow-x-auto">
             <table class="w-full text-left text-sm text-gray-600">
                 <thead class="bg-gray-50 border-b border-gray-200 text-gray-500">
                     <tr>
@@ -98,6 +98,127 @@
                 </tbody>
             </table>
         </div>
+
+        {{-- Mobile: Expandable Queue Cards --}}
+        <div class="xl:hidden">
+            <template x-if="filteredOrders().length === 0">
+                <div class="px-6 py-12 text-center text-gray-500">
+                    <i data-lucide="check-circle-2" class="w-10 h-10 mx-auto text-green-400 mb-2"></i>
+                    <p class="font-medium text-gray-800">Tidak ada antrean di divisi ini.</p>
+                    <p class="text-xs mt-1 text-gray-400" x-text="activeTab === 'printing' ? 'Semua pesanan selesai diprint!' : (activeTab === 'press' ? 'Semua pesanan selesai dipress!' : (activeTab === 'jahit' ? 'Semua pesanan selesai dijahit!' : 'Semua pesanan lolos QC!'))"></p>
+                </div>
+            </template>
+            <div class="p-3 space-y-2.5">
+                <template x-for="order in filteredOrders()" :key="order.id">
+                    <div x-data="{ open: false }"
+                         class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition-shadow duration-200"
+                         :class="open ? 'shadow-md border-[#1a237e]/20' : 'shadow-sm'">
+
+                        {{-- Collapsed Header --}}
+                        <button @click="open = !open"
+                                class="flex items-center justify-between w-full px-4 py-3.5 text-left transition-colors"
+                                :class="open ? 'bg-[#1a237e]/5' : 'bg-white hover:bg-gray-50'">
+                            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                <div class="w-2 h-2 rounded-full shrink-0"
+                                     :class="activeTab === 'printing' ? 'bg-blue-500' : (activeTab === 'press' ? 'bg-orange-500' : (activeTab === 'jahit' ? 'bg-amber-500' : 'bg-emerald-500'))"></div>
+                                <span class="font-bold text-[#1a237e] text-xs tracking-wide" x-text="order.order_id"></span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span x-show="order.priority === 'super_express'"
+                                      class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-bold border border-red-200">
+                                    <i data-lucide="zap" class="w-2.5 h-2.5"></i> Super Express
+                                </span>
+                                <span x-show="order.priority === 'express'"
+                                      class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 text-[10px] font-bold border border-orange-200">
+                                    <i data-lucide="zap" class="w-2.5 h-2.5"></i> Express
+                                </span>
+                                <div class="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300"
+                                     :class="open ? 'bg-[#1a237e] rotate-180' : 'bg-gray-100'">
+                                    <svg class="w-3.5 h-3.5 transition-colors duration-300" :class="open ? 'text-white' : 'text-gray-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+
+                        {{-- Expandable Body --}}
+                        <div x-show="open"
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-250"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0">
+
+                            {{-- Divider --}}
+                            <div class="mx-4 border-t border-gray-100"></div>
+
+                            {{-- Detail Grid --}}
+                            <div class="px-4 pt-3 pb-1 space-y-3">
+                                {{-- Customer - Full Width --}}
+                                <div>
+                                    <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Customer</p>
+                                    <p class="text-xs font-semibold text-gray-800" x-text="order.customer || '-'"></p>
+                                </div>
+                                {{-- 2 Kolom: Tim/Produk & Total Qty --}}
+                                <div class="grid grid-cols-2 gap-x-4">
+                                    <div>
+                                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Tim / Produk</p>
+                                        <p class="text-xs font-semibold text-gray-800 leading-snug" x-text="order.team_name || '-'"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Total Qty</p>
+                                        <p class="text-xs font-bold text-[#1a237e]" x-text="order.total_qty + ' pcs'"></p>
+                                    </div>
+                                </div>
+                                {{-- 2 Kolom: Deadline & Prioritas --}}
+                                <div class="grid grid-cols-2 gap-x-4">
+                                    <div>
+                                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Deadline</p>
+                                        <p class="text-xs font-semibold text-red-600 flex items-center gap-1">
+                                            <svg class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            <span x-text="order.deadline"></span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Prioritas</p>
+                                        <span x-show="order.priority === 'super_express'" class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-bold border border-red-200">
+                                            <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                            Super Express
+                                        </span>
+                                        <span x-show="order.priority === 'express'" class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 text-[10px] font-bold border border-orange-200">
+                                            <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                            Express
+                                        </span>
+                                        <span x-show="order.priority === 'normal'" class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px] font-bold border border-gray-200">
+                                            Normal
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Divider --}}
+                            <div class="mx-4 mt-3 border-t border-gray-100"></div>
+
+                            {{-- Action Buttons --}}
+                            <div class="px-4 py-3 flex gap-2">
+                                <button @click="open = false"
+                                        class="flex-1 py-2 text-xs font-semibold rounded-xl border border-gray-300 text-gray-600 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    Tutup
+                                </button>
+                                <button @click.stop="openDetail(order)"
+                                        class="flex-1 py-2 text-xs font-bold rounded-xl bg-[#1a237e] text-white hover:bg-[#283593] transition-colors flex items-center justify-center gap-1.5 shadow-sm shadow-[#1a237e]/20">
+                                    Lihat Detail
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 
     {{-- Modal Detail Pesanan & Penyelesaian --}}
@@ -107,30 +228,50 @@
 
             <div x-show="isDetailOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" aria-hidden="true"></div>
 
-            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-7xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
+            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-7xl p-4 sm:p-6 my-4 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
 
                 {{-- Header Modal --}}
-                <div class="flex justify-between items-center mb-6 bg-white -mx-6 -mt-6 p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center mb-4 sm:mb-6 bg-white -mx-4 -mt-4 p-4 sm:-mx-6 sm:-mt-6 sm:p-6 border-b border-gray-200">
                     <div>
-                        <div class="flex items-center gap-3 mb-1">
-                            <span class="px-2.5 py-1 rounded-md bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200 uppercase"
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-purple-100 text-purple-700 text-[10px] sm:text-xs font-bold border border-purple-200 uppercase"
                                 x-text="selectedOrder?.stage"></span>
-                            <h3 class="text-xl font-bold text-gray-900">Detail Pesanan: <span x-text="selectedOrder?.order_id" class="text-[#1a237e]"></span></h3>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900">Detail Pesanan: <span x-text="selectedOrder?.order_id" class="text-[#1a237e]"></span></h3>
                         </div>
-                        <p class="text-sm text-gray-500 flex items-center gap-1.5">
-                            <i data-lucide="user" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer"></span>
-                            &bull; <i data-lucide="phone" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer_contact"></span>
+                        <p class="text-xs sm:text-sm text-gray-500 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer"></span></span>
+                            <span class="hidden sm:inline">&bull;</span>
+                            <span class="flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span x-text="selectedOrder?.customer_contact"></span></span>
                         </p>
                     </div>
                     <button @click="isDetailOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                        <i data-lucide="x" class="w-6 h-6"></i>
+                        <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {{-- Scrollable Content Area --}}
+                <div class="max-h-[70vh] lg:max-h-[75vh] overflow-y-auto -mx-4 px-4 sm:-mx-6 sm:px-6">
 
-                    {{-- KIRI: Spesifikasi, Ukuran, Referensi (2 Kolom) --}}
-                    <div class="lg:col-span-2 space-y-6">
+                    {{-- Tabs on Mobile --}}
+                    <div class="flex border border-gray-200 mb-4 lg:hidden p-1 bg-gray-50 rounded-xl">
+                        <button @click="mobileTab = 'info'" 
+                                :class="mobileTab === 'info' ? 'bg-white text-[#1a237e] shadow-sm font-bold' : 'text-gray-500 hover:text-gray-700'" 
+                                class="flex-1 py-1.5 px-3 rounded-lg text-center text-xs transition-all flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Info Pesanan
+                        </button>
+                        <button @click="mobileTab = 'tindakan'" 
+                                :class="mobileTab === 'tindakan' ? 'bg-white text-[#1a237e] shadow-sm font-bold' : 'text-gray-500 hover:text-gray-700'" 
+                                class="flex-1 py-1.5 px-3 rounded-lg text-center text-xs transition-all flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                            Tindakan
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+
+                        {{-- KIRI: Spesifikasi, Ukuran, Referensi (2 Kolom) --}}
+                        <div class="lg:col-span-2 space-y-4 sm:space-y-6" :class="mobileTab === 'info' ? 'block' : 'hidden lg:block'">
 
                         {{-- Spesifikasi Produk --}}
                         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
@@ -188,7 +329,8 @@
                                 </button>
                             </div>
                             <div :style="isItemsExpanded ? 'max-height: 10000px;' : 'max-height: 250px;'" class="overflow-y-auto rounded-lg border border-gray-200 transition-all duration-300 ease-in-out relative">
-                                <table class="w-full text-sm">
+                                {{-- Desktop: Table --}}
+                                <table class="hidden xl:table w-full text-sm">
                                     <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide sticky top-0 z-10">
                                         <tr>
                                             <th class="px-3 py-2 text-left font-semibold">No Punggung</th>
@@ -213,6 +355,35 @@
                                         </template>
                                     </tbody>
                                 </table>
+
+                                {{-- Mobile: Accordion per item --}}
+                                <div class="xl:hidden">
+                                    <template x-if="!selectedOrder?.item_details || selectedOrder.item_details.length === 0">
+                                        <div class="px-3 py-6 text-center text-gray-400 text-sm">Tidak ada detail item.</div>
+                                    </template>
+                                    <template x-for="(detail, idx) in selectedOrder?.item_details || []" :key="idx">
+                                        <div x-data="{ open: false }" class="border-b border-gray-100 last:border-b-0">
+                                            <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors">
+                                                <div class="flex items-center gap-2 min-w-0 flex-1">
+                                                    <span class="text-xs font-semibold text-gray-800 shrink-0" x-text="detail.no_punggung ?? '-'"></span>
+                                                    <span class="text-xs text-gray-600 truncate" x-text="detail.nama_punggung ?? '-'"></span>
+                                                    <span class="text-[11px] text-gray-400 shrink-0" x-text="detail.size ? 'Size ' + detail.size : ''"></span>
+                                                </div>
+                                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 shrink-0 ml-2" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                            </button>
+                                            <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="px-3 pb-3 space-y-1.5">
+                                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                                    <span class="text-gray-400 font-medium w-20 shrink-0">Nama</span>
+                                                    <span x-text="detail.nama_punggung ?? '-'"></span>
+                                                </div>
+                                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                                    <span class="text-gray-400 font-medium w-20 shrink-0">Ket</span>
+                                                    <span x-text="detail.keterangan ?? '-'"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                                 
                                 {{-- Fade overlay when collapsed --}}
                                 <div x-show="selectedOrder?.item_details?.length > 5 && !isItemsExpanded" 
@@ -312,7 +483,7 @@
                     </div>
 
                     {{-- KANAN: Update Status & Penyelesaian (1 Kolom) --}}
-                    <div class="lg:col-span-1 space-y-6">
+                    <div class="lg:col-span-1 space-y-6" :class="mobileTab === 'tindakan' ? 'block' : 'hidden lg:block'">
 
                         <div class="bg-white rounded-xl border border-[#1a237e]/20 shadow-lg shadow-[#1a237e]/5 overflow-hidden sticky top-6">
                             <div class="bg-[#1a237e] px-5 py-4">
@@ -620,6 +791,7 @@
 
                     </div>
                 </div>
+                </div>
 
             </div>
         </div>
@@ -646,6 +818,7 @@ function produksiApp() {
 
 
         targetStage: 'jahit',
+        mobileTab: 'info',
         qcChecklist: {
             jahitan: false,
             cacat: false,
@@ -672,6 +845,21 @@ function produksiApp() {
         })),
 
         init() {
+            if (location.hash.startsWith('#produksi=')) {
+                var tab = location.hash.replace('#produksi=', '');
+                if (this.tabs.some(function(t) { return t.key === tab; })) {
+                    this.activeTab = tab;
+                }
+            }
+            var self = this;
+            window.addEventListener('hashchange', function() {
+                if (location.hash.startsWith('#produksi=')) {
+                    var tab = location.hash.replace('#produksi=', '');
+                    if (self.tabs.some(function(t) { return t.key === tab; })) {
+                        self.activeTab = tab;
+                    }
+                }
+            });
             this.$watch('activeTab', value => {
                 this.$nextTick(() => {
                     if (window.lucide) window.lucide.createIcons({ icons: window.lucide.icons });
@@ -725,6 +913,7 @@ function produksiApp() {
             }
             this.productionNote = '';
             this.targetStage = 'jahit';
+            this.mobileTab = 'info';
             this.isItemsExpanded = false;
             // Reset checklist QC setiap buka modal
             this.qcChecklist = { jahitan: false, cacat: false, ukuran: false, desain: false, setrika: false, perluRevisi: false };

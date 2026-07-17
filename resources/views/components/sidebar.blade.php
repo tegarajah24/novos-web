@@ -4,6 +4,8 @@
 $isSidebarOpen = !(isset($_COOKIE['sidebar_open']) && $_COOKIE['sidebar_open'] === 'false');
 $isOnDmc = request()->routeIs('staf.daily-mental-check');
 $dmcRoute = route('staf.daily-mental-check');
+$isOnProduksi = request()->routeIs('staf.produksi');
+$produksiRoute = route('staf.produksi');
 ?>
 
 {{-- Sidebar wrapper: shared Alpine scope for backdrop + aside --}}
@@ -28,6 +30,23 @@ $dmcRoute = route('staf.daily-mental-check');
         isAnyDmcActive() {
             return this.dmcOpen || (this.isOnDmc && [0, 1, 2, 3].some(i => this.isDmcActive(i)));
         },
+        isOnProduksi: {{ $isOnProduksi ? 'true' : 'false' }},
+        produksiOpen: location.hash.startsWith('#produksi='),
+        produksiHash: location.hash,
+        setProduksiTab(tab) {
+            location.hash = 'produksi=' + tab;
+            this.produksiHash = '#produksi=' + tab;
+            if (window.innerWidth < 1280) this.sidebarOpen = false;
+        },
+        toggleProduksi() {
+            this.produksiOpen = !this.produksiOpen;
+        },
+        isProduksiActive(tab) {
+            return this.produksiHash === '#produksi=' + tab;
+        },
+        isAnyProduksiActive() {
+            return this.produksiOpen || (this.isOnProduksi && ['printing','press','jahit','qc'].some(t => this.isProduksiActive(t)));
+        },
         toggle() {
             this.sidebarOpen = !this.sidebarOpen;
             if (window.innerWidth >= 1280) {
@@ -35,7 +54,7 @@ $dmcRoute = route('staf.daily-mental-check');
             }
         }
     }"
-    x-init="window.addEventListener('hashchange', () => { dmcHash = location.hash; })"
+    x-init="window.addEventListener('hashchange', () => { dmcHash = location.hash; produksiHash = location.hash; })"
     @sidebar-toggle.window="toggle()"
     class="contents">
 
@@ -119,11 +138,65 @@ $dmcRoute = route('staf.daily-mental-check');
         @endcanAccess
 
         @canAccess('production')
+        <div class="xl:hidden mb-3 pb-3 border-b border-gray-100">
+            <button @click.stop="toggleProduksi()"
+                    :class="isAnyProduksiActive() ? 'bg-[#1a237e]/90 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'"
+                    class="flex items-center justify-between w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                <div class="flex items-center gap-3 transition-colors duration-200" :class="isAnyProduksiActive() ? 'text-white' : 'text-[#1a237e]'">
+                    <i data-lucide="scissors" class="w-5 h-5 shrink-0"></i>
+                    <span class="whitespace-nowrap">Produksi</span>
+                </div>
+                <span class="w-4 h-4 transition-transform duration-200" :class="[produksiOpen ? '' : '-rotate-90', isAnyProduksiActive() ? 'text-white' : 'text-gray-400']">
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </span>
+            </button>
+            <div x-show="produksiOpen" x-cloak class="space-y-3 mt-3">
+                @if(request()->routeIs('staf.produksi'))
+                <button @click.stop="setProduksiTab('printing')"
+                        :class="isProduksiActive('printing') ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Printing
+                </button>
+                <button @click.stop="setProduksiTab('press')"
+                        :class="isProduksiActive('press') ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Press (Heat Press)
+                </button>
+                <button @click.stop="setProduksiTab('jahit')"
+                        :class="isProduksiActive('jahit') ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Jahit (Sewing)
+                </button>
+                <button @click.stop="setProduksiTab('qc')"
+                        :class="isProduksiActive('qc') ? 'bg-[#1a237e]/10 text-[#1a237e] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm transition-colors">
+                    Quality Control (QC)
+                </button>
+                @else
+                <a href="{{ $produksiRoute }}#produksi=printing"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Printing
+                </a>
+                <a href="{{ $produksiRoute }}#produksi=press"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Press (Heat Press)
+                </a>
+                <a href="{{ $produksiRoute }}#produksi=jahit"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Jahit (Sewing)
+                </a>
+                <a href="{{ $produksiRoute }}#produksi=qc"
+                   class="flex items-center w-full pl-11 pr-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                    Quality Control (QC)
+                </a>
+                @endif
+            </div>
+        </div>
         <a href="{{ route('staf.produksi') }}"
            data-ajax-nav
            @click="if(window.innerWidth < 1280) sidebarOpen = false"
            :class="sidebarOpen ? 'justify-start gap-3 px-4' : 'justify-center gap-0 px-0'"
-           class="flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.produksi') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
+           class="hidden xl:flex items-center py-3 rounded-xl transition-colors {{ request()->routeIs('staf.produksi') ? 'bg-[#1a237e]/90 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
             <i data-lucide="scissors" class="w-5 h-5 shrink-0 {{ request()->routeIs('staf.produksi') ? 'text-white' : 'text-[#1a237e]' }}"></i>
             <span x-show="window.innerWidth < 1280 || sidebarOpen" class="font-medium whitespace-nowrap">Produksi</span>
         </a>
