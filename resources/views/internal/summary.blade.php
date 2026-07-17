@@ -1,43 +1,7 @@
 @extends('layouts.internal')
 @section('title', 'Summary')
 
-@push('styles')
-<style>
-    /* Sembunyikan scrollbar untuk Chrome, Safari dan Opera */
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-    }
-    /* Sembunyikan scrollbar untuk IE, Edge dan Firefox */
-    .scrollbar-hide {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-    }
-    .stats-dots {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        margin-top: 12px;
-        margin-bottom: 12px;
-    }
-    @media (min-width: 1024px) {
-        .stats-dots {
-            display: none;
-        }
-    }
-    .stats-dots .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background-color: #d1d5db;
-        transition: all 0.3s ease;
-        cursor: default;
-    }
-    .stats-dots .dot.active {
-        width: 20px;
-        background-color: #1a237e;
-    }
-</style>
-@endpush
+
 
 @section('topbar-left')
     <h1 class="text-xl font-bold text-[#1a237e]">Summary</h1>
@@ -45,49 +9,59 @@
 
 @section('internal-content')
 
-{{-- ─── KPI SUMMARY CARDS ────────────────────────────────────────────────── --}}
-<div class="relative mb-5" id="summary-stats-scroll">
-    <div class="grid grid-flow-col auto-cols-[calc(50%-0.625rem)] lg:grid-flow-row lg:grid-cols-4 gap-5 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
-        @foreach($kpi1 as $k)
-        <a href="{{ $k['url'] }}" class="snap-start bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 lg:hover:shadow-md lg:hover:-translate-y-1 lg:hover:border-[#1a237e]/30 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3">
-                <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center lg:group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
+@php
+$allKpi = array_merge($kpi1, $kpi2);
+$topKpi = array_slice($allKpi, 0, 4);
+$moreKpi = array_slice($allKpi, 4);
+@endphp
+
+<div class="mb-5" x-data="{ showMore: false }" x-init="$nextTick(() => { if (window.innerWidth >= 1024) showMore = true })">
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-6 mb-3">
+        @foreach($topKpi as $k)
+        <a href="{{ $k['url'] }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 transition-all duration-200 hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 cursor-pointer group flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-4.5 h-4.5 lg:w-5 lg:h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
                 </div>
                 <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
                     @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
                     {{ $k['c'] }}
                 </span>
             </div>
-            <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
-            <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
+            <div>
+                <h3 class="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">{{ $k['v'] }}</h3>
+                <p class="text-xs lg:text-sm text-gray-500 mt-1 font-medium">{{ $k['l'] }}</p>
+            </div>
         </a>
         @endforeach
 
-        @foreach($kpi2 as $k)
-        <a href="{{ $k['url'] }}" class="snap-start bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-200 lg:hover:shadow-md lg:hover:-translate-y-1 lg:hover:border-[#1a237e]/30 cursor-pointer group">
-            <div class="flex justify-between items-start mb-3">
-                <div class="w-10 h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center lg:group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-5 h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
+        @foreach($moreKpi as $k)
+        <a href="{{ $k['url'] }}" x-show="showMore" x-transition x-cloak class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 lg:p-5 transition-all duration-200 hover:shadow-xl hover:border-[#1a237e]/30 lg:hover:-translate-y-1 cursor-pointer group flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-3 lg:mb-4">
+                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl {{ $k['bg'] }} flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-4.5 h-4.5 lg:w-5 lg:h-5 {{ $k['tc'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $k['icon'] }}"/></svg>
                 </div>
                 <span class="text-xs font-semibold flex items-center gap-0.5 {{ $k['up'] ? 'text-emerald-500' : 'text-red-500' }}">
                     @if($k['up'])<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>@else<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>@endif
                     {{ $k['c'] }}
                 </span>
             </div>
-            <div class="text-2xl font-bold text-gray-900">{{ $k['v'] }}</div>
-            <div class="text-xs text-gray-500 mt-0.5">{{ $k['l'] }}</div>
+            <div>
+                <h3 class="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">{{ $k['v'] }}</h3>
+                <p class="text-xs lg:text-sm text-gray-500 mt-1 font-medium">{{ $k['l'] }}</p>
+            </div>
         </a>
         @endforeach
     </div>
-    
-    {{-- Pagination dots for 4 groups of 2 cards --}}
-    <div class="stats-dots" id="summary-stats-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+
+    @if(count($moreKpi))
+    <div class="flex justify-center lg:hidden">
+        <button @click="showMore = !showMore" class="inline-flex items-center gap-1 py-2 text-sm font-medium text-[#1a237e]/70 hover:text-[#1a237e] transition-colors">
+            <span x-text="showMore ? 'Sembunyikan' : 'Lihat 4 Metrik Lainnya'">Lihat 4 Metrik Lainnya</span>
+            <svg class="w-4 h-4 transition-transform duration-300" :class="showMore ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
     </div>
+    @endif
 </div>
 
 {{-- ─── FILTER PANEL ──────────────────────────────────────────────────── --}}
@@ -160,13 +134,13 @@
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="trending-up" class="w-4 h-4 text-[#1a237e]"></i></span> Revenue Per Minggu</h3>
         <div class="overflow-x-auto lg:overflow-visible">
-            <div class="h-56 min-w-[700px] lg:min-w-0"><canvas id="chartRevenue"></canvas></div>
+            <div class="h-40 min-w-[700px] lg:min-w-0"><canvas id="chartRevenue"></canvas></div>
         </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="bar-chart-3" class="w-4 h-4 text-[#1a237e]"></i></span> Pesanan Masuk vs Selesai</h3>
         <div class="overflow-x-auto lg:overflow-visible">
-            <div class="h-56 min-w-[700px] lg:min-w-0"><canvas id="chartOrders"></canvas></div>
+            <div class="h-40 min-w-[700px] lg:min-w-0"><canvas id="chartOrders"></canvas></div>
         </div>
     </div>
 </div>
@@ -176,12 +150,32 @@
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="layers" class="w-4 h-4 text-[#1a237e]"></i></span> Top 5 Bahan Terlaris</h3>
         <div class="overflow-x-auto lg:overflow-visible">
-            <div class="h-56 min-w-[500px] lg:min-w-0"><canvas id="chartTop5"></canvas></div>
+            <div class="h-40 min-w-[500px] lg:min-w-0"><canvas id="chartTop5"></canvas></div>
         </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="pie-chart" class="w-4 h-4 text-[#1a237e]"></i></span> Distribusi Jenis Pesanan</h3>
-        <div class="h-56 flex justify-center"><canvas id="chartDist"></canvas></div>
+        @php $distColors = ['#1a237e', '#38bdf8']; @endphp
+        <div class="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-6">
+            <div class="relative w-36 h-36 lg:w-48 lg:h-48 flex justify-center flex-shrink-0">
+                <canvas id="chartDist"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span class="text-xl lg:text-2xl font-extrabold text-gray-900 leading-none">{{ array_sum($distData) }}</span>
+                    <span class="text-[10px] lg:text-xs text-gray-400 font-medium mt-0.5">Total Pesanan</span>
+                </div>
+            </div>
+            <div class="w-full lg:w-auto lg:flex-1 max-w-[250px] lg:pt-2 space-y-1.5">
+                @foreach($distLabels as $i => $label)
+                <div class="flex items-center justify-between py-0.5">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: {{ $distColors[$i] }}"></span>
+                        <span class="text-xs font-medium text-gray-600 truncate">{{ $label }}</span>
+                    </div>
+                    <span class="text-xs font-bold text-gray-900 flex-shrink-0 ml-2">{{ $distData[$i] }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 </div>
 
@@ -298,7 +292,7 @@ new Chart(document.getElementById('chartTop5'), {
                 data: @json($topMaterialData),
                 backgroundColor:['#1a237e','#283593','#303f9f','#3949ab','#3f51b5'],
                 borderRadius:6,
-                barPercentage:0.7,
+                barPercentage:0.6,
                 categoryPercentage:0.85
             }
         ]
@@ -306,32 +300,49 @@ new Chart(document.getElementById('chartTop5'), {
     options:{
         ...chartDefaults,
         indexAxis:'y',
+        layout:{padding:{right:10}},
         plugins:{...chartDefaults.plugins, legend:{display:false}},
-        animation:{
-            x:{from:0,duration:1200,easing:'easeOutQuart',delay:(ctx)=>ctx.dataIndex*150}
-        },
         scales:{
-            x:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},border:{display:false},ticks:{font:{size:11}}},
-            y:{grid:{display:false},border:{display:false},ticks:{crossAlign:'far',padding:10,font:{size:12,family:"'Poppins',sans-serif"}}}
+            x:{display:false, beginAtZero:true},
+            y:{display:false}
         },
         hover:{mode:'nearest',intersect:true}
     },
     plugins:[
-
         {
-            id:'valueLabels',
+            id:'barLabels',
             afterDraw(chart){
                 var ctx=chart.ctx;
                 var meta=chart.getDatasetMeta(0);
                 if (!meta || !meta.data) return;
+                var area=chart.chartArea;
                 meta.data.forEach(function(bar,index){
                     var value=chart.data.datasets[0].data[index];
+                    var label=chart.data.labels[index];
+                    var maxLen=20;
+                    var displayLabel=label.length>maxLen?label.substring(0,maxLen)+'…':label;
+                    var barW=bar.width;
+                    var barX=bar.x;
+                    var barY=bar.y;
                     ctx.save();
-                    ctx.fillStyle='#1a237e';
-                    ctx.font="bold 11px Poppins, sans-serif";
-                    ctx.textAlign='left';
                     ctx.textBaseline='middle';
-                    ctx.fillText(value+' terjual',bar.x+6,bar.y);
+                    if(barW>120){
+                        ctx.textAlign='left';
+                        ctx.font="600 11px Poppins, sans-serif";
+                        ctx.fillStyle='rgba(255,255,255,0.85)';
+                        ctx.fillText(displayLabel,barX-barW+10,barY-1);
+                        ctx.font="bold 12px Poppins, sans-serif";
+                        ctx.fillStyle='#fff';
+                        ctx.fillText(value,barX-barW+10,barY+13);
+                    }else{
+                        ctx.textAlign='left';
+                        ctx.font="600 11px Poppins, sans-serif";
+                        ctx.fillStyle='#374151';
+                        ctx.fillText(displayLabel,barX+8,barY-1);
+                        ctx.font="bold 12px Poppins, sans-serif";
+                        ctx.fillStyle='#1a237e';
+                        ctx.fillText(value,barX+8,barY+13);
+                    }
                     ctx.restore();
                 });
             }
@@ -342,7 +353,7 @@ new Chart(document.getElementById('chartTop5'), {
 new Chart(document.getElementById('chartDist'), {
     type:'doughnut',
     data:{ labels:@json($distLabels), datasets:[{ data:@json($distData), backgroundColor:['#1a237e','#38bdf8'], borderWidth:3, borderColor:'#fff', hoverOffset:4 }]},
-    options:{ responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{ position:'bottom', labels:{ padding:20, usePointStyle:true, pointStyle:'circle', font:{ family:"'Poppins',sans-serif", size:12 }}}}}
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{display:false} }}
 });
 
 }
@@ -379,46 +390,6 @@ function summaryFilter() {
     }
 }
 
-// Stats page indicator dots for Summary page (4 groups of 2 cards)
-function initSummaryStatsDots(containerId, dotsId) {
-    var container = document.getElementById(containerId);
-    var dotsContainer = document.getElementById(dotsId);
-    if (!container || !dotsContainer) return;
-    var dots = dotsContainer.querySelectorAll('.dot');
-    if (!dots.length) return;
-
-    // Only run on mobile
-    if (window.innerWidth >= 1024) return;
-
-    function update() {
-        var scrollEl = container.querySelector('.grid');
-        if (!scrollEl) return;
-        var cards = scrollEl.querySelectorAll('.snap-start');
-        if (!cards.length) return;
-        var containerLeft = scrollEl.getBoundingClientRect().left;
-        var closestCard = 0;
-        var minDist = Infinity;
-        cards.forEach(function(card, i) {
-            var dist = Math.abs(card.getBoundingClientRect().left - containerLeft);
-            if (dist < minDist) {
-                minDist = dist;
-                closestCard = i;
-            }
-        });
-        // Map card index to group index (2 cards per group)
-        var activeGroup = Math.floor(closestCard / 2);
-        dots.forEach(function(d, i) {
-            d.classList.toggle('active', i === activeGroup);
-        });
-    }
-
-    var scrollEl = container.querySelector('.grid');
-    if (scrollEl) scrollEl.addEventListener('scroll', update);
-    window.addEventListener('resize', update);
-    update();
-}
-
-initSummaryStatsDots('summary-stats-scroll', 'summary-stats-dots');
 if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons({ icons: window.lucide.icons });
 </script>
 @endsection
