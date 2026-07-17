@@ -1287,13 +1287,17 @@ function profileDashboard(orders = [], user = {}, initialAddresses = [], initial
                 headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: fd
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
+            .then(res => res.json().then(data => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
+                if (ok && data.success) {
                     Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Profil berhasil diperbarui!', timer: 1500, showConfirmButton: false });
                     setTimeout(() => location.reload(), 1500);
                 } else {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Gagal memperbarui profil' });
+                    let msg = data.message || 'Gagal memperbarui profil';
+                    if (data.errors) {
+                        msg = Object.values(data.errors).flat().join('\n');
+                    }
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: msg });
                 }
             })
             .catch(() => Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem' }));

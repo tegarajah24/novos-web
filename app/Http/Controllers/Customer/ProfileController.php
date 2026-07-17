@@ -75,7 +75,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): \Symfony\Component\HttpFoundation\Response
     {
         $user = $request->user();
         $user->fill($request->safe()->except(['avatar']));
@@ -111,6 +111,14 @@ class ProfileController extends Controller
         }
 
         $user->save();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profil berhasil diperbarui!',
+                'user'    => $user->fresh(),
+            ]);
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
