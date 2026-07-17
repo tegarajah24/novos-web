@@ -404,7 +404,12 @@ function statusBadgeType($status) {
     <!-- Chart.js Script -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initDashboardCharts() {
+            if (typeof Chart === 'undefined') {
+                setTimeout(initDashboardCharts, 100);
+                return;
+            }
+
             // Preloaded chart data
             var allChartData = @json($allChartData);
 
@@ -427,7 +432,7 @@ function statusBadgeType($status) {
                     var easePercent = percent * (2 - percent);
                     var current = Math.floor(easePercent * target);
                     el.textContent = current;
-                    
+
                     if (percent < 1) {
                         requestAnimationFrame(animateCounter);
                     } else {
@@ -646,7 +651,13 @@ function statusBadgeType($status) {
                 });
             }
 
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboardCharts);
+        } else {
+            initDashboardCharts();
+        }
 
         // Stats page indicator dots (2 dots = 2 groups of 2 cards each)
         function initStatsDots(containerId, dotsId) {
