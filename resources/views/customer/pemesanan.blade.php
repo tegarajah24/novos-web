@@ -1404,6 +1404,15 @@
         <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 mt-8 pb-24">
             <button
                 type="button"
+                x-show="jenis === 'katalog'"
+                @click="window.location.href = '/katalog/' + (katalogProductId || '')"
+                class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
+            >
+                Kembali ke Produk
+            </button>
+            <button
+                type="button"
+                x-show="jenis !== 'katalog'"
                 @click="step = 2"
                 class="w-full sm:w-auto px-5 py-2.5 sm:px-8 sm:py-3 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-colors text-sm sm:text-base flex items-center justify-center"
             >
@@ -1641,6 +1650,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         jenis: null,
         jenisPhase: 1,
         catalogProduct: catalogProduct,
+        katalogProductId: null,
         categories: categories,
         selectedCategoryId: '',
         subStep: 1,
@@ -1750,12 +1760,14 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     } else if (this.mode === 'katalog_direct' && state.katalogItem) {
                         const item = state.katalogItem;
                         this.jenis = 'katalog';
+                        this.katalogProductId = state.katalogProductId || item.product_id || null;
                         this.basePricePerPcs = parseInt(item.price) || 85000;
                         this.form.total_qty = item.qty || 1;
+                        this.form.size = item.size || '';
                         this.form.team_name = item.name || '';
                         this.form.nama_artikel = item.category || 'Katalog';
                         this.form.nama_pemesan = '{{ auth()->user()->name }}';
-                        
+
                         const cat = this.categories.find(c => c.name.toLowerCase() === (item.category || '').toLowerCase());
                         if (cat) {
                             this.selectedCategoryId = cat.id;
@@ -1779,6 +1791,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             } else {
                 if (this.catalogProduct) {
                     this.jenis = 'katalog';
+                    this.katalogProductId = this.catalogProduct.id || null;
                     if (this.catalogProduct.harga) {
                         this.basePricePerPcs = parseInt(this.catalogProduct.harga);
                     }
@@ -1791,7 +1804,8 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                         if (this.catalogProduct.jenis_potongan) this.form.customizations['jenis_potongan'] = this.catalogProduct.jenis_potongan;
                         if (this.catalogProduct.lengan_jahitan) this.form.customizations['lengan_jahitan'] = this.catalogProduct.lengan_jahitan;
                     }
-                    this.step = 2;
+                    this.form.size = this.catalogProduct.ukuran || this.form.size || '';
+                    this.step = 3;
                 }
             }
 

@@ -508,8 +508,6 @@ function produkDetail() {
         showReferensiProduk: false,
         
         // Custom name and back number
-        namesetName: '',
-        namesetNumber: '',
 
         // Touch gallery vars
         touchStartX: 0,
@@ -664,16 +662,6 @@ function produkDetail() {
             });
         },
 
-        // Format nameset notes
-        getNamesetNotes() {
-            if (this.namesetName.trim() || this.namesetNumber.trim()) {
-                let nameStr = this.namesetName.trim().toUpperCase() || '-';
-                let numStr = this.namesetNumber.trim() || '-';
-                return `Nameset: ${nameStr} (No. ${numStr})`;
-            }
-            return '';
-        },
-
         // Add to Cart
         async addToCart() {
             if (!this.validate()) return;
@@ -690,7 +678,7 @@ function produkDetail() {
                         product_id: {{ $product->id }},
                         size: this.selectedSize,
                         qty: this.qty,
-                        notes: this.getNamesetNotes()
+                        notes: ''
                     }),
                 });
                 const data = await res.json();
@@ -712,12 +700,13 @@ function produkDetail() {
             if (!this.validate()) return;
             const state = {
                 mode: 'katalog_direct',
-                step: 2,
-                subStep: 2,
+                step: 3,
+                subStep: 1,
                 jenis: 'katalog',
                 prioritas: 'normal',
                 selectedAddressId: null,
-                notes: this.getNamesetNotes(),
+                katalogProductId: {{ $product->id }},
+                notes: '',
                 katalogItem: {
                     product_id: {{ $product->id }},
                     name: '{{ addslashes($product->name) }}',
