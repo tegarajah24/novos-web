@@ -134,13 +134,13 @@ $moreKpi = array_slice($allKpi, 4);
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="trending-up" class="w-4 h-4 text-[#1a237e]"></i></span> Revenue Per Minggu</h3>
         <div class="overflow-x-auto lg:overflow-visible">
-            <div class="h-56 min-w-[700px] lg:min-w-0"><canvas id="chartRevenue"></canvas></div>
+            <div class="h-40 min-w-[700px] lg:min-w-0"><canvas id="chartRevenue"></canvas></div>
         </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="bar-chart-3" class="w-4 h-4 text-[#1a237e]"></i></span> Pesanan Masuk vs Selesai</h3>
         <div class="overflow-x-auto lg:overflow-visible">
-            <div class="h-56 min-w-[700px] lg:min-w-0"><canvas id="chartOrders"></canvas></div>
+            <div class="h-40 min-w-[700px] lg:min-w-0"><canvas id="chartOrders"></canvas></div>
         </div>
     </div>
 </div>
@@ -150,12 +150,12 @@ $moreKpi = array_slice($allKpi, 4);
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="layers" class="w-4 h-4 text-[#1a237e]"></i></span> Top 5 Bahan Terlaris</h3>
         <div class="overflow-x-auto lg:overflow-visible">
-            <div class="h-56 min-w-[500px] lg:min-w-0"><canvas id="chartTop5"></canvas></div>
+            <div class="h-40 min-w-[500px] lg:min-w-0"><canvas id="chartTop5"></canvas></div>
         </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-1.5"><span class="w-7 h-7 rounded-lg bg-[#1a237e]/10 flex items-center justify-center shrink-0"><i data-lucide="pie-chart" class="w-4 h-4 text-[#1a237e]"></i></span> Distribusi Jenis Pesanan</h3>
-        <div class="h-56 flex justify-center"><canvas id="chartDist"></canvas></div>
+        <div class="h-40 flex justify-center"><canvas id="chartDist"></canvas></div>
     </div>
 </div>
 
