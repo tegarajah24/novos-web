@@ -11,8 +11,8 @@ $canValidate = in_array($role, ['Admin', 'Manager', 'Super Admin']);
 
 @section('topbar-left')
     <div>
-        <div class="flex items-center gap-3">
-            <h1 class="text-xl font-bold text-[#1a237e]">{{ $order['order_id'] }}</h1>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3">
+            <h1 class="text-lg sm:text-xl font-bold text-[#1a237e] whitespace-nowrap">{{ $order['order_id'] }}</h1>
             <x-badge type="{{ $badgeType }}">{{ $badgeLabel }}</x-badge>
         </div>
         <p class="text-sm text-gray-500 mt-0.5">{{ $order['last_update'] }}</p>
@@ -156,7 +156,7 @@ if (!empty($order['item_details'])) {
 <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
 
     {{-- ── KOLOM KIRI ─────────────────────────────────────────────── --}}
-    <div class="flex-1 min-w-0">
+    <div class="flex-1 min-w-0 overflow-hidden">
         <div x-show="activeTab === 'detail'" class="space-y-5">
             {{-- Info Pesanan --}}
         @php
@@ -610,7 +610,7 @@ if (!empty($order['item_details'])) {
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 Logo Tim
             </h3>
-            <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
                 @php $logoIdx = 0; @endphp
                 @forelse(collect($order['design_files'])->where('type', 'logo')->reject(fn($f) => in_array($f['role'] ?? '', $spkRoles)) as $f)
                 @php
@@ -647,7 +647,7 @@ if (!empty($order['item_details'])) {
                 <svg class="w-4 h-4 text-[#1a237e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 Referensi Desain
             </h3>
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 @php $desainIdx = 0; @endphp
                 @forelse(collect($order['design_files'])->where('type', 'design')->reject(fn($f) => in_array($f['role'] ?? '', $spkRoles)) as $f)
 
@@ -765,7 +765,7 @@ if (!empty($order['item_details'])) {
                 </div>
 
                 {{-- Specs Grid --}}
-                <div class="grid grid-cols-3 gap-x-8 gap-y-3.5 text-sm">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 sm:gap-x-8 gap-y-3.5 text-sm">
                     <div><span class="text-gray-500 text-xs">Jenis</span><div class="font-semibold text-gray-900">Jersey Custom</div></div>
                     <div><span class="text-gray-500 text-xs">Nama Tim</span><div class="font-semibold text-gray-900">{{ $order['product']['team_name'] ?? 'Jersey Custom' }}</div></div>
                     <div><span class="text-gray-500 text-xs">Nama Artikel</span><div class="font-semibold text-gray-900">{{ $order['product']['nama_artikel'] ?? '-' }}</div></div>
@@ -824,24 +824,24 @@ if (!empty($order['item_details'])) {
 
                 <div class="flex flex-wrap gap-4">
                     <template x-if="mockupDepan">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: mockupDepan.url, name: 'Mockup Depan'}], 0)">
                             <img :src="mockupDepan.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!mockupDepan">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
                             <p class="text-xs text-gray-400">Belum ada mockup depan</p>
                         </div>
                     </template>
                     <template x-if="mockupBelakang">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: mockupBelakang.url, name: 'Mockup Belakang'}], 0)">
                             <img :src="mockupBelakang.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!mockupBelakang">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
                             <p class="text-xs text-gray-400">Belum ada mockup belakang</p>
                         </div>
                     </template>
@@ -857,24 +857,24 @@ if (!empty($order['item_details'])) {
 
                 <div class="flex flex-wrap gap-4">
                     <template x-if="detailDepan">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: detailDepan.url, name: 'Detail Depan'}], 0)">
                             <img :src="detailDepan.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!detailDepan">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
                             <p class="text-xs text-gray-400">Belum ada detail depan</p>
                         </div>
                     </template>
                     <template x-if="detailBelakang">
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-64 overflow-hidden cursor-zoom-in"
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl w-full sm:w-64 overflow-hidden cursor-zoom-in"
                              @click="window.openPhotoSwipe?.([{path: detailBelakang.url, name: 'Detail Belakang'}], 0)">
                             <img :src="detailBelakang.url" class="w-full h-full object-cover">
                         </div>
                     </template>
                     <template x-if="!detailBelakang">
-                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-64 aspect-[3/4] flex items-center justify-center">
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl w-full sm:w-64 aspect-[3/4] flex items-center justify-center">
                             <p class="text-xs text-gray-400">Belum ada detail belakang</p>
                         </div>
                     </template>
@@ -889,7 +889,7 @@ if (!empty($order['item_details'])) {
                 </h3>
                 
                 <template x-if="sponsorFiles.length > 0">
-                    <div class="grid grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <template x-for="(file, idx) in sponsorFiles" :key="file.path">
                             <div class="bg-gray-50 border border-gray-200 rounded-xl aspect-square overflow-hidden cursor-zoom-in"
                                  @click="window.openPhotoSwipe?.(sponsorFiles, idx)">
