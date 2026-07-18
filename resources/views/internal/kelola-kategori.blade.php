@@ -271,6 +271,7 @@
                                                 <option value="is_cut_type">Potongan</option>
                                                 <option value="is_sleeve_joint_type">Lengan Jahitan</option>
                                                 <option value="is_sleeve_type">Lengan</option>
+                                                <option value="is_size_type">Ukuran (Size)</option>
                                             </select>
                                         </div>
                                         <div class="flex items-end justify-end pb-1">

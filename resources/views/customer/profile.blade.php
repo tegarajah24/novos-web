@@ -601,7 +601,7 @@
                                                                                     </div>
                                                                                 </td>
                                                                                 <td class="px-3 py-2 text-right font-semibold text-[#1a237e]"
-                                                                                    x-text="'Rp ' + (parseInt(qty) * (item.design_data.base_price_per_pcs || 85000)).toLocaleString('id-ID')">
+                                                                                    x-text="'Rp ' + (parseInt(qty) * ((item.design_data.base_price_per_pcs || 85000) + (item.design_data.size_price_modifiers ? (Number(item.design_data.size_price_modifiers[sizeKey]) || 0) : 0))).toLocaleString('id-ID')">
                                                                                 </td>
                                                                             </tr>
                                                                         </template>
@@ -611,7 +611,7 @@
                                                                             <td class="px-3 py-2">Total</td>
                                                                             <td class="px-3 py-2 text-center" x-text="(item.design_data.total_qty || item.qty) + ' pcs'"></td>
                                                                             <td class="px-3 py-2 text-right text-[#1a237e]"
-                                                                                x-text="'Rp ' + parseInt(item.design_data.estimasi_total || 0).toLocaleString('id-ID')">
+                                                                                x-text="'Rp ' + parseInt(Object.keys(item.design_data.ukuran || {}).reduce((sum, k) => sum + ((parseInt(item.design_data.ukuran[k]) || 0) * ((item.design_data.base_price_per_pcs || 85000) + (item.design_data.size_price_modifiers ? (Number(item.design_data.size_price_modifiers[k]) || 0) : 0))), 0)).toLocaleString('id-ID')">
                                                                             </td>
                                                                         </tr>
                                                                     </tfoot>

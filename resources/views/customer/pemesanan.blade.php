@@ -435,13 +435,9 @@
                              class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
                         >
                             <option value="">- Pilih Ukuran -</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                            <option value="3XL">3XL</option>
-                            <option value="4XL">4XL</option>
+                            <template x-for="opt in sizeOptions" :key="opt.value">
+                                <option :value="opt.value" x-text="opt.value + (Number(opt.price_modifier) > 0 ? ' (+ Rp ' + formatRupiah(Number(opt.price_modifier)) + ')' : '')"></option>
+                            </template>
                         </select>
                     </div>
 
@@ -744,13 +740,9 @@
                                 <span class="text-[10px] text-gray-400 font-semibold px-1">Ukuran:</span>
                                 <select x-model="bulkForm.size" @change="applyBulkSize()" class="bg-transparent text-white text-xs outline-none cursor-pointer pr-2 w-full sm:w-auto">
                                     <option value="" class="bg-gray-800">-- Pilih --</option>
-                                    <option value="S" class="bg-gray-800">S</option>
-                                    <option value="M" class="bg-gray-800">M</option>
-                                    <option value="L" class="bg-gray-800">L</option>
-                                    <option value="XL" class="bg-gray-800">XL</option>
-                                    <option value="XXL" class="bg-gray-800">XXL</option>
-                                    <option value="3XL" class="bg-gray-800">3XL</option>
-                                    <option value="4XL" class="bg-gray-800">4XL</option>
+                                    <template x-for="opt in sizeOptions" :key="opt.value">
+                                        <option :value="opt.value" class="bg-gray-800" x-text="opt.value"></option>
+                                    </template>
                                 </select>
                             </div>
 
@@ -2218,6 +2210,13 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             const cat = this.categories.find(c => c.id == this.selectedCategoryId);
             return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
         },
+        
+        get sizeOptions() {
+            const schema = this.activeSchema;
+            if (!schema) return [];
+            const sizeAttr = schema.find(attr => attr.system_tag === 'is_size_type');
+            return sizeAttr ? (sizeAttr.options || []) : [];
+        },
 
         saveCheckoutState() {
             const state = {
@@ -2272,7 +2271,10 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         getItemModifier(item) {
             let total = 0;
             const compiled = Object.assign({}, this.form.customizations, item.customizations || {});
+            
+            // Modifier for custom attributes
             this.activeSchema.forEach(attr => {
+                if (attr.system_tag === 'is_size_type') return; // handled separately
                 if (attr.depends_on && attr.depends_on.attribute_id) {
                     const parentVal = compiled[attr.depends_on.attribute_id];
                     if (parentVal !== attr.depends_on.value) return;
@@ -2282,6 +2284,18 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 const opt = (attr.options || []).find(o => o.value === val);
                 total += Number(opt?.price_modifier || 0);
             });
+            
+            // Modifier for size
+            if (item.size) {
+                const sizeAttr = this.activeSchema.find(attr => attr.system_tag === 'is_size_type');
+                if (sizeAttr && sizeAttr.options) {
+                    const sizeOpt = sizeAttr.options.find(o => o.value === item.size);
+                    if (sizeOpt) {
+                        total += Number(sizeOpt.price_modifier || 0);
+                    }
+                }
+            }
+            
             return total;
         },
 
@@ -2761,6 +2775,10 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     jenis_potongan: majority.jenis_potongan || '',
                     lengan_jahitan: majority.lengan_jahitan || '',
                     customizations: this.form.customizations || {},
+                    size_price_modifiers: this.sizeOptions.reduce((acc, opt) => {
+                        acc[opt.value] = Number(opt.price_modifier || 0);
+                        return acc;
+                    }, {}),
                     items: compiledItems,
                     catatan: this.form.catatan,
                     total_qty: this.form.total_qty,

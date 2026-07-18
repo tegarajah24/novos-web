@@ -293,7 +293,7 @@
               </div>
               <span class="text-xs text-gray-400 font-medium">Min. {{ $minQty }} pcs</span>
               @if($product->price)
-                <span class="ml-auto text-sm font-bold text-[#1a237e]" x-text="'Subtotal: Rp ' + (qty * {{ (int)$product->price }}).toLocaleString('id-ID')"></span>
+                <span class="ml-auto text-sm font-bold text-[#1a237e]" x-text="'Subtotal: Rp ' + (qty * ({{ (int)$product->price }} + (sizePriceModifiers[selectedSize] || 0))).toLocaleString('id-ID')"></span>
               @endif
             </div>
           </div>
@@ -501,12 +501,32 @@
   </div>
 </template>
 
+@php
+    $dynamicSizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL']; // fallback
+    $dynamicSizeModifiers = [];
+    if (!empty($attributesSchema)) {
+        foreach ($attributesSchema as $attr) {
+            if (isset($attr['system_tag']) && $attr['system_tag'] === 'is_size_type' && !empty($attr['options'])) {
+                $dynamicSizes = [];
+                foreach ($attr['options'] as $opt) {
+                    $dynamicSizes[] = $opt['value'];
+                    if (isset($opt['price_modifier']) && (int)$opt['price_modifier'] > 0) {
+                        $dynamicSizeModifiers[$opt['value']] = (int)$opt['price_modifier'];
+                    }
+                }
+                break;
+            }
+        }
+    }
+@endphp
+
 <script>
 function produkDetail() {
     return {
         activeImg: 0,
 
-        sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
+        sizes: {!! json_encode($dynamicSizes) !!},
+        sizePriceModifiers: {!! json_encode($dynamicSizeModifiers) !!},
         selectedSize: null,
         qty: {{ $minQty }},
         minQty: {{ $minQty }},

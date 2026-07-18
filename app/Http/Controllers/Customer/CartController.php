@@ -21,13 +21,7 @@ class CartController extends Controller
             ->get();
 
         $totalSelected = $cartItems->where('is_selected', true)->sum(function ($item) {
-            if ($item->design_data) {
-                $qty = $item->design_data['total_qty'] ?? collect($item->design_data['ukuran'] ?? [])->sum(fn($v) => (int) $v);
-                $basePrice = ($item->design_data['base_price_per_pcs'] ?? 85000);
-                $prioritasBiaya = $item->design_data['biaya_prioritas'] ?? 0;
-                return ($qty * $basePrice) + $prioritasBiaya;
-            }
-            return $item->qty * ($item->product->price ?? 0);
+            return $this->calculateItemTotal($item);
         });
 
         return response()->json([
@@ -112,13 +106,7 @@ class CartController extends Controller
             ->where('is_selected', true)
             ->get()
             ->sum(function ($item) {
-                if ($item->design_data) {
-                    $qty = $item->design_data['total_qty'] ?? collect($item->design_data['ukuran'] ?? [])->sum(fn($v) => (int) $v);
-                    $basePrice = ($item->design_data['base_price_per_pcs'] ?? 85000);
-                    $prioritasBiaya = $item->design_data['biaya_prioritas'] ?? 0;
-                    return ($qty * $basePrice) + $prioritasBiaya;
-                }
-                return $item->qty * ($item->product->price ?? 0);
+                return $this->calculateItemTotal($item);
             });
 
         return response()->json([
@@ -183,13 +171,7 @@ class CartController extends Controller
             ->where('is_selected', true)
             ->get()
             ->sum(function ($item) {
-                if ($item->design_data) {
-                    $qty = $item->design_data['total_qty'] ?? collect($item->design_data['ukuran'] ?? [])->sum(fn($v) => (int) $v);
-                    $basePrice = ($item->design_data['base_price_per_pcs'] ?? 85000);
-                    $prioritasBiaya = $item->design_data['biaya_prioritas'] ?? 0;
-                    return ($qty * $basePrice) + $prioritasBiaya;
-                }
-                return $item->qty * ($item->product->price ?? 0);
+                return $this->calculateItemTotal($item);
             });
 
         return response()->json([
@@ -197,5 +179,48 @@ class CartController extends Controller
             'is_selected' => $cart->is_selected,
             'total_selected' => $totalSelected,
         ]);
+    }
+
+    protected function calculateItemTotal($item)
+    {
+        if ($item->design_data) {
+            $qty = $item->design_data['total_qty'] ?? collect($item->design_data['ukuran'] ?? [])->sum(fn($v) => (int) $v);
+            $basePrice = ($item->design_data['base_price_per_pcs'] ?? 85000);
+            $prioritasBiaya = $item->design_data['biaya_prioritas'] ?? 0;
+            
+            $sizeBiaya = 0;
+            if (isset($item->design_data['size_price_modifiers'])) {
+                foreach (($item->design_data['ukuran'] ?? []) as $size => $q) {
+                    $mod = $item->design_data['size_price_modifiers'][$size] ?? 0;
+                    $sizeBiaya += ((int)$q * (int)$mod);
+                }
+            } else if (isset($item->design_data['size_price_modifier']) && isset($item->size)) {
+                 $sizeBiaya = ((int)$qty * (int)($item->design_data['size_price_modifier'] ?? 0));
+            }
+            
+            return ($qty * $basePrice) + $prioritasBiaya + $sizeBiaya;
+        }
+
+        $basePrice = $item->product->price ?? 0;
+        $sizeModifier = 0;
+
+        if ($item->product && $item->product->category) {
+            $schema = $item->product->category->attributes_schema;
+            $schemaArray = is_string($schema) ? json_decode($schema, true) : $schema;
+            if (is_array($schemaArray)) {
+                foreach ($schemaArray as $attr) {
+                    if (isset($attr['system_tag']) && $attr['system_tag'] === 'is_size_type' && !empty($attr['options'])) {
+                        foreach ($attr['options'] as $opt) {
+                            if ($opt['value'] === $item->size && isset($opt['price_modifier'])) {
+                                $sizeModifier = (int) $opt['price_modifier'];
+                                break 2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $item->qty * ($basePrice + $sizeModifier);
     }
 }
