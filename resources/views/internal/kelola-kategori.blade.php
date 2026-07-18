@@ -243,8 +243,6 @@
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Tipe</label>
                                             <select x-model="attr.type" class="w-full rounded-lg border-gray-300 text-xs px-3 py-2 focus:ring-purple-500 focus:border-purple-500">
                                                 <option value="select">Select (Dropdown)</option>
-                                                <option value="radio">Radio (Pilihan)</option>
-                                                <option value="text">Text (Isian bebas)</option>
                                             </select>
                                         </div>
                                         <div class="flex items-end pb-2">
