@@ -38,8 +38,10 @@ class CategoryAttributeController extends Controller
                             $opt['price_modifier'] = 0;
                         }
                     }
+                    unset($opt);
                 }
             }
+            unset($attr);
             $request->merge(['attributes_schema' => $schema]);
         }
 
