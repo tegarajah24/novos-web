@@ -46,7 +46,7 @@ Route::get('/pesan', function () {
             $adminPhone = '62' . substr($adminPhone, 1);
         }
 
-        $categories = \App\Models\Category::all()->map(fn($c) => [
+        $categories = \App\Models\Category::whereNull('parent_id')->get()->map(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
             'icon' => $c->icon,
