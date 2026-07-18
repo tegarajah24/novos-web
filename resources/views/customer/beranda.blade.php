@@ -134,7 +134,8 @@
 
             {{-- primary image (depan) dengan floating animation --}}
             <div class="relative z-10 group animate-float">
-                <img src="{{ asset('images/jersey-depan.png') }}"
+                @php $jerseyDepan = \App\Models\Setting::get('hero_jersey_depan'); @endphp
+                <img src="{{ $jerseyDepan ? asset('storage/hero-backgrounds/' . $jerseyDepan) : asset('images/jersey-depan.png') }}"
                      alt="Jersey Custom Tampak Depan"
                      class="w-full md:max-w-[380px] h-auto object-contain drop-shadow-2xl
                             -rotate-[15deg] transition-all duration-700 ease-out
@@ -143,7 +144,8 @@
 
             {{-- secondary decorative image (belakang) — efek depth of field --}}
             <div class="absolute bottom-0 right-0 md:-right-6 z-0 opacity-[0.45] hidden md:block pointer-events-none animate-float-slow">
-                <img src="{{ asset('images/jersey-belakang.png') }}"
+                @php $jerseyBelakang = \App\Models\Setting::get('hero_jersey_belakang'); @endphp
+                <img src="{{ $jerseyBelakang ? asset('storage/hero-backgrounds/' . $jerseyBelakang) : asset('images/jersey-belakang.png') }}"
                      alt=""
                      class="w-[220px] h-auto object-contain drop-shadow-lg
                             rotate-[12deg] transition-all duration-700 ease-out

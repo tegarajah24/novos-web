@@ -36,13 +36,14 @@ class SettingController extends Controller
     {
         $request->validate([
             'file'   => 'required|file|image|mimes:jpeg,jpg,png,webp|max:5120',
-            'target' => 'required|string|in:beranda,tentang,katalog',
+            'target' => 'required|string|in:beranda,tentang,katalog,jersey_depan,jersey_belakang',
         ]);
 
         $file = $request->file('file');
         $target = $request->input('target');
 
-        $settingKey = "hero_{$target}_bg";
+        $bgTargets = ['beranda', 'tentang', 'katalog'];
+        $settingKey = in_array($target, $bgTargets) ? "hero_{$target}_bg" : "hero_{$target}";
 
         $oldValue = Setting::get($settingKey);
 

@@ -352,6 +352,51 @@
                     </div>
                 </div>
 
+                {{-- Jersey Hero Images --}}
+                <div class="border-t border-gray-100 pt-5">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4">Gambar Jersey Hero</h4>
+                    <p class="text-xs text-gray-500 mb-4">Gambar jersey yang melayang di hero section beranda. Format: JPG, PNG, WebP. Maks 5MB.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <template x-for="(jersey, jerseyIdx) in jerseyTargets" :key="jersey.key">
+                            <div class="border border-gray-200 rounded-xl p-4 space-y-3">
+                                <label class="block text-xs font-semibold text-gray-700" x-text="jersey.label"></label>
+                                <div class="relative w-full aspect-[3/4] max-h-[200px] rounded-lg overflow-hidden bg-gray-100 border border-dashed border-gray-300 cursor-pointer group mx-auto max-w-[160px]"
+                                     @click="jersey.value && window.openPhotoSwipe([{ src: jersey.preview || jersey.fallback, width: 800, height: 1000 }], 0)">
+                                    <img :src="jersey.preview || jersey.fallback" class="w-full h-full object-contain transition-transform group-hover:scale-105" :alt="jersey.label">
+                                    <div x-show="jersey.value" class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                        <svg class="w-8 h-8 text-white drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/></svg>
+                                    </div>
+                                    <div x-show="jersey.uploading" class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                        <svg class="animate-spin w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                    </div>
+                                </div>
+                                <div class="filepond-wrapper">
+                                    <input type="file" class="filepond hero-pond" :id="'hero-pond-' + jersey.target"
+                                           accept="image/jpeg,image/png,image/webp"
+                                           data-max-file-size="5MB" data-allow-multiple="false"
+                                           :data-label-idle="'Pilih atau seret gambar untuk ' + jersey.label">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" @click="uploadHero(jersey)" :disabled="jersey.uploading"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#1a237e] hover:bg-[#283593] rounded-lg transition-colors disabled:opacity-50">
+                                        <template x-if="jersey.uploading">
+                                            <svg class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                        </template>
+                                        <template x-if="!jersey.uploading">
+                                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                        </template>
+                                        Unggah
+                                    </button>
+                                    <button type="button" x-show="jersey.value" @click="removeHero(jersey)"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
                 <div class="pt-1">
                     <button type="submit" :disabled="saving"
                             class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-all active:scale-95 disabled:opacity-50 shadow-md shadow-[#1a237e]/20">
@@ -770,6 +815,11 @@ function settingApp() {
             about_visi: '',
             about_misi: [],
             bank_accounts: [],
+            hero_jersey_depan: '',
+            hero_jersey_belakang: '',
+            hero_beranda_bg: '',
+            hero_tentang_bg: '',
+            hero_katalog_bg: '',
         },
 
         bankErrors: [],
@@ -778,6 +828,11 @@ function settingApp() {
             { target: 'beranda', key: 'hero_beranda_bg', label: 'Beranda', fallback: '{{ asset("images/hero-bg.png") }}', value: '', preview: '', uploading: false },
             { target: 'tentang', key: 'hero_tentang_bg', label: 'Tentang Kami', fallback: '{{ asset("images/bg-tentang.png") }}', value: '', preview: '', uploading: false },
             { target: 'katalog', key: 'hero_katalog_bg', label: 'Katalog', fallback: '{{ asset("images/hero-katalog.png") }}', value: '', preview: '', uploading: false },
+        ],
+
+        jerseyTargets: [
+            { target: 'jersey_depan', key: 'hero_jersey_depan', label: 'Jersey Depan', fallback: '{{ asset("images/jersey-depan.png") }}', value: '', preview: '', uploading: false },
+            { target: 'jersey_belakang', key: 'hero_jersey_belakang', label: 'Jersey Belakang', fallback: '{{ asset("images/jersey-belakang.png") }}', value: '', preview: '', uploading: false },
         ],
 
         appearance: { ...DEFAULT_APPEARANCE },
@@ -1046,6 +1101,14 @@ function settingApp() {
                 const v = @json($settings) [h.key] || '';
                 h.value = v;
                 if (v) h.preview = '{{ asset("storage/hero-backgrounds/") }}/' + v;
+                this.form[h.key] = v;
+            });
+
+            this.jerseyTargets.forEach(j => {
+                const v = @json($settings) [j.key] || '';
+                j.value = v;
+                if (v) j.preview = '{{ asset("storage/hero-backgrounds/") }}/' + v;
+                this.form[j.key] = v;
             });
 
             this.isMobile = window.innerWidth < 768;
