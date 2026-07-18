@@ -96,7 +96,7 @@
     <template x-teleport="body">
     <div x-show="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center" x-cloak>
         <div x-show="modalOpen" x-transition.opacity class="fixed inset-0 bg-black/40"></div>
-        <div x-show="modalOpen" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+        <div x-show="modalOpen" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             <h3 class="text-lg font-bold text-gray-900 mb-4" x-text="editId ? 'Edit Kategori' : 'Tambah Kategori'"></h3>
             <form @submit.prevent="simpan">
                 <div class="mb-4">
