@@ -55,7 +55,10 @@ Route::get('/pesan', function () {
             'form_config' => $c->form_config,
         ]);
 
-        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone', 'categories'));
+        $rawBanks = \App\Models\Setting::get('bank_accounts');
+        $bankAccounts = $rawBanks ? json_decode($rawBanks, true) : [];
+
+        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone', 'categories', 'bankAccounts'));
     })->name('pemesanan');
 
 // Public routes for wilayah data

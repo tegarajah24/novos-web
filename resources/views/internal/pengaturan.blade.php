@@ -222,6 +222,51 @@
                     </div>
                 </div>
 
+                {{-- Rekening Bank --}}
+                <div class="border-t border-gray-100 pt-5">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4">Rekening Bank</h4>
+                    <p class="text-xs text-gray-500 mb-4">Rekening yang ditampilkan ke customer saat checkout.</p>
+                    <template x-for="(bank, index) in form.bank_accounts" :key="index">
+                        <div :id="'bank-' + index"
+                             :class="bankErrors.includes(index) ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                             class="flex items-start gap-3 mb-3 p-3 border rounded-xl">
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Nama Bank <span class="text-red-500">*</span></label>
+                                    <input type="text" x-model="bank.bank_name" placeholder="BRI"
+                                           :class="bankErrors.includes(index) && !bank.bank_name.trim() ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'"
+                                           class="w-full rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <p x-show="bankErrors.includes(index) && !bank.bank_name.trim()" class="text-xs text-red-500 mt-1">Nama bank wajib diisi</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Atas Nama <span class="text-red-500">*</span></label>
+                                    <input type="text" x-model="bank.account_name" placeholder="Novos Jersey"
+                                           :class="bankErrors.includes(index) && !bank.account_name.trim() ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'"
+                                           class="w-full rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                    <p x-show="bankErrors.includes(index) && !bank.account_name.trim()" class="text-xs text-red-500 mt-1">Atas nama wajib diisi</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">No. Rekening <span class="text-red-500">*</span></label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" x-model="bank.account_number" placeholder="1234-5678-90"
+                                               :class="bankErrors.includes(index) && !bank.account_number.trim() ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'"
+                                               class="flex-1 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                                        <button type="button" @click="removeBank(index)"
+                                                class="text-gray-400 hover:text-red-500 transition-colors p-1.5 shrink-0">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                    <p x-show="bankErrors.includes(index) && !bank.account_number.trim()" class="text-xs text-red-500 mt-1">No. rekening wajib diisi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <button type="button" @click="addBank()"
+                            class="inline-flex items-center gap-1.5 text-xs font-medium text-[#1a237e] hover:text-[#283593] transition-colors">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Bank
+                    </button>
+                </div>
+
                 {{-- Konten Halaman Tentang Kami --}}
                 <div class="border-t border-gray-100 pt-5">
                     <h4 class="text-sm font-bold text-gray-900 mb-4">Konten Halaman Tentang Kami</h4>
@@ -724,7 +769,10 @@ function settingApp() {
             about_story: '',
             about_visi: '',
             about_misi: [],
+            bank_accounts: [],
         },
+
+        bankErrors: [],
 
         heroTargets: [
             { target: 'beranda', key: 'hero_beranda_bg', label: 'Beranda', fallback: '{{ asset("images/hero-bg.png") }}', value: '', preview: '', uploading: false },
@@ -987,6 +1035,13 @@ function settingApp() {
             this.form.about_visi  = @json($settings['about_visi'] ?? '');
             this.form.about_misi  = @json(!empty($settings['about_misi']) ? json_decode($settings['about_misi'], true) : []);
 
+            const savedBanks = @json(!empty($settings['bank_accounts']) ? json_decode($settings['bank_accounts'], true) : []);
+            this.form.bank_accounts = (savedBanks && savedBanks.length > 0) ? savedBanks : [
+                { bank_name: 'BRI', account_name: '', account_number: '' },
+                { bank_name: 'Mandiri', account_name: '', account_number: '' },
+                { bank_name: 'BNI', account_name: '', account_number: '' }
+            ];
+
             this.heroTargets.forEach(h => {
                 const v = @json($settings) [h.key] || '';
                 h.value = v;
@@ -1062,6 +1117,26 @@ function settingApp() {
         },
 
         async saveToko() {
+            this.bankErrors = [];
+            const invalidIndices = [];
+            this.form.bank_accounts.forEach((b, i) => {
+                if (!b.bank_name.trim() || !b.account_name.trim() || !b.account_number.trim()) {
+                    invalidIndices.push(i);
+                }
+            });
+            if (invalidIndices.length > 0) {
+                this.bankErrors = invalidIndices;
+                this.saving = false;
+                await this.$nextTick();
+                const el = document.getElementById('bank-' + invalidIndices[0]);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const firstInput = el.querySelector('input');
+                    if (firstInput) setTimeout(() => firstInput.focus(), 400);
+                }
+                return;
+            }
+
             this.saving = true;
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             try {
@@ -1117,6 +1192,26 @@ function settingApp() {
             hero.preview = '';
             this.form[hero.key] = '';
             Notify.success('Gambar dihapus. Klik Simpan untuk menyimpan perubahan.');
+        },
+
+        addBank() {
+            this.form.bank_accounts.push({ bank_name: '', account_name: '', account_number: '' });
+            this.$nextTick(() => lucide.createIcons({ icons: window.lucide.icons }));
+        },
+
+        async removeBank(index) {
+            const result = await Swal.fire({
+                title: 'Yakin ingin menghapus rekening?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc2626',
+            });
+            if (result.isConfirmed) {
+                this.form.bank_accounts.splice(index, 1);
+                this.$nextTick(() => lucide.createIcons({ icons: window.lucide.icons }));
+            }
         },
 
         applyTheme(val) {

@@ -96,7 +96,7 @@
 @section('content')
 @auth
 
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }}, {{ json_encode($categories) }})">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }}, {{ json_encode($categories) }}, {{ json_encode($bankAccounts) }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
@@ -1272,48 +1272,26 @@
                 </div>
 
                 {{-- Info Rekening --}}
-                <div class="bg-white border border-gray-200 rounded-xl p-5 mt-4">
+                <div class="bg-white border border-gray-200 rounded-xl p-5 mt-4" x-show="bankAccounts.length > 0">
                     <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                         Pembayaran via Transfer Bank
                     </h4>
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">BCA</p>
-                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
+                        <template x-for="(bank, idx) in bankAccounts" :key="idx">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900" x-text="bank.bank_name"></p>
+                                    <p class="text-xs text-gray-500" x-text="'a.n. ' + (bank.account_name || '-')"></p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <p class="text-sm font-mono font-bold text-[#1a237e]" x-text="bank.account_number"></p>
+                                    <button @click="copyRekening(bank.account_number)" class="p-1.5 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <p class="text-sm font-mono font-bold text-[#1a237e]">123 456 7890</p>
-                                <button @click="copyRekening('123 456 7890')" class="p-1.5 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">Mandiri</p>
-                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <p class="text-sm font-mono font-bold text-[#1a237e]">987 654 3210</p>
-                                <button @click="copyRekening('987 654 3210')" class="p-1.5 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">BNI</p>
-                                <p class="text-xs text-gray-500">a.n. Novos Jersey</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <p class="text-sm font-mono font-bold text-[#1a237e]">555 666 7777</p>
-                                <button @click="copyRekening('555 666 7777')" class="p-1.5 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                </button>
-                            </div>
-                        </div>
+                        </template>
                     </div>
                     <p class="text-xs text-gray-400 mt-3">Setelah transfer, kirimkan bukti pembayaran melalui halaman konfirmasi atau chat dengan admin.</p>
                 </div>
@@ -1606,40 +1584,24 @@
             </div>
 
             {{-- Info Pembayaran DP --}}
-            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto" style="animation-delay:0.7s">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto" style="animation-delay:0.7s" x-show="bankAccounts.length > 0">
                 <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                     Pembayaran DP Minimal 10%
                 </h4>
                 <p class="text-xs text-gray-500 mb-3">Setelah admin memvalidasi pesanan, lakukan transfer DP minimal 10% ke salah satu rekening berikut:</p>
                 <div class="space-y-2 mb-3">
-                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
-                        <span class="text-xs font-semibold text-gray-700">BCA</span>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-mono font-bold text-[#1a237e]">123 456 7890</span>
-                            <button @click="copyRekening('123 456 7890')" class="p-1 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                            </button>
+                    <template x-for="(bank, idx) in bankAccounts" :key="idx">
+                        <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
+                            <span class="text-xs font-semibold text-gray-700" x-text="bank.bank_name"></span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-mono font-bold text-[#1a237e]" x-text="bank.account_number"></span>
+                                <button @click="copyRekening(bank.account_number)" class="p-1 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
-                        <span class="text-xs font-semibold text-gray-700">Mandiri</span>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-mono font-bold text-[#1a237e]">987 654 3210</span>
-                            <button @click="copyRekening('987 654 3210')" class="p-1 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
-                        <span class="text-xs font-semibold text-gray-700">BNI</span>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-mono font-bold text-[#1a237e]">555 666 7777</span>
-                            <button @click="copyRekening('555 666 7777')" class="p-1 hover:bg-gray-200 rounded-lg transition-colors" title="Salin nomor rekening">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                            </button>
-                        </div>
-                    </div>
+                    </template>
                 </div>
                 <p class="text-xs text-gray-400">a.n. <strong>Novos Jersey</strong></p>
             </div>
@@ -1703,7 +1665,7 @@
 </style>
 
 <script>
-function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = [], categories = []) {
+function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = [], categories = [], bankAccounts = []) {
     return {
         step: 1,
         mode: 'single',
@@ -1800,6 +1762,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         buktiBayarFile: null,
         loading: false,
         hasOrders: hasOrders,
+        bankAccounts: bankAccounts,
         prioritasOptions: @json($dynamicPriorities),
         basePricePerPcs: 85000,
 
