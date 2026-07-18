@@ -51,7 +51,7 @@ class CategoryAttributeController extends Controller
             'attributes_schema.*.required'            => 'boolean',
             'attributes_schema.*.options'                    => 'nullable|array',
             'attributes_schema.*.options.*.value'            => 'required|string|max:200',
-            'attributes_schema.*.options.*.price_modifier'   => 'nullable|numeric|min:0',
+            'attributes_schema.*.options.*.price_modifier'   => 'nullable|numeric',
             'attributes_schema.*.options.*.sleeve'           => 'nullable|in:long,short',
             'attributes_schema.*.system_tag'                 => 'nullable|in:is_fabric_type,is_collar_type,is_cut_type,is_sleeve_joint_type,is_sleeve_type',
             'attributes_schema.*.depends_on'                 => 'nullable|array',

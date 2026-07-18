@@ -311,10 +311,10 @@
                                                             placeholder="Nilai opsi...">
                                                         <div class="relative w-32 shrink-0">
                                                             <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-gray-400 text-[10px]">Rp</span>
-                                                            <input type="number" x-model="opt.price_modifier" min="0" step="1000"
+                                                            <input type="number" x-model="opt.price_modifier" step="1000"
                                                                 @if(auth()->user()->role->name !== 'Super Admin') disabled @endif
                                                                 class="w-full rounded-lg border-gray-200 bg-white pl-7 pr-2 py-1.5 text-xs focus:ring-[#1a237e] focus:border-[#1a237e] disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                                                                placeholder="+ Harga">
+                                                                placeholder="± Harga">
                                                         </div>
                                                         <select x-show="attr.system_tag === 'is_sleeve_type'"
                                                             x-model="opt.sleeve"
