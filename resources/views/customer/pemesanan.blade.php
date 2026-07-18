@@ -441,7 +441,7 @@
                         </select>
                     </div>
 
-                    <template x-for="attr in activeSchema" :key="attr.id">
+                    <template x-for="attr in activeSchema.filter(a => a.system_tag !== 'is_size_type')" :key="attr.id">
                         <div class="space-y-1.5">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-semibold text-gray-600" x-text="attr.name"></span>
@@ -3060,7 +3060,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             <div class="px-6 py-5 overflow-y-auto max-h-[60vh] space-y-4 bg-gray-50/50 grow">
                 <p class="text-xs text-gray-500">Atribut yang dikosongkan atau diset ke <strong>Default</strong> akan otomatis mengikuti <strong>Spesifikasi Utama</strong> di halaman pemesanan.</p>
                 
-                <template x-for="attr in activeSchema" :key="attr.id">
+                <template x-for="attr in activeSchema.filter(a => a.system_tag !== 'is_size_type')" :key="attr.id">
                     <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-gray-700" x-text="attr.name"></span>
