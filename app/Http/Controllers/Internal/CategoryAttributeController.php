@@ -27,6 +27,22 @@ class CategoryAttributeController extends Controller
      */
     public function updateSchema(Request $request, Category $category)
     {
+        $schema = $request->input('attributes_schema');
+
+        // Normalize: coerce empty/missing price_modifier to 0 BEFORE validation
+        if (is_array($schema)) {
+            foreach ($schema as &$attr) {
+                if (isset($attr['options']) && is_array($attr['options'])) {
+                    foreach ($attr['options'] as &$opt) {
+                        if (!isset($opt['price_modifier']) || $opt['price_modifier'] === '' || $opt['price_modifier'] === null) {
+                            $opt['price_modifier'] = 0;
+                        }
+                    }
+                }
+            }
+            $request->merge(['attributes_schema' => $schema]);
+        }
+
         $request->validate([
             'attributes_schema'                       => 'required|array',
             'attributes_schema.*.id'                  => 'required|string|max:100',
@@ -39,8 +55,8 @@ class CategoryAttributeController extends Controller
             'attributes_schema.*.options.*.sleeve'           => 'nullable|in:long,short',
             'attributes_schema.*.system_tag'                 => 'nullable|in:is_fabric_type,is_collar_type,is_cut_type,is_sleeve_joint_type,is_sleeve_type',
             'attributes_schema.*.depends_on'                 => 'nullable|array',
-            'attributes_schema.*.depends_on.attribute_id' => 'nullable|string',
-            'attributes_schema.*.depends_on.value'    => 'nullable|string',
+            'attributes_schema.*.depends_on.attribute_id'    => 'nullable|string',
+            'attributes_schema.*.depends_on.value'           => 'nullable|string',
         ]);
 
         $schema = $request->input('attributes_schema');
