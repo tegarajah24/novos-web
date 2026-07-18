@@ -327,7 +327,7 @@ if (!empty($order['item_details'])) {
                 <div><span class="text-gray-500 text-xs">Deadline</span><div class="font-medium text-red-600">{{ $order['deadline'] }}</div></div>
                 <div><span class="text-gray-500 text-xs">Total Qty</span><div class="font-medium text-gray-900">{{ $order['total_qty'] }} pcs</div></div>
             </div>
-            {{-- Item Details Table --}}
+            {{-- Item Details --}}
             @if(!empty($order['item_details']))
             <div class="mb-4">
                 <div class="flex items-center justify-between mb-2">
@@ -339,7 +339,37 @@ if (!empty($order['item_details'])) {
                     </button>
                     @endif
                 </div>
-                <div x-data="{ expandedAll: false }" class="rounded-lg border border-gray-200 overflow-hidden">
+
+                {{-- Desktop: Table --}}
+                <div class="hidden sm:block overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+                            <tr>
+                                <th class="px-3 py-2 text-left font-semibold">No</th>
+                                <th class="px-3 py-2 text-left font-semibold">Nama Punggung</th>
+                                <th class="px-3 py-2 text-left font-semibold">NPG</th>
+                                <th class="px-3 py-2 text-left font-semibold">Size</th>
+                                <th class="px-3 py-2 text-left font-semibold">Keterangan</th>
+                                <th class="px-3 py-2 text-right font-semibold">Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @foreach($order['item_details'] as $detail)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-3 py-2 text-gray-800 font-medium">{{ $loop->iteration }}</td>
+                                <td class="px-3 py-2 text-gray-700 font-medium">{{ $detail['nama_punggung'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-700">{{ $detail['no_punggung'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-700">{{ $detail['size'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-gray-700">{{ $detail['keterangan_simple'] ?? '-' }}</td>
+                                <td class="px-3 py-2 text-right font-medium text-gray-900">{{ 'Rp ' . number_format($detail['price'] ?? 0, 0, ',', '.') }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile: Accordion Cards --}}
+                <div x-data="{ expandedAll: false }" class="sm:hidden rounded-lg border border-gray-200 overflow-hidden">
                     @if(count($order['item_details']) > 5)
                     <button @click="expandedAll = !expandedAll" class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-[#1a237e] hover:bg-gray-50 transition-colors border-b border-gray-100">
                         <span x-text="expandedAll ? 'Sembunyikan' : 'Lihat Semua ({{ count($order['item_details']) }})'"></span>
