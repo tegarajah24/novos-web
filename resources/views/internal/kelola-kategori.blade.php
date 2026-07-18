@@ -116,56 +116,60 @@
                     </select>
                     <p class="text-xs text-gray-400 mt-1">Pilih kategori induk jika kategori ini merupakan sub-kategori.</p>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Harga Dasar per Jersey</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500 text-sm">Rp</span>
-                        <input type="number" x-model="base_price" min="0" step="1000"
-                               @if(auth()->user()->role->name !== 'Super Admin') disabled @endif
-                               class="w-full rounded-xl border-gray-300 pl-10 pr-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e] disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                               placeholder="Contoh: 85000">
-                    </div>
-                    @if(auth()->user()->role->name !== 'Super Admin')
-                        <p class="text-[10px] text-gray-400 mt-1">Hanya Super Admin yang dapat mengubah harga dasar.</p>
-                    @endif
-                </div>
-                <template x-if="editId && icon && (icon.includes('/') || icon.includes('.'))">
-                    <div class="mb-3 flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl border border-gray-100">
-                        <img :src="'/storage/' + icon" class="w-12 h-12 object-contain rounded-lg bg-white border border-gray-200">
-                        <div>
-                            <span class="text-xs font-semibold text-gray-700 block">Ikon Saat Ini</span>
-                            <span class="text-[10px] text-gray-400">Biarkan kosong jika tidak ingin mengubah</span>
+                <template x-if="!parent_id">
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Harga Dasar per Jersey</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500 text-sm">Rp</span>
+                                <input type="number" x-model="base_price" min="0" step="1000"
+                                       @if(auth()->user()->role->name !== 'Super Admin') disabled @endif
+                                       class="w-full rounded-xl border-gray-300 pl-10 pr-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e] disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                       placeholder="Contoh: 85000">
+                            </div>
+                            @if(auth()->user()->role->name !== 'Super Admin')
+                                <p class="text-[10px] text-gray-400 mt-1">Hanya Super Admin yang dapat mengubah harga dasar.</p>
+                            @endif
+                        </div>
+                        <template x-if="editId && icon && (icon.includes('/') || icon.includes('.'))">
+                            <div class="mb-3 flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                                <img :src="'/storage/' + icon" class="w-12 h-12 object-contain rounded-lg bg-white border border-gray-200">
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-700 block">Ikon Saat Ini</span>
+                                    <span class="text-[10px] text-gray-400">Biarkan kosong jika tidak ingin mengubah</span>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ikon Kategori</label>
+                            <input type="file" class="filepond" id="category-icon-pond" accept="image/png,image/jpeg,image/jpg,image/webp" data-max-file-size="2MB">
+                            <p class="text-xs text-gray-400 mt-1">Gunakan gambar berformat PNG/JPG/WebP dengan rasio 1:1 (Square). Rekomendasi resolusi: 512x512 piksel, maks 2MB.</p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                            <textarea x-model="description" rows="3"
+                                       class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
+                                       placeholder="Deskripsi singkat untuk card kategori..."></textarea>
+                        </div>
+                        <div class="mb-5 bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                            <span class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2.5">Konfigurasi Kolom Form</span>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                                    <input type="checkbox" x-model="form_config.show_team_name" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
+                                    <span>Tampilkan kolom <strong>Nama Tim / Event</strong></span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                                    <input type="checkbox" x-model="form_config.show_nama_artikel" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
+                                    <span>Tampilkan kolom <strong>Nama Artikel</strong></span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                                    <input type="checkbox" x-model="form_config.show_detail_sponsor" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
+                                    <span>Tampilkan kolom <strong>Detail Sponsor</strong></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </template>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Ikon Kategori</label>
-                    <input type="file" class="filepond" id="category-icon-pond" accept="image/png,image/jpeg,image/jpg,image/webp" data-max-file-size="2MB">
-                    <p class="text-xs text-gray-400 mt-1">Gunakan gambar berformat PNG/JPG/WebP dengan rasio 1:1 (Square). Rekomendasi resolusi: 512x512 piksel, maks 2MB.</p>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                    <textarea x-model="description" rows="3"
-                               class="w-full rounded-xl border-gray-300 px-4 py-2.5 text-sm focus:ring-[#1a237e] focus:border-[#1a237e]"
-                               placeholder="Deskripsi singkat untuk card kategori..."></textarea>
-                </div>
-                <div class="mb-5 bg-gray-50 border border-gray-100 p-4 rounded-xl">
-                    <span class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2.5">Konfigurasi Kolom Form</span>
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
-                            <input type="checkbox" x-model="form_config.show_team_name" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
-                            <span>Tampilkan kolom <strong>Nama Tim / Event</strong></span>
-                        </label>
-                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
-                            <input type="checkbox" x-model="form_config.show_nama_artikel" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
-                            <span>Tampilkan kolom <strong>Nama Artikel</strong></span>
-                        </label>
-                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
-                            <input type="checkbox" x-model="form_config.show_detail_sponsor" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
-                            <span>Tampilkan kolom <strong>Detail Sponsor</strong></span>
-                        </label>
-                    </div>
-                </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
                     <button type="submit" :disabled="submitting" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
