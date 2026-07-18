@@ -33,6 +33,7 @@ class ProductController extends Controller
             return [
                 'id'   => $cat->id,
                 'name' => $cat->name,
+                'parent_id' => $cat->parent_id,
                 'attributes_schema' => $mySchema,
             ];
         })->values()->toArray();

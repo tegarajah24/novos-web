@@ -345,8 +345,17 @@
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Kategori <span class="text-red-500">*</span></label>
                             <select x-model="formData.category_id" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
                                 <option value="" disabled>Pilih Kategori</option>
-                                <template x-for="cat in categories" :key="cat.id">
-                                    <option :value="cat.id" x-text="cat.name"></option>
+                                <template x-for="parent in parentCategories" :key="parent.id">
+                                    <optgroup :label="parent.name">
+                                        <template x-if="subCategories(parent.id).length > 0">
+                                            <template x-for="child in subCategories(parent.id)" :key="child.id">
+                                                <option :value="child.id" x-text="child.name"></option>
+                                            </template>
+                                        </template>
+                                        <template x-if="subCategories(parent.id).length === 0">
+                                            <option :value="parent.id" x-text="parent.name + ' (Kategori Utama)'"></option>
+                                        </template>
+                                    </optgroup>
                                 </template>
                             </select>
                         </div>
@@ -431,6 +440,14 @@ function kelolaProdukApp() {
         categories: @json($categories),
 
         products: @json($products),
+
+        get parentCategories() {
+            return this.categories.filter(c => !c.parent_id);
+        },
+
+        subCategories(parentId) {
+            return this.categories.filter(c => c.parent_id == parentId);
+        },
 
         filters: {
             search: '',
