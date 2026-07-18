@@ -83,7 +83,29 @@ class ProductController extends Controller
             'KIDS'            => '/images/referensi-ukuran/KIDSCUT-NVS-2026.png',
         ];
 
+        $attributesSchema = [];
+        if ($product->category && $product->category->attributes_schema) {
+            $schema = is_string($product->category->attributes_schema) 
+                ? json_decode($product->category->attributes_schema, true) 
+                : $product->category->attributes_schema;
+            if (is_array($schema)) {
+                foreach ($schema as $attr) {
+                    $attributesSchema[$attr['id']] = $attr;
+                }
+            }
+        }
+
+        // Cari "potongan" di product_attributes jika ada
         $jenisPotongan = $product->jenis_potongan;
+        if (is_array($product->product_attributes)) {
+            foreach ($product->product_attributes as $attrId => $attrValue) {
+                if (isset($attributesSchema[$attrId]) && strtolower($attributesSchema[$attrId]['name']) === 'jenis potongan') {
+                    $jenisPotongan = $attrValue;
+                    break;
+                }
+            }
+        }
+
         $referensiUkuranUrl = isset($referensiUkuranMap[$jenisPotongan])
             ? asset($referensiUkuranMap[$jenisPotongan])
             : asset('/images/referensi-ukuran/REGCUT-NVS-2026.png');
@@ -95,7 +117,7 @@ class ProductController extends Controller
         return view('customer.produk-detail', compact(
             'product', 'imageUrl', 'imageBelakangUrl',
             'minQty', 'wishlisted', 'avgRating', 'ratingCount', 'userRating', 'reviews',
-            'fullStars', 'halfStar', 'emptyStars', 'referensiUkuranUrl'
+            'fullStars', 'halfStar', 'emptyStars', 'referensiUkuranUrl', 'attributesSchema'
         ));
     }
 }

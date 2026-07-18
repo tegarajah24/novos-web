@@ -20,6 +20,7 @@ class ProductController extends Controller
             return [
                 'id'   => $cat->id,
                 'name' => $cat->name,
+                'attributes_schema' => $cat->attributes_schema ? (is_string($cat->attributes_schema) ? json_decode($cat->attributes_schema, true) : $cat->attributes_schema) : [],
             ];
         })->values()->toArray();
 

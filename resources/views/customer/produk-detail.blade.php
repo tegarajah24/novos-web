@@ -202,33 +202,47 @@
           </div>
 
           {{-- Specifications Section --}}
-          @if($product->kerah || $product->bahan || $product->jenis_potongan || $product->lengan_jahitan)
+          @if((is_array($product->product_attributes) && count($product->product_attributes) > 0 && !empty($attributesSchema)) || $product->kerah || $product->bahan || $product->jenis_potongan || $product->lengan_jahitan)
             <div class="border border-gray-100 p-4 bg-gray-50/50">
               <h3 class="text-xs font-bold text-[#1a237e] uppercase tracking-wider mb-3">Spesifikasi Produk</h3>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                @if($product->kerah)
-                  <div>
-                    <p class="text-gray-400 mb-1">Jenis Kerah</p>
-                    <span class="font-bold text-gray-800">{{ $product->kerah }}</span>
-                  </div>
-                @endif
-                @if($product->bahan)
-                  <div>
-                    <p class="text-gray-400 mb-1">Bahan Jersey</p>
-                    <span class="font-bold text-gray-800">{{ $product->bahan }}</span>
-                  </div>
-                @endif
-                @if($product->jenis_potongan)
-                  <div>
-                    <p class="text-gray-400 mb-1">Jenis Potongan</p>
-                    <span class="font-bold text-gray-800">{{ $product->jenis_potongan }}</span>
-                  </div>
-                @endif
-                @if($product->lengan_jahitan)
-                  <div>
-                    <p class="text-gray-400 mb-1">Model Lengan</p>
-                    <span class="font-bold text-gray-800">{{ $product->lengan_jahitan }}</span>
-                  </div>
+                
+                {{-- Dinamis JSON product_attributes --}}
+                @if(is_array($product->product_attributes) && count($product->product_attributes) > 0 && !empty($attributesSchema))
+                  @foreach($product->product_attributes as $attrId => $attrValue)
+                    @if(isset($attributesSchema[$attrId]) && $attrValue)
+                      <div>
+                        <p class="text-gray-400 mb-1">{{ $attributesSchema[$attrId]['name'] }}</p>
+                        <span class="font-bold text-gray-800">{{ $attrValue }}</span>
+                      </div>
+                    @endif
+                  @endforeach
+                @else
+                  {{-- Legacy Fallback --}}
+                  @if($product->kerah)
+                    <div>
+                      <p class="text-gray-400 mb-1">Jenis Kerah</p>
+                      <span class="font-bold text-gray-800">{{ $product->kerah }}</span>
+                    </div>
+                  @endif
+                  @if($product->bahan)
+                    <div>
+                      <p class="text-gray-400 mb-1">Bahan Jersey</p>
+                      <span class="font-bold text-gray-800">{{ $product->bahan }}</span>
+                    </div>
+                  @endif
+                  @if($product->jenis_potongan)
+                    <div>
+                      <p class="text-gray-400 mb-1">Jenis Potongan</p>
+                      <span class="font-bold text-gray-800">{{ $product->jenis_potongan }}</span>
+                    </div>
+                  @endif
+                  @if($product->lengan_jahitan)
+                    <div>
+                      <p class="text-gray-400 mb-1">Model Lengan</p>
+                      <span class="font-bold text-gray-800">{{ $product->lengan_jahitan }}</span>
+                    </div>
+                  @endif
                 @endif
               </div>
             </div>
