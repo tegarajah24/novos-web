@@ -315,14 +315,6 @@ function katalogData() {
                                     <p class="text-xs text-gray-400 mt-0.5">Hubungi CS</p>
                                 </template>
                             </div>
-                            {{-- Buy button: outline, sharp corners, slides up on hover --}}
-                            <button @click.stop="flyToCart($event, product)"
-                                class="mt-2 w-full py-2 text-xs font-semibold transition-all duration-300
-                                       border border-[#1a237e] text-[#1a237e] bg-transparent
-                                       md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0
-                                       hover:bg-[#1a237e]/5">
-                                + Beli
-                            </button>
                         </div>
                     </div>
                 </template>
