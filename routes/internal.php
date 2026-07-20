@@ -58,10 +58,6 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::delete('/kelola-produk/{product}', [ProductController::class, 'destroy'])->name('kelola-produk.destroy');
         Route::get('/kelola-produk/referensi', [ProductController::class, 'getReferensi'])->name('kelola-produk.get-referensi');
         Route::post('/kelola-produk/referensi', [ProductController::class, 'updateReferensi'])->name('kelola-produk.update-referensi');
-        Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
-        Route::post('/kelola-pengguna', [UserController::class, 'store'])->name('kelola-pengguna.store');
-        Route::put('/kelola-pengguna/{user}', [UserController::class, 'update'])->name('kelola-pengguna.update');
-        Route::delete('/kelola-pengguna/{user}', [UserController::class, 'destroy'])->name('kelola-pengguna.destroy');
 
         Route::get('/chat', [ChatController::class, 'index'])->name('chat');
         Route::post('/chat/heartbeat', [ChatController::class, 'heartbeat'])->name('chat.heartbeat');
@@ -105,6 +101,17 @@ Route::get('/daftar-pesanan/export', [OrderController::class, 'exportDaftarPesan
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
         Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
         Route::post('/pengaturan/upload-hero', [SettingController::class, 'uploadHero'])->name('pengaturan.upload-hero');
+    });
+
+// Kelola Pengguna — Super Admin only
+Route::prefix('staf')
+    ->middleware(['auth', 'role:Super Admin'])
+    ->name('staf.')
+    ->group(function () {
+        Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
+        Route::post('/kelola-pengguna', [UserController::class, 'store'])->name('kelola-pengguna.store');
+        Route::put('/kelola-pengguna/{user}', [UserController::class, 'update'])->name('kelola-pengguna.update');
+        Route::delete('/kelola-pengguna/{user}', [UserController::class, 'destroy'])->name('kelola-pengguna.destroy');
     });
 
 // Poster management — Super Admin only

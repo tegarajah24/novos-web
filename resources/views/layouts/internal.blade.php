@@ -1135,7 +1135,7 @@
                 { target: 'a[href*="laporan"]', label: 'Laporan', icon: 'file-text', color: '#37474f', tip: 'Buat dan ekspor laporan bisnis dalam format CSV, Excel, atau PDF. Filter berdasarkan periode dan jenis laporan.' },
                 { target: 'a[href*="kelola-produk"]', label: 'Kelola Produk', icon: 'package', color: '#00695c', tip: 'Atur katalog produk jersey: tambah produk baru, edit harga, upload foto, atur status featured.' },
                 { target: 'a[href*="kategori"]', label: 'Kategori', icon: 'folder-tree', color: '#f57c00', tip: 'Kelola kategori produk untuk mengelompokkan jenis jersey. Kategori akan tampil di katalog publik.' },
-                { target: 'a[href*="kelola-pengguna"]', label: 'Kelola Pengguna', icon: 'users', color: '#4a148c', tip: 'Manajemen akun staf internal: tambah pengguna baru, atur role, edit atau nonaktifkan akun. Hanya untuk Super Admin & Manager.' },
+                { target: 'a[href*="kelola-pengguna"]', label: 'Kelola Pengguna', icon: 'users', color: '#4a148c', tip: 'Manajemen akun staf internal: tambah pengguna baru, atur role, edit atau nonaktifkan akun. Hanya untuk Super Admin.' },
                 { target: 'a[href*="pengaturan"]', label: 'Pengaturan', icon: 'settings', color: '#607d8b', tip: 'Konfigurasi toko (nama, alamat, kontak) dan tampilan panel (tema, warna, font, glassmorphism, transisi). Lihat panduan lengkap di tab Panduan.' },
             ],
             get currentStep() {

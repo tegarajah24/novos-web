@@ -45,6 +45,13 @@ class UserController extends Controller
 
         $role = Role::where('name', $data['role'])->firstOrFail();
 
+        if (auth()->user()->role->name !== 'Super Admin' && $role->name === 'Super Admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk membuat akun Super Admin',
+            ], 403);
+        }
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
@@ -104,6 +111,20 @@ class UserController extends Controller
         $data = $request->validated();
 
         $role = Role::where('name', $data['role'])->firstOrFail();
+
+        if (auth()->user()->role->name !== 'Super Admin' && $role->name === 'Super Admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk menetapkan role Super Admin',
+            ], 403);
+        }
+
+        if (auth()->user()->role->name !== 'Super Admin' && $user->role->name === 'Super Admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk mengubah data Super Admin',
+            ], 403);
+        }
 
         $avatarPath = $user->avatar;
         if ($request->hasFile('avatar')) {
@@ -167,6 +188,20 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        if ($user->id === auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat menghapus akun sendiri',
+            ], 400);
+        }
+
+        if ($user->role->name === 'Super Admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Super Admin tidak dapat dihapus',
+            ], 400);
+        }
+
         $user->delete();
 
         return response()->json([
