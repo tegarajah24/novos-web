@@ -424,27 +424,15 @@
                     </button>
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedSpecs">
-                    {{-- Ukuran Jersey Utama (Global Size) --}}
-                    <div class="space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold text-gray-600">Ukuran Jersey Utama <span class="text-red-500">*</span></span>
-                        </div>
-                        <select
-                             x-model="form.size"
-                             @change="onGlobalSizeChange()"
-                             class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
-                        >
-                            <option value="">- Pilih Ukuran -</option>
-                            <template x-for="opt in sizeOptions" :key="opt.value">
-                                <option :value="opt.value" x-text="opt.value + (Number(opt.price_modifier) > 0 ? ' (+ Rp ' + formatRupiah(Number(opt.price_modifier)) + ')' : '')"></option>
-                            </template>
-                        </select>
-                    </div>
-
-                    <template x-for="attr in activeSchema.filter(a => a.system_tag !== 'is_size_type')" :key="attr.id">
+                    <template x-for="attr in activeSchema" :key="attr.id">
                         <div class="space-y-1.5">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-gray-600" x-text="attr.name"></span>
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-600" x-text="attr.name"></span>
+                                    <template x-if="attr.system_tag === 'is_size_type' || attr.required">
+                                        <span class="text-red-500 text-xs">*</span>
+                                    </template>
+                                </div>
                                 <template x-if="attr.reference_image">
                                     <button type="button" @click="showAttrGuide(attr)" class="text-[10px] text-blue-900 hover:underline flex items-center gap-0.5">
                                         Panduan
@@ -453,15 +441,29 @@
                             </div>
                             <template x-if="attr.type === 'select' || attr.type === 'radio'">
                                 <div>
-                                    <select
-                                        x-model="form.customizations[attr.id]"
-                                        class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
-                                    >
-                                        <option value="">- Pilih -</option>
-                                        <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
-                                            <option :value="opt.value" x-text="opt.value"></option>
-                                        </template>
-                                    </select>
+                                    <template x-if="attr.system_tag === 'is_size_type'">
+                                        <select
+                                            x-model="form.size"
+                                            @change="onGlobalSizeChange()"
+                                            class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                                        >
+                                            <option value="">- Pilih -</option>
+                                            <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
+                                                <option :value="opt.value" x-text="opt.value"></option>
+                                            </template>
+                                        </select>
+                                    </template>
+                                    <template x-if="attr.system_tag !== 'is_size_type'">
+                                        <select
+                                            x-model="form.customizations[attr.id]"
+                                            class="w-full border border-gray-300 p-2 rounded-lg bg-white text-xs outline-none focus:ring-1 focus:ring-[#1a237e]"
+                                        >
+                                            <option value="">- Pilih -</option>
+                                            <template x-for="(opt, oIdx) in (attr.options || [])" :key="oIdx">
+                                                <option :value="opt.value" x-text="opt.value"></option>
+                                            </template>
+                                        </select>
+                                    </template>
                                     <template x-if="getSelectedOptionPrice(attr) > 0">
                                         <div class="mt-1 flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
                                             <span x-text="'+ ' + formatRupiah(getSelectedOptionPrice(attr))"></span>
@@ -2304,7 +2306,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         },
 
         getSelectedOptionPrice(attr) {
-            const val = this.form.customizations[attr.id];
+            const val = attr.system_tag === 'is_size_type' ? this.form.size : this.form.customizations[attr.id];
             if (!val) return 0;
             const opt = (attr.options || []).find(o => o.value === val);
             return Number(opt?.price_modifier || 0);
