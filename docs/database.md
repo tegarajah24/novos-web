@@ -124,8 +124,8 @@
 |-------|------|------------|
 | id | bigIncrements | |
 | order_id | foreignId | relasi ke orders |
-| midtrans_order_id | string, unique | ID yang dikirim ke Midtrans |
-| midtrans_transaction_id | string, nullable | ID dari Midtrans |
+| midtrans_order_id | string, nullable | legacy - tidak digunakan |
+| midtrans_transaction_id | string, nullable | legacy - tidak digunakan |
 | amount | decimal(10,2) | |
 | status | enum | pending, success, failed, expired |
 | payment_method | string, nullable | gopay, bca, dll |

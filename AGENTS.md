@@ -19,7 +19,7 @@ Tujuan: Sistem pemesanan jersey custom online lengkap dengan manajemen produksi 
 | Icons | Lucide |
 | Alert / Dialog | SweetAlert2 |
 | Admin Panel | Filament |
-| Payment | Midtrans |
+| Payment | Manual (Transfer Bank) |
 | Database | MySQL |
 | Auth | Laravel Breeze |
 
@@ -103,7 +103,7 @@ Sebelum mengerjakan tugas apapun, baca file berikut sesuai konteks:
 - Route per role wajib pakai middleware `role:`
 - Jangan expose data user lain ke customer
 - Semua file upload (logo desain) disimpan di `storage/app/public` dan divalidasi tipenya
-- Gunakan `.env` untuk semua kredensial (Midtrans, DB, dll)
+- Gunakan `.env` untuk semua kredensial (DB, dll)
 
 ---
 

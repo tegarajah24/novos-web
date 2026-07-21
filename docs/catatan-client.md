@@ -8,7 +8,7 @@
 ## Yang Sudah Dikonfirmasi Client
 
 - Hanya melayani **custom order** (bukan produk katalog siap pakai)
-- Pembayaran menggunakan **Midtrans**
+- Pembayaran **manual (transfer bank)**
 - Ada fitur **Daily Mental Check & Micro Break** untuk menjaga kesehatan mental staf pengrajin jersi
 - Form desain berisi: identitas, logo, warna, motif, bahan, bentuk kerah
 
@@ -25,7 +25,7 @@
 
 - Stack: Laravel + Blade + Tailwind + DaisyUI
 - Auth: Laravel Breeze
-- Payment: Midtrans
+- Payment: Manual (Transfer Bank)
 - Pengolahan gambar menggunakan fungsi native bawaan Laravel Storage, dan Dashboard Admin/Staf dibangun kustom menggunakan Blade + Alpine.js (tanpa Filament/Livewire)
 - Database: MySQL via Laragon (lokal), migrasi ke server saat deploy
 
@@ -36,7 +36,7 @@
 3. Dashboard & kelola pesanan admin
 4. Flow status pesanan lengkap
 5. Chat per pesanan
-6. Pembayaran Midtrans
+6. Pembayaran manual (transfer bank)
 7. Produksi & Design view
 8. Stress Test
 9. Laporan
