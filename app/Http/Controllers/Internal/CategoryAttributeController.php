@@ -13,11 +13,27 @@ class CategoryAttributeController extends Controller
      */
     public function getSchema(Category $category)
     {
+        $category->load('parent');
+        $effectiveSchema = $category->getEffectiveAttributesSchema();
+        $parentSchema = [];
+        if ($category->parent) {
+            $pSchema = $category->parent->attributes_schema ?? [];
+            if (!is_array($pSchema)) {
+                $pSchema = json_decode($pSchema, true) ?? [];
+            }
+            $parentSchema = array_values(array_filter($pSchema, function ($attr) {
+                return !isset($attr['apply_to_catalog']) || $attr['apply_to_catalog'] === true;
+            }));
+        }
+
         return response()->json([
-            'success'           => true,
-            'category_id'       => $category->id,
-            'category_name'     => $category->name,
-            'attributes_schema' => $category->attributes_schema ?? [],
+            'success'                     => true,
+            'category_id'                 => $category->id,
+            'category_name'               => $category->name,
+            'parent_name'                 => $category->parent ? $category->parent->name : null,
+            'attributes_schema'           => $category->attributes_schema ?? [],
+            'effective_attributes_schema' => $effectiveSchema,
+            'parent_attributes_schema'    => $parentSchema,
         ]);
     }
 

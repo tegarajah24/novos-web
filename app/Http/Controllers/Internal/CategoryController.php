@@ -17,16 +17,17 @@ class CategoryController extends Controller
             ->orderBy('name')
             ->get()
             ->map(fn($cat) => [
-                'id'               => $cat->id,
-                'name'             => $cat->name,
-                'icon'             => $cat->icon,
-                'description'      => $cat->description,
-                'attributes_schema' => $cat->attributes_schema ?? [],
-                'form_config'      => $cat->form_config,
-                'base_price'       => $cat->base_price,
-                'products_count'   => $cat->products_count,
-                'parent_id'        => $cat->parent_id,
-                'parent_name'      => $cat->parent ? $cat->parent->name : null,
+                'id'                         => $cat->id,
+                'name'                       => $cat->name,
+                'icon'                       => $cat->icon,
+                'description'                => $cat->description,
+                'attributes_schema'           => $cat->attributes_schema ?? [],
+                'effective_attributes_schema' => $cat->getEffectiveAttributesSchema(),
+                'form_config'                => $cat->form_config,
+                'base_price'                 => $cat->base_price,
+                'products_count'             => $cat->products_count,
+                'parent_id'                  => $cat->parent_id,
+                'parent_name'                => $cat->parent ? $cat->parent->name : null,
             ]);
 
         return view('internal.kelola-kategori', compact('categories'));
@@ -38,16 +39,17 @@ class CategoryController extends Controller
             ->orderBy('name')
             ->get()
             ->map(fn($cat) => [
-                'id'               => $cat->id,
-                'name'             => $cat->name,
-                'icon'             => $cat->icon,
-                'description'      => $cat->description,
-                'attributes_schema' => $cat->attributes_schema ?? [],
-                'form_config'      => $cat->form_config,
-                'base_price'       => $cat->base_price,
-                'products_count'   => $cat->products_count,
-                'parent_id'        => $cat->parent_id,
-                'parent_name'      => $cat->parent ? $cat->parent->name : null,
+                'id'                         => $cat->id,
+                'name'                       => $cat->name,
+                'icon'                       => $cat->icon,
+                'description'                => $cat->description,
+                'attributes_schema'           => $cat->attributes_schema ?? [],
+                'effective_attributes_schema' => $cat->getEffectiveAttributesSchema(),
+                'form_config'                => $cat->form_config,
+                'base_price'                 => $cat->base_price,
+                'products_count'             => $cat->products_count,
+                'parent_id'                  => $cat->parent_id,
+                'parent_name'                => $cat->parent ? $cat->parent->name : null,
             ]);
 
         return response()->json($categories);

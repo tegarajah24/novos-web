@@ -55,13 +55,24 @@
                             <td class="px-6 py-4 text-center font-semibold text-[#1a237e]" x-text="cat.base_price ? 'Rp ' + Number(cat.base_price).toLocaleString('id-ID') : 'Rp 0'"></td>
                             <td class="px-6 py-4 text-center text-gray-600" x-text="cat.products_count"></td>
                             <td class="px-6 py-4 text-center">
+                                {{-- Atribut Langsung --}}
                                 <template x-if="cat.attributes_schema && cat.attributes_schema.length > 0">
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
-                                        <i data-lucide="layers" class="w-3 h-3"></i>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold" title="Atribut khusus kategori ini">
+                                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                                         <span x-text="cat.attributes_schema.length + ' atribut'"></span>
                                     </span>
                                 </template>
-                                <template x-if="!cat.attributes_schema || cat.attributes_schema.length === 0">
+
+                                {{-- Atribut Warisan dari Induk --}}
+                                <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (cat.effective_attributes_schema && cat.effective_attributes_schema.length > 0)">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold" :title="'Mewarisi ' + cat.effective_attributes_schema.length + ' atribut dari induk ' + (cat.parent_name || '')">
+                                        <i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i>
+                                        <span x-text="cat.effective_attributes_schema.length + ' atribut (Induk)'"></span>
+                                    </span>
+                                </template>
+
+                                {{-- Belum Ada Atribut --}}
+                                <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (!cat.effective_attributes_schema || cat.effective_attributes_schema.length === 0)">
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 text-xs">
                                         Belum ada
                                     </span>
@@ -217,12 +228,21 @@
             </div>
 
             {{-- Info Box --}}
-            <div class="px-6 py-3 bg-blue-50 border-b border-blue-100">
+            <div class="px-6 py-3 bg-blue-50 border-b border-blue-100 space-y-2">
                 <p class="text-xs text-blue-700 leading-relaxed">
-                    <strong>Atribut</strong> adalah pilihan kustomisasi yang akan diisi customer saat memesan produk dari kategori ini.
-                    Contoh: Jenis Kerah, Bahan, Ukuran Bawah Jaket, dll.
-                    Atribut bertipe <code class="bg-blue-100 px-1 rounded">depends_on</code> hanya muncul jika atribut induk dipilih nilai tertentu.
+                    <strong>Atribut</strong> adalah pilihan kustomisasi yang akan diisi customer saat memesan produk dari kategori ini (Contoh: Jenis Kerah, Bahan, Ukuran, dll).
                 </p>
+                <template x-if="parentName && parentSchema.length > 0">
+                    <div class="p-2.5 bg-purple-100/80 border border-purple-200 rounded-lg text-xs text-purple-900 flex items-start gap-2">
+                        <i data-lucide="corner-down-right" class="w-4 h-4 text-purple-700 shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold">Mewarisi <span x-text="parentSchema.length"></span> Atribut dari Induk (<span x-text="parentName"></span>)</p>
+                            <p class="text-[11px] text-purple-800 mt-0.5">
+                                Sub-kategori ini otomatis menyertakan atribut dari <strong x-text="parentName"></strong> saat pembuatan produk atau checkout katalog.
+                            </p>
+                        </div>
+                    </div>
+                </template>
             </div>
 
             {{-- Body --}}
@@ -419,6 +439,8 @@ function kategoriApp() {
         attrModalOpen: false,
         attrCategoryId: null,
         attrCategoryName: '',
+        parentName: '',
+        parentSchema: [],
         attrLoading: false,
         attrSaving: false,
         schema: [], // array of attribute objects
@@ -603,6 +625,8 @@ function kategoriApp() {
         async openAttrModal(cat) {
             this.attrCategoryId = cat.id;
             this.attrCategoryName = cat.name;
+            this.parentName = '';
+            this.parentSchema = [];
             this.schema = [];
             this.attrModalOpen = true;
             this.attrLoading = true;
@@ -615,6 +639,8 @@ function kategoriApp() {
                     headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf }
                 });
                 const data = await res.json();
+                this.parentName = data.parent_name || '';
+                this.parentSchema = data.parent_attributes_schema || [];
                 // Deep clone dan normalisasi depends_on
                 this.schema = (data.attributes_schema || []).map(attr => ({
                     id:               attr.id || '',
