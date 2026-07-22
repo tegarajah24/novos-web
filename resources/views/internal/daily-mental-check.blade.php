@@ -8,7 +8,7 @@
 
 @section('internal-content')
 <div x-data="dailyMentalCheck({ role: '{{ auth()->user()->role->name }}', posterUrl: '{{ $posterUrl }}', reminderTimes: {{ json_encode($reminderTimes) }} })">
-    {{-- Tab Navigation --}}
+    {{-- Tab Navigation (Desktop & Mobile) --}}
     <div class="hidden md:flex max-w-2xl gap-1 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-200 mb-8">
         <template x-for="(tab, i) in tabs" :key="i">
             <button @click="activeTab = i; location.hash = 'dmc=' + i"
@@ -16,6 +16,18 @@
                 class="flex-1 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
             >
                     <span x-text="tab.label"></span>
+            </button>
+        </template>
+    </div>
+
+    {{-- Mobile Tab Navigation --}}
+    <div class="flex md:hidden gap-1 bg-white rounded-xl p-1 shadow-sm border border-gray-200 mb-4 overflow-x-auto">
+        <template x-for="(tab, i) in tabs" :key="i">
+            <button @click="activeTab = i; location.hash = 'dmc=' + i"
+                :class="activeTab === i ? 'bg-[#1a237e] text-white shadow-sm font-bold' : 'text-gray-600 hover:bg-gray-50 font-medium'"
+                class="flex-1 px-3 py-2 rounded-lg text-xs transition-all text-center whitespace-nowrap"
+            >
+                <span x-text="tab.label"></span>
             </button>
         </template>
     </div>
@@ -64,9 +76,9 @@
         </div>
 
         {{-- Row 2: Skor Hari Ini + Reminder + Kepatuhan Micro-Break --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {{-- Card: Skor Hari Ini --}}
-            <div class="bg-white rounded-2xl shadow-sm p-6 h-full">
+            <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 h-full">
                 <template x-if="todayFilled">
                     <div>
                         <div class="flex items-start justify-between mb-4">
@@ -84,55 +96,58 @@
                     </div>
                 </template>
                 <template x-if="!todayFilled">
-                    <div class="text-center py-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-1">Check-in Hari Ini</h3>
-                        <p class="text-sm text-gray-500 mb-4">Luangkan 2 menit untuk cek kondisi mental Anda hari ini.</p>
+                    <div class="text-center py-4 sm:py-6">
+                        <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-1">Check-in Hari Ini</h3>
+                        <p class="text-xs sm:text-sm text-gray-500 mb-4">Luangkan 2 menit untuk cek kondisi mental Anda hari ini.</p>
                         <button @click="activeTab = 1"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#1a237e] text-white rounded-lg text-sm font-semibold hover:bg-[#283593] transition-colors shadow-sm">
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#1a237e] text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-[#283593] transition-colors shadow-sm">
                             Isi Daily Check Sekarang
                         </button>
                     </div>
                 </template>
             </div>
 
-            {{-- Card: Reminder Berikutnya --}}
-            <div class="bg-white rounded-2xl shadow-sm p-6 h-full">
-                <div class="flex items-center justify-between mb-3">
-                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Reminder Berikutnya</p>
-                    <button x-show="userRole === 'Super Admin'" @click="openSettings()"
-                        class="p-1.5 text-gray-400 hover:text-[#1a237e] rounded-lg hover:bg-gray-50 transition-colors" title="Atur Jadwal Reminder">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    </button>
-                </div>
-                <div class="text-center py-4">
-                    <p class="text-4xl font-bold text-[#1a237e] mb-1" x-text="nextReminder.time"></p>
-                    <p class="text-sm text-gray-500" x-text="nextReminder.label"></p>
-                    <template x-if="nextReminder.countdown !== '—'">
-                        <p class="text-sm text-gray-400 mt-2">
-                            <span class="font-semibold text-gray-700" x-text="nextReminder.countdown"></span> lagi
-                        </p>
-                    </template>
-                    <template x-if="nextReminder.countdown === '—'">
-                        <p class="text-sm text-gray-400 mt-2">Waktu kerja sudah selesai</p>
-                    </template>
-                </div>
-            </div>
-
-            {{-- Card: Kepatuhan Micro-Break --}}
-            <div class="bg-white rounded-2xl shadow-sm p-6 h-full">
-                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">Kepatuhan Micro-Break</p>
-                <div class="text-center py-2">
-                    <div class="relative w-20 h-20 mx-auto mb-2">
-                        <svg class="w-20 h-20 -rotate-90" viewBox="0 0 72 72">
-                            <circle cx="36" cy="36" r="30" fill="none" stroke="#e5e7eb" stroke-width="6"/>
-                            <circle cx="36" cy="36" r="30" fill="none" stroke="currentColor" stroke-width="6"
-                                stroke-linecap="round" :stroke-dasharray="188.5"
-                                :stroke-dashoffset="188.5 - (188.5 * compliancePercent / 100)"
-                                class="text-emerald-500 transition-all duration-700"/>
-                        </svg>
-                        <span class="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-900" x-text="compliancePercent + '%'"></span>
+            {{-- Mobile Side-by-Side Container for Reminder & Kepatuhan --}}
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:col-span-2">
+                {{-- Card: Reminder Berikutnya --}}
+                <div class="bg-white rounded-2xl shadow-sm p-3.5 sm:p-6 h-full flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-1 sm:mb-3">
+                        <p class="text-[10px] sm:text-xs text-gray-400 font-semibold uppercase tracking-wider">Reminder</p>
+                        <button x-show="userRole === 'Super Admin'" @click="openSettings()"
+                            class="p-1 text-gray-400 hover:text-[#1a237e] rounded-lg hover:bg-gray-50 transition-colors" title="Atur Jadwal Reminder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        </button>
                     </div>
-                    <p class="text-xs text-gray-500">Minggu ini</p>
+                    <div class="text-center py-1 sm:py-4">
+                        <p class="text-2xl sm:text-4xl font-bold text-[#1a237e] mb-0.5" x-text="nextReminder.time"></p>
+                        <p class="text-xs text-gray-500 truncate" x-text="nextReminder.label"></p>
+                        <template x-if="nextReminder.countdown !== '—'">
+                            <p class="text-[11px] sm:text-sm text-gray-400 mt-1 sm:mt-2">
+                                <span class="font-semibold text-gray-700" x-text="nextReminder.countdown"></span> lagi
+                            </p>
+                        </template>
+                        <template x-if="nextReminder.countdown === '—'">
+                            <p class="text-[10px] sm:text-sm text-gray-400 mt-1 sm:mt-2">Waktu kerja selesai</p>
+                        </template>
+                    </div>
+                </div>
+
+                {{-- Card: Kepatuhan Micro-Break --}}
+                <div class="bg-white rounded-2xl shadow-sm p-3.5 sm:p-6 h-full flex flex-col justify-between">
+                    <p class="text-[10px] sm:text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1 sm:mb-3">Kepatuhan</p>
+                    <div class="text-center py-1 sm:py-2">
+                        <div class="relative w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-1 sm:mb-2">
+                            <svg class="w-14 h-14 sm:w-20 sm:h-20 -rotate-90" viewBox="0 0 72 72">
+                                <circle cx="36" cy="36" r="30" fill="none" stroke="#e5e7eb" stroke-width="6"/>
+                                <circle cx="36" cy="36" r="30" fill="none" stroke="currentColor" stroke-width="6"
+                                    stroke-linecap="round" :stroke-dasharray="188.5"
+                                    :stroke-dashoffset="188.5 - (188.5 * compliancePercent / 100)"
+                                    class="text-emerald-500 transition-all duration-700"/>
+                            </svg>
+                            <span class="absolute inset-0 flex items-center justify-center text-sm sm:text-lg font-bold text-gray-900" x-text="compliancePercent + '%'"></span>
+                        </div>
+                        <p class="text-[10px] sm:text-xs text-gray-500">Minggu ini</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -188,13 +203,13 @@
 
                         {{-- Form --}}
                         <template x-if="!submitted">
-                            <div class="space-y-6">
-                                {{-- Tabel Pertanyaan --}}
-                                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-50/80">
+                            <div class="space-y-6 pb-20 md:pb-0">
+                                {{-- Tabel Pertanyaan (Desktop Only) --}}
+                                <div class="hidden md:block bg-white rounded-2xl shadow-sm overflow-hidden">
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead>
+                                                <tr class="bg-gray-50/80">
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700 w-10">No</th>
                                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Pertanyaan</th>
                                                     <th class="px-4 py-3 text-center font-semibold text-gray-700 w-28">Baik</th>
@@ -225,8 +240,37 @@
                                     </div>
                                 </div>
 
+                                {{-- Card List Pertanyaan (Mobile Only) --}}
+                                <div class="block md:hidden space-y-3">
+                                    <template x-for="(q, i) in questions" :key="q.id">
+                                        <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 space-y-3">
+                                            <div class="flex items-start gap-2.5">
+                                                <span class="w-6 h-6 rounded-full bg-[#1a237e]/10 text-[#1a237e] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5" x-text="q.id"></span>
+                                                <p class="text-sm font-semibold text-gray-800 leading-snug" x-text="q.text"></p>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-2 pt-1">
+                                                <button type="button" @click="form.answers[q.id] = 1"
+                                                    :class="form.answers[q.id] === 1 ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-600 font-bold' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 font-medium'"
+                                                    class="py-2.5 px-2 rounded-xl text-xs text-center transition-all">
+                                                    Baik
+                                                </button>
+                                                <button type="button" @click="form.answers[q.id] = 2"
+                                                    :class="form.answers[q.id] === 2 ? 'bg-amber-500 text-white shadow-sm ring-2 ring-amber-500 font-bold' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 font-medium'"
+                                                    class="py-2.5 px-2 rounded-xl text-xs text-center transition-all">
+                                                    Cukup
+                                                </button>
+                                                <button type="button" @click="form.answers[q.id] = 3"
+                                                    :class="form.answers[q.id] === 3 ? 'bg-rose-500 text-white shadow-sm ring-2 ring-rose-500 font-bold' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 font-medium'"
+                                                    class="py-2.5 px-2 rounded-xl text-xs text-center transition-all">
+                                                    Kurang Baik
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
                                 {{-- Butuh bantuan --}}
-                                <div class="bg-white rounded-2xl shadow-sm p-6">
+                                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
                                     <p class="font-semibold text-gray-900 text-sm mb-4">Apakah Anda membutuhkan bantuan atau dukungan hari ini?</p>
                                     <div class="flex gap-6 mb-4">
                                         <label class="flex items-center gap-2.5 cursor-pointer">
@@ -247,13 +291,23 @@
                                     </template>
                                 </div>
 
-                                {{-- Submit --}}
-                                <div class="text-center">
+                                {{-- Submit (Desktop Inline) --}}
+                                <div class="hidden md:block text-center">
                                     <button @click="submitForm()" :disabled="!allAnswered || loading"
                                         :class="allAnswered && !loading ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                                         class="px-8 py-3 text-white rounded-xl font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                                         Kirim Jawaban
+                                    </button>
+                                </div>
+
+                                {{-- Submit (Mobile Sticky Bottom Bar) --}}
+                                <div class="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-gray-200 z-30 block md:hidden shadow-lg">
+                                    <button @click="submitForm()" :disabled="!allAnswered || loading"
+                                        :class="allAnswered && !loading ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                                        class="w-full py-3 text-white rounded-xl font-bold transition-colors shadow-sm inline-flex items-center justify-center gap-2 text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                        <span>Kirim Jawaban</span>
                                     </button>
                                 </div>
                             </div>
@@ -347,13 +401,13 @@
 
         {{-- Form --}}
         <template x-if="!microSubmitted">
-            <div class="space-y-6">
-                {{-- A. Checklist Pelaksanaan SMART-WORK Micro-Break --}}
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div class="space-y-6 pb-20 md:pb-0">
+                {{-- A. Checklist Pelaksanaan SMART-WORK Micro-Break (Desktop Table) --}}
+                <div class="hidden md:block bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
-                        <h3 class="font-bold text-gray-900 max-md:text-sm">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
+                        <h3 class="font-bold text-gray-900">Checklist Pelaksanaan SMART-WORK Micro-Break</h3>
                     </div>
-                    <div class="overflow-x-auto max-md:max-h-[300px] max-md:overflow-y-auto">
+                    <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-gray-50/80">
@@ -523,8 +577,42 @@
                     </div>
                 </div>
 
-                {{-- D. Evaluasi Manfaat --}}
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                {{-- Mobile Card List View for Checklist --}}
+                <div class="block md:hidden space-y-4">
+                    <div class="px-1 pt-1">
+                        <h3 class="font-bold text-gray-900 text-sm">Checklist Pelaksanaan SMART-WORK</h3>
+                    </div>
+                    <template x-for="stageName in ['STOP', 'TAKE A BREATH', 'OBSERVE', 'PROCEED', 'AKTIVITAS PENDUKUNG']" :key="stageName">
+                        <div class="space-y-2">
+                            <div class="px-1 pt-2">
+                                <span class="text-xs font-bold text-[#1a237e] uppercase tracking-wider" x-text="stageName === 'AKTIVITAS PENDUKUNG' ? 'Tahap 5 – Aktivitas Pendukung' : 'Tahap – ' + stageName"></span>
+                            </div>
+                            <template x-for="q in microChecklist.filter(c => c.stage === stageName)" :key="q.id">
+                                <div class="bg-white rounded-2xl shadow-sm p-3.5 border border-gray-100 flex items-center justify-between gap-3">
+                                    <div class="flex items-start gap-2 flex-1 min-w-0">
+                                        <span class="w-5 h-5 rounded-full bg-[#1a237e]/10 text-[#1a237e] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5" x-text="q.id"></span>
+                                        <p class="text-xs font-semibold text-gray-800 leading-snug" x-text="q.text"></p>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <button type="button" @click="microForm.checklist[q.id] = 1"
+                                            :class="microForm.checklist[q.id] === 1 ? 'bg-emerald-600 text-white shadow-sm font-bold' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium'"
+                                            class="px-3 py-1.5 rounded-lg text-xs transition-all">
+                                            Ya
+                                        </button>
+                                        <button type="button" @click="microForm.checklist[q.id] = 0"
+                                            :class="microForm.checklist[q.id] === 0 ? 'bg-rose-500 text-white shadow-sm font-bold' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium'"
+                                            class="px-3 py-1.5 rounded-lg text-xs transition-all">
+                                            Tidak
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- D. Evaluasi Manfaat (Desktop Table) --}}
+                <div class="hidden md:block bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div class="px-6 pt-5 pb-2">
                         <h3 class="font-bold text-gray-900 max-md:text-sm">Evaluasi Manfaat Setelah Micro-Break</h3>
                         <p class="text-xs text-gray-500 mt-1">Bagaimana kondisi Anda setelah melakukan micro-break?</p>
@@ -587,6 +675,80 @@
                     </div>
                 </div>
 
+                {{-- Mobile Card View for Evaluasi Manfaat --}}
+                <div class="block md:hidden space-y-3">
+                    <div class="px-1 pt-2">
+                        <h4 class="font-bold text-gray-900 text-sm">Evaluasi Manfaat Setelah Micro-Break</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">Bagaimana kondisi Anda setelah melakukan micro-break?</p>
+                    </div>
+                    
+                    {{-- Item 1: Stres --}}
+                    <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 space-y-2.5">
+                        <p class="text-xs font-bold text-gray-800">1. Tingkat stres saya</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" @click="microForm.eval.stres = 'lebih_baik'"
+                                :class="microForm.eval.stres === 'lebih_baik' ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-600 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Lebih Baik
+                            </button>
+                            <button type="button" @click="microForm.eval.stres = 'sama'"
+                                :class="microForm.eval.stres === 'sama' ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-600 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Sama
+                            </button>
+                            <button type="button" @click="microForm.eval.stres = 'lebih_buruk'"
+                                :class="microForm.eval.stres === 'lebih_buruk' ? 'bg-rose-500 text-white shadow-sm ring-2 ring-rose-500 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Lebih Buruk
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Item 2: Fokus --}}
+                    <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 space-y-2.5">
+                        <p class="text-xs font-bold text-gray-800">2. Tingkat fokus saya</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" @click="microForm.eval.fokus = 'lebih_baik'"
+                                :class="microForm.eval.fokus === 'lebih_baik' ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-600 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Lebih Baik
+                            </button>
+                            <button type="button" @click="microForm.eval.fokus = 'sama'"
+                                :class="microForm.eval.fokus === 'sama' ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-600 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Sama
+                            </button>
+                            <button type="button" @click="microForm.eval.fokus = 'lebih_buruk'"
+                                :class="microForm.eval.fokus === 'lebih_buruk' ? 'bg-rose-500 text-white shadow-sm ring-2 ring-rose-500 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Lebih Buruk
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Item 3: Kenyamanan --}}
+                    <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 space-y-2.5">
+                        <p class="text-xs font-bold text-gray-800">3. Tingkat kenyamanan bekerja saya</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" @click="microForm.eval.kenyamanan = 'lebih_baik'"
+                                :class="microForm.eval.kenyamanan === 'lebih_baik' ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-600 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Lebih Baik
+                            </button>
+                            <button type="button" @click="microForm.eval.kenyamanan = 'sama'"
+                                :class="microForm.eval.kenyamanan === 'sama' ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-600 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Sama
+                            </button>
+                            <button type="button" @click="microForm.eval.kenyamanan = 'lebih_buruk'"
+                                :class="microForm.eval.kenyamanan === 'lebih_buruk' ? 'bg-rose-500 text-white shadow-sm ring-2 ring-rose-500 font-bold' : 'bg-gray-50 text-gray-700 border border-gray-200 font-medium'"
+                                class="py-2.5 px-1 rounded-xl text-xs text-center transition-all">
+                                Lebih Buruk
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Catatan Pekerja --}}
                 <div class="bg-white rounded-2xl shadow-sm p-6">
                     <h3 class="font-bold text-gray-900 text-sm mb-4">Catatan Pekerja</h3>
@@ -605,13 +767,23 @@
             </div>
     </div>
 
-                {{-- Submit --}}
-                <div class="text-center">
+                {{-- Submit (Desktop Inline) --}}
+                <div class="hidden md:block text-center">
                     <button @click="submitMicroForm()" :disabled="!allChecklistAnswered || !allEvalAnswered || loading"
                         :class="allChecklistAnswered && allEvalAnswered && !loading ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
                         class="px-8 py-3 text-white rounded-xl font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                         Kirim Jawaban
+                    </button>
+                </div>
+
+                {{-- Submit (Mobile Sticky Bottom Bar) --}}
+                <div class="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-gray-200 z-30 block md:hidden shadow-lg">
+                    <button @click="submitMicroForm()" :disabled="!allChecklistAnswered || !allEvalAnswered || loading"
+                        :class="allChecklistAnswered && allEvalAnswered && !loading ? 'bg-[#1a237e] hover:bg-[#283593] cursor-pointer' : 'bg-gray-300 cursor-not-allowed'"
+                        class="w-full py-3 text-white rounded-xl font-bold transition-colors shadow-sm inline-flex items-center justify-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span>Kirim Jawaban</span>
                     </button>
                 </div>
             </div>
