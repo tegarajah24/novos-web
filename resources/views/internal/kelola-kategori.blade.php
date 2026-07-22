@@ -185,18 +185,12 @@
                         <template x-if="!editId">
                             <button type="button" @click="simpan(true)" :disabled="submitting" 
                                     title="Simpan & Tambah Lagi" 
-                                    class="px-2.5 py-2 border-l border-white/20 rounded-r-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group">
+                                    class="px-3 py-2 border-l border-white/20 rounded-r-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group">
                                 <svg x-show="submittingAndAddAnother" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                                <template x-if="!submittingAndAddAnother">
-                                    <div class="flex items-center gap-0.5">
-                                        <svg class="w-3.5 h-3.5 text-blue-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M20 6L9 17l-5-5"/>
-                                        </svg>
-                                        <svg class="w-3.5 h-3.5 -ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M12 5v14M5 12h14"/>
-                                        </svg>
-                                    </div>
-                                </template>
+                                <svg x-show="!submittingAndAddAnother" class="w-4 h-4 text-blue-100 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 8v8M8 12h8"/>
+                                </svg>
                             </button>
                         </template>
                     </div>
