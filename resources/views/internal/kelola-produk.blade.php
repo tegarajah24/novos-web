@@ -377,7 +377,7 @@
                             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Atribut Default Produk</p>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <template x-for="attr in selectedCategorySchema" :key="attr.id">
-                                    <div class="space-y-1.5">
+                                    <div x-show="isAttrVisible(attr)" class="space-y-1.5">
                                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide" x-text="attr.name"></label>
                                         <template x-if="attr.type === 'select' || attr.type === 'radio'">
                                             <select :name="'product_attributes[' + attr.id + ']'"
@@ -496,6 +496,12 @@ function kelolaProdukApp() {
             if (!this.formData.category_id) return [];
             const cat = this.categories.find(c => c.id == this.formData.category_id);
             return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
+        },
+
+        isAttrVisible(attr) {
+            if (!attr || !attr.depends_on || !attr.depends_on.attribute_id) return true;
+            const parentVal = this.formData.product_attributes ? this.formData.product_attributes[attr.depends_on.attribute_id] : null;
+            return parentVal == attr.depends_on.value;
         },
 
         originalImages: [],
