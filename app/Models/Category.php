@@ -62,4 +62,28 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    /**
+     * Dapatkan schema atribut efektif (gabungan atribut induk + atribut kategori ini)
+     */
+    public function getEffectiveAttributesSchema(): array
+    {
+        $mySchema = $this->attributes_schema ?? [];
+        if (!is_array($mySchema)) {
+            $mySchema = json_decode($mySchema, true) ?? [];
+        }
+
+        if ($this->parent) {
+            $parentSchema = $this->parent->attributes_schema ?? [];
+            if (!is_array($parentSchema)) {
+                $parentSchema = json_decode($parentSchema, true) ?? [];
+            }
+            $parentFiltered = array_filter($parentSchema, function ($attr) {
+                return !isset($attr['apply_to_catalog']) || $attr['apply_to_catalog'] === true;
+            });
+            $mySchema = array_merge(array_values($parentFiltered), $mySchema);
+        }
+
+        return $mySchema;
+    }
 }

@@ -27,14 +27,14 @@
     <div class="bg-white shadow-sm rounded-2xl overflow-hidden">
 
         {{-- Tab Navigation --}}
-        <div class="flex items-center justify-between px-4 md:px-6 pt-4 pb-0 border-b border-gray-100 overflow-x-auto">
-            <div class="flex items-center gap-0">
+        <div class="px-4 md:px-6 py-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between gap-3 overflow-x-auto">
+            <div class="inline-flex p-1 bg-gray-200/60 rounded-xl gap-1">
                 <template x-for="tab in tabs" :key="tab.key">
                     <button @click="activeTab = tab.key"
                             :class="activeTab === tab.key
-                                ? 'text-[#1a237e] border-b-2 border-[#1a237e] font-semibold'
-                                : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent'"
-                            class="text-sm px-4 pb-3 transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                                ? 'bg-[#1a237e] text-white shadow-sm font-semibold'
+                                : 'text-gray-600 hover:text-gray-900 font-medium'"
+                            class="px-4 py-2 rounded-lg text-xs md:text-sm transition-all flex items-center gap-2 whitespace-nowrap">
                         <span x-text="tab.label"></span>
                         <span x-show="tab.count > 0"
                               x-text="tab.count"
