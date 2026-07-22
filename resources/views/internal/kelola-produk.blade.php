@@ -518,7 +518,12 @@ function kelolaProdukApp() {
             this.originalImages = [];
             this.clearFilePonds();
             this.showModal = true;
-            this.$nextTick(() => this.renderIcons());
+            this.$nextTick(() => {
+                this.renderIcons();
+                if (window.FilePond) {
+                    FilePond.parse(document.body);
+                }
+            });
         },
 
         openEditForm(product) {
@@ -532,15 +537,19 @@ function kelolaProdukApp() {
                 product_attributes: product.product_attributes || {},
             };
             this.originalImages = product.images || [];
-            this.clearFilePonds();
-            var pond = FilePond.find(document.querySelector('#pondImages'));
-            if (pond) {
-                (product.images || []).forEach(function(url) {
-                    pond.addFile(url);
-                });
-            }
             this.showModal = true;
-            this.$nextTick(() => this.renderIcons());
+            this.$nextTick(() => {
+                this.renderIcons();
+                if (window.FilePond) {
+                    FilePond.parse(document.body);
+                }
+                var pond = FilePond.find(document.querySelector('#pondImages'));
+                if (pond) {
+                    (product.images || []).forEach(function(url) {
+                        pond.addFile(url);
+                    });
+                }
+            });
         },
 
         closeForm() {
