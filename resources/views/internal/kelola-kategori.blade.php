@@ -170,11 +170,17 @@
                         </div>
                     </div>
                 </template>
-                <div class="flex justify-end gap-3">
+                <div class="flex items-center justify-end gap-2.5">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" :disabled="submitting" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                        <svg x-show="submitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                        <span x-text="submitting ? 'Menyimpan...' : 'Simpan'"></span>
+                    <template x-if="!editId">
+                        <button type="button" @click="simpan(true)" :disabled="submitting" class="px-4 py-2 bg-indigo-50 border border-indigo-200 text-[#1a237e] text-sm font-semibold rounded-xl hover:bg-indigo-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                            <svg x-show="submittingAndAddAnother" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                            <span x-text="submittingAndAddAnother ? 'Menyimpan...' : 'Simpan & Tambah Lagi'"></span>
+                        </button>
+                    </template>
+                    <button type="submit" @click="simpan(false)" :disabled="submitting" class="px-4 py-2 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        <svg x-show="submitting && !submittingAndAddAnother" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        <span x-text="submitting && !submittingAndAddAnother ? 'Menyimpan...' : 'Simpan'"></span>
                     </button>
                 </div>
             </form>
@@ -395,6 +401,7 @@ function kategoriApp() {
             show_detail_sponsor: true
         },
         submitting: false,
+        submittingAndAddAnother: false,
 
         // --- Atribut Dinamis ---
         attrModalOpen: false,
@@ -466,9 +473,10 @@ function kategoriApp() {
             });
         },
 
-        async simpan() {
+        async simpan(addAnother = false) {
             if (!this.name.trim() || this.submitting) return;
             this.submitting = true;
+            this.submittingAndAddAnother = addAnother;
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             const url = this.editId
                 ? '/staf/kategori/' + this.editId
@@ -484,9 +492,6 @@ function kategoriApp() {
                     formData.append('description', this.description.trim());
                 }
                 formData.append('base_price', this.base_price || 0);
-                formData.append('form_config[show_team_name]', this.form_config.show_team_name ? '1' : '0');
-                formData.append('form_config[show_nama_artikel]', this.form_config.show_nama_artikel ? '1' : '0');
-                formData.append('form_config[show_detail_sponsor]', this.form_config.show_detail_sponsor ? '1' : '0');
                 formData.append('form_config[show_team_name]', this.form_config.show_team_name ? '1' : '0');
                 formData.append('form_config[show_nama_artikel]', this.form_config.show_nama_artikel ? '1' : '0');
                 formData.append('form_config[show_detail_sponsor]', this.form_config.show_detail_sponsor ? '1' : '0');
@@ -513,8 +518,30 @@ function kategoriApp() {
                 const data = await res.json();
                 if (data.success) {
                     Notify.success(data.message);
-                    this.modalOpen = false;
                     await this.loadCategories();
+
+                    if (addAnother && !this.editId) {
+                        const currentParentId = this.parent_id;
+                        this.name = '';
+                        this.icon = '';
+                        this.description = '';
+                        this.base_price = 0;
+                        this.form_config = {
+                            show_team_name: true,
+                            show_nama_artikel: true,
+                            show_detail_sponsor: true
+                        };
+                        this.parent_id = currentParentId;
+                        if (pond) {
+                            pond.removeFiles();
+                        }
+                        this.$nextTick(() => {
+                            const nameInput = document.querySelector('input[x-model="name"]');
+                            if (nameInput) nameInput.focus();
+                        });
+                    } else {
+                        this.modalOpen = false;
+                    }
                 } else {
                     Notify.error(data.message || 'Gagal menyimpan.');
                 }
@@ -522,6 +549,7 @@ function kategoriApp() {
                 Notify.error('Terjadi kesalahan server.');
             } finally {
                 this.submitting = false;
+                this.submittingAndAddAnother = false;
             }
         },
 
