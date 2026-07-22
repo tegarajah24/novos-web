@@ -343,7 +343,7 @@
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Kategori <span class="text-red-500">*</span></label>
-                            <select x-model="formData.category_id" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                            <select x-model="formData.category_id" @change="onCategoryChange()" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
                                 <option value="" disabled>Pilih Kategori</option>
                                 <template x-for="parent in parentCategories" :key="parent.id">
                                     <optgroup :label="parent.name">
@@ -502,6 +502,24 @@ function kelolaProdukApp() {
             if (!attr || !attr.depends_on || !attr.depends_on.attribute_id) return true;
             const parentVal = this.formData.product_attributes ? this.formData.product_attributes[attr.depends_on.attribute_id] : null;
             return parentVal == attr.depends_on.value;
+        },
+
+        onCategoryChange() {
+            if (!this.formData.category_id) return;
+            const cat = this.categories.find(c => c.id == this.formData.category_id);
+            if (!cat) return;
+
+            const catName = (cat.name || '').trim().toLowerCase();
+            const schema = cat.attributes_schema || [];
+
+            schema.forEach(attr => {
+                if (!attr.options || !Array.isArray(attr.options)) return;
+                const matchingOpt = attr.options.find(opt => (opt.value || '').trim().toLowerCase() === catName);
+                if (matchingOpt) {
+                    if (!this.formData.product_attributes) this.formData.product_attributes = {};
+                    this.formData.product_attributes[attr.id] = matchingOpt.value;
+                }
+            });
         },
 
         originalImages: [],
