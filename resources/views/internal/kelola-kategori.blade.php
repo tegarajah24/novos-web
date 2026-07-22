@@ -10,11 +10,12 @@
 <div x-data="kategoriApp()" x-init="init()">
     <div class="bg-white shadow-sm rounded-2xl overflow-hidden">
         <div class="p-4 md:p-5 border-b border-gray-100 flex items-center justify-between gap-2 flex-wrap">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
                 <h2 class="font-semibold text-gray-900 text-sm">Daftar Kategori</h2>
-                <button @click="toggleAllCollapse()" class="px-2.5 py-1 text-xs text-[#1a237e] hover:bg-[#1a237e]/10 border border-[#1a237e]/20 rounded-lg transition-colors font-medium flex items-center gap-1.5" title="Lipat atau buka semua sub-kategori">
-                    <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
-                    <span>Lipat / Buka Semua</span>
+                <button @click="toggleAllCollapse()"
+                    class="p-1 text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 rounded-md transition-colors"
+                    title="Lipat / Buka Semua Sub-Kategori">
+                    <i data-lucide="chevrons-up-down" class="w-4 h-4"></i>
                 </button>
             </div>
             <button @click="openModal()" class="px-4 py-2 bg-[#1a237e] text-white text-xs font-semibold rounded-xl hover:bg-[#283593] transition-colors">
