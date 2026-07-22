@@ -113,7 +113,7 @@
                                 <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (cat.effective_attributes_schema && cat.effective_attributes_schema.length > 0)">
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold" :title="'Mewarisi ' + cat.effective_attributes_schema.length + ' atribut dari induk ' + (cat.parent_name || '')">
                                         <i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i>
-                                        <span x-text="cat.effective_attributes_schema.length + ' atribut (Induk)'"></span>
+                                        <span x-text="cat.effective_attributes_schema.length + ' atribut'"></span>
                                     </span>
                                 </template>
 
