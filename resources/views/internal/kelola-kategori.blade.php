@@ -10,7 +10,13 @@
 <div x-data="kategoriApp()" x-init="init()">
     <div class="bg-white shadow-sm rounded-2xl overflow-hidden">
         <div class="p-4 md:p-5 border-b border-gray-100 flex items-center justify-between gap-2 flex-wrap">
-            <h2 class="font-semibold text-gray-900 text-sm">Daftar Kategori</h2>
+            <div class="flex items-center gap-3">
+                <h2 class="font-semibold text-gray-900 text-sm">Daftar Kategori</h2>
+                <button @click="toggleAllCollapse()" class="px-2.5 py-1 text-xs text-[#1a237e] hover:bg-[#1a237e]/10 border border-[#1a237e]/20 rounded-lg transition-colors font-medium flex items-center gap-1.5" title="Lipat atau buka semua sub-kategori">
+                    <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
+                    <span>Lipat / Buka Semua</span>
+                </button>
+            </div>
             <button @click="openModal()" class="px-4 py-2 bg-[#1a237e] text-white text-xs font-semibold rounded-xl hover:bg-[#283593] transition-colors">
                 + Tambah Kategori
             </button>
@@ -37,24 +43,63 @@
                             </td>
                         </tr>
                     </template>
-                    <template x-for="cat in categories" :key="cat.id">
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900" x-text="cat.name"></td>
-                            <td class="px-6 py-4 text-gray-600">
-                                <span x-text="cat.parent_name || '—'" :class="cat.parent_name ? 'text-[#1a237e] font-semibold' : 'text-gray-400'"></span>
+                    <template x-for="cat in treeCategories" :key="cat.id">
+                        <tr :class="cat.isParent ? 'bg-white font-bold border-t-2 border-slate-200/90 hover:bg-slate-50/70' : 'bg-slate-50/70 hover:bg-slate-100/70'"
+                            class="transition-colors">
+                            {{-- Nama Kategori --}}
+                            <td class="px-6 py-3.5">
+                                <div class="flex items-center gap-2" :class="!cat.isParent ? 'pl-6 sm:pl-8' : ''">
+                                    <template x-if="cat.isParent">
+                                        <button type="button" @click="toggleCollapse(cat.id)" class="p-1 text-gray-500 hover:text-[#1a237e] hover:bg-gray-200/60 rounded-md transition-colors shrink-0">
+                                            <i :data-lucide="isCollapsed(cat.id) ? 'chevron-right' : 'chevron-down'" class="w-4 h-4"></i>
+                                        </button>
+                                    </template>
+                                    <template x-if="!cat.isParent">
+                                        <i data-lucide="corner-down-right" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+                                    </template>
+
+                                    <span :class="cat.isParent ? 'font-bold text-sm text-gray-900' : 'font-medium text-sm text-gray-700'" x-text="cat.name"></span>
+
+                                    <template x-if="cat.isParent && cat.childrenCount > 0">
+                                        <span @click="toggleCollapse(cat.id)"
+                                              class="ml-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100/80 cursor-pointer hover:bg-indigo-100 transition-colors"
+                                              x-text="cat.childrenCount + ' sub-kategori'">
+                                        </span>
+                                    </template>
+                                </div>
                             </td>
-                            <td class="px-6 py-4 text-center text-gray-600">
+
+                            {{-- Induk Kategori --}}
+                            <td class="px-6 py-3.5 text-gray-600">
+                                <template x-if="cat.isParent">
+                                    <span class="text-xs font-bold px-2 py-0.5 bg-gray-200/70 text-gray-600 rounded-md uppercase tracking-wider">Induk Utama</span>
+                                </template>
+                                <template x-if="!cat.isParent">
+                                    <span class="text-[#1a237e] font-semibold text-xs px-2 py-0.5 bg-blue-50 rounded-md cursor-pointer hover:bg-blue-100 transition-colors"
+                                          @click="toggleCollapse(cat.parentId)"
+                                          x-text="cat.parent_name || '—'"></span>
+                                </template>
+                            </td>
+
+                            {{-- Ikon --}}
+                            <td class="px-6 py-3.5 text-center text-gray-600">
                                 <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
-                                    <img :src="'/storage/' + cat.icon" class="w-8 h-8 mx-auto object-contain rounded border border-gray-100 bg-white" />
+                                    <img :src="'/storage/' + cat.icon" class="w-7 h-7 mx-auto object-contain rounded border border-gray-100 bg-white" />
                                 </template>
                                 <template x-if="cat.icon && !cat.icon.includes('/') && !cat.icon.includes('.')">
-                                    <i :data-lucide="cat.icon" class="w-5 h-5 mx-auto text-gray-500"></i>
+                                    <i :data-lucide="cat.icon" class="w-4 h-4 mx-auto text-gray-500"></i>
                                 </template>
                                 <span x-show="!cat.icon" class="text-gray-400">—</span>
                             </td>
-                            <td class="px-6 py-4 text-center font-semibold text-[#1a237e]" x-text="cat.base_price ? 'Rp ' + Number(cat.base_price).toLocaleString('id-ID') : 'Rp 0'"></td>
-                            <td class="px-6 py-4 text-center text-gray-600" x-text="cat.products_count"></td>
-                            <td class="px-6 py-4 text-center">
+
+                            {{-- Harga Dasar --}}
+                            <td class="px-6 py-3.5 text-center font-semibold text-[#1a237e]" x-text="cat.base_price ? 'Rp ' + Number(cat.base_price).toLocaleString('id-ID') : 'Rp 0'"></td>
+
+                            {{-- Jumlah Produk --}}
+                            <td class="px-6 py-3.5 text-center text-gray-600" x-text="cat.products_count"></td>
+
+                            {{-- Jumlah Atribut --}}
+                            <td class="px-6 py-3.5 text-center">
                                 {{-- Atribut Langsung --}}
                                 <template x-if="cat.attributes_schema && cat.attributes_schema.length > 0">
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold" title="Atribut khusus kategori ini">
@@ -78,7 +123,9 @@
                                     </span>
                                 </template>
                             </td>
-                            <td class="px-6 py-4 text-right flex items-center justify-end gap-1">
+
+                            {{-- Aksi --}}
+                            <td class="px-6 py-3.5 text-right flex items-center justify-end gap-1">
                                 <button @click="openAttrModal(cat)"
                                     class="text-gray-400 hover:text-purple-600 p-1.5 hover:bg-purple-50 rounded-lg transition-colors"
                                     title="Kelola Atribut">
@@ -93,7 +140,7 @@
                             </td>
                         </tr>
                     </template>
-                    <template x-if="!loading && categories.length === 0">
+                    <template x-if="!loading && treeCategories.length === 0">
                         <tr>
                             <td colspan="7" class="px-6 py-10 text-center text-gray-400">Belum ada kategori</td>
                         </tr>
@@ -419,6 +466,7 @@ function kategoriApp() {
     return {
         // --- Kategori ---
         categories: [],
+        collapsedParents: {}, // { [parentId]: false (default expanded) }
         loading: true,
         modalOpen: false,
         editId: null,
@@ -434,6 +482,64 @@ function kategoriApp() {
         },
         submitting: false,
         submittingAndAddAnother: false,
+
+        isCollapsed(parentId) {
+            return !!this.collapsedParents[parentId];
+        },
+
+        toggleCollapse(parentId) {
+            this.collapsedParents[parentId] = !this.collapsedParents[parentId];
+            this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
+        },
+
+        toggleAllCollapse() {
+            const parents = this.categories.filter(c => !c.parent_id);
+            const allCollapsed = parents.every(p => this.collapsedParents[p.id]);
+            parents.forEach(p => {
+                this.collapsedParents[p.id] = !allCollapsed;
+            });
+            this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
+        },
+
+        get treeCategories() {
+            if (!this.categories || !this.categories.length) return [];
+
+            // 1. Induk utama (parent_id is null / empty)
+            const parents = this.categories.filter(c => !c.parent_id);
+            const result = [];
+
+            parents.forEach(parent => {
+                const children = this.categories.filter(c => c.parent_id == parent.id);
+                result.push({
+                    ...parent,
+                    isParent: true,
+                    childrenCount: children.length
+                });
+
+                // Jika parent TIDAK dikolaps, tampilkan anak-anaknya di bawahnya
+                if (!this.collapsedParents[parent.id]) {
+                    children.forEach(child => {
+                        result.push({
+                            ...child,
+                            isParent: false,
+                            parentId: parent.id
+                        });
+                    });
+                }
+            });
+
+            // 2. Sub-kategori yang parent-nya tidak ditemukan (orphan)
+            const parentIds = new Set(parents.map(p => p.id));
+            const orphans = this.categories.filter(c => c.parent_id && !parentIds.has(c.parent_id));
+            orphans.forEach(child => {
+                result.push({
+                    ...child,
+                    isParent: false
+                });
+            });
+
+            return result;
+        },
 
         // --- Atribut Dinamis ---
         attrModalOpen: false,
