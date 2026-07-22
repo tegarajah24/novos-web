@@ -379,8 +379,8 @@
                                             <select x-model="attr.depends_on_id"
                                                 class="flex-1 rounded-lg border-gray-300 text-xs px-3 py-2 focus:ring-purple-500 focus:border-purple-500">
                                                 <option value="">— Selalu tampil —</option>
-                                                <template x-for="(other, oi) in schema" :key="oi">
-                                                    <option x-show="oi !== idx && other.id" :value="other.id" x-text="other.name || other.id"></option>
+                                                <template x-for="other in getAvailableTriggerAttributes(attr.id)" :key="other.id">
+                                                    <option :value="other.id" x-text="other.name" :selected="attr.depends_on_id === other.id"></option>
                                                 </template>
                                             </select>
                                             <span class="flex items-center text-xs text-gray-400 px-1">bernilai</span>
@@ -749,7 +749,7 @@ function kategoriApp() {
                 this.parentName = data.parent_name || '';
                 this.parentSchema = data.parent_attributes_schema || [];
                 // Deep clone dan normalisasi depends_on
-                this.schema = (data.attributes_schema || []).map(attr => ({
+                const mappedSchema = (data.attributes_schema || []).map(attr => ({
                     id:               attr.id || '',
                     name:             attr.name || '',
                     type:             attr.type || 'select',
@@ -766,6 +766,20 @@ function kategoriApp() {
                     depends_on_id:    attr.depends_on?.attribute_id || '',
                     depends_on_value: attr.depends_on?.value || '',
                 }));
+
+                this.schema = mappedSchema;
+
+                // Sinkronkan x-model depends_on_id setelah opsi <option> dirender oleh DOM
+                this.$nextTick(() => {
+                    this.schema.forEach(attr => {
+                        const savedId = attr.depends_on_id;
+                        attr.depends_on_id = '';
+                        this.$nextTick(() => {
+                            attr.depends_on_id = savedId;
+                        });
+                    });
+                    if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+                });
             } catch (e) {
                 Notify.error('Gagal memuat schema atribut.');
                 this.attrModalOpen = false;
@@ -773,6 +787,25 @@ function kategoriApp() {
                 this.attrLoading = false;
                 this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
             }
+        },
+
+        getAvailableTriggerAttributes(currentAttrId) {
+            const list = [];
+            if (this.parentSchema && this.parentSchema.length) {
+                this.parentSchema.forEach(a => {
+                    if (a.id && a.id !== currentAttrId) {
+                        list.push({ id: a.id, name: `${a.name || a.id} (Induk)` });
+                    }
+                });
+            }
+            if (this.schema && this.schema.length) {
+                this.schema.forEach(a => {
+                    if (a.id && a.id !== currentAttrId) {
+                        list.push({ id: a.id, name: a.name || a.id });
+                    }
+                });
+            }
+            return list;
         },
 
         addAttr() {
