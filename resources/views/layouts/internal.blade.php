@@ -59,6 +59,7 @@
             z-index: 0;
             pointer-events: none;
             object-fit: cover;
+            object-position: top center;
         }
         .bg-svg-dark { display: none; }
         /* Keep content above the background layers */
