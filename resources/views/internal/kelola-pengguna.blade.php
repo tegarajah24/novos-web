@@ -469,8 +469,16 @@
         });
 
         function openModal(id) {
-            document.getElementById(id).classList.add('active');
-            document.body.style.overflow = 'hidden';
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                if (window.FilePond) {
+                    setTimeout(() => {
+                        window.FilePond.parse(modal);
+                    }, 50);
+                }
+            }
         }
 
         function closeModal(event, id) {
