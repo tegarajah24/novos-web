@@ -915,20 +915,6 @@
         }
     @endphp
     <div x-data="microBreakReminder({{ json_encode($rawReminders) }})" x-init="init()">
-        {{-- Test button --}}
-        <button @click="showTestMenu = !showTestMenu"
-            class="fixed bottom-6 left-6 z-[9999] w-10 h-10 bg-gray-200 hover:bg-gray-300 text-gray-500 rounded-full shadow flex items-center justify-center transition-all"
-            title="Test Reminder">
-            <span class="text-lg font-bold" x-show="!showTestMenu">?</span>
-            <span class="text-lg leading-none" x-show="showTestMenu" x-cloak>&times;</span>
-        </button>
-        <div x-show="showTestMenu" x-cloak @click.away="showTestMenu = false"
-            class="fixed bottom-20 left-6 z-[9999] bg-white border border-gray-100 rounded-xl shadow-xl p-3 space-y-1.5 min-w-[180px]">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Test Reminder</p>
-            <template x-for="(r, i) in reminders" :key="i">
-                <button @click="triggerReminder(i)" class="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 rounded-lg" x-text="r.timeLabel || r.time"></button>
-            </template>
-        </div>
         <template x-teleport="body">
             <div x-show="activeReminder" x-cloak x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 translate-y-4 translate-x-4"
@@ -968,7 +954,6 @@
                 shownSlots: JSON.parse(localStorage.getItem('microbreak_shown') || '[]'),
                 today: localStorage.getItem('microbreak_date') || '',
                 activeReminder: null,
-                showTestMenu: false,
                 reminders: slots,
                 _timer: null,
 
@@ -1024,11 +1009,6 @@
 
                 dismissReminder() {
                     this.activeReminder = null;
-                },
-
-                triggerReminder(index) {
-                    this.activeReminder = this.reminders[index];
-                    this.showTestMenu = false;
                 }
             }
         }
