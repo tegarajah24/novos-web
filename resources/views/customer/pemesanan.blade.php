@@ -415,7 +415,7 @@
                 <h4 class="text-sm font-bold text-gray-800 mb-4 flex items-center justify-between cursor-pointer select-none" @click="expandedSpecs = !expandedSpecs">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
-                        <span>Spesifikasi Utama (Berlaku untuk Semua Jersey)</span>
+                        <span>Spesifikasi Utama</span>
                     </div>
                     <button type="button" class="text-gray-400 hover:text-gray-600 transition-transform duration-200" :class="expandedSpecs ? 'rotate-180' : ''">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
