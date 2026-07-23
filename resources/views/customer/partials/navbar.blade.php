@@ -97,7 +97,7 @@
                             <h3 class="font-semibold text-gray-900 text-sm">Notifikasi</h3>
                             <button @click="markAllRead" class="text-xs text-blue-600 hover:underline">Tandai semua dibaca</button>
                         </div>
-                        <div class="max-h-96 overflow-y-auto">
+                        <div class="max-h-96 overflow-y-auto overscroll-contain">
                             <template x-if="loadingNotif && notifications.length === 0">
                                 <div class="px-4 py-8 text-center">
                                     <svg class="w-6 h-6 mx-auto text-gray-300 mb-2 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -163,7 +163,7 @@
                             <h3 class="font-semibold text-gray-900 text-sm">Keranjang Belanja</h3>
                             <span class="text-xs text-gray-400" x-text="cartItems.length + ' item'"></span>
                         </div>
-                        <div class="max-h-80 overflow-y-auto">
+                        <div class="max-h-80 overflow-y-auto overscroll-contain">
                             <template x-if="loadingCart && cartItems.length === 0">
                                 <div class="px-4 py-10 text-center">
                                     <svg class="w-8 h-8 mx-auto text-gray-300 mb-3 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -351,7 +351,7 @@
                     <div class="absolute inset-0 bg-black/40" @click="sidebarOpen = false"></div>
 
                     {{-- Panel --}}
-                    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl overflow-y-auto"
+                    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl overflow-y-auto overscroll-contain"
                         @click.outside="sidebarOpen = false">
                         {{-- Header --}}
                         <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
@@ -511,7 +511,7 @@
      x-transition:leave="transition ease-in duration-150"
      x-transition:leave-start="opacity-100 translate-y-0"
      x-transition:leave-end="opacity-0 -translate-y-2"
-     class="fixed top-16 left-1/2 -translate-x-1/2 w-full bg-white border-t border-[#f0f0f0] z-40">
+     class="fixed top-16 left-1/2 -translate-x-1/2 w-full bg-white border-t border-[#f0f0f0] z-40 overflow-y-auto overscroll-contain max-h-[calc(100vh-4rem)]">
     <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
         <a href="{{ route('beranda') }}" class="block text-sm font-medium {{ request()->routeIs('beranda') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Beranda</a>
         <a href="{{ route('tentang') }}" class="block text-sm font-medium {{ request()->routeIs('tentang') ? 'text-[#1a237e] font-semibold' : 'text-[#616161]' }}">Tentang Kami</a>
