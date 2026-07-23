@@ -113,7 +113,7 @@
                                 <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (cat.effective_attributes_schema && cat.effective_attributes_schema.length > 0)">
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold" :title="'Mewarisi ' + cat.effective_attributes_schema.length + ' atribut dari induk ' + (cat.parent_name || '')">
                                         <i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i>
-                                        <span x-text="cat.effective_attributes_schema.length + ' atribut (Induk)'"></span>
+                                        <span x-text="cat.effective_attributes_schema.length + ' atribut'"></span>
                                     </span>
                                 </template>
 
@@ -224,6 +224,10 @@
                                 <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
                                     <input type="checkbox" x-model="form_config.show_detail_sponsor" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
                                     <span>Tampilkan kolom <strong>Detail Sponsor</strong></span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                                    <input type="checkbox" x-model="form_config.show_player_list" class="rounded border-gray-300 text-[#1a237e] focus:ring-[#1a237e] h-4 w-4">
+                                    <span>Tampilkan <strong>Tabel Daftar Pemain & Ukuran</strong></span>
                                 </label>
                             </div>
                         </div>
@@ -379,8 +383,8 @@
                                             <select x-model="attr.depends_on_id"
                                                 class="flex-1 rounded-lg border-gray-300 text-xs px-3 py-2 focus:ring-purple-500 focus:border-purple-500">
                                                 <option value="">— Selalu tampil —</option>
-                                                <template x-for="(other, oi) in schema" :key="oi">
-                                                    <option x-show="oi !== idx && other.id" :value="other.id" x-text="other.name || other.id"></option>
+                                                <template x-for="other in getAvailableTriggerAttributes(attr.id)" :key="other.id">
+                                                    <option :value="other.id" x-text="other.name" :selected="attr.depends_on_id === other.id"></option>
                                                 </template>
                                             </select>
                                             <span class="flex items-center text-xs text-gray-400 px-1">bernilai</span>
@@ -479,7 +483,8 @@ function kategoriApp() {
         form_config: {
             show_team_name: true,
             show_nama_artikel: true,
-            show_detail_sponsor: true
+            show_detail_sponsor: true,
+            show_player_list: true
         },
         submitting: false,
         submittingAndAddAnother: false,
@@ -590,7 +595,8 @@ function kategoriApp() {
                 this.form_config = Object.assign({
                     show_team_name: true,
                     show_nama_artikel: true,
-                    show_detail_sponsor: true
+                    show_detail_sponsor: true,
+                    show_player_list: true
                 }, cat.form_config || {});
             } else {
                 this.editId = null;
@@ -602,7 +608,8 @@ function kategoriApp() {
                 this.form_config = {
                     show_team_name: true,
                     show_nama_artikel: true,
-                    show_detail_sponsor: true
+                    show_detail_sponsor: true,
+                    show_player_list: true
                 };
             }
             this.modalOpen = true;
@@ -636,6 +643,7 @@ function kategoriApp() {
                 formData.append('form_config[show_team_name]', this.form_config.show_team_name ? '1' : '0');
                 formData.append('form_config[show_nama_artikel]', this.form_config.show_nama_artikel ? '1' : '0');
                 formData.append('form_config[show_detail_sponsor]', this.form_config.show_detail_sponsor ? '1' : '0');
+                formData.append('form_config[show_player_list]', this.form_config.show_player_list ? '1' : '0');
 
                 if (this.editId) {
                     formData.append('_method', 'PUT');
@@ -670,7 +678,8 @@ function kategoriApp() {
                         this.form_config = {
                             show_team_name: true,
                             show_nama_artikel: true,
-                            show_detail_sponsor: true
+                            show_detail_sponsor: true,
+                            show_player_list: true
                         };
                         this.parent_id = currentParentId;
                         if (pond) {
@@ -749,7 +758,7 @@ function kategoriApp() {
                 this.parentName = data.parent_name || '';
                 this.parentSchema = data.parent_attributes_schema || [];
                 // Deep clone dan normalisasi depends_on
-                this.schema = (data.attributes_schema || []).map(attr => ({
+                const mappedSchema = (data.attributes_schema || []).map(attr => ({
                     id:               attr.id || '',
                     name:             attr.name || '',
                     type:             attr.type || 'select',
@@ -766,6 +775,20 @@ function kategoriApp() {
                     depends_on_id:    attr.depends_on?.attribute_id || '',
                     depends_on_value: attr.depends_on?.value || '',
                 }));
+
+                this.schema = mappedSchema;
+
+                // Sinkronkan x-model depends_on_id setelah opsi <option> dirender oleh DOM
+                this.$nextTick(() => {
+                    this.schema.forEach(attr => {
+                        const savedId = attr.depends_on_id;
+                        attr.depends_on_id = '';
+                        this.$nextTick(() => {
+                            attr.depends_on_id = savedId;
+                        });
+                    });
+                    if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+                });
             } catch (e) {
                 Notify.error('Gagal memuat schema atribut.');
                 this.attrModalOpen = false;
@@ -773,6 +796,25 @@ function kategoriApp() {
                 this.attrLoading = false;
                 this.$nextTick(() => { if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); });
             }
+        },
+
+        getAvailableTriggerAttributes(currentAttrId) {
+            const list = [];
+            if (this.parentSchema && this.parentSchema.length) {
+                this.parentSchema.forEach(a => {
+                    if (a.id && a.id !== currentAttrId) {
+                        list.push({ id: a.id, name: `${a.name || a.id} (Induk)` });
+                    }
+                });
+            }
+            if (this.schema && this.schema.length) {
+                this.schema.forEach(a => {
+                    if (a.id && a.id !== currentAttrId) {
+                        list.push({ id: a.id, name: a.name || a.id });
+                    }
+                });
+            }
+            return list;
         },
 
         addAttr() {

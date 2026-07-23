@@ -415,7 +415,7 @@
                 <h4 class="text-sm font-bold text-gray-800 mb-4 flex items-center justify-between cursor-pointer select-none" @click="expandedSpecs = !expandedSpecs">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-[#1a237e]"></span>
-                        <span>Spesifikasi Utama (Berlaku untuk Semua Jersey)</span>
+                        <span>Spesifikasi Utama</span>
                     </div>
                     <button type="button" class="text-gray-400 hover:text-gray-600 transition-transform duration-200" :class="expandedSpecs ? 'rotate-180' : ''">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -424,7 +424,7 @@
                     </button>
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" x-show="expandedSpecs">
-                    <template x-for="attr in activeSchema" :key="attr.id">
+                    <template x-for="attr in activeSchema.filter(a => !a.depends_on || !a.depends_on.attribute_id || form.customizations[a.depends_on.attribute_id] === a.depends_on.value)" :key="attr.id">
                         <div class="space-y-1.5">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -641,7 +641,7 @@
                 </template>
 
                 {{-- Tabel Data Produksi Dinamis --}}
-                <div class="mt-4 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                <div x-show="showPlayerListField" class="mt-4 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
                     <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
                         <h4 class="text-sm font-bold text-gray-800">Daftar Pemain & Ukuran</h4>
                         <div class="text-xs text-gray-500 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 animate-pulse">
@@ -2071,10 +2071,20 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             return cat ? cat.id : null;
         },
 
-        isRowComplete(item) {
-            if (!item.size) return false;
+        getSizeAttr(schema) {
+            if (!schema) return null;
+            return schema.find(attr => attr.system_tag === 'is_size_type' || attr.id === 'ukuran' || attr.id === 'size' || (attr.name && attr.name.toLowerCase().includes('ukuran')));
+        },
 
+        isRowComplete(item) {
             const schema = this.activeSchema;
+            const sizeAttr = this.getSizeAttr(schema);
+            
+            if (sizeAttr && sizeAttr.required !== false) {
+                const effectiveSize = item.size || (item.customizations ? item.customizations[sizeAttr.id] : null) || (this.form.customizations ? this.form.customizations[sizeAttr.id] : null) || this.form.size;
+                if (!effectiveSize) return false;
+            }
+
             const compiled = Object.assign({}, this.form.customizations, item.customizations);
             const allOk = schema.every(attr => {
                 if (!attr.required) return true;
@@ -2082,7 +2092,9 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     const parentVal = compiled[attr.depends_on.attribute_id];
                     if (parentVal !== attr.depends_on.value) return true;
                 }
-                const val = compiled[attr.id];
+                const val = (sizeAttr && attr.id === sizeAttr.id) 
+                    ? (item.size || compiled[attr.id] || this.form.size)
+                    : compiled[attr.id];
                 return val !== undefined && val !== null && val.toString().trim() !== '';
             });
             if (!allOk) return false;
@@ -2204,6 +2216,11 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             const cat = this.selectedCategory;
             return cat && cat.form_config ? !!cat.form_config.show_detail_sponsor : true;
         },
+        get showPlayerListField() {
+            if (!this.selectedCategoryId) return true;
+            const cat = this.selectedCategory;
+            return cat && cat.form_config ? (cat.form_config.show_player_list !== false && cat.form_config.show_player_list !== 0 && cat.form_config.show_player_list !== '0') : true;
+        },
         get formFieldsGridClass() {
             const hasRightCol = this.showTeamNameField || this.showDetailSponsorField;
             return hasRightCol ? 'grid lg:grid-cols-2 gap-6' : 'grid grid-cols-1 gap-6';
@@ -2216,7 +2233,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         get sizeOptions() {
             const schema = this.activeSchema;
             if (!schema) return [];
-            const sizeAttr = schema.find(attr => attr.system_tag === 'is_size_type');
+            const sizeAttr = this.getSizeAttr(schema);
             return sizeAttr ? (sizeAttr.options || []) : [];
         },
 
@@ -2354,21 +2371,28 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             const basic = this.form.nama_pemesan.trim() !== '' && (!isTeam || this.form.team_name.trim() !== '') && this.selectedCategoryId !== '' && this.totalQty >= 1;
             if (!basic) return false;
             
+            if (!this.showPlayerListField) return true;
+
             const schema = this.activeSchema;
+            const sizeAttr = this.getSizeAttr(schema);
 
             return this.items.every(item => {
-                if (!item.size) return false;
+                if (sizeAttr && sizeAttr.required !== false) {
+                    const effectiveSize = item.size || (item.customizations ? item.customizations[sizeAttr.id] : null) || (this.form.customizations ? this.form.customizations[sizeAttr.id] : null) || this.form.size;
+                    if (!effectiveSize) return false;
+                }
                 
                 const compiled = Object.assign({}, this.form.customizations, item.customizations);
                 
-                // Check all attributes (jersey + bawahan via depends_on)
                 const allOk = schema.every(attr => {
                     if (!attr.required) return true;
                     if (attr.depends_on && attr.depends_on.attribute_id) {
                         const parentVal = compiled[attr.depends_on.attribute_id];
                         if (parentVal !== attr.depends_on.value) return true;
                     }
-                    const val = compiled[attr.id];
+                    const val = (sizeAttr && attr.id === sizeAttr.id) 
+                        ? (item.size || compiled[attr.id] || this.form.size)
+                        : compiled[attr.id];
                     return val !== undefined && val !== null && val.toString().trim() !== '';
                 });
                 if (!allOk) return false;
@@ -3062,7 +3086,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             <div class="px-6 py-5 overflow-y-auto max-h-[60vh] space-y-4 bg-gray-50/50 grow">
                 <p class="text-xs text-gray-500">Atribut yang dikosongkan atau diset ke <strong>Default</strong> akan otomatis mengikuti <strong>Spesifikasi Utama</strong> di halaman pemesanan.</p>
                 
-                <template x-for="attr in activeSchema.filter(a => a.system_tag !== 'is_size_type')" :key="attr.id">
+                <template x-for="attr in activeSchema.filter(a => a.system_tag !== 'is_size_type' && (!a.depends_on || !a.depends_on.attribute_id || form.customizations[a.depends_on.attribute_id] === a.depends_on.value))" :key="attr.id">
                     <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-gray-700" x-text="attr.name"></span>

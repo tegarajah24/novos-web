@@ -343,7 +343,7 @@
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Kategori <span class="text-red-500">*</span></label>
-                            <select x-model="formData.category_id" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
+                            <select x-model="formData.category_id" @change="onCategoryChange()" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/30 bg-gray-25">
                                 <option value="" disabled>Pilih Kategori</option>
                                 <template x-for="parent in parentCategories" :key="parent.id">
                                     <optgroup :label="parent.name">
@@ -377,7 +377,7 @@
                             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Atribut Default Produk</p>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <template x-for="attr in selectedCategorySchema" :key="attr.id">
-                                    <div class="space-y-1.5">
+                                    <div x-show="isAttrVisible(attr)" class="space-y-1.5">
                                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide" x-text="attr.name"></label>
                                         <template x-if="attr.type === 'select' || attr.type === 'radio'">
                                             <select :name="'product_attributes[' + attr.id + ']'"
@@ -413,14 +413,32 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 mt-6">
-                        <button type="button" @click="showModal = false" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm rounded-xl hover:bg-gray-50 transition-colors font-medium bg-white">
+                        <button type="button" @click="showModal = false" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
                             Batal
                         </button>
-                        <button type="submit" :disabled="submitting" class="px-6 py-2.5 bg-[#1a237e] text-white text-sm rounded-xl hover:bg-[#283593] transition-colors font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <svg x-show="submitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                            <svg x-show="!submitting" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                            <span x-text="submitting ? 'Menyimpan...' : 'Simpan'"></span>
-                        </button>
+
+                        {{-- Split Button Group --}}
+                        <div class="inline-flex rounded-xl shadow-sm bg-[#1a237e] text-white">
+                            <button type="button" @click="saveProduct(false)" :disabled="submitting" 
+                                    class="px-5 py-2.5 text-sm font-semibold hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    :class="formMode === 'create' ? 'rounded-l-xl' : 'rounded-xl'">
+                                <svg x-show="submitting && !submittingAndAddAnother" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                <svg x-show="!submitting" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                <span x-text="submitting && !submittingAndAddAnother ? 'Menyimpan...' : 'Simpan'"></span>
+                            </button>
+
+                            <template x-if="formMode === 'create'">
+                                <button type="button" @click="saveProduct(true)" :disabled="submitting" 
+                                        title="Simpan & Tambah Lagi" 
+                                        class="px-3.5 py-2.5 border-l border-white/20 rounded-r-xl hover:bg-[#283593] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group">
+                                    <svg x-show="submittingAndAddAnother" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                    <svg x-show="!submittingAndAddAnother" class="w-4 h-4 text-blue-100 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 8v8M8 12h8"/>
+                                    </svg>
+                                </button>
+                            </template>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -436,6 +454,7 @@ function kelolaProdukApp() {
         formMode: 'create',
         showModal: false,
         submitting: false,
+        submittingAndAddAnother: false,
 
         categories: @json($categories),
 
@@ -479,6 +498,30 @@ function kelolaProdukApp() {
             return (cat && cat.attributes_schema) ? cat.attributes_schema : [];
         },
 
+        isAttrVisible(attr) {
+            if (!attr || !attr.depends_on || !attr.depends_on.attribute_id) return true;
+            const parentVal = this.formData.product_attributes ? this.formData.product_attributes[attr.depends_on.attribute_id] : null;
+            return parentVal == attr.depends_on.value;
+        },
+
+        onCategoryChange() {
+            if (!this.formData.category_id) return;
+            const cat = this.categories.find(c => c.id == this.formData.category_id);
+            if (!cat) return;
+
+            const catName = (cat.name || '').trim().toLowerCase();
+            const schema = cat.attributes_schema || [];
+
+            schema.forEach(attr => {
+                if (!attr.options || !Array.isArray(attr.options)) return;
+                const matchingOpt = attr.options.find(opt => (opt.value || '').trim().toLowerCase() === catName);
+                if (matchingOpt) {
+                    if (!this.formData.product_attributes) this.formData.product_attributes = {};
+                    this.formData.product_attributes[attr.id] = matchingOpt.value;
+                }
+            });
+        },
+
         originalImages: [],
 
         initApp() {
@@ -518,7 +561,12 @@ function kelolaProdukApp() {
             this.originalImages = [];
             this.clearFilePonds();
             this.showModal = true;
-            this.$nextTick(() => this.renderIcons());
+            this.$nextTick(() => {
+                this.renderIcons();
+                if (window.FilePond) {
+                    FilePond.parse(document.body);
+                }
+            });
         },
 
         openEditForm(product) {
@@ -532,15 +580,19 @@ function kelolaProdukApp() {
                 product_attributes: product.product_attributes || {},
             };
             this.originalImages = product.images || [];
-            this.clearFilePonds();
-            var pond = FilePond.find(document.querySelector('#pondImages'));
-            if (pond) {
-                (product.images || []).forEach(function(url) {
-                    pond.addFile(url);
-                });
-            }
             this.showModal = true;
-            this.$nextTick(() => this.renderIcons());
+            this.$nextTick(() => {
+                this.renderIcons();
+                if (window.FilePond) {
+                    FilePond.parse(document.body);
+                }
+                var pond = FilePond.find(document.querySelector('#pondImages'));
+                if (pond) {
+                    (product.images || []).forEach(function(url) {
+                        pond.addFile(url);
+                    });
+                }
+            });
         },
 
         closeForm() {
@@ -553,9 +605,10 @@ function kelolaProdukApp() {
             if (pond) pond.removeFiles();
         },
 
-        async saveProduct() {
+        async saveProduct(addAnother = false) {
             if (this.submitting) return;
             this.submitting = true;
+            this.submittingAndAddAnother = addAnother;
             const fd = new FormData();
             fd.append('name', this.formData.name);
             fd.append('category_id', this.formData.category_id);
@@ -618,7 +671,26 @@ function kelolaProdukApp() {
                     }
 
                     Notify.success(data.message);
-                    this.closeForm();
+
+                    if (addAnother && this.formMode === 'create') {
+                        const currentCategoryId = this.formData.category_id;
+                        this.formData = {
+                            id: null,
+                            name: '',
+                            category_id: currentCategoryId,
+                            price: '',
+                            description: '',
+                            product_attributes: {},
+                        };
+                        this.originalImages = [];
+                        this.clearFilePonds();
+                        this.$nextTick(() => {
+                            const nameInput = document.querySelector('input[x-model="formData.name"]');
+                            if (nameInput) nameInput.focus();
+                        });
+                    } else {
+                        this.closeForm();
+                    }
                     this.renderIcons();
                 } else {
                     Notify.error(data.message || 'Terjadi kesalahan');
@@ -627,6 +699,7 @@ function kelolaProdukApp() {
                 Notify.error('Gagal terhubung ke server.');
             } finally {
                 this.submitting = false;
+                this.submittingAndAddAnother = false;
             }
         },
 
