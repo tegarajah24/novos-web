@@ -492,157 +492,7 @@
             <div>
                 <div class="flex items-center justify-between mb-1.5">
                     <label class="block text-sm font-medium text-gray-700">Detail Pesanan</label>
-                    <button
-                        type="button"
-                        @click="showUkuranRef = true"
-                        class="underline p-0 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors"
-                    >
-                        Referensi Ukuran
-                    </button>
                 </div>
-
-                {{-- Modal Referensi Ukuran --}}
-                <template x-teleport="body">
-                <div
-                    x-show="showUkuranRef"
-                    x-cloak
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55"
-                    @click.self="showUkuranRef = false"
-                >
-                    <div
-                        x-show="showUkuranRef"
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                        class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
-                        @click.stop
-                        x-data="{ ukuranTab: 'potongan' }"
-                    >
-                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/>
-                                        <path d="m14.5 12.5 2-2"/>
-                                        <path d="m11.5 9.5 2-2"/>
-                                        <path d="m8.5 6.5 2-2"/>
-                                        <path d="m17.5 15.5 2-2"/>
-                                    </svg>
-                                </div>
-                                <h3 class="text-base font-bold text-gray-900">Referensi Ukuran</h3>
-                            </div>
-                            <button
-                                @click="showUkuranRef = false"
-                                class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                            </button>
-                        </div>
-
-                        {{-- Tabs --}}
-                        <div class="flex border-b border-gray-100 px-6">
-                            <button
-                                type="button"
-                                @click="ukuranTab = 'potongan'"
-                                class="px-4 py-3 text-sm font-semibold border-b-2 transition-colors"
-                                :class="ukuranTab === 'potongan' ? 'border-[#1a237e] text-[#1a237e]' : 'border-transparent text-gray-500 hover:text-gray-700'"
-                            >
-                                Atasan
-                            </button>
-                            <button
-                                type="button"
-                                @click="ukuranTab = 'training'"
-                                class="px-4 py-3 text-sm font-semibold border-b-2 transition-colors"
-                                :class="ukuranTab === 'training' ? 'border-[#1a237e] text-[#1a237e]' : 'border-transparent text-gray-500 hover:text-gray-700'"
-                            >
-                                Bawahan
-                            </button>
-                        </div>
-
-                        {{-- Tab Content --}}
-                        <div class="px-6 py-4 overflow-y-auto flex-1 min-h-0">
-                            {{-- Tab: Ukuran Potongan --}}
-                            <template x-if="ukuranTab === 'potongan'">
-                                <div>
-                                    <template x-if="!form.jenis_potongan">
-                                        <div class="flex flex-col items-center justify-center py-16 text-center">
-                                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                    <circle cx="11" cy="11" r="8"/>
-                                                    <path d="m21 21-4.3-4.3"/>
-                                                </svg>
-                                            </div>
-                                            <p class="text-sm font-semibold text-gray-700 mb-1">Belum ada referensi ukuran</p>
-                                            <p class="text-xs text-gray-400 max-w-xs">Silakan pilih <strong>Jenis Potongan</strong> terlebih dahulu untuk melihat referensi ukuran yang sesuai.</p>
-                                        </div>
-                                    </template>
-                                    <template x-if="form.jenis_potongan">
-                                        <div>
-                                            <p class="text-xs text-gray-500 mb-4">Klik gambar untuk melihat ukuran <strong class="text-[#1a237e]" x-text="form.jenis_potongan"></strong> secara penuh.</p>
-                                            <div @click="openAtasanGallery" class="cursor-pointer group">
-                                                <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
-                                                    <img
-                                                        :src="activeSizePdf"
-                                                        class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                                                        alt="Referensi Ukuran"
-                                                    >
-                                                </div>
-                                                <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Klik untuk perbesar</p>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </template>
-
-                            {{-- Tab: Training --}}
-                            <template x-if="ukuranTab === 'training'">
-                                <div>
-                                    <p class="text-xs text-gray-500 mb-4">Klik gambar untuk melihat ukuran <strong class="text-[#1a237e]">Bawahan</strong> secara penuh. Gunakan scroll / pinch untuk zoom, atau klik tombol fullscreen.</p>
-                                    <div class="space-y-5">
-                                        <div @click="openBawahanGallery(0)" class="cursor-pointer group">
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
-                                                <img src="/images/referensi-ukuran/TRAININGLONG.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Celana Panjang">
-                                            </div>
-                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Celana Panjang — klik untuk perbesar</p>
-                                        </div>
-                                        <div @click="openBawahanGallery(1)" class="cursor-pointer group">
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7]">
-                                                <img src="/images/referensi-ukuran/TRAININGSHORT.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Celana Pendek">
-                                            </div>
-                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Celana Pendek — klik untuk perbesar</p>
-                                        </div>
-                                        <div @click="openBawahanGallery(2)" class="cursor-pointer group">
-                                            <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 aspect-[10/7] relative">
-                                                <img src="/images/referensi-ukuran/TRAININGLONG.png" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" alt="Rok">
-                                                <span class="absolute top-2 right-2 px-2 py-0.5 bg-yellow-400 text-[11px] font-bold text-yellow-900 rounded">Sementara</span>
-                                            </div>
-                                            <p class="text-xs font-semibold text-gray-500 mt-1.5 text-center">Rok — klik untuk perbesar</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-
-                        <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
-                            <button
-                                @click="showUkuranRef = false"
-                                class="px-6 py-2 bg-[#1a237e] hover:bg-[#283593] text-white text-sm font-semibold rounded-lg transition-colors"
-                            >
-                                Tutup
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                </template>
 
                 {{-- Tabel Data Produksi Dinamis --}}
                 <div x-show="showPlayerListField" class="mt-4 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
@@ -1755,7 +1605,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         overrideForm: {},
         overrideSingleIndex: null,
         prioritas: 'normal',
-        showUkuranRef: false,
         orderNumber: null,
         buktiBayarFile: null,
         loading: false,
@@ -2195,12 +2044,17 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
 
         getAttrGuideImage(attr) {
             if (!attr) return null;
-            if (attr.reference_image) return attr.reference_image;
-            const name = (attr.name || '').toLowerCase();
-            if (name.includes('kerah')) return '{{ $collarImageUrl }}';
-            if (name.includes('bahan')) return '{{ $bahanImageUrl }}';
-            if (name.includes('pola') || name.includes('potongan')) return '{{ $potonganImageUrl }}';
-            return null;
+            return attr.reference_image || null;
+        },
+
+        getGuideImageSrc(img) {
+            if (!img) return '';
+            if (img.startsWith('http://') || img.startsWith('https://')) return img;
+            if (img.startsWith('/storage/')) return img;
+            if (img.startsWith('storage/')) return '/' + img;
+            if (img.startsWith('/images/')) return img;
+            if (img.startsWith('images/')) return '/' + img;
+            return '/storage/' + img.replace(/^\//, '');
         },
 
         showAttrGuide(attr) {
@@ -2367,18 +2221,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             return opt ? parseInt(opt.biaya) : 0;
         },
 
-        get activeSizePdf() {
-            const map = {
-                'REGULER': '/images/referensi-ukuran/REGCUT-NVS-2026.png',
-                'SLIMFIT CEWE': '/images/referensi-ukuran/WMNSLMCUT-NVS-2026.png',
-                'OVERSIZE': '/images/referensi-ukuran/OVRCUT-NVS-2026.png',
-                'TUNIK': '/images/referensi-ukuran/TUNIKCUT-NVS-2026.png',
-                'SLIM FIT UNISEX': '/images/referensi-ukuran/UNISEXSLMCUT-NVS-2026.png',
-                'BOXY CUT': '/images/referensi-ukuran/BOXYCUT-NVS-2026.png',
-                'KIDS': '/images/referensi-ukuran/KIDSCUT-NVS-2026.png',
-            };
-            return map[this.form.jenis_potongan] || '/images/referensi-ukuran/REGCUT-NVS-2026.pdf';
-        },
 
         get estimasiTotal() {
             return this.hargaDasar + this.biayaPrioritas;
@@ -2962,29 +2804,6 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             }
         },
 
-        openBawahanGallery(index) {
-            window.openPhotoSwipe([
-                {
-                    src: '/images/referensi-ukuran/TRAININGLONG.png',
-                    width: 2345,
-                    height: 1660,
-                    alt: 'Celana Panjang'
-                },
-                {
-                    src: '/images/referensi-ukuran/TRAININGSHORT.png',
-                    width: 2345,
-                    height: 1660,
-                    alt: 'Celana Pendek'
-                },
-                {
-                    src: '/images/referensi-ukuran/TRAININGLONG.png',
-                    width: 2345,
-                    height: 1660,
-                    alt: 'Rok'
-                },
-            ], index)
-        },
-
         saveDraft() {
             if (this.step >= 4 || (!this.jenis && this.step <= 1)) return;
             try {
@@ -3043,16 +2862,15 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                 if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
             });
         },
-
-        openAtasanGallery() {
-            window.openPhotoSwipe([
-                {
-                    src: this.activeSizePdf,
-                    width: 2345,
-                    height: 1660,
-                    alt: this.form.jenis_potongan || 'Referensi Ukuran'
-                },
-            ], 0)
+        
+        getGuideImageSrc(img) {
+            if (!img) return '';
+            if (img.startsWith('http://') || img.startsWith('https://')) return img;
+            if (img.startsWith('/storage/')) return img;
+            if (img.startsWith('storage/')) return '/' + img;
+            if (img.startsWith('/images/')) return img;
+            if (img.startsWith('images/')) return '/' + img;
+            return '/storage/' + img.replace(/^\//, '');
         },
     }
 }
@@ -3074,7 +2892,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             </div>
             <div class="px-6 py-5 overflow-y-auto max-h-[70vh] flex items-center justify-center bg-gray-50/50">
                 <template x-if="showGuideAttr && showGuideAttr.reference_image">
-                    <img :src="showGuideAttr.reference_image.startsWith('http') || showGuideAttr.reference_image.startsWith('images/') ? '/' + showGuideAttr.reference_image.replace(/^\//, '') : '/storage/' + showGuideAttr.reference_image" class="max-h-[60vh] w-auto object-contain rounded-xl border border-gray-200 shadow-sm">
+                    <img :src="getGuideImageSrc(showGuideAttr.reference_image)" class="max-h-[60vh] w-auto object-contain rounded-xl border border-gray-200 shadow-sm">
                 </template>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
