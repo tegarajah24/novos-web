@@ -23,7 +23,109 @@
             </button>
         </div>
 
-        <div class="overflow-x-auto max-h-[70vh]">
+        {{-- Mobile View Cards --}}
+        <div class="md:hidden p-4 space-y-3 bg-gray-50/50">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-200">
+                <span class="text-xs font-semibold text-gray-500">Daftar Kategori</span>
+                <button type="button" @click="toggleCollapseAll()" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-1 shadow-sm">
+                    <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
+                    <span x-text="collapsedParents.size === 0 ? 'Lipat Sub' : 'Buka Sub'"></span>
+                </button>
+            </div>
+            <template x-if="loading">
+                <div class="p-8 text-center bg-white rounded-xl border border-gray-200">
+                    <span class="loading loading-spinner loading-md text-[#1a237e]"></span>
+                </div>
+            </template>
+            <template x-for="cat in treeCategories" :key="cat.id">
+                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                     x-transition:enter-start="opacity-0 max-h-0 -translate-y-2"
+                     x-transition:enter-end="opacity-100 max-h-[500px] translate-y-0"
+                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                     x-transition:leave-start="opacity-100 max-h-[500px] translate-y-0"
+                     x-transition:leave-end="opacity-0 max-h-0 -translate-y-2"
+                     class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-3" :class="!cat.isParent ? 'ml-4 border-l-4 border-l-indigo-400' : ''">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <template x-if="cat.isParent">
+                                <button type="button" @click="toggleCollapse(cat.id)" class="p-1 text-gray-500 hover:text-[#1a237e] hover:bg-gray-100 rounded-lg transition-colors shrink-0" title="Lipat / Buka Sub-Kategori">
+                                    <svg class="w-4 h-4 transition-transform duration-200" :class="isCollapsed(cat.id) ? '-rotate-90 text-gray-400' : 'rotate-0 text-[#1a237e]'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </template>
+                            <template x-if="!cat.isParent">
+                                <i data-lucide="corner-down-right" class="w-4 h-4 text-indigo-400 shrink-0 ml-0.5"></i>
+                            </template>
+
+                            <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
+                                <img :src="'/storage/' + cat.icon" class="w-8 h-8 object-contain rounded border border-gray-100 bg-white shrink-0" />
+                            </template>
+                            <template x-if="cat.icon && !cat.icon.includes('/') && !cat.icon.includes('.')">
+                                <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                                    <i :data-lucide="cat.icon" class="w-4 h-4 text-gray-500"></i>
+                                </div>
+                            </template>
+
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <h4 class="font-bold text-gray-900 text-sm" x-text="cat.name"></h4>
+                                    <template x-if="cat.isParent && cat.childrenCount > 0">
+                                        <span @click="toggleCollapse(cat.id)"
+                                              class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 cursor-pointer hover:bg-indigo-100 transition-colors"
+                                              x-text="cat.childrenCount + ' sub'">
+                                        </span>
+                                    </template>
+                                </div>
+                                <template x-if="cat.isParent">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-600 rounded">Induk Utama</span>
+                                </template>
+                                <template x-if="!cat.isParent">
+                                    <span class="text-[10px] font-semibold text-[#1a237e] bg-blue-50 px-2 py-0.5 rounded" x-text="'Induk: ' + (cat.parent_name || '—')"></span>
+                                </template>
+                            </div>
+                        </div>
+                        <span class="font-semibold text-xs text-[#1a237e]" x-text="cat.base_price ? 'Rp ' + Number(cat.base_price).toLocaleString('id-ID') : 'Rp 0'"></span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
+                        <div>
+                            <span class="text-gray-400">Produk:</span> <strong class="text-gray-700" x-text="cat.products_count"></strong>
+                        </div>
+                        <div>
+                            <template x-if="cat.attributes_schema && cat.attributes_schema.length > 0">
+                                <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold" x-text="cat.attributes_schema.length + ' atribut'"></span>
+                            </template>
+                            <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (cat.effective_attributes_schema && cat.effective_attributes_schema.length > 0)">
+                                <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-semibold" x-text="cat.effective_attributes_schema.length + ' atribut'"></span>
+                            </template>
+                            <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (!cat.effective_attributes_schema || cat.effective_attributes_schema.length === 0)">
+                                <span class="text-gray-400">Tidak ada atribut</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-1.5 pt-2 border-t border-gray-100">
+                        <button @click="openAttrModal(cat)" class="px-2.5 py-1 rounded-lg border border-purple-200 text-xs font-medium text-purple-700 hover:bg-purple-50 transition-colors flex items-center gap-1">
+                            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i> Atribut
+                        </button>
+                        <button @click="openModal(cat)" class="px-2.5 py-1 rounded-lg border border-gray-200 text-xs font-medium text-[#1a237e] hover:bg-blue-50 transition-colors flex items-center gap-1">
+                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+                        </button>
+                        <button @click="hapus(cat)" class="px-2.5 py-1 rounded-lg border border-red-200 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            </template>
+            <template x-if="!loading && treeCategories.length === 0">
+                <div class="p-8 text-center text-gray-400 bg-white rounded-xl border border-gray-200">Belum ada kategori</div>
+            </template>
+        </div>
+
+        {{-- Desktop View Table --}}
+        <div class="hidden md:block overflow-x-auto max-h-[70vh]">
             <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 border-b border-gray-200 text-gray-500 sticky top-0 z-10">
                     <tr>
@@ -45,14 +147,24 @@
                         </tr>
                     </template>
                     <template x-for="cat in treeCategories" :key="cat.id">
-                        <tr :class="cat.isParent ? 'bg-white font-bold border-t-2 border-slate-200/90 hover:bg-slate-50/70' : 'bg-slate-50/70 hover:bg-slate-100/70'"
+                        <tr x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                            :class="cat.isParent ? 'bg-white font-bold border-t-2 border-slate-200/90 hover:bg-slate-50/70' : 'bg-slate-50/70 hover:bg-slate-100/70'"
                             class="transition-colors">
                             {{-- Nama Kategori --}}
-                            <td class="px-6 py-3.5">
-                                <div class="flex items-center gap-2" :class="!cat.isParent ? 'pl-6 sm:pl-8' : ''">
+                            <td class="p-0 px-6">
+                                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                                     x-transition:enter-start="opacity-0 max-h-0 py-0"
+                                     x-transition:enter-end="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave-end="opacity-0 max-h-0 py-0"
+                                     class="flex items-center gap-2 py-3.5" :class="!cat.isParent ? 'pl-6 sm:pl-8' : ''">
                                     <template x-if="cat.isParent">
                                         <button type="button" @click="toggleCollapse(cat.id)" class="p-1 text-gray-500 hover:text-[#1a237e] hover:bg-gray-200/60 rounded-md transition-colors shrink-0">
-                                            <i :data-lucide="isCollapsed(cat.id) ? 'chevron-right' : 'chevron-down'" class="w-4 h-4"></i>
+                                            <svg class="w-4 h-4 transition-transform duration-200" :class="isCollapsed(cat.id) ? '-rotate-90 text-gray-400' : 'rotate-0 text-[#1a237e]'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </button>
                                     </template>
                                     <template x-if="!cat.isParent">
@@ -71,73 +183,131 @@
                             </td>
 
                             {{-- Induk Kategori --}}
-                            <td class="px-6 py-3.5 text-gray-600">
-                                <template x-if="cat.isParent">
-                                    <span class="text-xs font-bold px-2 py-0.5 bg-gray-200/70 text-gray-600 rounded-md uppercase tracking-wider">Induk Utama</span>
-                                </template>
-                                <template x-if="!cat.isParent">
-                                    <span class="text-[#1a237e] font-semibold text-xs px-2 py-0.5 bg-blue-50 rounded-md cursor-pointer hover:bg-blue-100 transition-colors"
-                                          @click="toggleCollapse(cat.parentId)"
-                                          x-text="cat.parent_name || '—'"></span>
-                                </template>
+                            <td class="p-0 px-6 text-gray-600">
+                                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                                     x-transition:enter-start="opacity-0 max-h-0 py-0"
+                                     x-transition:enter-end="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave-end="opacity-0 max-h-0 py-0"
+                                     class="py-3.5">
+                                    <template x-if="cat.isParent">
+                                        <span class="text-xs font-bold px-2 py-0.5 bg-gray-200/70 text-gray-600 rounded-md uppercase tracking-wider">Induk Utama</span>
+                                    </template>
+                                    <template x-if="!cat.isParent">
+                                        <span class="text-[#1a237e] font-semibold text-xs px-2 py-0.5 bg-blue-50 rounded-md cursor-pointer hover:bg-blue-100 transition-colors"
+                                              @click="toggleCollapse(cat.parentId)"
+                                              x-text="cat.parent_name || '—'"></span>
+                                    </template>
+                                </div>
                             </td>
 
                             {{-- Ikon --}}
-                            <td class="px-6 py-3.5 text-center text-gray-600">
-                                <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
-                                    <img :src="'/storage/' + cat.icon" class="w-7 h-7 mx-auto object-contain rounded border border-gray-100 bg-white" />
-                                </template>
-                                <template x-if="cat.icon && !cat.icon.includes('/') && !cat.icon.includes('.')">
-                                    <i :data-lucide="cat.icon" class="w-4 h-4 mx-auto text-gray-500"></i>
-                                </template>
-                                <span x-show="!cat.icon" class="text-gray-400">—</span>
+                            <td class="p-0 px-6 text-center text-gray-600">
+                                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                                     x-transition:enter-start="opacity-0 max-h-0 py-0"
+                                     x-transition:enter-end="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave-end="opacity-0 max-h-0 py-0"
+                                     class="py-3.5">
+                                    <template x-if="cat.icon && (cat.icon.includes('/') || cat.icon.includes('.'))">
+                                        <img :src="'/storage/' + cat.icon" class="w-7 h-7 mx-auto object-contain rounded border border-gray-100 bg-white" />
+                                    </template>
+                                    <template x-if="cat.icon && !cat.icon.includes('/') && !cat.icon.includes('.')">
+                                        <i :data-lucide="cat.icon" class="w-4 h-4 mx-auto text-gray-500"></i>
+                                    </template>
+                                    <span x-show="!cat.icon" class="text-gray-400">—</span>
+                                </div>
                             </td>
 
                             {{-- Harga Dasar --}}
-                            <td class="px-6 py-3.5 text-center font-semibold text-[#1a237e]" x-text="cat.base_price ? 'Rp ' + Number(cat.base_price).toLocaleString('id-ID') : 'Rp 0'"></td>
+                            <td class="p-0 px-6 text-center font-semibold text-[#1a237e]">
+                                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                                     x-transition:enter-start="opacity-0 max-h-0 py-0"
+                                     x-transition:enter-end="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave-end="opacity-0 max-h-0 py-0"
+                                     class="py-3.5"
+                                     x-text="cat.base_price ? 'Rp ' + Number(cat.base_price).toLocaleString('id-ID') : 'Rp 0'">
+                                </div>
+                            </td>
 
                             {{-- Jumlah Produk --}}
-                            <td class="px-6 py-3.5 text-center text-gray-600" x-text="cat.products_count"></td>
+                            <td class="p-0 px-6 text-center text-gray-600">
+                                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                                     x-transition:enter-start="opacity-0 max-h-0 py-0"
+                                     x-transition:enter-end="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave-end="opacity-0 max-h-0 py-0"
+                                     class="py-3.5"
+                                     x-text="cat.products_count">
+                                </div>
+                            </td>
 
                             {{-- Jumlah Atribut --}}
-                            <td class="px-6 py-3.5 text-center">
-                                {{-- Atribut Langsung --}}
-                                <template x-if="cat.attributes_schema && cat.attributes_schema.length > 0">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold" title="Atribut khusus kategori ini">
-                                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                                        <span x-text="cat.attributes_schema.length + ' atribut'"></span>
-                                    </span>
-                                </template>
+                            <td class="p-0 px-6 text-center">
+                                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                                     x-transition:enter-start="opacity-0 max-h-0 py-0"
+                                     x-transition:enter-end="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave-end="opacity-0 max-h-0 py-0"
+                                     class="py-3.5">
+                                    {{-- Atribut Langsung --}}
+                                    <template x-if="cat.attributes_schema && cat.attributes_schema.length > 0">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold" title="Atribut khusus kategori ini">
+                                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                                            <span x-text="cat.attributes_schema.length + ' atribut'"></span>
+                                        </span>
+                                    </template>
 
-                                {{-- Atribut Warisan dari Induk --}}
-                                <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (cat.effective_attributes_schema && cat.effective_attributes_schema.length > 0)">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold" :title="'Mewarisi ' + cat.effective_attributes_schema.length + ' atribut dari induk ' + (cat.parent_name || '')">
-                                        <i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i>
-                                        <span x-text="cat.effective_attributes_schema.length + ' atribut'"></span>
-                                    </span>
-                                </template>
+                                    {{-- Atribut Warisan dari Induk --}}
+                                    <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (cat.effective_attributes_schema && cat.effective_attributes_schema.length > 0)">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold" :title="'Mewarisi ' + cat.effective_attributes_schema.length + ' atribut dari induk ' + (cat.parent_name || '')">
+                                            <i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i>
+                                            <span x-text="cat.effective_attributes_schema.length + ' atribut'"></span>
+                                        </span>
+                                    </template>
 
-                                {{-- Belum Ada Atribut --}}
-                                <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (!cat.effective_attributes_schema || cat.effective_attributes_schema.length === 0)">
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 text-xs">
-                                        Belum ada
-                                    </span>
-                                </template>
+                                    {{-- Belum Ada Atribut --}}
+                                    <template x-if="(!cat.attributes_schema || cat.attributes_schema.length === 0) && (!cat.effective_attributes_schema || cat.effective_attributes_schema.length === 0)">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 text-xs">
+                                            Belum ada
+                                        </span>
+                                    </template>
+                                </div>
                             </td>
 
                             {{-- Aksi --}}
-                            <td class="px-6 py-3.5 text-right flex items-center justify-end gap-1">
-                                <button @click="openAttrModal(cat)"
-                                    class="text-gray-400 hover:text-purple-600 p-1.5 hover:bg-purple-50 rounded-lg transition-colors"
-                                    title="Kelola Atribut">
-                                    <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-                                </button>
-                                <button @click="openModal(cat)" class="text-gray-400 hover:text-[#1a237e] p-1.5 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
-                                    <i data-lucide="pencil" class="w-4 h-4"></i>
-                                </button>
-                                <button @click="hapus(cat)" class="text-gray-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
+                            <td class="p-0 px-6 text-right">
+                                <div x-show="cat.isParent || !isCollapsed(cat.parentId)"
+                                     x-transition:enter="transition-all ease-out duration-300 overflow-hidden"
+                                     x-transition:enter-start="opacity-0 max-h-0 py-0"
+                                     x-transition:enter-end="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave="transition-all ease-in duration-200 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 max-h-24 py-3.5"
+                                     x-transition:leave-end="opacity-0 max-h-0 py-0"
+                                     class="flex items-center justify-end gap-1 py-3.5">
+                                    <button @click="openAttrModal(cat)"
+                                        class="text-gray-400 hover:text-purple-600 p-1.5 hover:bg-purple-50 rounded-lg transition-colors"
+                                        title="Kelola Atribut">
+                                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                                    </button>
+                                    <button @click="openModal(cat)" class="text-gray-400 hover:text-[#1a237e] p-1.5 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    </button>
+                                    <button @click="hapus(cat)" class="text-gray-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     </template>
@@ -545,16 +715,13 @@ function kategoriApp() {
                     childrenCount: children.length
                 });
 
-                // Jika parent TIDAK dikolaps, tampilkan anak-anaknya di bawahnya
-                if (!this.collapsedParents[parent.id]) {
-                    children.forEach(child => {
-                        result.push({
-                            ...child,
-                            isParent: false,
-                            parentId: parent.id
-                        });
+                children.forEach(child => {
+                    result.push({
+                        ...child,
+                        isParent: false,
+                        parentId: parent.id
                     });
-                }
+                });
             });
 
             // 2. Sub-kategori yang parent-nya tidak ditemukan (orphan)
