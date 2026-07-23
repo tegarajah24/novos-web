@@ -1,6 +1,7 @@
 @extends('layouts.customer')
 
-@section('title', 'Buat Pesanan — Novos')
+@section('title', 'Buat Pesanan Jersey Custom — Novos')
+@section('meta_description', 'Pesan jersey custom impianmu di Novos. Pilih desain, ukuran, dan warna sesuai keinginanmu. Proses mudah, bayar DP 10%, dan jersey siap dalam 3-7 hari.')
  
 @php
     $collarOptions = json_decode(App\Models\Setting::get('jersey_collar_options', json_encode([

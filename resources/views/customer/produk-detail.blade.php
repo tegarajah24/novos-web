@@ -1,6 +1,8 @@
 @extends('layouts.customer')
 @php use Illuminate\Support\Str; @endphp
-@section('title', $product->name . ' — Novos')
+@section('title', $product->name . ' — Jersey Custom Premium | Novos')
+@section('meta_description', $product->name . ' — Jersey custom premium dari Novos. Bahan berkualitas, desain bisa disesuaikan. Harga mulai Rp ' . number_format($product->price ?? 0, 0, ',', '.') . '. Pesan sekarang!')
+@section('og_image', $imageUrl ?? asset('images/hero-bg.png'))
 
 @section('content')
 <div x-data="produkDetail()" class="min-h-screen bg-gray-50/50 py-8">

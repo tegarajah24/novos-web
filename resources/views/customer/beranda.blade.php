@@ -1,6 +1,8 @@
 @extends('layouts.customer')
 
-@section('title', 'Novos — Custom Sports Jersey')
+@section('title', 'Novos — Custom Sports Jersey | Pesan Jersey Custom Online')
+@section('meta_description', 'Novos menyediakan jasa pembuatan jersey custom berkualitas premium. Desain bebas, bahan pilihan, pengerjaan cepat 3-7 hari. Cocok untuk tim, komunitas, dan acara. Pesan sekarang!')
+@section('og_image', asset('images/hero-bg.png'))
 
 @push('styles')
 <style>

@@ -1,6 +1,7 @@
 @extends('layouts.customer')
 
-@section('title', 'Tentang Kami — Novos')
+@section('title', 'Tentang Kami — Novos Jersey Custom')
+@section('meta_description', 'Kenali Novos — konveksi jersey custom profesional di Purwokerto, Jawa Tengah. Tim berpengalaman, mesin modern, dan komitmen pada kualitas terbaik.')
 
 @section('content')
 <script>

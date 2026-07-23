@@ -1,5 +1,6 @@
 @extends('layouts.customer')
 @section('title', 'Panduan Ukuran Jersey — Novos')
+@section('meta_description', 'Panduan lengkap ukuran jersey custom Novos. Temukan ukuran yang tepat untuk jersey futsal, basket, voli, dan olahraga lainnya.')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-12">
