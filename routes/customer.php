@@ -57,8 +57,9 @@ Route::get('/pesan', function () {
 
         $rawBanks = \App\Models\Setting::get('bank_accounts');
         $bankAccounts = $rawBanks ? json_decode($rawBanks, true) : [];
+        $minDpPercent = (int) \App\Models\Setting::get('min_dp_percentage', 10);
 
-        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone', 'categories', 'bankAccounts'));
+        return view('customer.pemesanan', compact('produkData', 'addresses', 'hasOrders', 'provinces', 'adminPhone', 'categories', 'bankAccounts', 'minDpPercent'));
     })->name('pemesanan');
 
 // Public routes for wilayah data

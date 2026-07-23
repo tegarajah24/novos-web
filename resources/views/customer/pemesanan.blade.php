@@ -1,8 +1,12 @@
 @extends('layouts.customer')
 
+@php
+    $minDpPercent = (int) ($minDpPercent ?? App\Models\Setting::get('min_dp_percentage', 10));
+@endphp
+
 @section('title', 'Buat Pesanan Jersey Custom — Novos')
-@section('meta_description', 'Pesan jersey custom impianmu di Novos. Pilih desain, ukuran, dan warna sesuai keinginanmu. Proses mudah, bayar DP 10%, dan jersey siap dalam 3-7 hari.')
- 
+@section('meta_description', 'Pesan jersey custom impianmu di Novos. Pilih desain, ukuran, dan warna sesuai keinginanmu. Proses mudah, bayar DP ' . $minDpPercent . '%, dan jersey siap dalam 3-7 hari.')
+
 @php
     $collarOptions = json_decode(App\Models\Setting::get('jersey_collar_options', json_encode([
         "O-NECK V.1", "O-NECK V.2", "O-NECK V.3", "O-NECK V.4", "V-NECK V.5", 
@@ -97,7 +101,7 @@
 @section('content')
 @auth
 
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }}, {{ json_encode($categories) }}, {{ json_encode($bankAccounts) }})">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="pemesananForm({{ json_encode($produkData) }}, {{ json_encode($addresses) }}, {{ $hasOrders ? 'true' : 'false' }}, {{ json_encode($provinces) }}, {{ json_encode($categories) }}, {{ json_encode($bankAccounts) }}, {{ $minDpPercent }})">
     {{-- Header --}}
     <div class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900">Buat Pesanan</h1>
@@ -1113,8 +1117,8 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-amber-800">DP Minimal 10%</p>
-                            <p class="text-xs text-amber-700 mt-0.5">Pembayaran dilakukan setelah admin memvalidasi pesanan. DP minimal <strong>10% dari total</strong> (Rp <span x-text="Math.ceil(estimasiTotal * 0.1).toLocaleString('id-ID')"></span>) via transfer bank ke rekening di bawah.</p>
+                            <p class="text-sm font-semibold text-amber-800">DP Minimal <span x-text="minDpPercent + '%'"></span></p>
+                            <p class="text-xs text-amber-700 mt-0.5">DP minimal <strong x-text="minDpPercent + '% dari total'"></strong> (Rp <span x-text="Math.ceil(estimasiTotal * (minDpPercent / 100)).toLocaleString('id-ID')"></span>) via transfer bank ke rekening di bawah.</p>
                         </div>
                     </div>
                 </div>
@@ -1435,9 +1439,9 @@
             <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-left max-w-sm mx-auto" style="animation-delay:0.7s" x-show="bankAccounts.length > 0">
                 <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                    Pembayaran DP Minimal 10%
+                    Pembayaran DP Minimal <span x-text="minDpPercent + '%'"></span>
                 </h4>
-                <p class="text-xs text-gray-500 mb-3">Setelah admin memvalidasi pesanan, lakukan transfer DP minimal 10% ke salah satu rekening berikut:</p>
+                <p class="text-xs text-gray-500 mb-3">Setelah admin memvalidasi pesanan, lakukan transfer DP minimal <span x-text="minDpPercent + '%'"></span> ke salah satu rekening berikut:</p>
                 <div class="space-y-2 mb-3">
                     <template x-for="(bank, idx) in bankAccounts" :key="idx">
                         <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
@@ -1513,8 +1517,9 @@
 </style>
 
 <script>
-function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = [], categories = [], bankAccounts = []) {
+function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = true, provinces = [], categories = [], bankAccounts = [], minDpPercent = 10) {
     return {
+        minDpPercent: minDpPercent,
         step: 1,
         mode: 'single',
         cartItemsToCheckout: [],

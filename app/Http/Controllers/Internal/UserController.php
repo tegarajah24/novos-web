@@ -18,7 +18,8 @@ class UserController extends Controller
     {
         $users = User::with('role')
             ->whereHas('role', fn($q) => $q->whereIn('name', Role::internalNames()))
-            ->orderBy('created_at', 'desc')
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('created_at', 'asc')
             ->get()
             ->map(function ($user) {
                 return [
@@ -31,6 +32,7 @@ class UserController extends Controller
                     'avatar'     => $user->avatar,
                     'status'     => $user->is_active ? 'Aktif' : 'Nonaktif',
                     'created_at' => $user->created_at->format('d M Y'),
+                    'sort_order' => $user->sort_order ?? 0,
                 ];
             })
             ->values()
@@ -207,6 +209,23 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Pengguna berhasil dihapus',
+        ]);
+    }
+
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'order' => 'required|array',
+            'order.*' => 'integer|exists:users,id',
+        ]);
+
+        foreach ($request->order as $index => $id) {
+            User::where('id', $id)->update(['sort_order' => $index + 1]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Urutan pengguna berhasil diperbarui',
         ]);
     }
 }

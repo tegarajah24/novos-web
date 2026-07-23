@@ -241,9 +241,12 @@ class OrderController extends Controller
                 ? $data['customizations']
                 : (json_decode($data['customizations'] ?? '{}', true) ?? []);
 
+            $defaultTeamName = ($category && !empty($category->name)) ? ($category->name . ' Custom') : 'Jersey Custom';
+            $teamName = !empty($data['team_name']) ? $data['team_name'] : $defaultTeamName;
+
             DesignRequest::create([
                 'order_id'         => $order->id,
-                'team_name'        => $data['team_name'],
+                'team_name'        => $teamName,
                 'nama_artikel'     => $data['nama_artikel'] ?? null,
                 'nama_pemesan'     => $data['nama_pemesan'] ?? null,
                 'detail_sponsor'   => $data['detail_sponsor'] ?? null,

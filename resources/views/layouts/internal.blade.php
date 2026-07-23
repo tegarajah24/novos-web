@@ -23,6 +23,7 @@
 
     {{-- Scripts --}}
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/filepond.js', 'resources/js/photoswipe.js'])
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     @notifyCss
     @stack('styles')
     
@@ -850,44 +851,122 @@
                         </div>
                     </div>
 
-                    {{-- Modal Profil Saya (read-only) --}}
+                    {{-- Modal Profil Saya --}}
                     <template x-teleport="body">
-                        <div x-show="profileOpen" class="fixed inset-0 z-[100] flex items-center justify-center" x-cloak>
+                        <div x-show="profileOpen" class="fixed inset-0 z-[100] flex items-center justify-center" x-cloak x-data="{ activeTab: 'profile', loading: false, errors: {} }">
                             <div x-show="profileOpen" x-transition.opacity class="fixed inset-0 bg-black/40" @click="profileOpen = false"></div>
                             <div x-show="profileOpen" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 mx-4">
-                                <div class="flex items-center justify-between mb-5">
-                                    <h3 class="text-lg font-bold text-gray-900">Profil Saya</h3>
+                                <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-5">
+                                    <div class="flex gap-2">
+                                        <button @click="activeTab = 'profile'; errors = {}"
+                                                :class="activeTab === 'profile' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                                                class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors">
+                                            Profil
+                                        </button>
+                                        <button @click="activeTab = 'password'; errors = {}"
+                                                :class="activeTab === 'password' ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                                                class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors">
+                                            Ubah Password
+                                        </button>
+                                    </div>
                                     <button @click="profileOpen = false" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                     </button>
                                 </div>
 
-                                <div class="flex flex-col items-center gap-3 mb-6">
-                                    @if(auth()->user()->avatar)
-                                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" class="w-20 h-20 rounded-full object-cover border-2 border-gray-100">
-                                    @else
-                                        <div class="w-20 h-20 bg-[#1a237e] rounded-full flex items-center justify-center border-2 border-gray-100">
-                                            <span class="text-white font-bold text-xl">{{ collect(explode(' ', auth()->user()->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('') }}</span>
+                                {{-- Tab Profil --}}
+                                <div x-show="activeTab === 'profile'">
+                                    <div class="flex flex-col items-center gap-3 mb-6">
+                                        @if(auth()->user()->avatar)
+                                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" class="w-20 h-20 rounded-full object-cover border-2 border-gray-100">
+                                        @else
+                                            <div class="w-20 h-20 bg-[#1a237e] rounded-full flex items-center justify-center border-2 border-gray-100">
+                                                <span class="text-white font-bold text-xl">{{ collect(explode(' ', auth()->user()->name))->map(fn($w) => substr($w, 0, 1))->take(2)->implode('') }}</span>
+                                            </div>
+                                        @endif
+                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#1a237e]/10 text-[#1a237e]">{{ auth()->user()->role->name ?? '-' }}</span>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-0.5">Nama</p>
+                                            <p class="text-sm font-medium text-gray-900 bg-gray-50 rounded-lg px-3 py-2">{{ auth()->user()->name }}</p>
                                         </div>
-                                    @endif
-                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#1a237e]/10 text-[#1a237e]">{{ auth()->user()->role->name ?? '-' }}</span>
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-0.5">Email</p>
+                                            <p class="text-sm font-medium text-gray-900 bg-gray-50 rounded-lg px-3 py-2">{{ auth()->user()->email }}</p>
+                                        </div>
+                                    </div>
+
+                                    <button @click="profileOpen = false"
+                                        class="w-full mt-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors">
+                                        Tutup
+                                    </button>
                                 </div>
 
-                                <div class="space-y-4">
-                                    <div>
-                                        <p class="text-xs text-gray-500 mb-0.5">Nama</p>
-                                        <p class="text-sm font-medium text-gray-900 bg-gray-50 rounded-lg px-3 py-2">{{ auth()->user()->name }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500 mb-0.5">Email</p>
-                                        <p class="text-sm font-medium text-gray-900 bg-gray-50 rounded-lg px-3 py-2">{{ auth()->user()->email }}</p>
-                                    </div>
-                                </div>
+                                {{-- Tab Ubah Password --}}
+                                <div x-show="activeTab === 'password'">
+                                    <form @submit.prevent="
+                                        loading = true;
+                                        errors = {};
+                                        const fd = new FormData($el);
+                                        fd.append('_method', 'PUT');
+                                        fetch('{{ route('password.update') }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'Accept': 'application/json'
+                                            },
+                                            body: fd
+                                        })
+                                        .then(res => res.json().then(data => ({ ok: res.ok, data })))
+                                        .then(({ ok, data }) => {
+                                            loading = false;
+                                            if (!ok) {
+                                                errors = data.errors || { general: [data.message || 'Gagal mengubah password'] };
+                                                return;
+                                            }
+                                            if (window.Notify) window.Notify.success(data.message || 'Password berhasil diperbarui');
+                                            $el.reset();
+                                            activeTab = 'profile';
+                                            profileOpen = false;
+                                        })
+                                        .catch(() => {
+                                            loading = false;
+                                            if (window.Notify) window.Notify.error('Koneksi terputus');
+                                        });
+                                    " class="space-y-3">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Password Saat Ini</label>
+                                            <input type="password" name="current_password" required class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e]" placeholder="Masukkan password saat ini">
+                                            <template x-if="errors.current_password">
+                                                <p class="text-red-500 text-xs mt-1" x-text="errors.current_password[0]"></p>
+                                            </template>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Password Baru</label>
+                                            <input type="password" name="password" required class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e]" placeholder="Password baru (min. 8 karakter)">
+                                            <template x-if="errors.password">
+                                                <p class="text-red-500 text-xs mt-1" x-text="errors.password[0]"></p>
+                                            </template>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
+                                            <input type="password" name="password_confirmation" required class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e]" placeholder="Ulangi password baru">
+                                        </div>
 
-                                <button @click="profileOpen = false"
-                                    class="w-full mt-6 py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors">
-                                    Tutup
-                                </button>
+                                        <template x-if="errors.general">
+                                            <p class="text-red-500 text-xs mt-1" x-text="errors.general[0]"></p>
+                                        </template>
+
+                                        <div class="pt-2">
+                                            <button type="submit" :disabled="loading" class="w-full py-2.5 bg-[#1a237e] text-white text-sm font-semibold rounded-xl hover:bg-[#283593] transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                                                <span x-show="!loading">Simpan Password</span>
+                                                <span x-show="loading">Menyimpan...</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </template>

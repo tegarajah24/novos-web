@@ -109,6 +109,7 @@ Route::prefix('staf')
     ->name('staf.')
     ->group(function () {
         Route::get('/kelola-pengguna', [UserController::class, 'index'])->name('kelola-pengguna');
+        Route::post('/kelola-pengguna/reorder', [UserController::class, 'reorder'])->name('kelola-pengguna.reorder');
         Route::post('/kelola-pengguna', [UserController::class, 'store'])->name('kelola-pengguna.store');
         Route::put('/kelola-pengguna/{user}', [UserController::class, 'update'])->name('kelola-pengguna.update');
         Route::delete('/kelola-pengguna/{user}', [UserController::class, 'destroy'])->name('kelola-pengguna.destroy');

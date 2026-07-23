@@ -288,7 +288,7 @@
 
             @foreach([
                 ['Buat Pesanan',         'Isi form detail jersey custom kamu', true,  false],
-                ['Bayar DP',             'Transfer DP minimal 10% via bank',   false, true ],
+                ['Bayar DP',             'Transfer DP minimal ' . (\App\Models\Setting::get('min_dp_percentage', 10)) . '% via bank',   false, true ],
                 ['Proses Desain',        'Tim desain buatkan desainmu',        true,  false],
                 ['Produksi',             'Jersey dicetak & dijahit',           false, false],
                 ['Pelunasan & Selesai',  'Lunas, jersey siap dikirim/diambil', false, false],

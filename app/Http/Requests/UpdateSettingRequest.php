@@ -19,6 +19,7 @@ class UpdateSettingRequest extends FormRequest
             'company_email'     => 'nullable|email|max:255',
             'company_address'   => 'nullable|string|max:1000',
             'company_instagram' => 'nullable|string|max:255',
+            'min_dp_percentage' => 'nullable|integer|min:1|max:100',
             'hours_weekday'     => 'nullable|string|max:100',
             'hours_saturday'    => 'nullable|string|max:100',
             'hours_sunday'      => 'nullable|string|max:100',

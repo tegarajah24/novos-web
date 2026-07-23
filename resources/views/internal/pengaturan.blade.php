@@ -110,7 +110,7 @@
                                class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
                         <input type="email" x-model="form.company_email" placeholder="hello@novosjersey.com"
@@ -120,6 +120,14 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Instagram</label>
                         <input type="text" x-model="form.company_instagram" placeholder="@novosjersey"
                                class="w-full rounded-xl border-gray-200 bg-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">DP Minimal (%) <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="number" x-model="form.min_dp_percentage" min="1" max="100" placeholder="10"
+                                   class="w-full rounded-xl border-gray-200 bg-white pl-4 pr-8 py-2.5 text-sm focus:ring-2 focus:ring-[#1a237e]/30 focus:border-[#1a237e]">
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 text-sm font-semibold">%</span>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -799,6 +807,7 @@ function settingApp() {
             company_email: '',
             company_address: '',
             company_instagram: '',
+            min_dp_percentage: 10,
             hours_weekday: '08.00 - 17.00',
             hours_saturday: '08.00 - 13.00',
             hours_sunday: 'Libur',
@@ -1073,6 +1082,7 @@ function settingApp() {
             this.form.company_email     = @json($settings['company_email'] ?? '');
             this.form.company_address   = @json($settings['company_address'] ?? '');
             this.form.company_instagram = @json($settings['company_instagram'] ?? '');
+            this.form.min_dp_percentage = @json($settings['min_dp_percentage'] ?? 10);
             this.form.hours_weekday     = @json($settings['hours_weekday'] ?? '08.00 - 17.00');
             this.form.hours_saturday    = @json($settings['hours_saturday'] ?? '08.00 - 13.00');
             this.form.hours_sunday      = @json($settings['hours_sunday'] ?? 'Libur');

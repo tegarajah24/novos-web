@@ -41,7 +41,47 @@
             </div>
         </div>
         
-        <div class="overflow-x-auto">
+        {{-- Mobile View Cards --}}
+        <div class="md:hidden p-4 space-y-3 bg-gray-50/50">
+            <template x-for="(prod, index) in filteredProducts" :key="prod.id">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-16 h-16 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
+                            <template x-if="prod.images && prod.images.length > 0">
+                                <img :src="prod.images[0]" class="object-cover w-full h-full" :alt="prod.name">
+                            </template>
+                            <template x-if="!prod.images || prod.images.length === 0">
+                                <i data-lucide="image" class="w-6 h-6 text-gray-400"></i>
+                            </template>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <h4 class="font-bold text-gray-900 text-sm truncate" x-text="prod.name"></h4>
+                                <span class="text-xs text-gray-400 shrink-0">#<span x-text="prod.id"></span></span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="px-2 py-0.5 bg-blue-50 text-[#1a237e] rounded text-xs font-semibold" x-text="getCategoryName(prod.category_id)"></span>
+                            </div>
+                            <p class="font-semibold text-emerald-600 text-sm" x-text="formatRupiah(prod.price)"></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                        <button @click="openEditForm(prod)" class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-[#1a237e] hover:bg-blue-50 transition-colors flex items-center gap-1">
+                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+                        </button>
+                        <button @click="confirmDelete(prod.id)" class="px-3 py-1.5 rounded-lg border border-red-200 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            </template>
+            <div x-show="filteredProducts.length === 0" class="text-center py-8 text-gray-500 font-medium bg-white rounded-xl border border-gray-200">
+                Tidak ada produk ditemukan.
+            </div>
+        </div>
+        
+        {{-- Desktop View Table --}}
+        <div class="hidden md:block overflow-x-auto">
             <table class="table w-full">
                 <thead>
                     <tr class="bg-gray-50 text-gray-700 font-bold border-b border-gray-200">
