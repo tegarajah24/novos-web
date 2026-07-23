@@ -2071,10 +2071,20 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             return cat ? cat.id : null;
         },
 
-        isRowComplete(item) {
-            if (!item.size) return false;
+        getSizeAttr(schema) {
+            if (!schema) return null;
+            return schema.find(attr => attr.system_tag === 'is_size_type' || attr.id === 'ukuran' || attr.id === 'size' || (attr.name && attr.name.toLowerCase().includes('ukuran')));
+        },
 
+        isRowComplete(item) {
             const schema = this.activeSchema;
+            const sizeAttr = this.getSizeAttr(schema);
+            
+            if (sizeAttr && sizeAttr.required !== false) {
+                const effectiveSize = item.size || (item.customizations ? item.customizations[sizeAttr.id] : null) || (this.form.customizations ? this.form.customizations[sizeAttr.id] : null) || this.form.size;
+                if (!effectiveSize) return false;
+            }
+
             const compiled = Object.assign({}, this.form.customizations, item.customizations);
             const allOk = schema.every(attr => {
                 if (!attr.required) return true;
@@ -2082,7 +2092,9 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
                     const parentVal = compiled[attr.depends_on.attribute_id];
                     if (parentVal !== attr.depends_on.value) return true;
                 }
-                const val = compiled[attr.id];
+                const val = (sizeAttr && attr.id === sizeAttr.id) 
+                    ? (item.size || compiled[attr.id] || this.form.size)
+                    : compiled[attr.id];
                 return val !== undefined && val !== null && val.toString().trim() !== '';
             });
             if (!allOk) return false;
@@ -2221,7 +2233,7 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
         get sizeOptions() {
             const schema = this.activeSchema;
             if (!schema) return [];
-            const sizeAttr = schema.find(attr => attr.system_tag === 'is_size_type');
+            const sizeAttr = this.getSizeAttr(schema);
             return sizeAttr ? (sizeAttr.options || []) : [];
         },
 
@@ -2359,21 +2371,28 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             const basic = this.form.nama_pemesan.trim() !== '' && (!isTeam || this.form.team_name.trim() !== '') && this.selectedCategoryId !== '' && this.totalQty >= 1;
             if (!basic) return false;
             
+            if (!this.showPlayerListField) return true;
+
             const schema = this.activeSchema;
+            const sizeAttr = this.getSizeAttr(schema);
 
             return this.items.every(item => {
-                if (!item.size) return false;
+                if (sizeAttr && sizeAttr.required !== false) {
+                    const effectiveSize = item.size || (item.customizations ? item.customizations[sizeAttr.id] : null) || (this.form.customizations ? this.form.customizations[sizeAttr.id] : null) || this.form.size;
+                    if (!effectiveSize) return false;
+                }
                 
                 const compiled = Object.assign({}, this.form.customizations, item.customizations);
                 
-                // Check all attributes (jersey + bawahan via depends_on)
                 const allOk = schema.every(attr => {
                     if (!attr.required) return true;
                     if (attr.depends_on && attr.depends_on.attribute_id) {
                         const parentVal = compiled[attr.depends_on.attribute_id];
                         if (parentVal !== attr.depends_on.value) return true;
                     }
-                    const val = compiled[attr.id];
+                    const val = (sizeAttr && attr.id === sizeAttr.id) 
+                        ? (item.size || compiled[attr.id] || this.form.size)
+                        : compiled[attr.id];
                     return val !== undefined && val !== null && val.toString().trim() !== '';
                 });
                 if (!allOk) return false;
