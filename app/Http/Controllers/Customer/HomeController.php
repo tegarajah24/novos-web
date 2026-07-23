@@ -93,7 +93,8 @@ class HomeController extends Controller
     {
         $tim = User::with('role')
             ->whereHas('role', fn($q) => $q->whereIn('name', Role::internalNames()))
-            ->orderBy('created_at')
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         $aboutStory = Setting::get('about_story');

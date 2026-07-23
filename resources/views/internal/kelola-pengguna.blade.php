@@ -89,6 +89,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wider">
+                        <th class="px-4 py-4 font-semibold text-center w-28">Urutan</th>
                         <th class="px-6 py-4 font-semibold">Nama</th>
                         <th class="px-6 py-4 font-semibold">Username</th>
                         <th class="px-6 py-4 font-semibold">Email</th>
@@ -316,9 +317,11 @@
     </template>
 
     {{-- Scripts --}}
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script>
         var __users = @json($users);
         var filteredUsers = [...__users];
+        let sortableInstance = null;
 
         function renderStats() {
             document.getElementById('totalUsers').textContent = __users.length;
@@ -331,16 +334,72 @@
             return ({ 'Super Admin': 'red', 'Manager': 'purple', 'Admin': 'blue', 'Design': 'orange', 'Produksi': 'green' })[role] || 'gray';
         }
 
+        function initSortable() {
+            const el = document.getElementById('userTableBody');
+            if (!el || typeof Sortable === 'undefined') return;
+
+            if (sortableInstance) {
+                sortableInstance.destroy();
+                sortableInstance = null;
+            }
+
+            const isFiltered = filteredUsers.length !== __users.length;
+            if (isFiltered) return;
+
+            sortableInstance = new Sortable(el, {
+                handle: '.handle',
+                animation: 200,
+                ghostClass: 'bg-[#1a237e]/10',
+                chosenClass: 'bg-blue-50',
+                onEnd: async function () {
+                    const rows = Array.from(el.querySelectorAll('tr[data-id]'));
+                    const newOrderIds = rows.map(r => parseInt(r.getAttribute('data-id')));
+
+                    rows.forEach((r, idx) => {
+                        const numEl = r.querySelector('.user-index-num');
+                        if (numEl) numEl.textContent = idx + 1;
+                    });
+
+                    __users.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+                    filteredUsers = [...__users];
+
+                    try {
+                        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                        const res = await fetch("{{ route('staf.kelola-pengguna.reorder') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ order: newOrderIds })
+                        });
+                        const data = await res.json();
+                        if (!res.ok || !data.success) {
+                            Notify.error(data.message || 'Gagal memperbarui urutan');
+                        } else {
+                            Notify.success('Urutan berhasil diperbarui');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        Notify.error('Koneksi terputus');
+                    }
+                }
+            });
+        }
+
         function renderTable(data) {
             const tbody = document.getElementById('userTableBody');
             const total = document.getElementById('totalDisplay');
             if (!data.length) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500">Tidak ada pengguna ditemukan.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-10 text-center text-gray-500">Tidak ada pengguna ditemukan.</td></tr>';
                 total.textContent = '0';
                 document.getElementById('infoDisplay').textContent = 'Menampilkan 0 dari 0 pengguna';
                 return;
             }
-            tbody.innerHTML = data.map(u => {
+            const isFiltered = data.length !== __users.length;
+            tbody.innerHTML = data.map((u, index) => {
                 const roleBadge = {
                     'Super Admin': 'red', 'Manager': 'purple', 'Admin': 'blue', 'Design': 'orange', 'Produksi': 'green'
                 }[u.role] || 'gray';
@@ -348,7 +407,17 @@
                 const avatarHtml = u.avatar
                     ? `<img src="/storage/${u.avatar}" alt="${u.name}" class="w-9 h-9 rounded-full object-cover shrink-0">`
                     : `<div class="w-9 h-9 rounded-full bg-[#1a237e] flex items-center justify-center text-white text-xs font-bold shrink-0">${initials}</div>`;
-                return `<tr class="hover:bg-gray-50 transition-colors">
+                return `<tr data-id="${u.id}" class="hover:bg-gray-50/80 transition-colors">
+                    <td class="px-4 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="handle p-1.5 rounded-lg text-gray-400 hover:text-[#1a237e] hover:bg-gray-100 transition-colors ${isFiltered ? 'opacity-30 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}" title="${isFiltered ? 'Reset filter untuk mengubah urutan' : 'Tahan & geser untuk mengubah urutan'}">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </span>
+                            <span class="text-xs font-semibold text-gray-500 w-4 text-center user-index-num">${index + 1}</span>
+                        </div>
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             ${avatarHtml}
@@ -376,6 +445,9 @@
                 </tr>`;
             }).join('');
             total.textContent = data.length;
+            document.getElementById('infoDisplay').textContent = `Menampilkan ${data.length} dari ${__users.length} pengguna`;
+
+            initSortable();
         }
 
         function applyFilters() {
