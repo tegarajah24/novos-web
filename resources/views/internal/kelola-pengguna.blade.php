@@ -317,11 +317,10 @@
     </template>
 
     {{-- Scripts --}}
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script>
         var __users = @json($users);
         var filteredUsers = [...__users];
-        let sortableInstance = null;
+        var sortableInstance = null;
 
         function renderStats() {
             document.getElementById('totalUsers').textContent = __users.length;
