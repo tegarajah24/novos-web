@@ -348,7 +348,7 @@
                                         </div>
                                     </div>
 
-                                    {{-- Row 2: Depends On & Reference Image --}}
+                                    {{-- Row 2: Tag & Reference Image --}}
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 p-3 rounded-lg border border-gray-200 bg-white">
                                         {{-- System Tag --}}
                                         <div>
@@ -364,12 +364,21 @@
                                                 <option value="is_size_type">Ukuran (Size)</option>
                                             </select>
                                         </div>
-                                        <div class="flex items-end justify-end pb-1">
-                                            <button @click="removeAttr(idx)"
-                                                class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition-colors"
-                                                title="Hapus atribut">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
+                                        {{-- Gambar Panduan / Referensi --}}
+                                        <div class="flex items-center gap-2">
+                                            <div class="flex-1">
+                                                <label class="block text-xs font-medium text-gray-500 mb-1">Gambar Panduan / Referensi (URL/Path)</label>
+                                                <input type="text" x-model="attr.reference_image"
+                                                    class="w-full rounded-lg border-gray-300 text-xs px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
+                                                    placeholder="Contoh: images/panduan-kerah.png">
+                                            </div>
+                                            <div class="pt-5">
+                                                <button @click="removeAttr(idx)"
+                                                    class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition-colors"
+                                                    title="Hapus atribut">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
 
