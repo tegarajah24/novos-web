@@ -324,7 +324,7 @@
     {{-- Modal Tambah/Edit Kategori --}}
     <template x-teleport="body">
     <div x-show="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center" x-cloak>
-        <div x-show="modalOpen" x-transition.opacity class="fixed inset-0 bg-black/40"></div>
+        <div x-show="modalOpen" x-transition.opacity class="fixed inset-0 bg-black/40" @click="modalOpen = false"></div>
         <div x-show="modalOpen" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             <h3 class="text-lg font-bold text-gray-900 mb-4" x-text="editId ? 'Edit Kategori' : 'Tambah Kategori'"></h3>
             <form @submit.prevent="simpan">
@@ -403,7 +403,7 @@
                         </div>
                     </div>
                 </template>
-                <div class="flex items-center justify-end gap-3">
+                <div class="flex items-center justify-end gap-3 mt-6">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
 
                     {{-- Split Button Group --}}
@@ -435,11 +435,11 @@
 
     {{-- Modal Kelola Atribut Dinamis --}}
     <template x-teleport="body">
-    <div x-show="attrModalOpen" class="fixed inset-0 z-50 flex items-start justify-center pt-6 pb-6 overflow-y-auto" x-cloak>
+    <div x-show="attrModalOpen" class="fixed inset-0 z-50 flex items-center justify-center sm:p-4 overflow-y-auto" x-cloak>
         <div x-show="attrModalOpen" x-transition.opacity class="fixed inset-0 bg-black/50" @click="attrModalOpen = false"></div>
-        <div x-show="attrModalOpen" x-transition class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 my-auto">
+        <div x-show="attrModalOpen" x-transition.scale.origin.bottom class="relative bg-white shadow-2xl w-full h-full sm:h-auto sm:max-w-4xl sm:rounded-2xl max-h-none sm:max-h-[90vh] flex flex-col overflow-hidden">
             {{-- Header --}}
-            <div class="px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between">
+            <div class="px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between shrink-0">
                 <div>
                     <h3 class="text-lg font-bold text-gray-900">Kelola Atribut</h3>
                     <p class="text-sm text-gray-500 mt-0.5">Kategori: <span class="font-semibold text-purple-700" x-text="attrCategoryName"></span></p>
@@ -450,7 +450,7 @@
             </div>
 
             {{-- Info Box --}}
-            <div class="px-6 py-3 bg-blue-50 border-b border-blue-100 space-y-2">
+            <div class="px-6 py-3 bg-blue-50 border-b border-blue-100 space-y-2 shrink-0">
                 <p class="text-xs text-blue-700 leading-relaxed">
                     <strong>Atribut</strong> adalah pilihan kustomisasi yang akan diisi customer saat memesan produk dari kategori ini (Contoh: Jenis Kerah, Bahan, Ukuran, dll).
                 </p>
@@ -468,7 +468,7 @@
             </div>
 
             {{-- Body --}}
-            <div class="px-6 py-5 max-h-[60vh] overflow-y-auto" x-ref="attrScrollArea">
+            <div class="px-6 py-5 flex-1 overflow-y-auto" x-ref="attrScrollArea">
                 <template x-if="attrLoading">
                     <div class="flex items-center justify-center py-12">
                         <span class="loading loading-spinner loading-md text-purple-600"></span>
@@ -643,7 +643,7 @@
             </div>
 
             {{-- Footer --}}
-            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50 rounded-b-2xl">
+            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50 sm:rounded-b-2xl shrink-0">
                 <span class="text-xs text-gray-400" x-text="schema.length + ' atribut terdefinisi'"></span>
                 <div class="flex gap-3">
                     <button @click="attrModalOpen = false" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
