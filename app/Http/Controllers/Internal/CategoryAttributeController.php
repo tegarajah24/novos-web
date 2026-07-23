@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Internal;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryAttributeController extends Controller
 {
@@ -39,27 +40,39 @@ class CategoryAttributeController extends Controller
 
     /**
      * Simpan / update schema atribut untuk satu kategori.
-     * Schema dikirim sebagai JSON array dari frontend.
+     * Mendukung upload file gambar panduan via multipart/form-data.
      */
     public function updateSchema(Request $request, Category $category)
     {
-        $schema = $request->input('attributes_schema');
+        // Handle both JSON and FormData submissions
+        $rawSchema = $request->input('attributes_schema');
+
+        // If attributes_schema is a JSON string (from FormData), decode it
+        if (is_string($rawSchema)) {
+            $rawSchema = json_decode($rawSchema, true);
+        }
+
+        if (!is_array($rawSchema)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Schema atribut tidak valid.',
+            ], 422);
+        }
 
         // Normalize: coerce empty/missing price_modifier to 0 BEFORE validation
-        if (is_array($schema)) {
-            foreach ($schema as &$attr) {
-                if (isset($attr['options']) && is_array($attr['options'])) {
-                    foreach ($attr['options'] as &$opt) {
-                        if (!isset($opt['price_modifier']) || $opt['price_modifier'] === '' || $opt['price_modifier'] === null) {
-                            $opt['price_modifier'] = 0;
-                        }
+        foreach ($rawSchema as &$attr) {
+            if (isset($attr['options']) && is_array($attr['options'])) {
+                foreach ($attr['options'] as &$opt) {
+                    if (!isset($opt['price_modifier']) || $opt['price_modifier'] === '' || $opt['price_modifier'] === null) {
+                        $opt['price_modifier'] = 0;
                     }
-                    unset($opt);
                 }
+                unset($opt);
             }
-            unset($attr);
-            $request->merge(['attributes_schema' => $schema]);
         }
+        unset($attr);
+
+        $request->merge(['attributes_schema' => $rawSchema]);
 
         $request->validate([
             'attributes_schema'                       => 'required|array',
@@ -90,6 +103,23 @@ class CategoryAttributeController extends Controller
                 }
             }
         }
+
+        // Handle uploaded reference images
+        foreach ($schema as $idx => &$attr) {
+            $fileKey = 'reference_image_' . $idx;
+            if ($request->hasFile($fileKey)) {
+                $file = $request->file($fileKey);
+                if ($file->isValid()) {
+                    // Delete old file if exists
+                    if (!empty($attr['reference_image']) && Storage::disk('public')->exists($attr['reference_image'])) {
+                        Storage::disk('public')->delete($attr['reference_image']);
+                    }
+                    $path = $file->store('attribute-guides', 'public');
+                    $attr['reference_image'] = $path;
+                }
+            }
+        }
+        unset($attr);
 
         $category->update(['attributes_schema' => $schema]);
 

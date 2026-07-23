@@ -127,30 +127,8 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-900">Jenis Kerah</h3>
-                            <p class="text-xs text-gray-500">Kelola daftar opsi kerah dan gambar panduannya</p>
+                            <p class="text-xs text-gray-500">Kelola gambar panduan kerah global</p>
                         </div>
-                    </div>
-                    
-                    {{-- Input Tambah Opsi --}}
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" x-model="refInputs.collar" @keydown.enter.prevent="addRefOption('collar')" placeholder="Tambah jenis kerah baru..."
-                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
-                        <button type="button" @click="addRefOption('collar')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
-                    </div>
- 
-                    {{-- List Opsi --}}
-                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
-                        <template x-for="(opt, idx) in referensi.collar.options" :key="idx">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
-                                <span x-text="opt"></span>
-                                <button type="button" @click="removeRefOption('collar', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
-                            </span>
-                        </template>
-                        <template x-if="referensi.collar.options.length === 0">
-                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
-                        </template>
                     </div>
  
                     {{-- Gambar Panduan --}}
@@ -176,30 +154,8 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-900">Bahan Jersey</h3>
-                            <p class="text-xs text-gray-500">Kelola daftar opsi bahan dan gambar panduannya</p>
+                            <p class="text-xs text-gray-500">Kelola gambar panduan bahan global</p>
                         </div>
-                    </div>
-                    
-                    {{-- Input Tambah Opsi --}}
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" x-model="refInputs.bahan" @keydown.enter.prevent="addRefOption('bahan')" placeholder="Tambah bahan baru..."
-                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
-                        <button type="button" @click="addRefOption('bahan')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
-                    </div>
- 
-                    {{-- List Opsi --}}
-                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
-                        <template x-for="(opt, idx) in referensi.bahan.options" :key="idx">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
-                                <span x-text="opt"></span>
-                                <button type="button" @click="removeRefOption('bahan', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
-                            </span>
-                        </template>
-                        <template x-if="referensi.bahan.options.length === 0">
-                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
-                        </template>
                     </div>
  
                     {{-- Gambar Panduan --}}
@@ -225,30 +181,8 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-900">Jenis Potongan</h3>
-                            <p class="text-xs text-gray-500">Kelola daftar opsi potongan dan gambar panduannya</p>
+                            <p class="text-xs text-gray-500">Kelola gambar panduan potongan global</p>
                         </div>
-                    </div>
-                    
-                    {{-- Input Tambah Opsi --}}
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" x-model="refInputs.potongan" @keydown.enter.prevent="addRefOption('potongan')" placeholder="Tambah potongan baru..."
-                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
-                        <button type="button" @click="addRefOption('potongan')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
-                    </div>
- 
-                    {{-- List Opsi --}}
-                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
-                        <template x-for="(opt, idx) in referensi.potongan.options" :key="idx">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
-                                <span x-text="opt"></span>
-                                <button type="button" @click="removeRefOption('potongan', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
-                            </span>
-                        </template>
-                        <template x-if="referensi.potongan.options.length === 0">
-                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
-                        </template>
                     </div>
  
                     {{-- Gambar Panduan --}}
@@ -274,30 +208,8 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-900">Model Lengan & Jahitan</h3>
-                            <p class="text-xs text-gray-500">Kelola daftar opsi lengan/jahitan dan gambar panduannya</p>
+                            <p class="text-xs text-gray-500">Kelola gambar panduan lengan global</p>
                         </div>
-                    </div>
-                    
-                    {{-- Input Tambah Opsi --}}
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" x-model="refInputs.lengan" @keydown.enter.prevent="addRefOption('lengan')" placeholder="Tambah model lengan baru..."
-                               class="flex-1 rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] bg-white text-gray-900">
-                        <button type="button" @click="addRefOption('lengan')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-750 text-xs font-bold rounded-xl transition-all cursor-pointer">Tambah</button>
-                    </div>
- 
-                    {{-- List Opsi --}}
-                    <div class="flex flex-wrap gap-1.5 mb-5 max-h-36 overflow-y-auto p-1.5 border border-gray-100 rounded-xl bg-gray-50/50">
-                        <template x-for="(opt, idx) in referensi.lengan.options" :key="idx">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700">
-                                <span x-text="opt"></span>
-                                <button type="button" @click="removeRefOption('lengan', idx)" class="text-gray-400 hover:text-red-500 focus:outline-none ml-0.5">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
-                            </span>
-                        </template>
-                        <template x-if="referensi.lengan.options.length === 0">
-                            <span class="text-xs text-gray-400 p-1">Belum ada opsi</span>
-                        </template>
                     </div>
  
                     {{-- Gambar Panduan --}}

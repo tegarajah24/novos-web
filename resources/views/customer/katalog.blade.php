@@ -1,6 +1,7 @@
 @extends('layouts.customer')
 
-@section('title', 'Katalog — Novos')
+@section('title', 'Katalog Jersey Custom — Novos')
+@section('meta_description', 'Lihat katalog jersey custom Novos. Tersedia berbagai pilihan desain jersey futsal, basket, voli, dan olahraga lainnya. Harga terjangkau, kualitas premium.')
 
 @section('content')
 <style>

@@ -231,14 +231,14 @@
     {{-- Modal Detail Pesanan & Penyelesaian --}}
     <template x-teleport="body">
     <div x-show="isDetailOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-cloak>
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        <div class="flex items-center justify-center h-full sm:min-h-screen p-0 sm:p-0 text-center">
 
             <div x-show="isDetailOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-black/40" aria-hidden="true"></div>
 
-            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full max-w-7xl p-4 sm:p-6 my-4 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
+            <div x-show="isDetailOpen" x-transition.scale.origin.bottom class="inline-block w-full h-full sm:h-auto sm:max-w-7xl p-4 sm:p-6 my-0 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-none sm:rounded-2xl shadow-2xl border-0 sm:border border-gray-200 flex flex-col justify-between">
 
                 {{-- Header Modal --}}
-                <div class="flex justify-between items-center mb-4 sm:mb-6 bg-white -mx-4 -mt-4 p-4 sm:-mx-6 sm:-mt-6 sm:p-6 border-b border-gray-200">
+                <div class="sticky top-0 z-20 flex justify-between items-center bg-white -mx-4 -mt-4 p-4 sm:-mx-6 sm:-mt-6 sm:p-6 border-b border-gray-200 shrink-0">
                     <div>
                         <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
                             <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-purple-100 text-purple-700 text-[10px] sm:text-xs font-bold border border-purple-200 uppercase"
@@ -257,7 +257,7 @@
                 </div>
 
                 {{-- Scrollable Content Area --}}
-                <div class="max-h-[70vh] lg:max-h-[75vh] overflow-y-auto -mx-4 px-4 sm:-mx-6 sm:px-6">
+                <div class="flex-1 max-h-[calc(100vh-80px)] sm:max-h-[70vh] lg:max-h-[75vh] overflow-y-auto -mx-4 px-4 sm:-mx-6 sm:px-6 mt-2 sm:mt-0">
 
                     {{-- Tabs on Mobile --}}
                     <div class="flex border border-gray-200 mb-4 lg:hidden p-1 bg-gray-50 rounded-xl">

@@ -1,6 +1,7 @@
 @extends('layouts.customer')
 
-@section('title', 'Buat Pesanan — Novos')
+@section('title', 'Buat Pesanan Jersey Custom — Novos')
+@section('meta_description', 'Pesan jersey custom impianmu di Novos. Pilih desain, ukuran, dan warna sesuai keinginanmu. Proses mudah, bayar DP 10%, dan jersey siap dalam 3-7 hari.')
  
 @php
     $collarOptions = json_decode(App\Models\Setting::get('jersey_collar_options', json_encode([
@@ -433,8 +434,11 @@
                                         <span class="text-red-500 text-xs">*</span>
                                     </template>
                                 </div>
-                                <template x-if="attr.reference_image">
-                                    <button type="button" @click="showAttrGuide(attr)" class="text-[10px] text-blue-900 hover:underline flex items-center gap-0.5">
+                                <template x-if="getAttrGuideImage(attr)">
+                                    <button type="button" @click="showAttrGuide(attr)" class="text-[10px] text-blue-900 font-semibold hover:underline flex items-center gap-0.5">
+                                        <svg class="w-3 h-3 text-blue-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
                                         Panduan
                                     </button>
                                 </template>
@@ -2189,8 +2193,22 @@ function pemesananForm(catalogProduct = null, userAddresses = [], hasOrders = tr
             return parentVal === attr.depends_on.value;
         },
 
+        getAttrGuideImage(attr) {
+            if (!attr) return null;
+            if (attr.reference_image) return attr.reference_image;
+            const name = (attr.name || '').toLowerCase();
+            if (name.includes('kerah')) return '{{ $collarImageUrl }}';
+            if (name.includes('bahan')) return '{{ $bahanImageUrl }}';
+            if (name.includes('pola') || name.includes('potongan')) return '{{ $potonganImageUrl }}';
+            return null;
+        },
+
         showAttrGuide(attr) {
-            this.showGuideAttr = attr;
+            const guideImg = this.getAttrGuideImage(attr);
+            this.showGuideAttr = {
+                name: attr.name,
+                reference_image: guideImg
+            };
             this.showGuideModal = true;
         },
 

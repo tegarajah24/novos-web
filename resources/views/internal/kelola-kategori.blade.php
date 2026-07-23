@@ -348,7 +348,7 @@
                                         </div>
                                     </div>
 
-                                    {{-- Row 2: Depends On & Reference Image --}}
+                                    {{-- Row 2: Tag & Reference Image --}}
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 p-3 rounded-lg border border-gray-200 bg-white">
                                         {{-- System Tag --}}
                                         <div>
@@ -364,12 +364,35 @@
                                                 <option value="is_size_type">Ukuran (Size)</option>
                                             </select>
                                         </div>
-                                        <div class="flex items-end justify-end pb-1">
-                                            <button @click="removeAttr(idx)"
-                                                class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition-colors"
-                                                title="Hapus atribut">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
+                                        {{-- Gambar Panduan / Referensi --}}
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label class="block text-xs font-medium text-gray-500">Gambar Panduan</label>
+                                                <button @click="removeAttr(idx)"
+                                                    class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded-lg transition-colors"
+                                                    title="Hapus atribut">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                            </div>
+                                            {{-- Preview existing image --}}
+                                            <template x-if="attr.reference_image && !attr._newFile">
+                                                <div class="flex items-center gap-2 mb-1.5">
+                                                    <img :src="attr.reference_image.startsWith('http') ? attr.reference_image : '/storage/' + attr.reference_image"
+                                                         class="w-10 h-10 object-cover rounded-lg border border-gray-200 bg-gray-50">
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-[10px] text-gray-400 truncate" x-text="attr.reference_image.split('/').pop()"></p>
+                                                        <button @click="attr.reference_image = ''; attr._newFile = false;"
+                                                            class="text-[10px] text-red-500 hover:text-red-700 font-medium">Hapus</button>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            {{-- FilePond input --}}
+                                            <input type="file"
+                                                :id="'attr-ref-pond-' + idx"
+                                                class="filepond attr-ref-pond"
+                                                accept="image/png,image/jpeg,image/jpg,image/webp"
+                                                data-max-file-size="2MB"
+                                                :data-name="'reference_image_' + idx">
                                         </div>
                                     </div>
 
@@ -559,6 +582,10 @@ function kategoriApp() {
 
         async init() {
             await this.loadCategories();
+            // Cleanup FilePond instances when attribute modal closes
+            this.$watch('attrModalOpen', (open) => {
+                if (!open) this.destroyAttrRefPonds();
+            });
         },
 
         async loadCategories() {
@@ -616,7 +643,9 @@ function kategoriApp() {
             this.$nextTick(() => { 
                 if (window.lucide) lucide.createIcons({ icons: window.lucide.icons }); 
                 if (window.FilePond) {
-                    FilePond.parse(document.body);
+                    // Only parse within the category modal, not the entire body
+                    const modalEl = document.querySelector('[x-show="modalOpen"]');
+                    if (modalEl) FilePond.parse(modalEl);
                 }
             });
         },
@@ -765,6 +794,7 @@ function kategoriApp() {
                     required:         attr.required !== false,
                     apply_to_catalog: attr.apply_to_catalog !== false,
                     reference_image:  attr.reference_image || '',
+                    _newFile:         false,
                     system_tag:       attr.system_tag || '',
                     options:          (attr.options || []).map(o => ({ 
                         value: o.value || '',
@@ -788,6 +818,8 @@ function kategoriApp() {
                         });
                     });
                     if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+                    // Delay FilePond init to ensure x-for template DOM is fully rendered
+                    setTimeout(() => this.initAttrRefPonds(), 150);
                 });
             } catch (e) {
                 Notify.error('Gagal memuat schema atribut.');
@@ -825,6 +857,7 @@ function kategoriApp() {
                 required: true,
                 apply_to_catalog: true,
                 reference_image: '',
+                _newFile: false,
                 system_tag: '',
                 options: [{ value: '', price_modifier: 0, sleeve: '' }],
                 depends_on_id: '',
@@ -832,9 +865,64 @@ function kategoriApp() {
             });
             this.$nextTick(() => {
                 if (window.lucide) lucide.createIcons({ icons: window.lucide.icons });
+                // Init FilePond for the new attribute
+                const newIdx = this.schema.length - 1;
+                const el = document.getElementById('attr-ref-pond-' + newIdx);
+                if (el && window.FilePond) {
+                    FilePond.create(el, {
+                        acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
+                        maxFileSize: '2MB',
+                        labelIdle: 'Seret gambar atau <span class="filepond--label-action">Browse</span>',
+                        imagePreviewHeight: 80,
+                        imageCropAspectRatio: '1:1',
+                        stylePanelLayout: 'compact',
+                    });
+                }
                 // Scroll ke bawah di area atribut
-                const el = this.$refs.attrScrollArea;
-                if (el) el.scrollTop = el.scrollHeight;
+                const scrollEl = this.$refs.attrScrollArea;
+                if (scrollEl) scrollEl.scrollTop = scrollEl.scrollHeight;
+            });
+        },
+
+        initAttrRefPonds() {
+            if (!window.FilePond) return;
+            // Destroy existing instances first
+            document.querySelectorAll('.attr-ref-pond').forEach(el => {
+                const pond = FilePond.find(el);
+                if (pond) pond.destroy();
+            });
+            // Create new instances for each attribute
+            this.schema.forEach((attr, idx) => {
+                const el = document.getElementById('attr-ref-pond-' + idx);
+                if (el) {
+                    const pond = FilePond.create(el, {
+                        acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
+                        maxFileSize: '2MB',
+                        labelIdle: 'Seret gambar atau <span class="filepond--label-action">Browse</span>',
+                        imagePreviewHeight: 80,
+                        imageCropAspectRatio: '1:1',
+                        stylePanelLayout: 'compact',
+                    });
+                    // If there's an existing reference_image, show it as a server file
+                    if (attr.reference_image && !attr._newFile) {
+                        const url = attr.reference_image.startsWith('http') ? attr.reference_image : '/storage/' + attr.reference_image;
+                        pond.addFile(url).catch(() => {});
+                    }
+                    // Track when a new file is added
+                    pond.on('addfile', () => { attr._newFile = true; });
+                    pond.on('removefile', () => {
+                        attr._newFile = false;
+                        // If there was an original image, keep it (don't clear reference_image here)
+                    });
+                }
+            });
+        },
+
+        destroyAttrRefPonds() {
+            if (!window.FilePond) return;
+            document.querySelectorAll('.attr-ref-pond').forEach(el => {
+                const pond = FilePond.find(el);
+                if (pond) pond.destroy();
             });
         },
 
@@ -907,15 +995,35 @@ function kategoriApp() {
                 return obj;
             });
 
+            // Build FormData for file uploads
+            const formData = new FormData();
+            formData.append('_method', 'PUT');
+            formData.append('attributes_schema', JSON.stringify(schemaToSend));
+
+            // Collect files from FilePond instances
+            this.schema.forEach((attr, idx) => {
+                const el = document.getElementById('attr-ref-pond-' + idx);
+                if (el) {
+                    const pond = FilePond.find(el);
+                    if (pond) {
+                        pond.getFiles().forEach(f => {
+                            if (f.file instanceof File) {
+                                formData.append('reference_image_' + idx, f.file);
+                            }
+                        });
+                    }
+                }
+            });
+
             try {
                 const res = await fetch(`/staf/kategori/${this.attrCategoryId}/attributes`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrf,
+                        'X-HTTP-Method-Override': 'PUT',
                     },
-                    body: JSON.stringify({ attributes_schema: schemaToSend }),
+                    body: formData,
                 });
                 const data = await res.json();
                 if (data.success) {
